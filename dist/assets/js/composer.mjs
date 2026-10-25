@@ -22,7 +22,7 @@ import {
   MODEL_VERSION,
 } from "./policy.mjs?v=0.5.1";
 import { buildReturnAnchors } from "./return-model.mjs?v=0.5.1";
-import { assetAt, fundamentalForecast } from "./research-model.mjs?v=0.5.1";
+import { assetAt, fundamentalForecast, bondAssumptions } from "./research-model.mjs?v=0.5.1";
 import { selectCompositionUniverse } from "./universe.mjs?v=0.5.1";
 
 export const DEFAULT_COMPOSITION_RULES = {
@@ -101,6 +101,19 @@ export function prepareComposition(
       if (!forecast.valid) reason = forecast.error;
       else if (forecast.thesis.status === "contradicted")
         reason = "Tesis contradicha: revisar hipótesis antes de nuevas compras";
+    }
+    if (!reason && asset.type === "etf") {
+      const own = settings.assetAssumptions?.[asset.symbol];
+      const hasExplicitReturn = finite(own?.expectedReturn) &&
+        finite(own?.uncertainty) && own.uncertainty > 0 && own.uncertainty <= 1;
+      const isBondPriced = !!bondAssumptions(asset, {
+        ...settings, asOf, informationAsOf: info,
+        yieldCurve: Object.fromEntries((snapshot.macro || [])
+          .filter((row) => row.date <= info)
+          .map((row) => [row.id, row.value])),
+      });
+      if (!isBondPriced && !hasExplicitReturn)
+        reason = "ETF sin retorno esperado fundamentado: no se permite compra nueva con el supuesto genérico del 6 %. Introduce una expectativa y una incertidumbre explícitas.";
     }
     if (reason) excluded.push({ symbol: asset.symbol, reason });
     if (!reason || existing.has(asset.symbol)) {
