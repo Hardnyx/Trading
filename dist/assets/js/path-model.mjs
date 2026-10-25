@@ -5,19 +5,19 @@ import {
   quantile,
   sum,
   normalizeWeights,
-} from "./analytics.mjs?v=0.5.2";
-import { seededRandom, normalGenerator, poisson } from "./random.mjs?v=0.5.2";
-import { ewmaCovariance, cholesky } from "./risk-math.mjs?v=0.5.2";
-import { buildReturnAnchors, sampleDrifts } from "./return-model.mjs?v=0.5.2";
-import { assetAt } from "./research-model.mjs?v=0.5.2";
-import { factorModel } from "./factors.mjs?v=0.5.2";
-import { conditionalRisk, studentScale, updateGjrVariance } from "./conditional-risk.mjs?v=0.5.2";
+} from "./analytics.mjs?v=0.5.3";
+import { seededRandom, normalGenerator, poisson } from "./random.mjs?v=0.5.3";
+import { ewmaCovariance, cholesky } from "./risk-math.mjs?v=0.5.3";
+import { buildReturnAnchors, sampleDrifts } from "./return-model.mjs?v=0.5.3";
+import { assetAt } from "./research-model.mjs?v=0.5.3";
+import { factorModel } from "./factors.mjs?v=0.5.3";
+import { conditionalRisk, studentScale, updateGjrVariance } from "./conditional-risk.mjs?v=0.5.3";
 import {
   mandate,
   regimes,
   withdrawalSchedule,
   DEFAULT_REGIMES,
-} from "./policy.mjs?v=0.5.2";
+} from "./policy.mjs?v=0.5.3";
 
 export const BASE_REGIME = {
   id: "base",
