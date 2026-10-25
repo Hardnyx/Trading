@@ -284,6 +284,54 @@ function candidate(x, random) {
   }
   return validWeights(w, x) ? w : null;
 }
+// Test a small position in each available asset against the reserve baseline.
+// This guarantees that the optimizer actually evaluates every shortlisted idea.
+function reserveTilts(x) {
+  const cash = x.assets.findIndex((a) => a.symbol === "CASH"),
+    bond = x.assets.findIndex((a) => a.symbol === "SHY");
+  if (cash < 0) return [];
+  const minimum = Math.min(1, Math.ceil(x.requiredCash * 20 - 1e-9) / 20);
+  const source = bond >= 0 && x.buyAllowed[bond] ? bond : cash;
+  const result = [];
+  for (let i = 0; i < x.assets.length; i++) {
+    if (i === cash || i === source || !x.buyAllowed[i]) continue;
+    const w = Array(x.assets.length).fill(0);
+    w[cash] = minimum;
+    w[source] += 1 - minimum;
+    const invest = Math.min(0.2, Math.floor((1 - minimum) * 20 + 1e-9) / 20);
+    if (invest < 0.05) continue;
+    w[source] -= invest;
+    w[i] += invest;
+    if (validWeights(w, x)) result.push(w);
+  }
+  return result;
+}
+
+// Deterministic, risk-constrained 5pp exchanges near the strongest candidates.
+// No historical return enters the selection of recipient assets.
+function neighborCandidate(x, parent, random) {
+  const donors = parent.map((weight, i) => ({ weight, i }))
+    .filter(({ weight }) => weight >= 0.05 - 1e-8);
+  const recipients = x.assets.map((asset, i) => ({
+    i,
+    priority: x.anchors[i].annual -
+      0.35 * Math.sqrt(Math.max(0, x.covariance[i][i])),
+  })).filter(({ i }) => x.buyAllowed[i])
+    .sort((a, b) => b.priority - a.priority || a.i - b.i);
+  if (!donors.length || !recipients.length) return null;
+  for (let attempt = 0; attempt < 35; attempt++) {
+    const donor = donors[Math.floor(random() * donors.length)].i;
+    const pool = attempt % 3 === 0 ? recipients.slice(0, 10) : recipients;
+    const receiver = pool[Math.floor(random() * pool.length)].i;
+    if (donor === receiver) continue;
+    const w = parent.slice();
+    w[donor] = Math.max(0, Math.round((w[donor] - 0.05) * 1000) / 1000);
+    w[receiver] = Math.round((w[receiver] + 0.05) * 1000) / 1000;
+    if (validWeights(w, x)) return w;
+  }
+  return null;
+}
+
 function assess(w, x, sample, hold = false, passive = false) {
   const positions = x.assets.flatMap((a, i) =>
       w[i] > 1e-9 ? [{ symbol: a.symbol, weight: w[i] }] : [],
@@ -381,13 +429,23 @@ export function composePortfolio(
   for (const w of passiveCandidates(x)) add(w, true);
   const allCash = x.assets.map((a) => (a.symbol === "CASH" ? 1 : 0));
   if (validWeights(allCash, x)) add(allCash);
-  for (
-    let attempt = 0;
-    attempt < target * 25 && evaluated < target;
-    attempt++
-  ) {
+  for (const w of reserveTilts(x)) add(w);
+  const randomBudget = Math.max(evaluated, Math.floor(target * 0.65));
+  for (let attempt = 0; attempt < target * 25 && evaluated < randomBudget; attempt++) {
     const w = candidate(x, random);
     if (w) add(w);
+  }
+  ranked.sort((a, b) => b.metrics.score - a.metrics.score);
+  for (let attempt = 0; attempt < target * 30 && evaluated < target; attempt++) {
+    if (!ranked.length) {
+      const w = candidate(x, random);
+      if (w) add(w);
+      continue;
+    }
+    const parent = ranked[Math.floor(random() * Math.min(8, ranked.length))];
+    const neighbor = neighborCandidate(x, parent.weights, random);
+    if (neighbor) add(neighbor);
+    if (attempt % 20 === 19) ranked.sort((a, b) => b.metrics.score - a.metrics.score);
   }
   ranked.sort((a, b) => b.metrics.score - a.metrics.score);
   const verificationSeed = (seed + 0x6a09e667) >>> 0,
@@ -435,7 +493,11 @@ export function composePortfolio(
     capital: x.current.capital,
     excluded: x.excluded,
     selection: x.selection,
-    search: { evaluated, feasible, paths, allocationStep: 0.05 },
+    search: {
+      evaluated, feasible, paths, allocationStep: 0.05,
+      method: "reserve-tilts-random-local-exchanges",
+      exhaustive: false,
+    },
     verification: {
       seed: verificationSeed,
       paths: finalPaths,
