@@ -7,7 +7,9 @@ export function conditionalRisk(assets, baseCov, options = {}) {
   const empty = (reason) => ({
     covariance: baseCov, fits: Array(assets.length).fill(null),
     active: 0, fallback: assets.length, enabled: false,
-    mode: "ewma", reason, studentNu: null,
+    dynamic: true, mode: "ewma", reason, studentNu: null,
+    innovationLaw: "gaussian-factor-residual",
+    multipliers: Array(assets.length).fill(1),
   });
   if (options.volatilityMode === "ewma") return empty("EWMA seleccionado");
   const source = options.volatilityData;
@@ -53,9 +55,13 @@ export function conditionalRisk(assets, baseCov, options = {}) {
     active,
     fallback: assets.length-active,
     enabled: true,
+    dynamic: true,
     mode: "hybrid",
-    studentNu: Math.max(4, Math.min(20, ...fits.filter(Boolean).map((f)=>f.nu))),
-    reason: "GJR-t aceptado por walk-forward; resto EWMA. Matriz TOTAL escalada sin borrar factores.",
+    multipliers: ratio,
+    studentNu: null,
+    fittedStudentNu: fits.filter(Boolean).map(f=>f.nu),
+    innovationLaw: "gaussian-factor-residual",
+    reason: "GJR-t estimado en retornos totales; EWMA diario para los demás. Innovaciones conjuntas gaussianas hasta validar colas y residuos por separado.",
     evaluatedAsOf: asOf,
   };
 }
@@ -93,4 +99,13 @@ export function updateGjrVariance(fit, varianceDaily, logInnovation) {
     throw new Error("Varianza GJR fuera de rango");
   // A per-step guard limits numerical explosions in extreme Monte Carlo tails.
   return Math.max(1e-12, Math.min(.25, next));
+}
+
+/** Daily EWMA recursion, applied to EVERY unaccepted GJR instrument. */
+export function updateEwmaVariance(varianceDaily, innovation, lambda=0.94) {
+  if (!Number.isFinite(varianceDaily) || varianceDaily<0 ||
+      !Number.isFinite(innovation) || !(lambda>0&&lambda<1))
+    throw new Error("Actualización EWMA inválida");
+  const next=lambda*varianceDaily+(1-lambda)*innovation*innovation;
+  return Math.max(0,Math.min(.25,next));
 }
