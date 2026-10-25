@@ -4,7 +4,7 @@ import {
   normalizeWeights,
   metrics,
   scenarios,
-} from "../analytics.mjs?v=0.4.0";
+} from "../analytics.mjs?v=0.5.0";
 import {
   sparkline,
   portfolioChart,
@@ -13,7 +13,7 @@ import {
   scatter,
   forecastCone,
   histogram,
-} from "../charts.mjs?v=0.4.0";
+} from "../charts.mjs?v=0.5.0";
 import {
   esc,
   url,
@@ -23,12 +23,12 @@ import {
   compact,
   color,
   dateLabel,
-} from "./format.mjs?v=0.4.0";
-import { template } from "./templates.mjs?v=0.4.0";
-import { DEFAULT_COMPOSITION_RULES } from "../composer.mjs?v=0.4.0";
-import { factorModel } from "../factors.mjs?v=0.4.0";
+} from "./format.mjs?v=0.5.0";
+import { template } from "./templates.mjs?v=0.5.0";
+import { DEFAULT_COMPOSITION_RULES } from "../composer.mjs?v=0.5.0";
+import { factorModel } from "../factors.mjs?v=0.5.0";
 
-import { createDecisionViews } from "./decision-views.mjs?v=0.4.0";
+import { createDecisionViews } from "./decision-views.mjs?v=0.5.0";
 
 export const NAV = [
   ["portfolio", "Componer cartera", "F1"],
