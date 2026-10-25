@@ -1080,20 +1080,31 @@ export function createViews(context) {
         "01",
         template("macro-view-2", {
           items: data.macro
-            .map((s) =>
-              template("macro-view-3", {
+            .map((s) => {
+              const showAnnualChange = s.id === "CPI" && finite(s.yoy);
+              const previous = s.history.at(-2);
+              const priorYear =
+                previous &&
+                s.history.find(
+                  (row) =>
+                    row.date ===
+                    `${Number(previous.date.slice(0, 4)) - 1}${previous.date.slice(4)}`,
+                );
+              const previousAnnualChange =
+                priorYear?.value > 0
+                  ? previous.value / priorYear.value - 1
+                  : null;
+              return template("macro-view-3", {
                 label: s.label,
-                value2: s.id === "CPI" ? " · interanual" : "",
-                value3:
-                  s.id === "CPI" && finite(s.yoy)
-                    ? pct(s.yoy)
-                    : fmt(s.value, 2) +
-                      (s.unit === "%" ? "%" : s.unit ? " " + s.unit : ""),
-                value4:
-                  s.id === "CPI"
-                    ? fmt(s.previous, 2) + " índice"
-                    : fmt(s.previous, 2) +
-                      (s.unit === "%" ? "%" : s.unit ? " " + s.unit : ""),
+                value2: showAnnualChange ? " · interanual" : "",
+                value3: showAnnualChange
+                  ? pct(s.yoy)
+                  : fmt(s.value, 2) +
+                    (s.unit === "%" ? "%" : s.unit ? " " + s.unit : ""),
+                value4: showAnnualChange
+                  ? pct(previousAnnualChange)
+                  : fmt(s.previous, 2) +
+                    (s.unit === "%" ? "%" : s.unit ? " " + s.unit : ""),
                 date: dateLabel(s.date),
                 sparkline: sparkline(
                   s.history.map((r) => r.value),
@@ -1105,8 +1116,8 @@ export function createViews(context) {
                 value8:
                   s.provider ||
                   (s.id === "CPI" || s.id === "UNRATE" ? "BLS" : "Treasury"),
-              }),
-            )
+              });
+            })
             .join(""),
         }),
         "",

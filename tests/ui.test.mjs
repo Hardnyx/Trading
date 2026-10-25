@@ -116,6 +116,50 @@ test("provider configuration and imported consensus show dates, coverage and rev
   assert.ok(views.sourcesView().includes("CLAVE PENDIENTE"));
 });
 
+test("macro comparisons use matching inflation units and label employment in thousands", () => {
+  const views = createViews({
+    data: {
+      macro: [
+        {
+          id: "CPI",
+          label: "IPC",
+          unit: "índice",
+          provider: "FRED",
+          value: 130,
+          previous: 120,
+          yoy: 0.3,
+          date: "2026-09-01",
+          source_url: "https://example.test/cpi",
+          history: [
+            { date: "2025-08-01", value: 100 },
+            { date: "2025-09-01", value: 100 },
+            { date: "2026-08-01", value: 120 },
+            { date: "2026-09-01", value: 130 },
+          ],
+        },
+        {
+          id: "PAYEMS",
+          label: "Nóminas",
+          unit: "miles de personas",
+          provider: "FRED",
+          value: 159044,
+          previous: 159015,
+          date: "2026-09-01",
+          source_url: "https://example.test/jobs",
+          history: [
+            { date: "2026-08-01", value: 159015 },
+            { date: "2026-09-01", value: 159044 },
+          ],
+        },
+      ],
+    },
+  });
+  const html = views.macro();
+  assert.match(html, /<td>30\.0%<\/td>/);
+  assert.match(html, /<td>20\.0%<\/td>/);
+  assert.ok(html.includes("159,044.00 miles de personas"));
+});
+
 for (const populated of [false, true])
   test(`all views render valid fragments with ${populated ? "a registered" : "an empty"} portfolio`, () => {
     const positions = populated

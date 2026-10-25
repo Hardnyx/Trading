@@ -17,7 +17,7 @@ import {
 } from "./monitor.mjs";
 
 import { fmt, pct, money, dateLabel } from "./ui/format.mjs";
-import { createViews, NAV } from "./ui/views.mjs?v=20261024.1";
+import { createViews, NAV } from "./ui/views.mjs?v=20261024.2";
 import { loadTemplates } from "./ui/templates.mjs";
 import { applyVisualValues, showStartupError } from "./ui/dom.mjs";
 import { DEFAULT_COMPOSITION_RULES } from "./composer.mjs";
