@@ -500,6 +500,40 @@ def bls_series(series_id, label, cutoff, cpi=False):
                   "índice" if cpi else "%", "IPC desestacionalizado" if cpi else "Tasa de desempleo desestacionalizada")
     return bls_batch([definition], cutoff)[0]
 
+def flag_inconsistent_eps(asset, cutoff):
+    """Do not value an apparent pre-split or mismatched EPS as a current share."""
+    facts = asset.get("financials")
+    if not isinstance(facts, dict):
+        return None
+    eps, income, shares = (facts.get(key) for key in ("eps", "net_income", "shares"))
+    if not all(isinstance(row, dict) for row in (eps, income, shares)):
+        return None
+    values = [number(row.get("value")) for row in (eps, income, shares)]
+    if any(value is None or value <= 0 for value in values):
+        return None
+    eps_value, net_income, share_count = values
+    ratio = eps_value * share_count / net_income
+    comparable_period = (eps.get("period_end") == income.get("period_end")
+                         and eps.get("method") == income.get("method"))
+    recent_split = any(
+        split.get("date") and
+        0 <= (date(cutoff) - date(split["date"])).days <= 550 and
+        number(split.get("ratio")) not in (None, 1)
+        for split in asset.get("splits", [])
+    )
+    if not comparable_period and not recent_split:
+        return None
+    # Wide bounds account for dilution, buybacks and one-off income items.
+    # Crossing them means raw EPS is not trustworthy enough for automation.
+    if ratio < 1 / 3 or ratio > 3:
+        facts["eps_unverified"] = dict(eps)
+        facts["eps"] = None
+        asset.setdefault("quality_flags", []).append("eps_share_income_scale_mismatch")
+        return (f"{asset['symbol']}: BPA no comparable con beneficio/acciones "
+                f"(ratio de conciliación {ratio:.2f}); valoración BPA bloqueada")
+    return None
+
+
 def build_asset(spec, cutoff, previous):
     symbol, name, sector, cik, growth, multiple = spec
     errors = []
@@ -545,6 +579,9 @@ def build_asset(spec, cutoff, previous):
                 row["shares"] = row["shares_unadjusted"] * factor
                 row["shares_split_adjusted"] = True
                 row["split_source"] = asset["source_url"]
+    inconsistent_eps = flag_inconsistent_eps(asset, cutoff)
+    if inconsistent_eps:
+        errors.append(inconsistent_eps)
     if symbol in ISSUER_URLS:
         try:
             raw = download(ISSUER_URLS[symbol], f"issuer-{symbol}.html", max_age=6 * 3600)
