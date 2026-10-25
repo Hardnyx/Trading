@@ -558,6 +558,19 @@ def build_asset(spec, cutoff, previous):
     return asset, errors
 
 
+def common_price_cutoff(assets):
+    """Use the modal available closing date; a single stale ETF cannot backdate everyone."""
+    counts = {}
+    for asset in assets:
+        day = asset.get("price_date")
+        if day:
+            counts[day] = counts.get(day, 0) + 1
+    if not counts:
+        raise ValueError("No hay precios para determinar el corte")
+    benchmark = next((a["price_date"] for a in assets if a["symbol"] == "SPY"), None)
+    return max(counts, key=lambda day: (counts[day], day == benchmark, day))
+
+
 def public_snapshot(snapshot):
     return dict(snapshot, assets=[{key: value for key, value in asset.items() if key != "analyst_estimates"}
                                  for asset in snapshot["assets"]])
@@ -750,7 +763,7 @@ def main():
     if not assets:
         raise SystemExit("No hay datos válidos; el archivo anterior no se modifica")
     snapshot = {"schema_version": 1, "generated_at": dt.datetime.now(UTC).isoformat(), "requested_as_of": args.as_of,
-                "price_as_of": min(a["price_date"] for a in assets), "assets": assets, "macro": macro, "errors": errors, "providers": providers,
+                "price_as_of": common_price_cutoff(assets), "assets": assets, "macro": macro, "errors": errors, "providers": providers,
                 "sources": [
                     {"name": "Yahoo Finance", "kind": "Endpoint público no oficial", "url": "https://finance.yahoo.com/", "data": "Cierres, Adj Close, dividendos y volumen"},
                     {"name": "SEC EDGAR", "kind": "API oficial", "url": "https://www.sec.gov/search-filings/edgar-application-programming-interfaces", "data": "Hechos financieros XBRL"},
