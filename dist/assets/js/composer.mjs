@@ -155,7 +155,7 @@ export function prepareComposition(
     excluded,
     buyAllowed: sampled.assets.map((asset) => permissionBySymbol.get(asset.symbol)),
     selection: {
-      published: snapshot.assets.length,
+      published: raw.assets.length,
       eligible: eligible.length,
       simulated: sampled.assets.length,
       outsideSample: sampled.omitted,
@@ -475,14 +475,19 @@ export function composePortfolio(
   const equityTilt = Array(x.assets.length).fill(0);
   if (cash >= 0) {
     const minCash = Math.min(1, Math.ceil(x.requiredCash * 20 - 1e-9) / 20);
-    reserve[cash] = minCash;
-    if (shortBond >= 0) reserve[shortBond] = 1 - minCash;
-    else reserve[cash] = 1;
+    reserve[cash] = 1;
+    if (shortBond >= 0) {
+      reserve[shortBond] = Math.min(x.rules.reserveCap, 1 - minCash);
+      reserve[cash] -= reserve[shortBond];
+    }
     equityTilt.splice(0, equityTilt.length, ...reserve);
     if (equity >= 0) {
       const targetEquity = Math.min(0.2, 1 - minCash);
-      const funding = shortBond >= 0 ? shortBond : cash;
-      equityTilt[funding] -= targetEquity;
+      const fromBond = shortBond >= 0
+        ? Math.min(targetEquity, equityTilt[shortBond]) : 0;
+      if (shortBond >= 0) equityTilt[shortBond] -= fromBond;
+      const fromCash = targetEquity - fromBond;
+      equityTilt[cash] -= fromCash;
       equityTilt[equity] += targetEquity;
     }
   }
