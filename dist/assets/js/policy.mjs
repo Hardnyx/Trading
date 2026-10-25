@@ -1,4 +1,4 @@
-import { finite, normalizeWeights, sum } from "./analytics.mjs?v=0.4.0";
+import { finite, normalizeWeights, sum } from "./analytics.mjs?v=0.5.0";
 
 export const MODEL_VERSION = "0.5.0";
 export function informationDate(snapshot) {
