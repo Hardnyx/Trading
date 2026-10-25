@@ -18,6 +18,17 @@ class UniverseTests(unittest.TestCase):
         self.assertEqual(len(EXTRA_STOCKS), 71)
         self.assertEqual(len(EXTRA_ETFS), 33)
 
+    def test_stale_single_ticker_does_not_backdate_market_price_cut(self):
+        items = [
+            {"symbol": "SPY", "price_date": "2026-10-23"},
+            {"symbol": "AAPL", "price_date": "2026-10-23"},
+            {"symbol": "MSFT", "price_date": "2026-10-23"},
+            {"symbol": "ILLQ", "price_date": "2026-10-20"},
+        ]
+        self.assertEqual(collector.common_price_cutoff(items), "2026-10-23")
+        items[0]["price_date"] = "2026-10-20"
+        self.assertEqual(collector.common_price_cutoff(items), "2026-10-23")
+
     def test_official_cik_mapping_matches_exact_symbol(self):
         registry = {"0": {"ticker": "AVGO", "cik_str": 1730168},
                     "1": {"ticker": "GS", "cik_str": 886982},
