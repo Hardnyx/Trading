@@ -10,6 +10,10 @@ Se propone un sistema predictivo para carteras multiactivo que distingue entre (
 
 **Palabras clave:** cálculo estocástico, GJR-GARCH, efectos asimétricos, regímenes, datos *point-in-time*, eventos, riesgo de cartera, CVaR.
 
+### Estado de implementación (25 de octubre de 2026)
+
+La versión 0.6.0 descompone una única matriz EWMA común en factor SPY y residuo PSD, actualiza GJR y EWMA diariamente, y elimina un factor radial Student-t universal no calibrado. **No** equivale aún al modelo factorial-GARCH completo: GJR se estima sobre retornos totales y la estimación de residuos por régimen/sector sigue siendo diagnóstica. La dependencia de cola, GARCH residual, GARCH-X, DCC y saltos informativos continúan pendientes de validación.
+
 ## 1. Problema y pregunta de investigación
 
 Trading dispone de valoración fundamental, un universo multiactivo, simulaciones Monte Carlo y una matriz de covarianza EWMA. Sin embargo, la expectativa anual genérica de ciertos ETF —por ejemplo, 6 % para oro— no representa una tesis económica calibrada, y los saltos añadidos a una covarianza histórica que ya incluye crisis pueden contar el mismo riesgo dos veces.
