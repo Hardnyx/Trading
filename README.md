@@ -4,6 +4,8 @@ Terminal de research para acciones y ETFs de Estados Unidos. La interfaz combina
 
 Herramienta de uso personal para revisar activos, configurar supuestos y analizar la distribución de resultados de una cartera.
 
+![Pantalla de research](docs/terminal.jpg)
+
 ## Qué incluye
 
 - **Componer cartera:** selección de activos, pesos, capital y registro de una referencia con fecha de corte.
