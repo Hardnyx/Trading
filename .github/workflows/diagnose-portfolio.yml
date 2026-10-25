@@ -5,6 +5,9 @@ on:
     branches: [main]
     paths:
       - 'scripts/diagnose_portfolio.mjs'
+      - 'dist/assets/js/composer.mjs'
+      - 'dist/assets/js/universe.mjs'
+      - '.github/workflows/diagnose-portfolio.yml'
 permissions:
   contents: read
 jobs:
