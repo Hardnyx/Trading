@@ -30,7 +30,7 @@ try {
   const issues=[];
   page.on("pageerror",e=>issues.push(e.message));
   page.on("console",e=>{if(e.type()==="error")issues.push(e.text())});
-  await page.goto("http://127.0.0.1:8813/?build=0.5.3#portfolio",
+  await page.goto("http://127.0.0.1:8813/?build=0.5.3b#portfolio",
     {waitUntil:"networkidle",timeout:60000});
   const button=page.locator('[data-action="compose-reference"]');
   await button.waitFor({state:"visible",timeout:45000});
