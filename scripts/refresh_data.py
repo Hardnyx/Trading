@@ -9,6 +9,7 @@ import concurrent.futures
 import csv
 import datetime as dt
 import io
+import hashlib
 import json
 import math
 import os
@@ -23,9 +24,10 @@ import xml.etree.ElementTree as ET
 ROOT = Path(__file__).resolve().parents[1]
 CACHE = ROOT / ".cache"
 OUTPUT = ROOT / "dist/data/market.json"
+ARCHIVE = ROOT / "data/snapshots"
 UTC = dt.timezone.utc
-UA = "TradingResearch/0.1 (https://github.com/Hardnyx/Trading)"
-SEC_UA = os.environ.get("SEC_USER_AGENT", UA)
+UA = "TradingResearch/0.2 (https://github.com/Hardnyx/Trading)"
+SEC_UA = os.environ.get("SEC_USER_AGENT") or UA
 LOCK = threading.Lock()
 LAST_SEC = 0.0
 ASSETS = [
@@ -197,8 +199,8 @@ def filings(cik, cutoff):
 
 
 def prices(symbol, cutoff):
-    url = f"https://query1.finance.yahoo.com/v8/finance/chart/{symbol}?range=2y&interval=1d&events=div%2Csplits"
-    body = json.loads(download(url, f"prices-{symbol}.json", max_age=3600))
+    url = f"https://query1.finance.yahoo.com/v8/finance/chart/{symbol}?range=5y&interval=1d&events=div%2Csplits"
+    body = json.loads(download(url, f"prices-5y-{symbol}.json", max_age=3600))
     response = body.get("chart", {}).get("result")
     if not response:
         raise ValueError("Sin serie de precios")
@@ -258,7 +260,7 @@ def treasury_curves(cutoff):
 
 def bls_series(series_id, label, cutoff, cpi=False):
     year = date(cutoff).year
-    url = f"https://api.bls.gov/publicAPI/v2/timeseries/data/{series_id}?startyear={year-2}&endyear={year}"
+    url = f"https://api.bls.gov/publicAPI/v1/timeseries/data/{series_id}?startyear={year-2}&endyear={year}"
     body = json.loads(download(url, f"bls-{series_id}.json", max_age=6 * 3600))
     if body.get("status") != "REQUEST_SUCCEEDED":
         raise ValueError("BLS no devolvió observaciones")
@@ -319,6 +321,40 @@ def build_asset(spec, cutoff, previous):
     return asset, errors
 
 
+def archive_observation(snapshot, directory=ARCHIVE):
+    """Preserve what was observed at collection time without repeating price history."""
+    collected = dt.datetime.fromisoformat(snapshot['generated_at'].replace('Z', '+00:00'))
+    if collected.tzinfo is None:
+        raise ValueError('La captura necesita una hora de colección con zona horaria')
+    collected = collected.astimezone(UTC)
+    source = json.dumps(snapshot, ensure_ascii=False, sort_keys=True, separators=(',', ':'), allow_nan=False)
+    payload = {
+        'schema_version': 1,
+        'collected_at': snapshot['generated_at'],
+        'requested_as_of': snapshot['requested_as_of'],
+        'price_as_of': snapshot['price_as_of'],
+        'collection_mode': 'current' if snapshot['requested_as_of'] == collected.date().isoformat() else 'historical_request',
+        'source_snapshot_sha256': hashlib.sha256(source.encode('utf-8')).hexdigest(),
+        'assets': [dict({k: v for k, v in asset.items() if k != 'history'},
+                        quote=asset['history'][-1] if asset.get('history') else None)
+                   for asset in snapshot['assets']],
+        'macro': [{k: v for k, v in series.items() if k != 'history'} for series in snapshot.get('macro', [])],
+        'errors': snapshot.get('errors', []),
+        'sources': snapshot.get('sources', []),
+    }
+    content = json.dumps(payload, ensure_ascii=False, sort_keys=True, separators=(',', ':'), allow_nan=False) + '\n'
+    folder = Path(directory) / collected.strftime('%Y-%m')
+    folder.mkdir(parents=True, exist_ok=True)
+    path = folder / (collected.strftime('%Y-%m-%dT%H%M%S%fZ') + '.json')
+    try:
+        with path.open('x', encoding='utf-8') as handle:
+            handle.write(content)
+    except FileExistsError:
+        if path.read_text(encoding='utf-8') != content:
+            raise ValueError('No se puede sobrescribir una captura anterior')
+    return path
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--as-of", default=dt.datetime.now(UTC).date().isoformat(), help="Corte máximo YYYY-MM-DD")
@@ -370,7 +406,9 @@ def main():
     temporary = OUTPUT.with_suffix(".tmp")
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
     temporary.write_text(json.dumps(snapshot, ensure_ascii=False, separators=(",", ":"), allow_nan=False) + "\n")
+    archived = archive_observation(snapshot)
     temporary.replace(OUTPUT)
+    print(f"Captura conservada: {archived.relative_to(ROOT)}", flush=True)
     print(f"Guardado {OUTPUT.name}: {len(assets)} activos, {len(macro)} series, {len(errors)} avisos", flush=True)
 
 

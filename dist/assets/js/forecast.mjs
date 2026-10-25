@@ -237,7 +237,7 @@ export function validateRiskBands(assets, positions, lambda = 0.94) {
   if (!weights.length) return null;
   const alignment = alignReturns(
     weights.map((p) => lookup.get(p.symbol)),
-    500,
+    1260,
   );
   const observations = alignment.dates.map((_, t) =>
     sum(weights.map((p, i) => alignment.columns[i][t] * p.weight)),

@@ -1,5 +1,13 @@
 name: Refresh market data
 on:
+  schedule:
+    # 18:30 America/Lima; after the US regular session in both DST regimes.
+    - cron: '30 23 * * *'
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/refresh-data.yml'
+      - 'scripts/refresh_data.py'
   workflow_dispatch:
 permissions:
   contents: read
@@ -21,11 +29,13 @@ jobs:
         with:
           python-version: '3.12'
       - name: Download a public market snapshot
+        env:
+          SEC_USER_AGENT: ${{ vars.SEC_USER_AGENT }}
         run: python scripts/refresh_data.py
       - name: Commit the updated snapshot
         id: snapshot
         run: |
-          git add dist/data/market.json
+          git add dist/data/market.json data/snapshots
           if git diff --cached --quiet; then
             echo 'changed=false' >> "$GITHUB_OUTPUT"
             exit 0

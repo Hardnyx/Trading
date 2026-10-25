@@ -42,7 +42,11 @@ python scripts/refresh_data.py --as-of 2026-10-24
 
 El script utiliza únicamente la biblioteca estándar de Python. Guarda respuestas temporalmente en `.cache/`, limita las solicitudes a la SEC y reemplaza el corte de forma atómica. Si una fuente falla, conserva datos previos y registra el aviso; no fabrica observaciones.
 
-En GitHub está disponible el workflow manual **Refresh market data**. Actualiza el archivo de datos en `main` y llama al despliegue de GitHub Pages con el SHA del nuevo corte. El botón de la web **Cargar último corte publicado** descarga el archivo que ya está en el hosting, sin ejecutar el extractor.
+El workflow **Refresh market data** se ejecuta diariamente a las **18:30 de Lima** (23:30 UTC) y también puede iniciarse desde Actions. Actualiza el archivo de datos en `main` y llama al despliegue de GitHub Pages con el SHA del nuevo corte. El botón de la web **Cargar último corte publicado** descarga el archivo que ya está en el hosting, sin ejecutar el extractor.
+
+### Conservación de cortes
+
+Cada descarga guarda una captura fechada en `data/snapshots/`, con precios observados, fundamentos, fechas de publicación, series macro y una huella del archivo completo. Las capturas son inmutables; no repiten toda la historia de precios. Empiezan a registrar la información conocida desde su fecha de colección. Una descarga solicitada para una fecha pasada queda identificada como retrospectiva.
 
 ## Composición y seguimiento
 
@@ -80,6 +84,8 @@ La referencia se conserva en el navegador, junto con los supuestos y el estado d
 | Yahoo Finance chart                   | Cierres, Adj Close, volumen y dividendos               | Endpoint público no oficial; disponibilidad sin garantía |
 | U.S. Treasury                         | Curva par nominal                                      | Feed XML oficial                                         |
 | BLS                                   | IPC y desempleo desestacionalizados                    | API pública oficial                                      |
+
+Precios diarios: se solicitan cinco años por activo; la cobertura efectiva depende de la fuente.
 
 Universo inicial: AAPL, MSFT, NVDA, AMZN, GOOGL, META, JPM, V, XOM, JNJ, PG, COST, SPY, QQQ, IWM, TLT, GLD y SHY. La cobertura financiera puede variar entre emisores: los datos ausentes se muestran como `—`.
 
@@ -136,7 +142,8 @@ dist/
   data/market.json Corte descargado de fuentes públicas
 scripts/
   refresh_data.py  Actualización y normalización
-tests/            Cálculos financieros y estocásticos
+data/snapshots/   Cortes observados por fecha de colección
+tests/            Cálculos financieros, plantillas y archivos de cortes
 ```
 
 La aplicación no envía los pesos ni los supuestos a un servidor. Se guardan en el navegador y pueden exportarse a un archivo JSON.
