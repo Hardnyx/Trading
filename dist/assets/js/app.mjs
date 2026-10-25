@@ -644,12 +644,14 @@ function importFile(kind) {
   $("#import-file").value = "";
   $("#import-file").click();
 }
+let marketETag = null;
 async function loadData() {
   const response = await fetch(
     new URL("../../data/market.json", import.meta.url),
     { cache: "no-cache" },
   );
   if (!response.ok) throw new Error("No se pudo cargar el corte de mercado.");
+  marketETag = response.headers.get("ETag");
   data = withCashAsset(validateSnapshot(await response.json()));
   statsCache.clear();
   state.positions = Array.isArray(state.positions)
@@ -685,12 +687,18 @@ setInterval(async () => {
   if (!data || !state.baseline || document.visibilityState !== "visible")
     return;
   try {
-    const response = await fetch(
-      new URL("../../data/market.json", import.meta.url),
-      { cache: "no-cache" },
-    );
+    const url = new URL("../../data/market.json", import.meta.url);
+    // Prefer a cheap conditional HEAD over reparsing an unchanged large JSON.
+    if (marketETag) {
+      const head = await fetch(url, { method: "HEAD", cache: "no-cache" });
+      if (!head.ok) return;
+      const observedETag = head.headers.get("ETag");
+      if (observedETag && observedETag === marketETag) return;
+    }
+    const response = await fetch(url, { cache: "no-cache" });
     if (!response.ok) return;
     const next = validateSnapshot(await response.json());
+    marketETag = response.headers.get("ETag");
     if (next.generated_at === data.generated_at) return;
     const previous = monitoring()?.alerts.map((a) => a.id) || [];
     data = withCashAsset(next);
