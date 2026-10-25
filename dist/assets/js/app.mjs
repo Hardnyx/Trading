@@ -645,14 +645,34 @@ function importFile(kind) {
   $("#import-file").click();
 }
 let marketETag = null;
-async function loadData() {
-  const response = await fetch(
-    new URL("../../data/market.json", import.meta.url),
-    { cache: "no-cache" },
-  );
+let marketURL = null;
+
+// Prefer the compressed public artifact; the JSON fallback works on browsers
+// without DecompressionStream and local servers without the gzip file.
+async function fetchMarketCut() {
+  if (typeof DecompressionStream === "function") {
+    try {
+      const url = new URL("../../data/market.json.gz", import.meta.url);
+      const response = await fetch(url, { cache: "no-cache" });
+      if (response.ok && response.body) {
+        const body = response.body.pipeThrough(new DecompressionStream("gzip"));
+        const snapshot = await new Response(body).json();
+        return { snapshot, etag: response.headers.get("ETag"), url };
+      }
+    } catch {
+      // A stale or unsupported compressed response must not prevent loading.
+    }
+  }
+  const url = new URL("../../data/market.json", import.meta.url);
+  const response = await fetch(url, { cache: "no-cache" });
   if (!response.ok) throw new Error("No se pudo cargar el corte de mercado.");
-  marketETag = response.headers.get("ETag");
-  data = withCashAsset(validateSnapshot(await response.json()));
+  return { snapshot: await response.json(), etag: response.headers.get("ETag"), url };
+}
+async function loadData() {
+  const result = await fetchMarketCut();
+  marketETag = result.etag;
+  marketURL = result.url;
+  data = withCashAsset(validateSnapshot(result.snapshot));
   statsCache.clear();
   state.positions = Array.isArray(state.positions)
     ? state.positions.filter(
@@ -687,18 +707,16 @@ setInterval(async () => {
   if (!data || !state.baseline || document.visibilityState !== "visible")
     return;
   try {
-    const url = new URL("../../data/market.json", import.meta.url);
-    // Prefer a cheap conditional HEAD over reparsing an unchanged large JSON.
-    if (marketETag) {
-      const head = await fetch(url, { method: "HEAD", cache: "no-cache" });
+    // HEAD against the same compressed or ordinary resource we last loaded.
+    if (marketETag && marketURL) {
+      const head = await fetch(marketURL, { method: "HEAD", cache: "no-cache" });
       if (!head.ok) return;
-      const observedETag = head.headers.get("ETag");
-      if (observedETag && observedETag === marketETag) return;
+      if (head.headers.get("ETag") === marketETag) return;
     }
-    const response = await fetch(url, { cache: "no-cache" });
-    if (!response.ok) return;
-    const next = validateSnapshot(await response.json());
-    marketETag = response.headers.get("ETag");
+    const result = await fetchMarketCut();
+    const next = validateSnapshot(result.snapshot);
+    marketETag = result.etag;
+    marketURL = result.url;
     if (next.generated_at === data.generated_at) return;
     const previous = monitoring()?.alerts.map((a) => a.id) || [];
     data = withCashAsset(next);
