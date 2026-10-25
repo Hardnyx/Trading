@@ -53,7 +53,20 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git commit -m 'chore(data): refresh market snapshot'
-          git push origin HEAD:main
+          # Other source updates can land while the collector downloads data.
+          # Rebase the snapshot commit instead of force-pushing or losing changes.
+          for attempt in 1 2 3 4; do
+            git fetch origin main
+            git rebase origin/main
+            if git push origin HEAD:main; then
+              break
+            fi
+            if [ "$attempt" -eq 4 ]; then
+              echo "Snapshot push failed after 4 attempts" >&2
+              exit 1
+            fi
+            sleep 2
+          done
           echo 'changed=true' >> "$GITHUB_OUTPUT"
           echo "commit_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
   deploy:
