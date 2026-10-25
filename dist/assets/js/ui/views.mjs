@@ -27,6 +27,7 @@ import {
 import { template } from "./templates.mjs?v=0.5.0";
 import { DEFAULT_COMPOSITION_RULES } from "../composer.mjs?v=0.5.0";
 import { factorModel } from "../factors.mjs?v=0.5.0";
+import { MODEL_VERSION } from "../policy.mjs?v=0.5.0";
 
 import { createDecisionViews } from "./decision-views.mjs?v=0.5.0";
 
@@ -769,6 +770,12 @@ export function createViews(context) {
       });
     const p = state.proposal;
     if (!p) return "";
+    if (p.model_version !== MODEL_VERSION ||
+        p.as_of !== data.price_as_of ||
+        p.snapshot_generated_at !== data.generated_at)
+      return template("composition-notice", {
+        message: "Propuesta desactualizada: versión del motor o corte de datos distinto. Pulsa Proponer cartera.",
+      });
     if (p.status !== "proposed")
       return template("composition-notice", { message: p.reason });
     const metrics = [
@@ -1380,7 +1387,7 @@ export function createViews(context) {
       toUpperCase: nav[1].toUpperCase(),
       value6: state.busy
         ? "CALCULANDO…"
-        : "CORTE " + dateLabel(data.price_as_of),
+        : "MOTOR " + MODEL_VERSION + " · CORTE " + dateLabel(data.price_as_of),
       value7: nav[2],
       items8: NAV.map(([id, label, key]) =>
         template("shell-3", {

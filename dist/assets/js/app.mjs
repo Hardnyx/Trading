@@ -111,7 +111,7 @@ state.compositionRules = {
 if (state.proposal && state.proposal.model_version !== MODEL_VERSION) {
   state.proposal = null;
   state.compositionError =
-    "Propuesta anterior incompatible con el motor 0.4.0. Se conservaron tus posiciones y supuestos: pulsa Proponer cartera para recalcular con correlaciones residuales por régimen.";
+    `Propuesta guardada con un motor anterior al ${MODEL_VERSION}. Conservamos posiciones y supuestos. Pulsa Proponer cartera para recalcular.`;
 }
 if (
   !saved.workspaceVersion &&
@@ -178,7 +178,7 @@ function persist() {
     localStorage.setItem(
       "trading-workspace-v1",
       JSON.stringify({
-        workspaceVersion: "0.3.0",
+        workspaceVersion: MODEL_VERSION,
         positions: state.positions,
         capital: state.capital,
         lookback: state.lookback,
@@ -697,6 +697,15 @@ async function loadData() {
   const checked=validateSnapshot(result.snapshot);
   checked.volatility=await matchingVolatility(checked);
   data = withCashAsset(checked);
+  if (state.proposal &&
+      (state.proposal.model_version !== MODEL_VERSION ||
+       state.proposal.as_of !== data.price_as_of ||
+       state.proposal.snapshot_generated_at !== data.generated_at)) {
+    const oldVersion = state.proposal.model_version || "desconocida";
+    state.proposal = null;
+    state.compositionError =
+      `La propuesta anterior (${oldVersion}) no corresponde al motor ${MODEL_VERSION} o al corte publicado. Recalcula con Proponer cartera.`;
+  }
   statsCache.clear();
   state.positions = Array.isArray(state.positions)
     ? state.positions.filter(
@@ -746,6 +755,14 @@ setInterval(async () => {
     const previous = monitoring()?.alerts.map((a) => a.id) || [];
     next.volatility=await matchingVolatility(next);
     data = withCashAsset(next);
+    if (state.proposal &&
+        (state.proposal.model_version !== MODEL_VERSION ||
+         state.proposal.as_of !== data.price_as_of ||
+         state.proposal.snapshot_generated_at !== data.generated_at)) {
+      state.proposal = null;
+      state.compositionError =
+        "El corte de mercado cambió. Recalcula la propuesta con los datos nuevos.";
+    }
     statsCache.clear();
     notifyReview(previous);
     state.forecast = null;
@@ -1172,6 +1189,9 @@ document.addEventListener("change", async (event) => {
       const input = JSON.parse(await el.files[0].text());
       if (importKind === "snapshot") {
         data = withCashAsset(validateSnapshot(input));
+        state.proposal = null;
+        state.compositionError =
+          "Corte importado. Debes recalcular la propuesta con los datos de este archivo.";
         statsCache.clear();
         state.positions = state.positions.filter((p) => asset(p.symbol));
         toast("Corte importado para esta sesión.");
