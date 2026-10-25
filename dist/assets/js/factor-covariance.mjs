@@ -59,3 +59,23 @@ export function conditionalFactorization(model, multipliers) {
   return {loading,residualFactor:cholesky(residualCovariance),
     residualCovariance,method:model.method,observations:model.observations};
 }
+
+/**
+ * Rebuild an exact market-factor decomposition from a stressed TOTAL covariance.
+ * A stale Cholesky factor would otherwise silently undo correlation shocks
+ * during dynamic GJR/EWMA simulations.
+ */
+export function factorizeStressedCovariance(covariance, assets) {
+  const n = assets.length;
+  if (covariance.length !== n || covariance.some(row => row.length !== n))
+    throw new Error("Covarianza estresada con dimensiones incompatibles");
+  const m = assets.findIndex(asset => asset.symbol === "SPY");
+  if (m < 0 || covariance[m][m] <= 1e-12) return null;
+  const v = Math.sqrt(covariance[m][m]);
+  const loading = assets.map((_, i) => covariance[i][m] / v);
+  const residualCovariance = covariance.map((row, i) =>
+    row.map((value, j) => value - loading[i] * loading[j]));
+  const residualFactor = cholesky(residualCovariance);
+  return { loading, residualCovariance, residualFactor,
+    method: "stress-total-covariance-SPY-Schur" };
+}
