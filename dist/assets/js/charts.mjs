@@ -1,5 +1,5 @@
-import { template } from "./ui/templates.mjs";
-import { finite, wealth } from "./analytics.mjs";
+import { template } from "./ui/templates.mjs?v=0.3.0";
+import { finite, wealth } from "./analytics.mjs?v=0.3.0";
 
 export const COLORS = [
   "var(--chart-accent)",

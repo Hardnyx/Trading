@@ -33,11 +33,16 @@ OUTPUT = ROOT / "dist/data/market.json"
 RESEARCH_OUTPUT = ROOT / "data/research/latest.json"
 ARCHIVE = ROOT / "data/snapshots"
 UTC = dt.timezone.utc
-UA = "TradingResearch/0.2 (https://github.com/Hardnyx/Trading)"
+UA = "TradingResearch/0.3 (https://github.com/Hardnyx/Trading)"
 SEC_UA = os.environ.get("SEC_USER_AGENT") or UA
 LOCK = threading.Lock()
 LAST_SEC = 0.0
 ACCESS_FAILURES = {}
+if __package__:
+    from .bond_profiles import ISSUER_URLS, parse_profile
+else:
+    from bond_profiles import ISSUER_URLS, parse_profile
+
 ASSETS = [
     ("AAPL", "Apple", "Tecnología", 320193, 0.06, 25),
     ("MSFT", "Microsoft", "Tecnología", 789019, 0.10, 29),
@@ -57,8 +62,20 @@ ASSETS = [
     ("TLT", "iShares 20+ Year Treasury", "Treasuries largos", None, None, None),
     ("GLD", "SPDR Gold Shares", "Oro", None, None, None),
     ("SHY", "iShares 1–3 Year Treasury", "Treasuries cortos", None, None, None),
+    *[(symbol, name, sector, None, None, None) for symbol, name, sector in [
+        ("XLK", "Technology Select Sector SPDR", "Tecnología"),
+        ("XLC", "Communication Services Select Sector SPDR", "Comunicación"),
+        ("XLY", "Consumer Discretionary Select Sector SPDR", "Consumo discrecional"),
+        ("XLP", "Consumer Staples Select Sector SPDR", "Consumo básico"),
+        ("XLF", "Financial Select Sector SPDR", "Financiero"),
+        ("XLE", "Energy Select Sector SPDR", "Energía"),
+        ("XLV", "Health Care Select Sector SPDR", "Salud"),
+        ("XLI", "Industrial Select Sector SPDR", "Industrial"),
+        ("XLU", "Utilities Select Sector SPDR", "Servicios públicos"),
+        ("XLRE", "Real Estate Select Sector SPDR", "Inmobiliario"),
+        ("XLB", "Materials Select Sector SPDR", "Materiales"),
+    ]],
 ]
-
 
 
 def download(url, cache_key, max_age=0, sec=False, payload=None):
@@ -194,6 +211,8 @@ def financials(cik, cutoff):
     result["equity"] = instant(facts, ["StockholdersEquity", "StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest"], cutoff)
     result["assets"] = instant(facts, ["Assets"], cutoff)
     result["long_debt"] = instant(facts, ["LongTermDebtNoncurrent", "LongTermDebt"], cutoff)
+    for year, suffix in [(1,"NextTwelveMonths"),(2,"YearTwo"),(3,"YearThree"),(4,"YearFour"),(5,"YearFive"),(6,"AfterYearFive")]:
+        result[f"debt_due_{year}"] = instant(facts,["LongTermDebtMaturitiesRepaymentsOfPrincipalIn" + suffix],cutoff)
     result["current_debt"] = instant(facts, ["LongTermDebtCurrent", "LongTermDebtAndCapitalLeaseObligationsCurrent"], cutoff)
     result["shares"] = instant(body.get("facts", {}).get("dei", {}), ["EntityCommonStockSharesOutstanding"], cutoff, "shares")
     if not result["shares"]:
@@ -204,6 +223,18 @@ def financials(cik, cutoff):
     for key, record in result.items():
         if isinstance(record, dict) and record.get("period_end") and (date(cutoff) - date(record["period_end"])).days > 550:
             result[key] = None
+    share_rows = facts_for(body.get("facts", {}).get("dei", {}),["EntityCommonStockSharesOutstanding"],"shares",cutoff)
+    share_rows = sorted([r for r in share_rows if not r.get("start") and r["end"] >= (date(cutoff)-dt.timedelta(days=1100)).isoformat()],key=lambda r:r["end"])[-16:]
+    result["history"] = []
+    for row in share_rows:
+        observed = {"period_end":row["end"],"filed":row["filed"],"shares_unadjusted":row["val"],"shares":row["val"],"shares_split_adjusted":False}
+        # Historical accounting observations retain their actual publication date;
+        # this is today's available history, not a reconstructed historical vintage.
+        op = ttm(facts,mapping["operating_income"],row["filed"])
+        rev = ttm(facts,mapping["revenue"],row["filed"])
+        if op and rev and op["period_end"] == rev["period_end"] and rev["value"] > 0:
+            observed["operating_margin"] = op["value"] / rev["value"]
+        result["history"].append(observed)
     result["source_url"] = f"https://www.sec.gov/edgar/browse/?CIK={cik}&owner=exclude"
     result["entity"] = body.get("entityName")
     return result
@@ -255,7 +286,11 @@ def prices(symbol, cutoff):
         raise ValueError("Historia insuficiente")
     dividend_sum = sum(x["amount"] for x in response.get("events", {}).get("dividends", {}).values()
                        if 0 <= (date(rows[-1]["date"]) - dt.datetime.fromtimestamp(x["date"], UTC).date()).days < 365)
-    return {"history": rows, "price": rows[-1]["close"], "price_date": rows[-1]["date"],
+    splits = [{"date": dt.datetime.fromtimestamp(x["date"], UTC).date().isoformat(),
+               "ratio": x["numerator"] / x["denominator"]}
+              for x in response.get("events", {}).get("splits", {}).values()
+              if x.get("denominator", 0) > 0 and dt.datetime.fromtimestamp(x["date"], UTC).date().isoformat() <= cutoff]
+    return {"splits": splits, "history": rows, "price": rows[-1]["close"], "price_date": rows[-1]["date"],
             "change": rows[-1]["close"] / rows[-2]["close"] - 1,
             "dividend_per_share": round(dividend_sum, 6), "currency": response["meta"].get("currency", "USD"),
             "source_url": f"https://finance.yahoo.com/quote/{symbol}/history/"}
@@ -355,6 +390,8 @@ def build_asset(spec, cutoff, previous):
             asset["financials"] = {key: value if not isinstance(value, dict) or
                                    (value.get("filed", "9999") <= cutoff and value.get("period_end", "9999") <= cutoff)
                                    else None for key, value in old.items()}
+            if isinstance(asset["financials"].get("history"),list):
+                asset["financials"]["history"] = [r for r in asset["financials"]["history"] if r.get("filed","9999") <= cutoff and r.get("period_end","9999") <= cutoff]
             errors.append(f"{symbol}: SEC no actualizada ({error_label(exc)})")
         try:
             asset["filings"] = filings(cik, cutoff)
@@ -364,6 +401,23 @@ def build_asset(spec, cutoff, previous):
             errors.append(f"{symbol}: presentaciones no actualizadas ({error_label(exc)})")
     else:
         asset["financials"] = None
+    if cik and isinstance(asset.get("splits"),list):
+        for row in (asset.get("financials") or {}).get("history",[]):
+            if row["period_end"] >= asset["history"][0]["date"]:
+                factor = math.prod(split["ratio"] for split in asset["splits"] if row["period_end"] < split["date"] <= cutoff)
+                row["shares"] = row["shares_unadjusted"] * factor
+                row["shares_split_adjusted"] = True
+                row["split_source"] = asset["source_url"]
+    if symbol in ISSUER_URLS:
+        try:
+            raw = download(ISSUER_URLS[symbol], f"issuer-{symbol}.html", max_age=6 * 3600)
+            asset["bond_profile"] = parse_profile(raw.decode("utf-8") if isinstance(raw, bytes) else raw,
+                                                 symbol, cutoff, dt.datetime.now(UTC).isoformat())
+        except Exception as exc:
+            old_profile = previous.get(symbol, {}).get("bond_profile")
+            if old_profile and old_profile.get("date", "9999") <= cutoff:
+                asset["bond_profile"] = old_profile
+            errors.append(f"{symbol}: perfil de duración/TIR sin actualizar ({error_label(exc)})")
     return asset, errors
 
 
@@ -534,12 +588,13 @@ def main():
                     {"name": "U.S. Treasury", "kind": "Feed XML oficial", "url": "https://home.treasury.gov/treasury-daily-interest-rate-xml-feed", "data": "Curva par nominal"},
                     {"name": "BLS", "kind": "API oficial", "url": "https://www.bls.gov/developers/", "data": "IPC y desempleo"},
                     {"name": "FRED", "kind": "CSV público / API histórica con clave", "url": "https://fred.stlouisfed.org/docs/api/fred/", "data": "IPC, desempleo, Fed funds, inflación implícita, nóminas y producción industrial"},
+                    {"name": "iShares", "kind": "Página del emisor", "url": "https://www.ishares.com/", "data": "Duración, TIR, SEC yield y gastos de SHY/TLT fechados"},
                     {"name": "FMP", "kind": "API opcional con clave · corte privado", "url": "https://site.financialmodelingprep.com/developer/docs/stable/financial-estimates", "data": "Consenso anual de BPA y ventas; revisiones entre capturas. Se carga mediante Importar corte JSON."},
                 ],
                 "methodology": {"universe_point_in_time": False, "financials_point_in_time": False,
                                 "returns": "Adj Close de Yahoo; precios ajustados por el proveedor por splits y distribuciones",
                                 "portfolio": "Pesos constantes: rebalanceo diario teórico, sin costos ni impuestos",
-                                "valuation": "Supuestos editables propios; no son consenso ni precios objetivo de analistas",
+                                "valuation": "Previsión propia; consenso opcional comparable; incertidumbre y escenarios editables",
                                 "limitations": "Universo actual seleccionado. Histórico financiero con últimas rectificaciones disponibles. No constituye un backtest point-in-time."}}
     archived = archive_observation(snapshot)
     write_snapshot(snapshot)

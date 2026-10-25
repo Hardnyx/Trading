@@ -4,7 +4,12 @@ import {
   valuation,
   portfolioAnalysis,
   finite,
-} from "./analytics.mjs";
+} from "./analytics.mjs?v=0.3.0";
+
+import { evaluateThesis } from "./research-model.mjs?v=0.3.0";
+import { adjustedReturn, factorModel } from "./factors.mjs?v=0.3.0";
+
+import { informationDate } from "./policy.mjs?v=0.3.0";
 
 export const DEFAULT_RULES = {
   weightDrift: 0.05,
@@ -59,6 +64,11 @@ export function registerPortfolio(
       };
     }),
     initial_risk: analysis?.stats ?? null,
+    factor_exposures: factorModel(
+      snapshot.assets,
+      weights,
+      snapshot.price_as_of,
+    ),
     macro: snapshot.macro.map((s) => ({
       id: s.id,
       value: s.value,
@@ -70,22 +80,34 @@ export function registerPortfolio(
   };
 }
 
-export function reviewPortfolio(snapshot, baseline, rules = DEFAULT_RULES) {
+export function reviewPortfolio(
+  snapshot,
+  baseline,
+  rules = DEFAULT_RULES,
+  research = baseline?.research || {},
+) {
   if (!baseline) return null;
   rules = { ...DEFAULT_RULES, ...rules };
   const lookup = new Map(snapshot.assets.map((a) => [a.symbol, a]));
   const positions = baseline.positions.map((p) => {
     const a = lookup.get(p.symbol);
     if (!a) return { ...p, missing: true };
-    const currentValue =
-      (baseline.capital * p.weight * a.history.at(-1).adj_close) / p.adj_close;
+    const origin = a.history.find((row) => row.date === baseline.as_of);
+    const ratio =
+      origin?.adj_close > 0
+        ? a.history.at(-1).adj_close / origin.adj_close
+        : a.history.at(-1).adj_close / p.adj_close;
+    const currentValue = baseline.capital * p.weight * ratio;
     const m = metrics(a),
       v = valuation(a, baseline.overrides?.[p.symbol] || {});
     return {
       ...p,
       asset: a,
       currentValue,
-      return: a.history.at(-1).adj_close / p.adj_close - 1,
+      return: ratio - 1,
+      adjustmentQuality: origin
+        ? "same_current_series"
+        : "legacy_fallback_unreconciled",
       currentModel: v,
       currentMetrics: m,
     };
@@ -115,6 +137,39 @@ export function reviewPortfolio(snapshot, baseline, rules = DEFAULT_RULES) {
       as_of: snapshot.price_as_of,
     });
   for (const p of available) {
+    const thesis = evaluateThesis(
+      p.asset,
+      research[p.symbol] || {},
+      snapshot.generated_at ? informationDate(snapshot) : snapshot.price_as_of,
+    );
+    p.thesis = thesis;
+    if (thesis.status === "contradicted")
+      push(
+        "thesis",
+        p.symbol,
+        "Una hipótesis de la tesis se contradice",
+        thesis.observations
+          .filter((r) => r.status === "contradicted")
+          .map(
+            (r) =>
+              `${r.label}: ${r.value.toFixed(3)}; umbral ${r.threshold}. Presentación ${r.filed || "sin fecha"}.`,
+          )
+          .join(" "),
+        "Actualizar previsión y volver a evaluar mantener o cambiar después de costos.",
+        "alta",
+        thesis.observations.map((r) => r.filed).join(),
+      );
+    if (thesis.overdue)
+      push(
+        "thesis_review",
+        p.symbol,
+        "Fecha de revisión de tesis alcanzada",
+        thesis.thesis || "Revisión programada de hipótesis.",
+        "Revisar evidencia, invalidación y catalizador.",
+        "media",
+        thesis.reviewDate,
+      );
+
     const delta = p.currentWeight - p.weight;
     if (Math.abs(delta) >= rules.weightDrift)
       push(

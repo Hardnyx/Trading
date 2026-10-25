@@ -9,6 +9,7 @@ on:
       - '.github/workflows/refresh-data.yml'
       - 'scripts/refresh_data.py'
       - 'scripts/data_providers.py'
+      - 'scripts/bond_profiles.py'
   workflow_dispatch:
 permissions:
   contents: read

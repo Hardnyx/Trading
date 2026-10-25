@@ -26,9 +26,10 @@
           </div>
         </div>
         <p>
-          Solo posiciones largas. Pesos en pasos de 5 puntos, sin apalancamiento
-          ni costos. SHY es la reserva y tiene su propio límite. La media futura
-          parte de valoración, no del retorno histórico.
+          Solo posiciones largas. Pesos en pasos de 5 puntos, sin
+          apalancamiento; con costos iniciales y efectivo para retiros. SHY
+          tiene su propio límite. La media futura parte de valoración, no del
+          retorno histórico.
         </p>
       </details>
     </template>
@@ -74,7 +75,7 @@
                 <th>ACTIVO</th>
                 <th>PESO PROPUESTO</th>
                 <th>ANCLA ADVERSA / AÑO</th>
-                <th>ANCLA BASE / AÑO</th>
+                <th>ANCLA MODO / AÑO</th>
                 <th>ANCLA FAVORABLE / AÑO</th>
                 <th>INFORMACIÓN CONOCIDA</th>
               </tr>
@@ -86,7 +87,7 @@
         </div>
         <div class="composition-method">
           <p>
-            Mejor crecimiento logarítmico esperado entre {{evaluated}}
+            Selección según el objetivo del mandato entre {{evaluated}}
             candidatas; {{feasible}} cumplieron los límites de búsqueda.
             {{searchPaths}} escenarios compartidos para comparar y
             {{verificationPaths}} nuevos para comprobar la elegida. Horizonte:
@@ -94,10 +95,10 @@
           </p>
           <p>
             Valoración por BPA y múltiplo de salida. Anclas triangulares entre
-            los escenarios adverso y favorable, con modo en el base y un factor
-            fundamental compartido. Difusión correlacionada {{model}}.
-            Parámetros de incertidumbre y saltos propios; las probabilidades
-            dependen de estos supuestos.
+            los escenarios adverso y favorable, con modo en el base y factores
+            de mercado, sector y empresa. Difusión correlacionada {{model}}, con
+            respuestas distintas por activo. Parámetros de incertidumbre y
+            saltos propios; las probabilidades dependen de estos supuestos.
           </p>
           <p>
             Se conserva el corte, la información utilizada, la semilla y los

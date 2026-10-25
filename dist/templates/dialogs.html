@@ -205,14 +205,16 @@
         </li>
         <li>
           <b>Saltos.</b> En Merton, N es Poisson y J es normal con media y
-          dispersión configuradas. Un mismo salto afecta a todos los activos: es
-          una extensión de estrés sistémico. κ = exp(media + dispersión²/2) − 1
-          compensa la media. Los saltos se añaden a la volatilidad observada; no
-          se calibran separadamente y pueden aumentar el riesgo total.
+          dispersión configuradas. El evento es común, con cargas por activo y
+          respuesta de bonos por duración y tasas. Efectivo: sin salto. κᵢ =
+          exp(mediaᵢ + dispersiónᵢ²/2) − 1 compensa la media. Los saltos se
+          añaden a la volatilidad observada; no se calibran separadamente y
+          pueden aumentar el riesgo total.
         </li>
         <li>
-          <b>Simulación.</b> Trayectorias semanales buy & hold, sin costos ni
-          impuestos; el ancla incorpora dividendos para evitar doble conteo.
+          <b>Simulación.</b> Trayectorias semanales buy & hold con retiros desde
+          efectivo. La propuesta incluye costos iniciales e impuesto asumido en
+          ventas. El ancla incorpora dividendos para evitar doble conteo.
           P05–P95 es una banda entre cuantiles del modelo, no un intervalo de
           confianza sobre el futuro real. La probabilidad de drawdown usa pasos
           semanales y puede omitir mínimos intradiarios. Semilla reproducible.

@@ -4,7 +4,7 @@ import {
   normalizeWeights,
   metrics,
   scenarios,
-} from "../analytics.mjs";
+} from "../analytics.mjs?v=0.3.0";
 import {
   sparkline,
   portfolioChart,
@@ -13,7 +13,7 @@ import {
   scatter,
   forecastCone,
   histogram,
-} from "../charts.mjs";
+} from "../charts.mjs?v=0.3.0";
 import {
   esc,
   url,
@@ -23,9 +23,11 @@ import {
   compact,
   color,
   dateLabel,
-} from "./format.mjs";
-import { template } from "./templates.mjs";
-import { DEFAULT_COMPOSITION_RULES } from "../composer.mjs";
+} from "./format.mjs?v=0.3.0";
+import { template } from "./templates.mjs?v=0.3.0";
+import { DEFAULT_COMPOSITION_RULES } from "../composer.mjs?v=0.3.0";
+
+import { createDecisionViews } from "./decision-views.mjs?v=0.3.0";
 
 export const NAV = [
   ["portfolio", "Componer cartera", "F1"],
@@ -35,6 +37,7 @@ export const NAV = [
   ["valuation", "Valoración", "F5"],
   ["risk", "Riesgo", "F6"],
   ["macro", "Macro monitor", "F7"],
+  ["mandate", "Mandato", "F8"],
 ];
 const icon = (key) => {
   const symbols = {
@@ -62,6 +65,16 @@ export function createViews(context) {
     monitoring,
     filteredAssets,
   } = context;
+  const positionCapital = () =>
+    state.proposal?.status === "proposed" && !state.proposal.modified
+      ? (state.proposal.trade_plan?.investableCapital ?? state.capital)
+      : state.capital;
+  const referenceMoney = (value) =>
+    (state.mandate?.referenceCurrency || "USD") === "USD"
+      ? money(value, 0)
+      : finite(value)
+        ? fmt(value, 0) + " " + state.mandate.referenceCurrency
+        : "—";
   function panel(title, index, body, controls = "", foot = "") {
     return template("panel", {
       index: index,
@@ -111,7 +124,7 @@ export function createViews(context) {
         "VAR 95% · HORIZONTE",
         f ? pct(f.var95) : "—",
         f
-          ? `${money(f.var95 * state.capital, 0)} sobre capital simulado`
+          ? `${referenceMoney(f.var95 * state.capital * (f.policy?.fxSpot || 1))} sobre capital inicial`
           : "Monte Carlo correlacionado",
         "negative",
       ),
@@ -137,7 +150,7 @@ export function createViews(context) {
           }),
         )
         .join(""),
-      capital: money(state.capital, 0),
+      capital: money(positionCapital(), 0),
       effectivePositions: fmt(a?.effectivePositions, 1),
     });
   }
@@ -169,15 +182,20 @@ export function createViews(context) {
       : f
         ? template("forecast-panel-6", {
             items: [
-              ["P05 · ADVERSO", f.p05, "negative"],
-              ["P50 · MEDIANA", f.medianReturn, "orange"],
-              ["P95 · FAVORABLE", f.p95, "positive"],
+              ["P05 · ADVERSO", f.p05, "negative", f.p05TerminalWealth],
+              [
+                "P50 · MEDIANA",
+                f.medianReturn,
+                "orange",
+                f.medianTerminalWealth,
+              ],
+              ["P95 · FAVORABLE", f.p95, "positive", f.p95TerminalWealth],
             ]
-              .map(([label, r, c]) =>
+              .map(([label, r, c, availableWealth]) =>
                 template("forecast-panel-7", {
                   label: label,
                   c: c,
-                  value3: money(state.capital * (1 + r), 0),
+                  value3: referenceMoney(availableWealth),
                   r: pct(r, 1, true),
                   value5: state.settings.horizon * 12,
                 }),
@@ -192,11 +210,11 @@ export function createViews(context) {
         value1: state.busy ? template("forecast-panel-5") : "",
         value2: historical
           ? "RETORNO ACUMULADO · CARTERA"
-          : "CAPITAL PROYECTADO · P50",
+          : "CAPITAL DISPONIBLE AL HORIZONTE · P50",
         value3: historical
           ? pct(analysis?.stats.total, 1, true)
           : f
-            ? money(state.capital * (1 + f.medianReturn), 0)
+            ? referenceMoney(f.medianTerminalWealth)
             : "—",
         legend: legend,
         value5: historical
@@ -500,6 +518,16 @@ export function createViews(context) {
         value4: s.horizon === 0.5 ? "selected" : "",
         value5: s.horizon === 1 ? "selected" : "",
         value6: s.horizon === 3 ? "selected" : "",
+        horizonOptions: [...new Set([0.25, 0.5, 1, 2, 3, 5, s.horizon])]
+          .sort((a, b) => a - b)
+          .map((value) =>
+            template("composition-horizon-option", {
+              value,
+              label: value < 1 ? `${value * 12} meses` : `${value} años`,
+              selected: s.horizon === value ? "selected" : "",
+            }),
+          )
+          .join(""),
         value7: s.driftMode === "fundamental" ? "selected" : "",
         value8: s.driftMode === "manual" ? "selected" : "",
         value9: fmt(s.manualReturn * 100, 0),
@@ -630,7 +658,7 @@ export function createViews(context) {
                       symbol8: p.symbol,
                       value9: money(
                         (w.find((v) => v.symbol === p.symbol)?.weight || 0) *
-                          state.capital,
+                          positionCapital(),
                         0,
                       ),
                       fraction: pct(
@@ -684,7 +712,8 @@ export function createViews(context) {
     const rules = { ...DEFAULT_COMPOSITION_RULES, ...state.compositionRules };
     const fields = [
       ["maxPosition", "MÁX. POR ACCIÓN", 5, 50, 5, 100, "%"],
-      ["maxSector", "MÁX. POR SECTOR", 10, 100, 5, 100, "%"],
+      ["maxFund", "MÁX. POR ETF DIVERSIFICADO", 5, 100, 5, 100, "%"],
+      ["maxSector", "MÁX. SECTOR DIRECTO", 10, 100, 5, 100, "%"],
       ["reserveCap", "MÁX. RESERVA SHY", 5, 100, 5, 100, "%"],
       ["maxPositions", "MÁX. POSICIONES", 2, 12, 1, 1, ""],
       ["maxCorrelation", "CORRELACIÓN MÁXIMA", 0.1, 1, 0.05, 1, "ρ"],
@@ -712,7 +741,12 @@ export function createViews(context) {
         [0.25, "3 meses"],
         [0.5, "6 meses"],
         [1, "1 año"],
+        [2, "2 años"],
         [3, "3 años"],
+        [5, "5 años"],
+        ...(![0.25, 0.5, 1, 2, 3, 5].includes(state.settings.horizon)
+          ? [[state.settings.horizon, `${state.settings.horizon * 12} meses`]]
+          : []),
       ]
         .map(([value, label]) =>
           template("composition-horizon-option", {
@@ -757,7 +791,7 @@ export function createViews(context) {
         "ANÁLISIS EX ANTE",
         `${p.settings.horizon * 12} meses`,
         "orange",
-        `Datos conocidos al ${dateLabel(p.as_of)}`,
+        `Precios ${dateLabel(p.as_of)} · información ${dateLabel(p.information_as_of || p.as_of)}`,
       ],
     ];
     return template("composition-report", {
@@ -777,7 +811,7 @@ export function createViews(context) {
         .map((s) =>
           template("composition-signal", {
             symbol: s.symbol,
-            weight: pct(s.weight, 0),
+            weight: pct(s.weight, 1),
             low: pct(s.adverseAnchor),
             anchor: pct(s.anchor),
             high: pct(s.favorableAnchor),
@@ -1386,13 +1420,15 @@ export function createViews(context) {
       ).join(""),
     });
   }
+  const extra = createDecisionViews(context);
   return {
-    portfolio,
-    overview,
+    mandate: extra.mandate,
+    portfolio: () => portfolio() + extra.decisionReport(),
+    overview: () => overview() + extra.decisionReport() + extra.journalPanel(),
     forecasts: forecastsView,
     research,
-    valuation: valuationView,
-    risk: riskView,
+    valuation: () => valuationView() + extra.researchPanel(),
+    risk: () => riskView() + extra.factorPanel(),
     macro: macroView,
     renderTable,
     sourcesView,

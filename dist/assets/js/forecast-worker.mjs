@@ -1,4 +1,4 @@
-import { simulateForecast, validateRiskBands } from "./forecast.mjs";
+import { simulateForecast, validateRiskBands } from "./forecast.mjs?v=0.3.0";
 self.onmessage = (event) => {
   const { id, assets, positions, options, overrides } = event.data;
   try {

@@ -139,10 +139,7 @@
         <div class="field">
           <label for="horizon-select">HORIZONTE</label
           ><select id="horizon-select" data-setting="horizon" data-numeric>
-            <option value="0.25" {{{value3}}}>3 meses</option>
-            <option value="0.5" {{{value4}}}>6 meses</option>
-            <option value="1" {{{value5}}}>1 año</option>
-            <option value="3" {{{value6}}}>3 años</option>
+            {{{horizonOptions}}}
           </select>
         </div>
         <div class="field">
@@ -189,17 +186,17 @@
         <div class="forecast-input-note">
           Volatilidad/covarianza EWMA con regularización del 5%. Ancla
           fundamental:
-          <b>{{value13}}</b> del peso. El resto usa Treasury 3M para SHY o el
-          retorno manual.
+          <b>{{value13}}</b> del peso. Bonos: TIR, gastos y duración del perfil
+          fechado; ETFs: supuesto propio.
         </div>
         <button class="button primary" data-action="resimulate">
           {{{refreshIcon}}}{{value15}}
         </button>
         <div class="forecast-input-note">
           Ancla fundamental triangular entre escenarios adverso y favorable, con
-          modo en el base y factor común. Semilla {{seed}}. Probabilidades
-          condicionales al modelo; no son confianza estadística sobre el retorno
-          real.
+          modo en el base y factores de mercado, sector y empresa. Semilla
+          {{seed}}. Probabilidades condicionales al modelo; no son confianza
+          estadística sobre el retorno real.
         </div>
       </div>
     </template>

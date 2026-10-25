@@ -9,18 +9,41 @@ import {
   alignReturns,
   returnStats,
   validateSnapshot,
-} from "./analytics.mjs";
+} from "./analytics.mjs?v=0.3.0";
 import {
   registerPortfolio,
   reviewPortfolio,
   DEFAULT_RULES,
-} from "./monitor.mjs";
+} from "./monitor.mjs?v=0.3.0";
 
-import { fmt, pct, money, dateLabel } from "./ui/format.mjs";
-import { createViews, NAV } from "./ui/views.mjs?v=20261024.2";
-import { loadTemplates } from "./ui/templates.mjs";
-import { applyVisualValues, showStartupError } from "./ui/dom.mjs";
-import { DEFAULT_COMPOSITION_RULES } from "./composer.mjs";
+import { fmt, pct, money, dateLabel } from "./ui/format.mjs?v=0.3.0";
+import { createViews, NAV } from "./ui/views.mjs?v=0.3.0";
+import { loadTemplates } from "./ui/templates.mjs?v=0.3.0";
+import { applyVisualValues, showStartupError } from "./ui/dom.mjs?v=0.3.0";
+import { DEFAULT_COMPOSITION_RULES } from "./composer.mjs?v=0.3.0";
+
+import {
+  DEFAULT_MANDATE,
+  DEFAULT_EXECUTION,
+  DEFAULT_REGIMES,
+  mandate,
+  execution,
+  regimes,
+  withCashAsset,
+  currentAccount,
+  informationDate,
+} from "./policy.mjs?v=0.3.0";
+import { validateResearch } from "./research-model.mjs?v=0.3.0";
+import {
+  journalOrigin,
+  appendForecast,
+  freezeMaturedOutcomes,
+} from "./journal.mjs?v=0.3.0";
+
+import { openJournal, saveJournal } from "./journal-store.mjs?v=0.3.0";
+
+let journalDBReady = false,
+  storageErrorShown = false;
 
 const $ = (s, root = document) => root.querySelector(s);
 
@@ -50,6 +73,13 @@ const state = {
   compositionError: null,
   compositionRules: { ...DEFAULT_COMPOSITION_RULES },
   proposal: null,
+  mandate: { ...DEFAULT_MANDATE },
+  execution: { ...DEFAULT_EXECUTION },
+  account: { enabled: false, cash: 0, positions: [] },
+  research: {},
+  assetAssumptions: {},
+  macroRegimes: structuredClone(DEFAULT_REGIMES),
+  journal: [],
   settings: {
     model: "merton",
     horizon: 1,
@@ -76,7 +106,23 @@ state.compositionRules = {
   ...DEFAULT_COMPOSITION_RULES,
   ...state.compositionRules,
 };
+if (
+  !saved.workspaceVersion &&
+  saved.compositionRules?.reserveCap === 0.5 &&
+  saved.compositionRules?.maxPosition === 0.2 &&
+  saved.compositionRules?.maxSector === 0.35 &&
+  saved.compositionRules?.maxPositions === 6 &&
+  saved.compositionRules?.maxCorrelation === 0.85
+)
+  state.compositionRules.reserveCap = 1;
 state.rules = { ...DEFAULT_RULES, ...state.rules };
+state.mandate = { ...DEFAULT_MANDATE, ...state.mandate };
+state.execution = { ...DEFAULT_EXECUTION, ...state.execution };
+state.account ||= { enabled: false, cash: 0, positions: [] };
+state.research ||= {};
+state.assetAssumptions ||= {};
+state.macroRegimes ||= structuredClone(DEFAULT_REGIMES);
+state.journal = Array.isArray(state.journal) ? state.journal : [];
 state.acknowledged = Array.isArray(state.acknowledged)
   ? state.acknowledged
   : [];
@@ -110,10 +156,22 @@ function renderTable(assets) {
 }
 
 function persist() {
+  if (data) state.journal = freezeMaturedOutcomes(state.journal, data);
+  if (journalDBReady)
+    saveJournal(state.journal).catch((error) => {
+      journalDBReady = false;
+      if (!storageErrorShown) {
+        storageErrorShown = true;
+        toast(
+          "No se pudo guardar el registro. Exporta una copia: " + error.message,
+        );
+      }
+    });
   try {
     localStorage.setItem(
       "trading-workspace-v1",
       JSON.stringify({
+        workspaceVersion: "0.3.0",
         positions: state.positions,
         capital: state.capital,
         lookback: state.lookback,
@@ -126,9 +184,23 @@ function persist() {
         rules: state.rules,
         proposal: state.proposal,
         compositionRules: state.compositionRules,
+        mandate: state.mandate,
+        execution: state.execution,
+        account: state.account,
+        research: state.research,
+        assetAssumptions: state.assetAssumptions,
+        macroRegimes: state.macroRegimes,
+        ...(journalDBReady ? {} : { journal: state.journal }),
       }),
     );
-  } catch {}
+  } catch {
+    if (!storageErrorShown) {
+      storageErrorShown = true;
+      toast(
+        "El almacenamiento está lleno. Exporta la cartera para conservar los cambios.",
+      );
+    }
+  }
 }
 function toast(message) {
   const t = $("#toast");
@@ -166,7 +238,7 @@ function assetStats(a) {
 
 function monitoring() {
   return state.baseline
-    ? reviewPortfolio(data, state.baseline, state.rules)
+    ? reviewPortfolio(data, state.baseline, state.rules, state.research)
     : null;
 }
 
@@ -256,6 +328,29 @@ function navigate(view) {
   render();
   window.scrollTo({ top: 0, behavior: "instant" });
 }
+function calculationOptions(forComposition = false) {
+  const policy = mandate({ ...state.mandate, horizon: state.settings.horizon });
+  return {
+    ...state.settings,
+    asOf: data.price_as_of,
+    informationAsOf: informationDate(data),
+    mandate: policy,
+    execution: execution(state.execution),
+    macroRegimes: regimes(state.macroRegimes),
+    capital: state.capital,
+    research: state.research,
+    assetAssumptions: state.assetAssumptions,
+    yieldCurve: Object.fromEntries(data.macro.map((r) => [r.id, r.value])),
+    ...(forComposition
+      ? { account: state.account, baseline: state.baseline }
+      : {
+          initialCost:
+            state.proposal?.status === "proposed" && !state.proposal.modified
+              ? state.proposal.trade_plan?.total || 0
+              : 0,
+        }),
+  };
+}
 function runForecast() {
   if (!data) return;
   state.settings.reserveReturn = riskFree();
@@ -275,9 +370,20 @@ function runForecast() {
     return;
   }
   try {
-    worker ||= new Worker(new URL("./forecast-worker.mjs", import.meta.url), {
-      type: "module",
-    });
+    const options = calculationOptions();
+    const origin = journalOrigin(
+      data,
+      state.positions,
+      options,
+      state.overrides,
+      state.research,
+    );
+    worker ||= new Worker(
+      new URL("./forecast-worker.mjs?v=0.3.0", import.meta.url),
+      {
+        type: "module",
+      },
+    );
     worker.onmessage = (event) => {
       const r = event.data;
       if (r.id !== job) return;
@@ -289,6 +395,7 @@ function runForecast() {
       } else {
         state.forecast = r.forecast;
         state.validation = r.validation;
+        state.journal = appendForecast(state.journal, origin, r.forecast);
       }
       render();
     };
@@ -302,7 +409,7 @@ function runForecast() {
       id: current,
       assets: data.assets,
       positions: state.positions,
-      options: state.settings,
+      options,
       overrides: state.overrides,
     });
   } catch (error) {
@@ -313,6 +420,7 @@ function runForecast() {
 }
 function proposalSignature() {
   return JSON.stringify({
+    modelVersion: "0.3.0",
     asOf: data?.price_as_of,
     snapshot: data?.generated_at,
     positions: [...state.positions].sort((a, b) =>
@@ -321,6 +429,12 @@ function proposalSignature() {
     settings: state.settings,
     overrides: state.overrides,
     rules: state.compositionRules,
+    mandate: state.mandate,
+    execution: state.execution,
+    account: state.account,
+    research: state.research,
+    assetAssumptions: state.assetAssumptions,
+    macroRegimes: state.macroRegimes,
   });
 }
 
@@ -332,7 +446,7 @@ function runComposition() {
   state.compositionError = null;
   try {
     compositionWorker ||= new Worker(
-      new URL("./composer-worker.mjs", import.meta.url),
+      new URL("./composer-worker.mjs?v=0.3.0", import.meta.url),
       { type: "module" },
     );
     compositionWorker.onmessage = (event) => {
@@ -353,7 +467,10 @@ function runComposition() {
       state.proposal = event.data.proposal;
       if (state.proposal.status === "proposed") {
         state.positions = state.proposal.positions.map((p) => ({ ...p }));
-        state.settings = { ...state.settings, ...state.proposal.settings };
+        state.capital = state.proposal.capital;
+        for (const key of Object.keys(state.settings))
+          if (Object.hasOwn(state.proposal.settings, key))
+            state.settings[key] = state.proposal.settings[key];
         state.proposal.signature = proposalSignature();
         state.proposal.modified = false;
         changePositions();
@@ -374,7 +491,7 @@ function runComposition() {
     compositionWorker.postMessage({
       id,
       snapshot: data,
-      settings: state.settings,
+      settings: calculationOptions(true),
       overrides: state.overrides,
       rules: state.compositionRules,
     });
@@ -443,6 +560,13 @@ function portfolioExport() {
         acknowledged: state.acknowledged,
         proposal: state.proposal,
         compositionRules: state.compositionRules,
+        mandate: state.mandate,
+        execution: state.execution,
+        account: state.account,
+        research: state.research,
+        assetAssumptions: state.assetAssumptions,
+        macroRegimes: state.macroRegimes,
+        journal: state.journal,
       },
       null,
       2,
@@ -526,7 +650,7 @@ async function loadData() {
     { cache: "no-cache" },
   );
   if (!response.ok) throw new Error("No se pudo cargar el corte de mercado.");
-  data = validateSnapshot(await response.json());
+  data = withCashAsset(validateSnapshot(await response.json()));
   statsCache.clear();
   state.positions = Array.isArray(state.positions)
     ? state.positions.filter(
@@ -569,7 +693,7 @@ setInterval(async () => {
     const next = validateSnapshot(await response.json());
     if (next.generated_at === data.generated_at) return;
     const previous = monitoring()?.alerts.map((a) => a.id) || [];
-    data = next;
+    data = withCashAsset(next);
     statsCache.clear();
     notifyReview(previous);
     state.forecast = null;
@@ -650,7 +774,24 @@ document.addEventListener("click", async (event) => {
     else navigate("research");
     return;
   }
+  if (element.dataset.accountRemove) {
+    state.account.positions = state.account.positions.filter(
+      (p) => p.symbol !== element.dataset.accountRemove,
+    );
+    persist();
+    render();
+    return;
+  }
   const action = element.dataset.action;
+  if (action === "account-add") {
+    const symbol = $("#account-symbol")?.value;
+    if (symbol && !state.account.positions.some((p) => p.symbol === symbol)) {
+      state.account.positions.push({ symbol, quantity: 0, costBasis: null });
+      persist();
+      render();
+    }
+    return;
+  }
   if (action === "reload-app") {
     location.reload();
     return;
@@ -680,6 +821,11 @@ document.addEventListener("click", async (event) => {
       state.capital,
       state.overrides,
     );
+    state.baseline.research = structuredClone(state.research);
+    state.baseline.mandate = structuredClone(state.mandate);
+    state.baseline.execution = structuredClone(state.execution);
+    if (state.proposal?.status === "proposed" && !state.proposal.modified)
+      state.baseline.capital = state.proposal.trade_plan.investableCapital;
     state.acknowledged = [];
     state.baseline.proposal = state.proposal
       ? JSON.parse(JSON.stringify(state.proposal))
@@ -813,6 +959,73 @@ document.addEventListener("input", (event) => {
 });
 document.addEventListener("change", async (event) => {
   const el = event.target;
+  if (el.dataset.scope) {
+    try {
+      const scope = el.dataset.scope,
+        key = el.dataset.key,
+        symbol = el.dataset.symbol;
+      if (el.type === "number" && !el.checkValidity())
+        throw new Error("Revisa el rango del campo.");
+      const value =
+        el.type === "checkbox"
+          ? el.checked
+          : el.type === "number"
+            ? el.value === ""
+              ? null
+              : Number(el.value) / Number(el.dataset.scale || 1)
+            : el.value;
+      if (scope === "holding")
+        state.account.positions = state.account.positions.map((p) =>
+          p.symbol === symbol ? { ...p, [key]: value } : p,
+        );
+      else if (scope === "research")
+        state.research[symbol] = validateResearch({
+          ...state.research[symbol],
+          [key]: value,
+        });
+      else if (scope === "assetAssumptions")
+        state.assetAssumptions[symbol] = {
+          ...state.assetAssumptions[symbol],
+          [key]: value,
+        };
+      else if (scope === "regime")
+        state.macroRegimes = state.macroRegimes.map((r) =>
+          r.id === symbol ? { ...r, [key]: value } : r,
+        );
+      else if (scope === "setting") state.settings[key] = value;
+      else if (scope === "mandate" && key === "withdrawalsText") {
+        const withdrawals = String(value)
+          .split(/\n/)
+          .map((row) => row.trim())
+          .filter(Boolean)
+          .map((row) => {
+            const [date, amount] = row.split(",").map((x) => x.trim());
+            return { date, amount: Number(amount) };
+          });
+        const next = { ...state.mandate, withdrawals };
+        mandate(next);
+        state.mandate = next;
+      } else if (
+        scope === "mandate" ||
+        scope === "execution" ||
+        scope === "account"
+      ) {
+        state[scope] = { ...state[scope], [key]: value };
+        if (scope === "mandate" && key === "horizon")
+          state.settings.horizon = value;
+      }
+      state.forecast = null;
+      if (state.proposal) state.proposal.modified = true;
+      job++;
+      state.busy = false;
+      persist();
+      render();
+    } catch (error) {
+      toast(error.message);
+      render();
+    }
+    return;
+  }
   if (el.dataset.compositionRule) {
     const value = Number(el.value) / Number(el.dataset.scale);
     if (!el.checkValidity() || !finite(value)) {
@@ -896,15 +1109,17 @@ document.addEventListener("change", async (event) => {
       return;
     }
     state.settings[key] = value;
+    if (key === "horizon") state.mandate.horizon = value;
     state.forecast = null;
     runForecast();
   }
   if (el.id === "import-file" && el.files[0]) {
     try {
-      if (el.files[0].size > 15e6) throw new Error("El archivo supera 15 MB.");
+      if (el.files[0].size > 100e6)
+        throw new Error("El archivo supera 100 MB.");
       const input = JSON.parse(await el.files[0].text());
       if (importKind === "snapshot") {
-        data = validateSnapshot(input);
+        data = withCashAsset(validateSnapshot(input));
         statsCache.clear();
         state.positions = state.positions.filter((p) => asset(p.symbol));
         toast("Corte importado para esta sesión.");
@@ -930,6 +1145,43 @@ document.addEventListener("change", async (event) => {
           symbol,
           weight,
         }));
+        if (input.mandate) state.mandate = mandate(input.mandate);
+        if (input.execution) state.execution = execution(input.execution);
+        if (input.macroRegimes)
+          state.macroRegimes = regimes(input.macroRegimes);
+        if (input.research) {
+          for (const value of Object.values(input.research))
+            validateResearch(value);
+          state.research = input.research;
+        }
+        if (
+          input.assetAssumptions &&
+          typeof input.assetAssumptions === "object"
+        )
+          state.assetAssumptions = input.assetAssumptions;
+        if (input.account) {
+          currentAccount(
+            data,
+            input.account,
+            null,
+            input.capital || state.capital,
+          );
+          state.account = input.account;
+        }
+        if (input.journal) {
+          if (
+            !Array.isArray(input.journal) ||
+            input.journal.length > 10000 ||
+            input.journal.some(
+              (r) =>
+                !r.origin?.positions ||
+                !r.prediction ||
+                !/^\d{4}-\d{2}-\d{2}$/.test(r.target_date),
+            )
+          )
+            throw new Error("Registro de previsiones no válido.");
+          state.journal = input.journal;
+        }
         if (input.capital > 0 && input.capital <= 1e9)
           state.capital = input.capital;
         if (input.overrides && typeof input.overrides === "object") {
@@ -959,7 +1211,11 @@ document.addEventListener("change", async (event) => {
           const allowed = ["gbm", "merton"];
           if (allowed.includes(input.settings.model))
             state.settings.model = input.settings.model;
-          if ([0.25, 0.5, 1, 3].includes(input.settings.horizon))
+          if (
+            finite(input.settings.horizon) &&
+            input.settings.horizon >= 0.25 &&
+            input.settings.horizon <= 5
+          )
             state.settings.horizon = input.settings.horizon;
           if (["fundamental", "manual"].includes(input.settings.driftMode))
             state.settings.driftMode = input.settings.driftMode;
@@ -991,6 +1247,22 @@ document.addEventListener("change", async (event) => {
             input.settings.seed <= 4294967295
           )
             state.settings.seed = input.settings.seed;
+          for (const key of [
+            "fundamentalMarketShare",
+            "fundamentalSectorShare",
+          ])
+            if (
+              finite(input.settings[key]) &&
+              input.settings[key] >= 0 &&
+              input.settings[key] <= 1
+            )
+              state.settings[key] = input.settings[key];
+          if (
+            (state.settings.fundamentalMarketShare ?? 0.35) +
+              (state.settings.fundamentalSectorShare ?? 0.3) >
+            1
+          )
+            throw new Error("Participaciones de incertidumbre no válidas.");
           if (typeof input.settings.uncertainFundamentals === "boolean")
             state.settings.uncertainFundamentals =
               input.settings.uncertainFundamentals;
@@ -998,7 +1270,7 @@ document.addEventListener("change", async (event) => {
         state.proposal = null;
         const proposal = input.proposal;
         if (
-          proposal?.version === 1 &&
+          [1, 2].includes(proposal?.version) &&
           proposal.method === "ex-ante-fundamental-monte-carlo" &&
           proposal.status === "proposed" &&
           Array.isArray(proposal.signals) &&
@@ -1111,6 +1383,18 @@ window.addEventListener("hashchange", () => {
 });
 try {
   await Promise.all([loadTemplates(), loadData()]);
+  try {
+    const stored = await openJournal();
+    state.journal = [
+      ...new Map(
+        [...state.journal, ...stored].map((row) => [row.id, row]),
+      ).values(),
+    ].sort((a, b) => a.origin.created_at.localeCompare(b.origin.created_at));
+    await saveJournal(state.journal);
+    journalDBReady = true;
+  } catch {
+    journalDBReady = false;
+  }
   const view = location.hash.slice(1);
   if (NAV.some((n) => n[0] === view)) state.view = view;
   render();

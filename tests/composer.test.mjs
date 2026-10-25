@@ -6,8 +6,8 @@ import {
   terminalScenarios,
   evaluateWeights,
   DEFAULT_COMPOSITION_RULES,
-} from "../dist/assets/js/composer.mjs";
-import { triangularQuantile } from "../dist/assets/js/return-model.mjs";
+} from "../dist/assets/js/composer.mjs?v=0.3.0";
+import { triangularQuantile } from "../dist/assets/js/return-model.mjs?v=0.3.0";
 
 function snapshot() {
   const asOf = "2026-10-23";
@@ -65,7 +65,7 @@ test("composition is reproducible, fully invested and respects position, sector 
   assert.ok(a.positions.length <= DEFAULT_COMPOSITION_RULES.maxPositions);
   const sectors = new Map();
   for (const p of a.positions)
-    if (p.symbol !== "SHY") {
+    if (!["SHY","CASH"].includes(p.symbol)) {
       const sector = input.assets.find(
         (asset) => asset.symbol === p.symbol,
       ).sector;
@@ -77,7 +77,7 @@ test("composition is reproducible, fully invested and respects position, sector 
     ),
   );
   for (const p of a.positions)
-    assert.ok(p.weight <= (p.symbol === "SHY" ? 0.5 : 0.2) + 1e-9);
+    assert.ok(p.weight <= (["SHY","CASH"].includes(p.symbol) ? 1 : 0.2) + 1e-9);
   assert.ok(a.metrics.cvar95 <= a.rules.cvarBudget);
   assert.ok(a.metrics.lossProbability <= a.rules.maxLossProbability);
   assert.notEqual(a.settings.seed, a.verification.seed);
@@ -154,7 +154,7 @@ test("terminal scenarios preserve the configured annual anchor at zero diffusion
   assert.equal(metrics.lossProbability, 0);
 });
 
-test("an infeasible stochastic risk budget returns no proposal instead of relaxing its limits", () => {
+test("a tight risk budget keeps cash and an impossible capital floor returns no proposal", () => {
   const p = composePortfolio(
     snapshot(),
     { jumpIntensity: 3, jumpMean: -0.5, jumpVol: 0.15 },
@@ -162,8 +162,12 @@ test("an infeasible stochastic risk budget returns no proposal instead of relaxi
     { cvarBudget: 0.001, maxLossProbability: 0.001 },
     { candidates: 50, paths: 500, finalPaths: 1000 },
   );
-  assert.equal(p.status, "no_feasible");
-  assert.equal(p.positions, undefined);
+  assert.equal(p.status, "hold");
+  assert.deepEqual(p.positions,[{symbol:"CASH",weight:1}]);
+  assert.equal(p.metrics.cvar95,0);
+  const impossible=composePortfolio(snapshot(),{mandate:{capitalFloor:200000}}, {}, {}, {candidates:30,paths:100,finalPaths:100});
+  assert.equal(impossible.status,"no_feasible");
+  assert.equal(impossible.positions,undefined);
   assert.throws(
     () => prepareComposition(snapshot(), {}, {}, { maxCorrelation: 1.2 }),
     /límites/,

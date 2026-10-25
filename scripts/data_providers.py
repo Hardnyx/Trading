@@ -172,9 +172,9 @@ def analyst_estimates(download, symbol, cutoff, api_key, observed_at, previous=N
         if record["eps_mean"] is None and record["revenue_mean"] is None:
             continue
         record["currency"] = row.get("currency") if row.get("currency") in {"USD", "EUR", "GBP", "JPY", "CAD", "CHF"} else None
-        record["eps_basis"] = "provider_unspecified"
+        record["eps_basis"] = "non_gaap"  # FMP analyst-estimates FAQ; never infer GAAP comparability.
         old = prior.get(day)
-        if old and old.get("frequency") == "annual" and old.get("currency") == record["currency"]:
+        if old and old.get("frequency") == "annual" and old.get("currency") == record["currency"] and old.get("eps_basis") == record["eps_basis"]:
             record["comparison_observed_at"] = previous["observed_at"]
             for prefix in ("eps", "revenue"):
                 before, after = numeric(old.get(f"{prefix}_mean")), record[f"{prefix}_mean"]

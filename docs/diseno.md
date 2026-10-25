@@ -19,7 +19,7 @@ Herramienta personal para componer una cartera con los datos del corte disponibl
 | Consistencia                 | Mismas columnas, unidades, formatos y acciones para cada activo.                                        |
 | Control                      | Supuestos editables, importación/exportación, cierre con Escape y registro explícito de la composición. |
 | Prevención de errores        | Validación de archivos y pesos; el registro requiere una suma de 100%.                                  |
-| Reconocimiento               | Funciones visibles F1–F7, nombres de activos, enlaces a las fuentes y motivos de cada revisión.         |
+| Reconocimiento               | Funciones visibles F1–F8, nombres de activos, enlaces a las fuentes y motivos de cada revisión.         |
 | Eficiencia                   | Búsqueda con `/`, atajos por función y simulación en un Web Worker.                                     |
 | Legibilidad                  | Números tabulares, alineación decimal, signos explícitos y colores de uso estable.                      |
 | Densidad                     | Resúmenes en una fila, comparaciones en tablas; sin gráficos de dona ni bloques promocionales.          |
@@ -51,3 +51,9 @@ El panel distingue una descarga correcta, una descarga fallida y una fuente pend
 Captura de verificación del 24 de octubre de 2026:
 
 ![Estado de las fuentes de datos](data-sources.jpg)
+
+## Mandato y decisiones
+
+F8 concentra restricciones, cuenta y ejecución; F5 conserva las hipótesis y la evidencia por emisor; F2 muestra revisiones y evaluación prospectiva. Los campos se rotulan con moneda, plazo y unidad. Las cantidades ingresadas, las referencias teóricas y las órdenes propuestas tienen contextos explícitos. Registrar una referencia no confirma una operación.
+
+Los resultados muestran costos netos, alternativas comparables y datos faltantes. Una tesis contradicha requiere revisión. El diario diferencia pendientes, retrospectivos y casos sin realización comparable. La incertidumbre asumida se distingue de la precisión medida.

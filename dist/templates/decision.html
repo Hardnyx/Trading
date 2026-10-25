@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <title>Mandato y research</title>
+  </head>
+  <body>
+    <template id="decision-section">
+      <section class="panel decision-section">
+        <div class="panel-header">
+          <h2 class="panel-title">{{title}}</h2>
+          <span class="panel-meta">{{meta}}</span>
+        </div>
+        {{{body}}}
+        <p class="decision-note">{{note}}</p>
+      </section>
+    </template>
+    <template id="decision-field">
+      <div class="field">
+        <label for="{{id}}">{{label}}</label>
+        <div class="input-unit">
+          <input
+            id="{{id}}"
+            type="{{type}}"
+            value="{{value}}"
+            min="{{min}}"
+            max="{{max}}"
+            step="{{step}}"
+            data-scope="{{scope}}"
+            data-key="{{key}}"
+            data-symbol="{{symbol}}"
+            data-scale="{{scale}}"
+            {{{checked}}}
+          /><span>{{unit}}</span>
+        </div>
+      </div>
+    </template>
+    <template id="decision-select">
+      <div class="field">
+        <label for="{{id}}">{{label}}</label
+        ><select
+          id="{{id}}"
+          data-scope="{{scope}}"
+          data-key="{{key}}"
+          data-symbol="{{symbol}}"
+        >
+          {{{options}}}
+        </select>
+      </div>
+    </template>
+    <template id="decision-option">
+      <option value="{{value}}" {{{selected}}}>{{label}}</option>
+    </template>
+    <template id="decision-text">
+      <div class="field decision-text">
+        <label for="{{id}}">{{label}}</label
+        ><textarea
+          id="{{id}}"
+          rows="{{rows}}"
+          maxlength="4000"
+          data-scope="{{scope}}"
+          data-key="{{key}}"
+          data-symbol="{{symbol}}"
+        >
+{{value}}</textarea
+        >
+      </div>
+    </template>
+    <template id="decision-grid">
+      <div class="decision-fields">{{{fields}}}</div>
+    </template>
+    <template id="decision-table">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              {{{headers}}}
+            </tr>
+          </thead>
+          <tbody>
+            {{{rows}}}
+          </tbody>
+        </table>
+      </div>
+    </template>
+    <template id="decision-th">
+      <th>{{value}}</th>
+    </template>
+    <template id="decision-td">
+      <td>{{value}}</td>
+    </template>
+    <template id="decision-row">
+      <tr>
+        {{{cells}}}
+      </tr>
+    </template>
+    <template id="decision-account">
+      <div class="decision-fields">{{{fields}}}</div>
+      <div class="account-add">
+        <label for="account-symbol">ACTIVO</label
+        ><select id="account-symbol">
+          {{{options}}}</select
+        ><button class="button" data-action="account-add">
+          Agregar posición
+        </button>
+      </div>
+      {{{table}}}
+    </template>
+    <template id="decision-holding">
+      <tr>
+        <th>{{symbol}}</th>
+        <td>{{{quantity}}}</td>
+        <td>{{{basis}}}</td>
+        <td>
+          <button class="text-button" data-account-remove="{{symbol}}">
+            Quitar
+          </button>
+        </td>
+      </tr>
+    </template>
+    <template id="decision-summary">
+      <div class="decision-stats">{{{items}}}</div>
+    </template>
+    <template id="decision-stat">
+      <div>
+        <label>{{label}}</label><strong>{{value}}</strong
+        ><small>{{detail}}</small>
+      </div>
+    </template>
+    <template id="decision-message">
+      <p class="decision-note">{{message}}</p>
+    </template>
+    <template id="decision-actions">
+      <div class="decision-actions">
+        <button class="button primary" data-action="compose">
+          Reevaluar mantener o cambiar</button
+        ><button class="button" data-action="export">
+          Exportar cartera y registro
+        </button>
+      </div>
+    </template>
+    <template id="decision-heading">
+      <div class="page-heading">
+        <div>
+          <p class="eyebrow">MANDATO / CUENTA / EJECUCIÓN</p>
+          <h1>Mandato de inversión</h1>
+          <p>
+            Restricciones y supuestos que intervienen en la composición.
+            Importes de la cuenta en USD; metas y retiros en la moneda de
+            referencia.
+          </p>
+        </div>
+      </div>
+    </template>
+  </body>
+</html>

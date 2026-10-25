@@ -61,7 +61,7 @@ class ProviderInputs(unittest.TestCase):
             {"symbol": "TEST", "date": "2028-06-30", "epsAvg": "NaN", "revenueAvg": None},
         ]).encode())
         previous = {"observed_at": "2026-10-23T18:00:00+00:00", "periods": [
-            {"period_end": "2027-06-30", "frequency": "annual", "eps_mean": 4, "revenue_mean": 100, "currency": "USD"},
+            {"period_end": "2027-06-30", "frequency": "annual", "eps_mean": 4, "revenue_mean": 100, "currency": "USD", "eps_basis": "non_gaap"},
         ]}
         result = providers.analyst_estimates(request, "TEST", CUTOFF, "test-key", OBSERVED, previous)
         self.assertEqual(len(result["periods"]), 1)
@@ -70,7 +70,7 @@ class ProviderInputs(unittest.TestCase):
         self.assertEqual(row["eps_revision_pct"], 0.25)
         self.assertEqual(row["revenue_revision"], 10)
         self.assertEqual(row["eps_analysts"], 7)
-        self.assertEqual(row["eps_basis"], "provider_unspecified")
+        self.assertEqual(row["eps_basis"], "non_gaap")
         self.assertNotIn("do-not-export", json.dumps(result))
         self.assertNotIn("test-key", json.dumps(result))
 

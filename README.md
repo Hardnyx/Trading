@@ -1,24 +1,89 @@
 # Trading
 
-Terminal de research para acciones y ETFs de Estados Unidos. Incluye proyecciones, valoración y análisis de riesgo.
-
-Herramienta de uso personal para revisar activos, configurar supuestos y analizar la distribución de resultados de una cartera.
+Research, composición y seguimiento de una cartera personal de acciones y ETFs de Estados Unidos.
 
 [Abrir aplicación](https://hardnyx.github.io/Trading/)
 
-## Qué incluye
+## Uso
 
-- **Componer cartera:** propuesta ex ante con un clic, edición de pesos y registro de una referencia con fecha de corte.
-- **Seguimiento:** comparación con la referencia registrada, revisiones con motivos y estado de atención.
-- **Proyecciones:** Monte Carlo multiactivo con difusión lognormal correlacionada y extensión con saltos sistémicos de tipo Merton. Hasta 5,000 trayectorias, semilla reproducible y horizonte de tres meses a tres años.
-- **Research:** filtros, precios, P/E, FCF yield, volatilidad y comparación contra el modelo propio.
-- **Valoración:** crecimiento, múltiplo de salida, horizonte y rentabilidad exigida editables. Escenarios adverso, base y favorable.
-- **Riesgo:** correlaciones, contribución a la varianza, beta, drawdown, VaR/CVaR históricos y escenarios de estrés.
-- **Macro:** curva nominal del Treasury, IPC y desempleo, con fechas y enlaces a sus fuentes.
+1. **F8 · Mandato:** objetivo, horizonte, moneda, metas, retiros, drawdown tolerable y liquidez. Configura costos y, si corresponde, las cantidades que realmente tienes.
+2. **F5 · Valoración:** revisa crecimiento, múltiplo, márgenes, dilución, confianza y tesis de cada empresa. Compara previsión propia, consenso comparable y crecimiento implícito en el precio.
+3. **F1 · Componer:** pulsa **Proponer cartera**. Compara mantener, una alternativa con ETF/SHY/efectivo y candidatas activas, después de costos. Los pesos se pueden editar antes de registrar una referencia.
+4. **F2 · Seguimiento:** revisa nueva evidencia, condiciones de tesis, desvíos y previsiones registradas. Reevaluar calcula cambios; registrar una composición no confirma operaciones en un broker.
+5. **F3/F6:** trayectorias futuras, riesgo durante el horizonte, contribuciones marginales y correlaciones residuales después de mercado/sector. **F4/F7:** universo y contexto macro.
 
-## Ejecutar
+La cuenta, tesis, supuestos y pronósticos quedan en este navegador. **Exportar cartera** permite conservarlos y trasladarlos. Los avisos requieren permiso del navegador y la página abierta; no hay vigilancia de la cartera personal con la página cerrada.
 
-No necesita un framework, una instalación de npm ni un servidor de aplicación. Con Python 3.10 o superior:
+## Método
+
+**Previsión.** Para acciones, BPA y múltiplo de salida propios; también ventas × margen neto / dilución, consenso comparable o mezcla 50/50. El crecimiento implícito en precio usa la misma ecuación de dividendos descontados que la valoración. El retorno anual equivalente aproxima los dividendos al final; no se suman otra vez al simular. No es un DCF completo.
+
+La confianza subjetiva se reduce por cobertura y antigüedad de fundamentos y contradicciones de tesis. Contrae la previsión hacia un retorno previo explícito y amplía sus rangos. Una contradicción no mejora el retorno previsto y bloquea nuevas compras hasta revisar las hipótesis. Confianza no equivale a precisión predictiva demostrada. Las observaciones faltantes aparecen como `—`, no como cero.
+
+**Incertidumbre y escenarios.** Cópula normal de mercado, sector y empresa para las anclas triangulares. El valor central es el **modo**; la media triangular es `(mínimo + modo + máximo) / 3`. Las participaciones de incertidumbre y los escenarios macro son supuestos editables. Beneficios, múltiplos y tasas cambian de forma condicional a cada escenario; no se infiere automáticamente un régimen de los últimos datos macro.
+
+Difusión correlacionada con covarianza EWMA de retornos logarítmicos, regularización fuera de diagonal del 5% y 252 sesiones/año. El retorno histórico no se utiliza como retorno esperado. En Merton, los eventos son comunes y las cargas difieren por activo: beta histórica de mercado para renta variable, duración/shock de tasas para bonos, carga asumida para oro y cero para efectivo. Cada activo utiliza su propio compensador `exp(media_i + varianza_i/2) - 1`. Los saltos y escenarios se añaden a una covarianza histórica que ya contiene shocks; es incertidumbre adicional del modelo, sin calibración estructural independiente.
+
+**Bonos y efectivo.** SHY y TLT usan TIR bruta, gastos y duración de perfiles iShares fechados. Aproximación local: carry = TIR − gastos; respuesta a tasas = −duración × cambio de tasa. Con un perfil antiguo se puede usar la curva Treasury de plazo próximo como proxy de TIR, conservando duración y fecha del perfil. No se usa Treasury 3M como retorno de SHY. No se supone convexidad de unidades desconocidas ni se modela en detalle el rolado de un ETF. CASH es efectivo sintético USD, sin remuneración ni riesgo de precio.
+
+**Mandato y decisión.** Objetivos: crecimiento logarítmico, preservación con utilidad CRRA o minimizar el faltante cuadrático frente a una meta final. Retiros/metas se expresan en moneda de referencia; cuenta y órdenes, en USD. Otras monedas requieren tipo de cambio, variación, volatilidad, correlación y confirmación explícitos. FX se compone multiplicativamente.
+
+La búsqueda aproximada compara 300 candidatas con 600 trayectorias mensuales comunes. Hasta diez finalistas se comprueban con 3,000 nuevas trayectorias semanales; sólo se propone una que pase esa verificación. No garantiza un óptimo global. Límites iniciales editables: 20% por acción, 80% por ETF diversificado, 35% por sector de acciones directas, 100% en SHY, ocho posiciones, correlación 0.95, CVaR máximo 20% y probabilidad de pérdida máxima 45%. No hay composición interna de ETFs: el límite sectorial no mide toda la exposición económica.
+
+El drawdown se calcula sobre un índice ajustado por retiros; la falta de efectivo y el piso de capital se comprueban aparte. Los retiros se prefundan en CASH. No se suponen ventas gratuitas durante las trayectorias. Se informa tiempo bajo máximos y falta de recuperación al final; los intervalos semanales pueden omitir mínimos entre observaciones.
+
+Comisión por orden, comisión variable, medio spread completo por lado, deslizamiento e impuesto supuesto sobre ganancias realizadas se deducen una sola vez. Se resuelve el presupuesto con capital neto de costos. Impuesto 0 significa exclusión asumida; no representa una conclusión tributaria. Sin costo de compra, una venta gravada no es una propuesta completa. No se optimizan lotes fiscales. Mantener se prefiere si cumple el mandato y la mejora equivalente no supera el umbral en dólares y la relación beneficio/costo. Sensibilidades de crecimiento/margen, múltiplo, confianza y correlaciones vuelven a elegir entre una muestra limitada de candidatas.
+
+**Tesis y factores.** Condiciones sobre margen, deuda neta/FCF, BPA, conversión de caja y dilución generan revisiones con evidencia fechada. La tesis textual, invalidación y catalizadores son investigación propia. Una presentación nueva requiere lectura; no implica una operación automáticamente. Factores: SPY y sector ortogonal al mercado, betas OLS, correlaciones residuales y atribución aritmética desde el registro. El residual significa no explicado; no mide habilidad. La atribución usa betas fijadas al registro y una referencia teórica; no concilia operaciones reales posteriores.
+
+## Validación predictiva
+
+Cada cálculo registra un origen con corte de precios, corte de información, fecha de creación, fundamentos, hipótesis, versión, semillas, covarianza y huellas de entradas/historia. El registro local usa IndexedDB y conserva los orígenes sin desplazarlos al llegar nuevos cortes. Los resultados vencidos quedan fijados con su fecha de observación. Exporta copias para protegerlos frente a la limpieza del navegador. Los retrospectivos se excluyen y los inmaduros permanecen pendientes. Un origen sólo se considera prospectivo entre el cierre y la apertura del siguiente día de semana en Nueva York; este filtro conservador puede excluir registros durante feriados. Al vencer, se usa la primera sesión común disponible y ambos extremos de la misma serie ajustada actual, evitando mezclar escalas anteriores a splits/dividendos.
+
+Se informa Brier de la probabilidad de pérdida, cobertura P05–P95 y error absoluto. Son resultados de referencias mantenidas, con el costo inicial supuesto; no concilian retiros/operaciones del broker. Sin historia FX, las previsiones en otra moneda quedan no evaluables. Las previsiones con retiros también quedan sin puntuar hasta conciliar la realización de sus flujos; no se comparan contra un retorno sin retiros. Ventanas solapadas no son muestras independientes. Aún no existe una muestra prospectiva madura que demuestre capacidad predictiva.
+
+La comprobación walk forward de F3 evalúa únicamente bandas EWMA de riesgo: 126 sesiones pasadas y 21 futuras no solapadas, centro logarítmico cero. No valida el ancla fundamental, los saltos ni la selección de acciones. El universo actual no resuelve sesgo de supervivencia ni incluye todos los deslistados.
+
+## Datos y actualización
+
+```bash
+python scripts/refresh_data.py
+# Corte máximo; no convierte datos actuales en versiones históricas disponibles entonces:
+python scripts/refresh_data.py --as-of 2026-10-24
+```
+
+Biblioteca estándar Python. Respuestas en `.cache/`, límites de consultas SEC, escritura atómica. Se conserva el último dato válido y se informa la incidencia si una fuente falla. **Refresh market data** corre diariamente a las **18:30 de Lima** (23:30 UTC) y publica el nuevo corte en GitHub Pages. La web consulta el archivo publicado cada cinco minutos mientras está visible y hay una referencia registrada.
+
+| Fuente                          | Datos                                                                                            | Acceso                                        |
+| ------------------------------- | ------------------------------------------------------------------------------------------------ | --------------------------------------------- |
+| SEC Company Facts / Submissions | Fundamentos, historia contable disponible, vencimientos estándar cuando existen y presentaciones | Sin clave; identificación de cliente          |
+| Yahoo chart                     | Cinco años de cierres ajustados, volumen, dividendos y splits                                    | Endpoint público no oficial                   |
+| U.S. Treasury                   | Curva par nominal                                                                                | XML oficial                                   |
+| iShares                         | Duración, TIR, SEC yield y gastos de SHY/TLT con fecha                                           | Página pública del emisor                     |
+| BLS                             | IPC y desempleo                                                                                  | API pública; clave opcional                   |
+| FRED                            | Series macro y fechas de observación                                                             | CSV actual sin clave; API histórica con clave |
+| FMP                             | Consenso anual y revisiones entre capturas                                                       | Clave y acceso al endpoint; uso local/privado |
+
+Universo: 12 acciones, SPY/QQQ/IWM/TLT/GLD/SHY y los 11 Select Sector ETFs XLK/XLC/XLY/XLP/XLF/XLE/XLV/XLI/XLU/XLRE/XLB. CASH se crea localmente como reserva sin remuneración. No es una cotización descargada.
+
+Los vencimientos sólo se muestran cuando existe el concepto estándar en Company Facts. La dilución requiere historia de acciones y ajuste documentado por splits. No hay cobertura completa de clases múltiples, conceptos XBRL personalizados ni calendario integral de deuda.
+
+Las capturas inmutables en `data/snapshots/` conservan la información observada y una huella del archivo completo; no duplican toda la historia de precios. Capturar hoy un período contable antiguo no reconstruye su publicación original. Corte de precios, período económico, presentación y observación se conservan por separado.
+
+### Claves opcionales
+
+Se configuran como variables de entorno o secrets de GitHub Actions; nunca se escriben en JSON público.
+
+| Variable         | Uso                                                                                    |
+| ---------------- | -------------------------------------------------------------------------------------- |
+| `SEC_USER_AGENT` | Identificación propia con contacto autorizado; también admite variable del repositorio |
+| `FRED_API_KEY`   | Versiones históricas: realtime_start/realtime_end iguales al corte                     |
+| `BLS_API_KEY`    | API v2 registrada; sin clave se usa v1                                                 |
+| `FMP_API_KEY`    | Consenso anual según plan/acceso del proveedor                                         |
+
+Sin clave, FRED sólo acepta CSV para captura actual (`observed_current`), no reconstrucción histórica. FMP sólo se consulta localmente o en un repositorio privado. Este repositorio público no publica consenso aunque se configure una clave. El archivo personal `data/research/latest.json`, ignorado por git, se puede cargar en **Datos y fuentes → Importar corte JSON**. La base FMP de estimaciones es no GAAP; la moneda de reporte y el BPA base comparable deben verificarse antes de usarla en valoración. Comparar revisiones exige mismo ejercicio, moneda y base contable. La fecha de observación impide introducir consenso actual en un corte histórico.
+
+## Ejecutar y comprobar
 
 ```bash
 git clone https://github.com/Hardnyx/Trading.git
@@ -26,125 +91,7 @@ cd Trading
 python -m http.server 8000 --directory dist
 ```
 
-Abre `http://localhost:8000`. El navegador debe soportar módulos JavaScript y Web Workers. Las simulaciones se ejecutan en un worker para mantener fluida la interfaz.
-
-## Actualizar datos
-
-```bash
-python scripts/refresh_data.py
-```
-
-También puedes usar un corte máximo:
-
-```bash
-python scripts/refresh_data.py --as-of 2026-10-24
-```
-
-El script utiliza únicamente la biblioteca estándar de Python. Guarda respuestas temporalmente en `.cache/`, limita las solicitudes a la SEC y reemplaza el corte de forma atómica. Si una fuente falla, conserva datos previos y registra el aviso; no fabrica observaciones.
-
-El workflow **Refresh market data** se ejecuta diariamente a las **18:30 de Lima** (23:30 UTC) y también puede iniciarse desde Actions. Actualiza el archivo de datos en `main` y llama al despliegue de GitHub Pages con el SHA del nuevo corte. El botón de la web **Cargar último corte publicado** descarga el archivo que ya está en el hosting, sin ejecutar el extractor.
-
-### APIs opcionales
-
-El extractor lee las siguientes variables de entorno. En GitHub Actions se configuran como secrets del repositorio, en **Settings → Secrets and variables → Actions**.
-
-| Nombre           | Uso                                                                                                                                                   |
-| ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `FRED_API_KEY`   | Opcional para versiones históricas de las seis series macro. Sin clave se utiliza el CSV público para la captura del día.                             |
-| `FMP_API_KEY`    | Consenso anual de BPA y ventas para las acciones del universo; requiere acceso al endpoint según el plan.                                             |
-| `BLS_API_KEY`    | Opcional: activa la API v2 registrada. Sin ella se usa v1 mediante POST.                                                                              |
-| `SEC_USER_AGENT` | Identificación propia del extractor con un contacto autorizado, según las reglas de acceso de EDGAR. También se admite como variable del repositorio. |
-
-FMP se omite cuando no hay clave. FRED puede descargar las series actuales mediante su exportación pública CSV, también utilizada por pandas-datareader. El estado de configuración, los errores y la cobertura efectiva se muestran en **Datos y fuentes**. Las claves no se escriben en los JSON, en los enlaces de la interfaz ni en los diagnósticos.
-
-Con clave, FRED solicita `realtime_start` y `realtime_end` iguales al corte para obtener la versión disponible en esa fecha. Sin clave, el CSV sólo se acepta para la captura del día y se identifica como `observed_current`: no reconstruye versiones históricas. La fecha de observación, la fecha de la versión y la de descarga se conservan por separado. Si FRED y BLS cubren la misma serie, se elige la observación más reciente; a igualdad de período se utiliza FRED.
-
-**Consenso para uso personal:** FMP distingue el acceso a la API de los derechos para publicar sus datos. El extractor mantiene el consenso en `data/research/latest.json`, excluido del JSON público y de las capturas públicas. Esa carpeta está ignorada por git en ejecuciones locales. Puedes cargar el archivo en el terminal con **Datos y fuentes → Importar corte JSON**; el navegador procesa el archivo localmente.
-
-En GitHub Actions, FMP sólo se consulta si el repositorio es privado. En ese caso el workflow conserva `data/research/` en el repositorio, mientras GitHub Pages publica exclusivamente `dist/`. En un repositorio público FMP queda desactivado aunque exista una clave; no se modifica la visibilidad del repositorio.
-
-El consenso conserva hasta cuatro ejercicios fiscales futuros, la media y rango de BPA, las ventas medias, el número de analistas y los cambios frente a la captura anterior del mismo ejercicio. Son revisiones observadas entre descargas, no un historial de consenso reconstruido. La moneda y base GAAP/ajustada no se infieren si el proveedor no las declara. Todavía no modifica el ancla de valoración ni se utiliza como distribución probabilística. Las consultas retrospectivas no incorporan consenso descargado hoy.
-
-Documentación: [clave FRED](https://fred.stlouisfed.org/docs/api/api_key.html), [consensos FMP](https://site.financialmodelingprep.com/developer/docs/stable/financial-estimates), [acceso FMP](https://site.financialmodelingprep.com/developer/docs/quickstart), [publicación de datos FMP](https://site.financialmodelingprep.com/insights/platform/can-you-use-fmp-data-in-a-public-app-website-or-client-dashboard) y [acceso SEC](https://www.sec.gov/about/developer-resources).
-
-### Conservación de cortes
-
-Cada descarga guarda una captura fechada en `data/snapshots/`, con precios observados, fundamentos, fechas de publicación, series macro y una huella del archivo completo. Las capturas son inmutables; no repiten toda la historia de precios. Empiezan a registrar la información conocida desde su fecha de colección. Una descarga solicitada para una fecha pasada queda identificada como retrospectiva.
-
-Cuando hay consenso, se conserva además una captura completa para research en `data/research/snapshots/`; la captura pública excluye esos campos.
-
-## Composición y seguimiento
-
-**Proponer cartera** compara hasta 400 carteras con 1,000 escenarios futuros comunes y comprueba la elegida con 5,000 escenarios nuevos. Entre las candidatas que satisfacen los límites, elige la de mayor crecimiento logarítmico esperado. La búsqueda es aproximada, con pesos en pasos de 5 puntos porcentuales; no garantiza un óptimo global.
-
-Las acciones necesitan BPA y precio conocidos al corte y un ancla de valoración superior al rendimiento supuesto de la reserva SHY. Los índices amplios y otros ETFs permanecen disponibles para composición manual. Los precios históricos estiman covarianza y correlaciones; su rentabilidad pasada no determina la media futura de la propuesta.
-
-Se simulan difusión correlacionada, saltos sistémicos y una distribución triangular del ancla fundamental entre los escenarios adverso y favorable, con modo en el base. Un factor compartido mueve las anclas de las acciones. Estos límites y su dependencia son supuestos explícitos, no distribuciones calibradas de beneficios ni probabilidades observadas.
-
-Los límites iniciales, editables en la página, son: 20% por acción, 35% por sector, 50% en SHY, seis posiciones, correlación máxima de 0.85, CVaR 95% máximo de 20% y probabilidad de pérdida máxima de 45% al horizonte. Son parámetros de trabajo. Si no hay una propuesta que los cumpla, el programa conserva la cartera actual.
-
-El corte, los fundamentos utilizados, los supuestos, las semillas y ambas simulaciones quedan registrados al exportar o registrar la composición. Cambiar pesos o supuestos marca la propuesta como modificada. La segunda simulación comprueba estabilidad numérica con nuevas realizaciones del modelo; no constituye validación predictiva con futuros datos de mercado.
-
-La aplicación comienza sin posiciones. Selecciona activos, ajusta los pesos al 100%, configura el capital y revisa los supuestos antes de pulsar **Registrar composición**. El registro conserva precios ajustados, pesos, fundamentos y supuestos del corte utilizado. Los cambios posteriores del constructor no modifican esa referencia hasta registrar otra composición.
-
-Al cargar un corte posterior, el seguimiento evalúa:
-
-- Desvío del peso por evolución de los activos.
-- Precio por encima del valor del modelo propio.
-- Caída del BPA o cambio de signo del FCF simple.
-- Aumento de volatilidad o pérdida desde el registro.
-- Nuevas presentaciones 10-K, 10-Q y 8-K, entre otras, en la SEC.
-
-Cada revisión muestra el criterio, la evidencia y qué revisar. Los umbrales son editables. La aparición de una presentación regulatoria no se interpreta por sí sola como una orden de compra o venta.
-
-**Avisos:** se evalúan al cargar datos y al detectar un nuevo corte publicado mientras la página está abierta. Los avisos del navegador requieren permiso explícito. No hay un monitor en segundo plano con la página cerrada. El workflow de actualización publica el corte cuando termina la descarga.
-
-La referencia se conserva en el navegador, junto con los supuestos y el estado de las revisiones. La exportación JSON permite conservarla y trasladarla. La evolución de la cartera registrada usa Adj Close y representa una evolución teórica ajustada, no una conciliación de posiciones del broker.
-
-### Fuentes
-
-| Fuente                                | Contenido                                              | Acceso                                                   |
-| ------------------------------------- | ------------------------------------------------------ | -------------------------------------------------------- |
-| SEC EDGAR Company Facts y Submissions | Conceptos XBRL y presentaciones regulatorias recientes | API oficial, sin clave                                   |
-| Yahoo Finance chart                   | Cierres, Adj Close, volumen y dividendos               | Endpoint público no oficial; disponibilidad sin garantía |
-| U.S. Treasury                         | Curva par nominal                                      | Feed XML oficial                                         |
-| BLS                                   | IPC y desempleo desestacionalizados                    | API pública oficial                                      |
-| FRED                                  | Macro y versiones disponibles al corte                 | CSV público actual; API histórica con clave              |
-| FMP                                   | Consenso y revisiones entre capturas                   | API con clave; ejecución local o repositorio privado     |
-
-Precios diarios: se solicitan cinco años por activo; la cobertura efectiva depende de la fuente.
-
-Universo inicial: AAPL, MSFT, NVDA, AMZN, GOOGL, META, JPM, V, XOM, JNJ, PG, COST, SPY, QQQ, IWM, TLT, GLD y SHY. La cobertura financiera puede variar entre emisores: los datos ausentes se muestran como `—`.
-
-## Cómo se calculan las proyecciones
-
-El retorno central puede venir de la valoración propia o de un supuesto manual. Se aplica a un proceso de difusión correlacionado cuya covarianza se estima con EWMA sobre retornos logarítmicos. Se regularizan las covarianzas fuera de la diagonal un 5%.
-
-En la extensión Merton se añaden saltos comunes a la cartera. Su frecuencia, media logarítmica y dispersión son parámetros de estrés propios. La compensación del salto preserva la media esperada del ancla. El modelo utiliza pasos semanales y mantiene constantes las unidades de cada posición, sin costos ni impuestos.
-
-La valoración parte de BPA diluido o FCF/acción, aplica crecimiento y múltiplo de salida y descuenta el resultado. No hay un DCF completo. El consenso externo opcional se muestra en la ficha del activo como referencia; el ancla sigue usando los supuestos propios. Los dividendos por acción se mantienen constantes. El retorno anual equivalente aproxima el efectivo de dividendos como recibido al final del horizonte. El ancla ya incorpora ese efectivo y no se suma nuevamente en Monte Carlo.
-
-Los escenarios de valoración usan variaciones explícitas respecto al supuesto base: crecimiento −7/+5 puntos porcentuales y múltiplo ×0.80/×1.15 para adverso/favorable. No se asignan probabilidades empíricas a esos escenarios.
-
-### Comprobación histórica
-
-El laboratorio muestra una comprobación walk forward: estima bandas de riesgo usando las últimas 126 sesiones y observa el retorno de las 21 siguientes, con ventanas futuras no solapadas. Reporta la cobertura de la banda al 90%, centrada en retorno logarítmico cero. No utiliza retornos futuros para estimar esa banda.
-
-Esto comprueba la cobertura de un modelo de riesgo; **no valida la capacidad predictiva del ancla fundamental o de los saltos**. Las muestras son pequeñas y el universo está seleccionado con información actual.
-
-### Límites relevantes
-
-- Universo actual y últimos estados rectificados disponibles. No hay una base histórica point-in-time ni cobertura completa de deslistados.
-- Las bandas P05–P95 son cuantiles condicionales al modelo, no intervalos de confianza del futuro real.
-- Volatilidad y correlaciones pueden cambiar. EWMA fija su nivel inicial durante la proyección.
-- Los saltos se añaden a la volatilidad histórica sin separar sus componentes: es un escenario de estrés, no una calibración estructural.
-- El drawdown simulado usa observaciones semanales; puede omitir caídas entre esos puntos.
-- Las métricas históricas utilizan pesos constantes y rebalanceo diario teórico. La proyección usa buy & hold; son ejercicios distintos y están rotulados.
-- FCF = flujo de operación − capex con períodos comparables. No representa un FCFE completo. No se muestra FCF yield para el sector financiero.
-- Las acciones de múltiples clases y los conceptos personalizados de XBRL pueden no tener cobertura en Company Facts. Se descartan acciones en circulación con más de 400 días de antigüedad.
-- Las series macro aportan contexto y aún no son predictores incorporados al drift. Las observaciones se muestran según su período, no como si todas se publicaran el mismo día.
-
-## Validación
+Abre `http://localhost:8000`. HTML, CSS y módulos JavaScript están separados; no requiere framework ni dependencias npm. Simulación y composición se ejecutan en Web Workers.
 
 Con Node.js 20+ y Python 3.10+:
 
@@ -154,31 +101,4 @@ npm test
 python -m unittest discover -s tests -p 'test_*.py'
 ```
 
-Las pruebas cubren alineación de series, covarianzas, pesos, contribución al riesgo, valoración, reconstrucción TTM, fechas de publicación, factorización de Cholesky, semilla reproducible, media de GBM, compensación de saltos y ventanas de comprobación.
-
-## Estructura
-
-```text
-dist/
-  index.html
-  assets/
-    css/           Estilos y paleta
-    js/            Cálculos, controladores y workers
-      ui/          Vistas, formatos y carga de plantillas
-  templates/       HTML por sección y gráficos
-  data/market.json Corte descargado de fuentes públicas
-scripts/
-  refresh_data.py  Actualización y normalización
-  data_providers.py FRED y consenso con credenciales opcionales
-data/snapshots/   Cortes observados por fecha de colección
-data/research/    Consenso para importar localmente; fuera del hosting público
-tests/            Cálculos financieros, plantillas y archivos de cortes
-```
-
-La aplicación no envía los pesos ni los supuestos a un servidor. Se guardan en el navegador y pueden exportarse a un archivo JSON.
-
-Referencias: [Kelly con riesgo restringido](https://www.web.stanford.edu/~boyd/papers/kelly.html), [CVaR](https://www.sciencedirect.com/science/article/pii/S0378426602002716), [Merton, retornos discontinuos](https://dspace.mit.edu/entities/publication/e63635d9-d2bf-40ce-a79b-67786dd9f105), [RiskMetrics Technical Document](https://www.msci.com/research-and-insights/paper/1996-riskmetrics-technical-document), [SEC APIs](https://www.sec.gov/search-filings/edgar-application-programming-interfaces), [Treasury XML](https://home.treasury.gov/treasury-daily-interest-rate-xml-feed) y [BLS API](https://www.bls.gov/developers/).
-
-Proyecto independiente, sin afiliación a Bloomberg.
-
-Criterios de interfaz y referencias formales: [docs/diseno.md](docs/diseno.md).
+Referencias: [CFA: mandato](https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/basics-of-portfolio-planning-and-construction), [CFA: construcción](https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/active-equity-investing-portfolio-construction), [Boyd: decisiones con costos](https://web.stanford.edu/~boyd/papers/cvx_portfolio.html), [SHY](https://www.ishares.com/us/products/239452/ishares-13-year-treasury-bond-etf), [TLT](https://www.ishares.com/us/products/239454/ishares-20-year-treasury-bond-etf), [sectores](https://www.ssga.com/us/en/intermediary/capabilities/equities/sector-investing/select-sector-etfs), [FMP: estimaciones](https://site.financialmodelingprep.com/faqs?code=analyst), [SEC](https://www.sec.gov/about/developer-resources), [FRED](https://fred.stlouisfed.org/docs/api/fred/).

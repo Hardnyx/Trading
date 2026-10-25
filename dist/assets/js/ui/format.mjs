@@ -1,4 +1,4 @@
-import { finite } from "../analytics.mjs";
+import { finite } from "../analytics.mjs?v=0.3.0";
 
 export const esc = (s) =>
   String(s ?? "").replace(
@@ -31,12 +31,12 @@ export const color = (x) =>
   finite(x) ? (x >= 0 ? "positive" : "negative") : "muted";
 export const dateLabel = (d) =>
   d && /^\d{4}-\d{2}-\d{2}/.test(d)
-    ? new Date(d.slice(0, 10) + "T12:00:00Z")
+    ? new Date(d.includes("T") ? d : d.slice(0, 10) + "T12:00:00Z")
         .toLocaleDateString("es-PE", {
           day: "2-digit",
           month: "short",
           year: "numeric",
-          timeZone: "UTC",
+          timeZone: d.includes("T") ? "America/Lima" : "UTC",
         })
         .replaceAll(".", "")
         .toUpperCase()
