@@ -1,8 +1,8 @@
 import { chromium } from "playwright";
 import { spawn } from "node:child_process";
 import { readFileSync, mkdirSync } from "node:fs";
-import { composePortfolio } from "../dist/assets/js/composer.mjs?v=0.5.3";
-import { referenceRequest } from "../dist/assets/js/reference-preset.mjs?v=0.5.3";
+import { composePortfolio } from "../dist/assets/js/composer.mjs?v=0.6.0";
+import { referenceRequest } from "../dist/assets/js/reference-preset.mjs?v=0.6.0";
 
 const market=JSON.parse(readFileSync("dist/data/market.json","utf8"));
 const volatility=JSON.parse(readFileSync("dist/data/volatility.json","utf8"));
@@ -30,7 +30,7 @@ try {
   const issues=[];
   page.on("pageerror",e=>issues.push(e.message));
   page.on("console",e=>{if(e.type()==="error")issues.push(e.text())});
-  await page.goto("http://127.0.0.1:8813/?build=0.5.3b#portfolio",
+  await page.goto("http://127.0.0.1:8813/?build=0.6.0#portfolio",
     {waitUntil:"networkidle",timeout:60000});
   const button=page.locator('[data-action="compose-reference"]');
   await button.waitFor({state:"visible",timeout:45000});
