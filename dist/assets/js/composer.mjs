@@ -488,10 +488,10 @@ export function composePortfolio(
   }
   const references = Object.fromEntries([
     ["cash", allCash],
-    ["reserve", reserve],
-    ["equity20", equityTilt],
+    ["reserve", shortBond >= 0 ? reserve : null],
+    ["equity20", equity >= 0 && x.buyAllowed[equity] ? equityTilt : null],
   ].map(([name, w]) => {
-    if (!validWeights(w, x)) return [name, null];
+    if (!w || !validWeights(w, x)) return [name, null];
     const check = assess(w, x, verification);
     return [name, {
       positions: check.positions,
