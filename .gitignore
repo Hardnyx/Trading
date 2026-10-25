@@ -1,0 +1,9 @@
+.cache/
+__pycache__/
+*.pyc
+.DS_Store
+.env
+node_modules/
+coverage/
+*.tar.gz
+
