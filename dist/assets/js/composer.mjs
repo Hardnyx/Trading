@@ -432,7 +432,8 @@ export function composePortfolio(
   for (const w of passiveCandidates(x)) add(w, true);
   const allCash = x.assets.map((a) => (a.symbol === "CASH" ? 1 : 0));
   if (validWeights(allCash, x)) add(allCash);
-  for (const w of reserveTilts(x)) add(w);
+  const initialTilts = reserveTilts(x);
+  for (const w of initialTilts) add(w);
   const randomBudget = Math.max(evaluated, Math.floor(target * 0.65));
   for (let attempt = 0; attempt < target * 25 && evaluated < randomBudget; attempt++) {
     const w = candidate(x, random);
@@ -565,6 +566,7 @@ export function composePortfolio(
     diagnostics,
     search: {
       evaluated, feasible, paths, allocationStep: 0.05,
+      reserveTiltsEvaluated: initialTilts.length,
       method: "reserve-tilts-random-local-exchanges",
       exhaustive: false,
     },
