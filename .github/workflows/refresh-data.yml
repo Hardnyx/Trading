@@ -10,6 +10,7 @@ on:
       - 'scripts/refresh_data.py'
       - 'scripts/data_providers.py'
       - 'scripts/bond_profiles.py'
+      - 'scripts/universe.py'
   workflow_dispatch:
 permissions:
   contents: read
