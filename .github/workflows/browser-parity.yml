@@ -1,0 +1,21 @@
+name: Browser/defaults parity diagnosis
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/diagnose_browser_defaults.mjs'
+      - '.github/workflows/browser-parity.yml'
+permissions:
+  contents: read
+jobs:
+  reproduce:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Compare browser defaults with the old single-regime test
+        run: node scripts/diagnose_browser_defaults.mjs
