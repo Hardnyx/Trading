@@ -67,7 +67,7 @@ export function pathSettings(input = {}) {
     throw new Error("Parámetros de simulación fuera de rango.");
   return s;
 }
-export function preparePaths(assets, options = {}, overrides = {}) {
+export function preparePaths(assets, options = {}, overrides = {}, references = assets) {
   const settings = pathSettings(options),
     asOf =
       settings.asOf ||
@@ -82,17 +82,15 @@ export function preparePaths(assets, options = {}, overrides = {}) {
     aligned.columns.map((c) => c.map(Math.log1p)),
     settings.lambda,
   );
-  const exposures = settings.marketLoadings
-    ? null
-    : factorModel(
-        clean,
-        clean.map((a) => ({ symbol: a.symbol, weight: 1 / clean.length })),
-        asOf,
-      );
+  const exposures = factorModel(
+    clean,
+    clean.map((a) => ({ symbol: a.symbol, weight: 1 / clean.length })),
+    asOf, 500, settings.lambda, references,
+  );
   const marketLoadings =
     settings.marketLoadings ||
     Object.fromEntries(
-      (exposures?.rows || []).map((r) => [
+      (exposures.rows || []).map((r) => [
         r.symbol,
         Math.max(-3, Math.min(3, r.betaMarket)),
       ]),
@@ -101,6 +99,15 @@ export function preparePaths(assets, options = {}, overrides = {}) {
     assets: clean,
     options: { ...settings, asOf, marketLoadings },
     covariance,
+    residualCorrelation: exposures.available ? exposures.residualCorrelation : null,
+    dependence: {
+      available: exposures.available,
+      method: exposures.method || "total-correlation-fallback",
+      observations: exposures.observations,
+      regimeCounts: exposures.regimeCounts || null,
+      explanation: exposures.note,
+      residualMarketRiskExcluded: false,
+    },
     anchors: buildReturnAnchors(clean, { ...settings, asOf }, overrides),
     observations: aligned.dates.length,
     calibrationEnd: aligned.dates.at(-1),
