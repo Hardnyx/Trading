@@ -99,3 +99,27 @@ test("new GJR daily simulation respects reproducibility and disables generic Mer
   },{},assets);
   assert.equal(ewma.conditional.enabled,false);
 });
+
+test("hybrid without validated GJR cannot revert to generic Merton jumps",()=>{
+  const assets=[etf("AAA"),etf("BBB",2)];
+  const unavailable=sampleSource({
+    AAA:{...accepted("AAA"),status:"research_only"},
+    BBB:{...accepted("BBB"),status:"research_only"},
+  });
+  const base={asOf:DATE,informationAsOf:DATE,model:"merton",horizon:.25,
+    seed:100,volatilityData:unavailable};
+  const hybrid=preparePaths(assets,{...base,volatilityMode:"hybrid"},{},assets);
+  assert.equal(hybrid.conditional.active,0);
+  assert.equal(hybrid.conditional.dynamic,true);
+  const a=generatePaths(hybrid,100,37,52);
+  const larger=structuredClone(hybrid);
+  larger.options.jumpIntensity=4;
+  larger.options.jumpMean=-.7;
+  assert.deepEqual(Array.from(a.gross[0]),
+    Array.from(generatePaths(larger,100,37,52).gross[0]));
+  const explicit=preparePaths(assets,{...base,volatilityMode:"legacy"},{},assets);
+  assert.equal(explicit.conditional.dynamic,false);
+  assert.equal(explicit.conditional.enabled,false);
+  assert.notDeepEqual(Array.from(a.gross[0]),
+    Array.from(generatePaths(explicit,100,37,52).gross[0]));
+});
