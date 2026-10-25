@@ -91,6 +91,21 @@ test("composition is reproducible, fully invested and respects position, sector 
   assert.equal(JSON.stringify(input), before);
 });
 
+test("reserve and benchmark comparators respect a tighter SHY cap", () => {
+  const result = composePortfolio(
+    snapshot(),
+    { model: "gbm", seed: 765, horizon: 1 },
+    {},
+    { reserveCap: 0.5 },
+    { candidates: 45, paths: 200, finalPaths: 400 },
+  );
+  assert.equal(result.selection.published, snapshot().assets.length);
+  const reserve = result.diagnostics.references.reserve;
+  assert.ok(reserve);
+  assert.equal(reserve.positions.find((p) => p.symbol === "SHY").weight, 0.5);
+  assert.equal(reserve.positions.find((p) => p.symbol === "CASH").weight, 0.5);
+});
+
 test("future prices and unpublished earnings never enter an ex ante composition", () => {
   const input = snapshot();
   input.assets[0].financials.eps.filed = "2026-10-24";
