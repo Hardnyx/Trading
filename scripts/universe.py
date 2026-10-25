@@ -1,0 +1,141 @@
+"""Ampliación curada del universo: instrumentos, no señales de compra.
+
+Los supuestos sectoriales son hipótesis iniciales editables, NO pronósticos
+consensuados ni estimaciones inferidas de series de precios.
+El CIK se resuelve con el catálogo oficial SEC antes de recolectar estados.
+"""
+
+AUTO_CIK = -1
+
+# Crecimiento anual del BPA, múltiplo P/E de salida: priors de trabajo.
+# Ningún prior sustituye el análisis específico ni implica certeza estadística.
+SECTOR_PRIORS = {
+    "Tecnología": (0.06, 22),
+    "Financiero": (0.04, 15),
+    "Salud": (0.05, 19),
+    "Consumo discrecional": (0.05, 20),
+    "Industrial": (0.05, 19),
+    "Energía": (0.02, 13),
+    "Servicios públicos": (0.03, 16),
+    "Comunicación": (0.04, 16),
+    "Inmobiliario": (None, None),  # REIT: BPA/P-E no equivale a FFO/AFFO.
+    "Materiales": (0.04, 18),
+    "Consumo básico": (0.04, 21),
+}
+
+EXTRA_STOCKS = [
+    ("AVGO", "Broadcom", "Tecnología"),
+    ("QCOM", "Qualcomm", "Tecnología"),
+    ("TXN", "Texas Instruments", "Tecnología"),
+    ("MU", "Micron Technology", "Tecnología"),
+    ("AMAT", "Applied Materials", "Tecnología"),
+    ("LRCX", "Lam Research", "Tecnología"),
+    ("KLAC", "KLA Corporation", "Tecnología"),
+    ("INTU", "Intuit", "Tecnología"),
+    ("NOW", "ServiceNow", "Tecnología"),
+    ("PANW", "Palo Alto Networks", "Tecnología"),
+    ("SNPS", "Synopsys", "Tecnología"),
+    ("CDNS", "Cadence Design Systems", "Tecnología"),
+    ("IBM", "IBM", "Tecnología"),
+    ("INTC", "Intel", "Tecnología"),
+    ("GS", "Goldman Sachs", "Financiero"),
+    ("MS", "Morgan Stanley", "Financiero"),
+    ("C", "Citigroup", "Financiero"),
+    ("WFC", "Wells Fargo", "Financiero"),
+    ("BLK", "BlackRock", "Financiero"),
+    ("SCHW", "Charles Schwab", "Financiero"),
+    ("AXP", "American Express", "Financiero"),
+    ("SPGI", "S&P Global", "Financiero"),
+    ("ICE", "Intercontinental Exchange", "Financiero"),
+    ("CB", "Chubb", "Financiero"),
+    ("UNH", "UnitedHealth Group", "Salud"),
+    ("ABT", "Abbott Laboratories", "Salud"),
+    ("TMO", "Thermo Fisher Scientific", "Salud"),
+    ("DHR", "Danaher", "Salud"),
+    ("AMGN", "Amgen", "Salud"),
+    ("GILD", "Gilead Sciences", "Salud"),
+    ("ISRG", "Intuitive Surgical", "Salud"),
+    ("PFE", "Pfizer", "Salud"),
+    ("REGN", "Regeneron Pharmaceuticals", "Salud"),
+    ("TSLA", "Tesla", "Consumo discrecional"),
+    ("MCD", "McDonald's", "Consumo discrecional"),
+    ("SBUX", "Starbucks", "Consumo discrecional"),
+    ("NKE", "Nike", "Consumo discrecional"),
+    ("LOW", "Lowe's", "Consumo discrecional"),
+    ("TJX", "TJX Companies", "Consumo discrecional"),
+    ("BKNG", "Booking Holdings", "Consumo discrecional"),
+    ("CMG", "Chipotle Mexican Grill", "Consumo discrecional"),
+    ("UBER", "Uber Technologies", "Consumo discrecional"),
+    ("GE", "GE Aerospace", "Industrial"),
+    ("DE", "Deere & Company", "Industrial"),
+    ("HON", "Honeywell", "Industrial"),
+    ("UNP", "Union Pacific", "Industrial"),
+    ("LMT", "Lockheed Martin", "Industrial"),
+    ("RTX", "RTX Corporation", "Industrial"),
+    ("WM", "Waste Management", "Industrial"),
+    ("CVX", "Chevron", "Energía"),
+    ("COP", "ConocoPhillips", "Energía"),
+    ("SLB", "SLB", "Energía"),
+    ("EOG", "EOG Resources", "Energía"),
+    ("MPC", "Marathon Petroleum", "Energía"),
+    ("NEE", "NextEra Energy", "Servicios públicos"),
+    ("SO", "Southern Company", "Servicios públicos"),
+    ("DUK", "Duke Energy", "Servicios públicos"),
+    ("AEP", "American Electric Power", "Servicios públicos"),
+    ("TMUS", "T-Mobile US", "Comunicación"),
+    ("VZ", "Verizon Communications", "Comunicación"),
+    ("CMCSA", "Comcast", "Comunicación"),
+    ("AMT", "American Tower", "Inmobiliario"),
+    ("PLD", "Prologis", "Inmobiliario"),
+    ("O", "Realty Income", "Inmobiliario"),
+    ("LIN", "Linde", "Materiales"),
+    ("APD", "Air Products and Chemicals", "Materiales"),
+    ("SHW", "Sherwin-Williams", "Materiales"),
+    ("FCX", "Freeport-McMoRan", "Materiales"),
+    ("CL", "Colgate-Palmolive", "Consumo básico"),
+    ("KMB", "Kimberly-Clark", "Consumo básico"),
+    ("MDLZ", "Mondelez International", "Consumo básico"),
+]
+
+EXTRA_ETFS = [
+    ("VTV", "Vanguard Value", "Valor USA"),
+    ("VUG", "Vanguard Growth", "Crecimiento USA"),
+    ("SCHD", "Schwab U.S. Dividend Equity", "Dividendos"),
+    ("QUAL", "iShares MSCI USA Quality Factor", "Calidad"),
+    ("USMV", "iShares MSCI USA Min Vol Factor", "Baja volatilidad"),
+    ("MTUM", "iShares MSCI USA Momentum Factor", "Momentum"),
+    ("RSP", "Invesco S&P 500 Equal Weight", "Índice igual ponderación"),
+    ("DIA", "SPDR Dow Jones Industrial Average", "Índice industrial"),
+    ("VIG", "Vanguard Dividend Appreciation", "Dividendos"),
+    ("DGRO", "iShares Core Dividend Growth", "Dividendos"),
+    ("SPLV", "Invesco S&P 500 Low Volatility", "Baja volatilidad"),
+    ("VGSH", "Vanguard Short-Term Treasury", "Treasuries cortos"),
+    ("VGIT", "Vanguard Intermediate-Term Treasury", "Treasuries intermedios"),
+    ("VGLT", "Vanguard Long-Term Treasury", "Treasuries largos"),
+    ("IGSB", "iShares 1-5 Year Investment Grade Corporate", "Crédito grado de inversión"),
+    ("VCIT", "Vanguard Intermediate-Term Corporate Bond", "Crédito grado de inversión"),
+    ("VCSH", "Vanguard Short-Term Corporate Bond", "Crédito grado de inversión"),
+    ("SHV", "iShares Short Treasury Bond", "Treasuries ultracortos"),
+    ("MUB", "iShares National Muni Bond", "Municipales USA"),
+    ("JNK", "SPDR Bloomberg High Yield Bond", "Crédito high yield"),
+    ("BKLN", "Invesco Senior Loan", "Préstamos bancarios"),
+    ("BNDX", "Vanguard Total International Bond", "Bonos internacionales"),
+    ("INDA", "iShares MSCI India", "India"),
+    ("MCHI", "iShares MSCI China", "China"),
+    ("FXI", "iShares China Large-Cap", "China"),
+    ("EWG", "iShares MSCI Germany", "Alemania"),
+    ("EWU", "iShares MSCI United Kingdom", "Reino Unido"),
+    ("EWC", "iShares MSCI Canada", "Canadá"),
+    ("EWA", "iShares MSCI Australia", "Australia"),
+    ("EWT", "iShares MSCI Taiwan", "Taiwán"),
+    ("XBI", "SPDR S&P Biotech", "Biotecnología"),
+    ("IBB", "iShares Biotechnology", "Biotecnología"),
+    ("KWEB", "KraneShares CSI China Internet", "China tecnológica"),
+]
+
+def expanded_universe():
+    stocks = [(symbol, name, sector, AUTO_CIK, *SECTOR_PRIORS[sector])
+              for symbol, name, sector in EXTRA_STOCKS]
+    funds = [(symbol, name, sector, None, None, None)
+             for symbol, name, sector in EXTRA_ETFS]
+    return stocks + funds
