@@ -1,6 +1,6 @@
-import { finite } from "./analytics.mjs?v=0.5.0";
-import { fundamentalForecast, bondAssumptions } from "./research-model.mjs?v=0.5.0";
-import { normalCDF, normalGenerator } from "./random.mjs?v=0.5.0";
+import { finite } from "./analytics.mjs?v=0.5.1";
+import { fundamentalForecast, bondAssumptions } from "./research-model.mjs?v=0.5.1";
+import { normalCDF, normalGenerator } from "./random.mjs?v=0.5.1";
 
 const bounded = (x) => Math.max(-0.85, Math.min(2, x));
 export function buildReturnAnchors(assets, settings = {}, overrides = {}) {

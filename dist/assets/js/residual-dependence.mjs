@@ -1,6 +1,6 @@
-import { alignReturns, covariance, variance, mean, finite } from "./analytics.mjs?v=0.5.0";
-import { SECTOR_PROXIES } from "./policy.mjs?v=0.5.0";
-import { ewmaCovariance } from "./risk-math.mjs?v=0.5.0";
+import { alignReturns, covariance, variance, mean, finite } from "./analytics.mjs?v=0.5.1";
+import { SECTOR_PROXIES } from "./policy.mjs?v=0.5.1";
+import { ewmaCovariance } from "./risk-math.mjs?v=0.5.1";
 
 const clamp = (x, low, high) => Math.max(low, Math.min(high, x));
 
