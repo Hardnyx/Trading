@@ -1,88 +1,9 @@
-import {
-  alignReturns,
-  covariance,
-  variance,
-  mean,
-  finite,
-  sum,
-  correlation,
-  normalizeWeights,
-} from "./analytics.mjs?v=0.3.0";
-import { SECTOR_PROXIES } from "./policy.mjs?v=0.3.0";
-export function factorModel(assets, positions, asOf, lookback = 500) {
-  const lookup = new Map(assets.map((a) => [a.symbol, a])),
-    market = lookup.get("SPY");
-  if (!market)
-    return {
-      rows: [],
-      residualCorrelation: [],
-      note: "Falta SPY para estimar exposiciones.",
-    };
-  const selected = normalizeWeights(positions)
-    .map((p) => ({ p, asset: lookup.get(p.symbol) }))
-    .filter((r) => r.asset);
-  const all = [
-    ...new Map(
-      [
-        market,
-        ...selected
-          .flatMap((r) => [r.asset, lookup.get(SECTOR_PROXIES[r.asset.sector])])
-          .filter(Boolean),
-      ].map((a) => [
-        a.symbol,
-        { ...a, history: a.history.filter((r) => r.date <= asOf) },
-      ]),
-    ).values(),
-  ];
-  const aligned = alignReturns(all, lookback),
-    columns = new Map(all.map((a, i) => [a.symbol, aligned.columns[i]])),
-    m = columns.get("SPY"),
-    vm = variance(m);
-  if (aligned.dates.length < 63 || !(vm > 0))
-    return {
-      rows: [],
-      residualCorrelation: [],
-      note: "Historia común insuficiente para factores.",
-    };
-  const rows = selected.map(({ p, asset }) => {
-    const y = columns.get(asset.symbol),
-      sector = SECTOR_PROXIES[asset.sector],
-      s = columns.get(sector);
-    const sectorBeta = s ? covariance(s, m) / vm : 0,
-      sectorOrthogonal = s ? s.map((v, t) => v - sectorBeta * m[t]) : null;
-    const vs = sectorOrthogonal ? variance(sectorOrthogonal) : 0,
-      betaMarket = covariance(y, m) / vm,
-      betaSector = vs > 1e-14 ? covariance(y, sectorOrthogonal) / vs : 0;
-    const residual = y.map(
-        (v, t) =>
-          v -
-          betaMarket * m[t] -
-          (sectorOrthogonal ? betaSector * sectorOrthogonal[t] : 0),
-      ),
-      vy = variance(y),
-      vr = variance(residual);
-    return {
-      symbol: asset.symbol,
-      weight: p.weight,
-      sector: sector || null,
-      sectorMarketBeta: sectorBeta,
-      betaMarket,
-      betaSector,
-      rSquared: vy > 0 ? Math.max(0, Math.min(1, 1 - vr / vy)) : null,
-      residualVolatility: Math.sqrt(vr * 252),
-      residual,
-    };
-  });
-  return {
-    rows,
-    residualCorrelation: rows.map((a) =>
-      rows.map((b) => correlation(a.residual, b.residual)),
-    ),
-    asOf,
-    inputEnd: aligned.dates.at(-1),
-    observations: aligned.dates.length,
-    note: "Regresión con mercado SPY y sector ortogonal al mercado. El residual es lo no explicado; no mide habilidad. ETFs sin desglose sectorial.",
-  };
+import { finite, sum } from "./analytics.mjs?v=0.3.0";
+import { estimateResidualDependence } from "./residual-dependence.mjs?v=0.3.0";
+
+export function factorModel(assets, positions, asOf, lookback = 500,
+                            lambda = 0.94, references = assets) {
+  return estimateResidualDependence(assets, positions, asOf, lookback, lambda, references);
 }
 export function adjustedReturn(asset, from, to) {
   const first = asset.history.find((r) => r.date === from),
