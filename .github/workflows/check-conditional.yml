@@ -1,0 +1,24 @@
+name: Validate conditional-risk integration
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/check_conditional.mjs'
+      - 'dist/data/volatility.json'
+      - 'dist/assets/js/conditional-risk.mjs'
+      - 'dist/assets/js/path-model.mjs'
+      - '.github/workflows/check-conditional.yml'
+permissions:
+  contents: read
+jobs:
+  integration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Evaluate real prices, conditional risk and EWMA control
+        run: node scripts/check_conditional.mjs
