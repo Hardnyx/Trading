@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <title>Plantillas de interfaz</title>
+  </head>
+  <body>
+    <!-- Ex ante composition controls and the recorded model proposal. -->
+
+    <template id="composition-controls">
+      <details class="composition-controls">
+        <summary>
+          LÍMITES DE LA PROPUESTA · {{months}} MESES · CVaR MÁX. {{budget}}
+        </summary>
+        <div class="composition-fields">
+          {{{fields}}}
+          <div class="field">
+            <label for="composition-horizon">HORIZONTE</label
+            ><select
+              id="composition-horizon"
+              data-setting="horizon"
+              data-numeric
+            >
+              {{{horizons}}}
+            </select>
+          </div>
+        </div>
+        <p>
+          Solo posiciones largas. Pesos en pasos de 5 puntos, sin apalancamiento
+          ni costos. SHY es la reserva y tiene su propio límite. La media futura
+          parte de valoración, no del retorno histórico.
+        </p>
+      </details>
+    </template>
+
+    <template id="composition-field">
+      <div class="field">
+        <label for="composition-{{key}}">{{label}}</label>
+        <div class="input-unit">
+          <input
+            id="composition-{{key}}"
+            type="number"
+            min="{{min}}"
+            max="{{max}}"
+            step="{{step}}"
+            value="{{value}}"
+            data-composition-rule="{{key}}"
+            data-scale="{{scale}}"
+          /><span>{{unit}}</span>
+        </div>
+      </div>
+    </template>
+
+    <template id="composition-horizon-option">
+      <option value="{{value}}" {{{selected}}}>{{label}}</option>
+    </template>
+
+    <template id="composition-notice">
+      <div class="notice">{{message}}</div>
+    </template>
+
+    <template id="composition-report">
+      <section class="panel composition-report">
+        <div class="panel-header">
+          <h2 class="panel-title">PROPUESTA EX ANTE</h2>
+          <span class="panel-meta">CORTE {{asOf}}</span>
+        </div>
+        {{{notice}}}
+        <div class="composition-metrics">{{{metrics}}}</div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>ACTIVO</th>
+                <th>PESO PROPUESTO</th>
+                <th>ANCLA ADVERSA / AÑO</th>
+                <th>ANCLA BASE / AÑO</th>
+                <th>ANCLA FAVORABLE / AÑO</th>
+                <th>INFORMACIÓN CONOCIDA</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{{rows}}}
+            </tbody>
+          </table>
+        </div>
+        <div class="composition-method">
+          <p>
+            Mejor crecimiento logarítmico esperado entre {{evaluated}}
+            candidatas; {{feasible}} cumplieron los límites de búsqueda.
+            {{searchPaths}} escenarios compartidos para comparar y
+            {{verificationPaths}} nuevos para comprobar la elegida. Horizonte:
+            {{months}} meses.
+          </p>
+          <p>
+            Valoración por BPA y múltiplo de salida. Anclas triangulares entre
+            los escenarios adverso y favorable, con modo en el base y un factor
+            fundamental compartido. Difusión correlacionada {{model}}.
+            Parámetros de incertidumbre y saltos propios; las probabilidades
+            dependen de estos supuestos.
+          </p>
+          <p>
+            Se conserva el corte, la información utilizada, la semilla y los
+            límites al registrar o exportar. La comprobación histórica no
+            interviene en la selección.
+          </p>
+        </div>
+      </section>
+    </template>
+
+    <template id="composition-metric">
+      <div>
+        <label>{{label}}</label><strong class="{{tone}}">{{value}}</strong
+        ><small>{{detail}}</small>
+      </div>
+    </template>
+
+    <template id="composition-signal">
+      <tr>
+        <td>
+          <button class="text-button" data-detail="{{symbol}}">
+            {{symbol}}
+          </button>
+        </td>
+        <td>{{weight}}</td>
+        <td>{{low}}</td>
+        <td>{{anchor}}</td>
+        <td>{{high}}</td>
+        <td>{{source}}</td>
+      </tr>
+    </template>
+  </body>
+</html>

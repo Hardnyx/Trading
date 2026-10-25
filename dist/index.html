@@ -1,19 +1,43 @@
 <!doctype html>
 <html lang="es">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#090d11">
-  <meta name="description" content="Terminal de research para acciones de Estados Unidos. Construye carteras, analiza correlaciones y explora escenarios de valoración con datos públicos.">
-  <title>Trading · Research Terminal</title>
-  <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="./assets/styles.css">
-  <script type="module" src="./assets/app.mjs"></script>
-</head>
-<body>
-  <div id="app"><div class="boot"><span class="brand">TRADING<span class="brand-cursor">_</span></span><p>Cargando datos<span class="loading-dots">...</span></p></div></div>
-  <div id="modal-root"></div>
-  <div id="toast" role="status" aria-live="polite"></div>
-  <input id="import-file" type="file" accept="application/json,.json" hidden>
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#090d11" />
+    <meta
+      name="description"
+      content="Terminal de research para acciones de Estados Unidos. Construye carteras, analiza correlaciones y explora escenarios de valoración con datos públicos."
+    />
+    <title>Trading · Research Terminal</title>
+    <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="./assets/css/styles.css" />
+    <script type="module" src="./assets/js/app.mjs"></script>
+  </head>
+  <body>
+    <div id="app">
+      <div class="boot">
+        <span class="brand">TRADING<span class="brand-cursor">_</span></span>
+        <p>Cargando datos<span class="loading-dots">...</span></p>
+      </div>
+    </div>
+    <div id="modal-root"></div>
+    <div id="toast" role="status" aria-live="polite"></div>
+    <input
+      id="import-file"
+      type="file"
+      accept="application/json,.json"
+      hidden
+    />
+    <template id="startup-error">
+      <div class="boot">
+        <span class="brand">TRADING</span>
+        <p data-error-message></p>
+        <button class="button" data-action="reload-app">Volver a cargar</button>
+      </div>
+    </template>
+    <noscript
+      >Activa JavaScript para componer la cartera y ejecutar los
+      cálculos.</noscript
+    >
+  </body>
 </html>

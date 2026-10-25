@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <title>Plantillas de interfaz</title>
+  </head>
+  <body>
+    <!-- overview: reusable HTML; double braces escape text, triple braces insert rendered fragments. -->
+
+    <template id="overview-2">
+      <div class="optimization">
+        <p>
+          Referencia guardada el {{registered_at}}, usando el corte {{as_of}}.
+          Los cambios de pesos del constructor no alteran esta base hasta
+          registrar otra composición.
+        </p>
+        <p>
+          La referencia se guarda en este navegador. Exporta la cartera para
+          conservarla o pasarla a otro equipo.
+        </p>
+        <p>
+          La evaluación se ejecuta al cargar otro corte. Los avisos del
+          navegador requieren mantener la página abierta y dar permiso.
+        </p>
+        <button class="button" data-action="export">
+          Exportar referencia y supuestos
+        </button>
+      </div>
+    </template>
+
+    <template id="overview">
+      <div class="two-column section-gap">{{{riskMonitor}}}{{{panel}}}</div>
+    </template>
+
+    <template id="overview-4">
+      <span
+        >Evolución teórica con Adj Close y unidades iniciales constantes. No
+        sustituye la conciliación con el broker.</span
+      >
+    </template>
+
+    <template id="overview-6">
+      <tr>
+        <td>
+          <button class="text-button" data-detail="{{symbol}}">
+            {{symbol2}}
+          </button>
+        </td>
+        <td>{{weight}}</td>
+        <td>{{currentWeight}}</td>
+        <td class="{{returnTone}}">{{return}}</td>
+        <td>{{price}}</td>
+        <td>{{price8}}</td>
+        <td>{{fairValue}}</td>
+      </tr>
+    </template>
+
+    <template id="overview-5">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>ACTIVO</th>
+              <th>PESO REGISTRADO</th>
+              <th>PESO AJUSTADO ACTUAL</th>
+              <th>RETORNO AJUSTADO</th>
+              <th>PRECIO REFERENCIA</th>
+              <th>ÚLTIMO PRECIO</th>
+              <th>VALOR MODELO ACTUAL</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{{items}}}
+          </tbody>
+        </table>
+      </div>
+    </template>
+
+    <template id="overview-3">
+      <div class="section-gap">{{{panel}}}</div>
+    </template>
+
+    <template id="overview-7">
+      <span
+        >Las alertas indican qué revisar. Las de valoración dependen de los
+        supuestos guardados.</span
+      >
+    </template>
+
+    <template id="overview-8">
+      <button class="text-button" data-action="notifications">
+        Activar avisos
+      </button>
+    </template>
+
+    <template id="overview-9">
+      <div class="empty-state review-empty">
+        No se activó ningún criterio con este corte.
+      </div>
+    </template>
+
+    <template id="overview-12">
+      <a href="{{url}}" target="_blank" rel="noopener noreferrer"
+        >Presentación SEC ↗</a
+      >
+    </template>
+
+    <template id="overview-13">
+      <button class="button small" data-ack="{{id}}">Marcar revisada</button>
+    </template>
+
+    <template id="overview-14">
+      <span class="muted">REVISADA</span>
+    </template>
+
+    <template id="overview-11">
+      <tr>
+        <td>
+          <span class="{{value1}}">{{toUpperCase}}</span><br /><button
+            class="text-button"
+            {{{value3}}}
+          >
+            {{symbol}}
+          </button>
+        </td>
+        <td>
+          <b>{{title}}</b>
+          <p>{{reason}}</p>
+          {{{value7}}}
+        </td>
+        <td>{{review}}</td>
+        <td>{{{value9}}}</td>
+      </tr>
+    </template>
+
+    <template id="overview-10">
+      <div class="table-wrap">
+        <table class="alerts-table">
+          <thead>
+            <tr>
+              <th>PRIORIDAD / ACTIVO</th>
+              <th>OBSERVACIÓN</th>
+              <th>REVISIÓN SUGERIDA</th>
+              <th>ESTADO</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{{items}}}
+          </tbody>
+        </table>
+      </div>
+    </template>
+
+    <template id="overview-15">
+      <div class="metric-grid">
+        {{{metric}}}{{{metric2}}}{{{metric3}}}{{{metric4}}}
+      </div>
+    </template>
+
+    <template id="overview-16">
+      <div class="notice">
+        Faltan datos para {{items}}. No se calcula un rendimiento completo.
+      </div>
+    </template>
+
+    <template id="overview-17">
+      <div class="empty-state">
+        No hay una cartera registrada.<br /><button
+          class="button primary"
+          data-view="portfolio"
+        >
+          Componer cartera
+        </button>
+      </div>
+    </template>
+
+    <template id="overview-18">
+      <button class="button" data-action="reload">
+        {{{refreshIcon}}}Cargar último corte</button
+      ><button class="button" data-action="rules">Criterios</button>
+    </template>
+  </body>
+</html>

@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <title>Plantillas de interfaz</title>
+  </head>
+  <body>
+    <!-- forecasts: reusable HTML; double braces escape text, triple braces insert rendered fragments. -->
+
+    <template id="forecasts-view-2">
+      <span>Colas agrupadas en extremos · retorno acumulado</span>
+    </template>
+
+    <template id="forecasts-view-3">
+      <span class="panel-meta">{{value1}} MESES</span>
+    </template>
+
+    <template id="forecasts-view-4">
+      <span
+        >El modelo usa la CAGR de valoración como ancla de la media terminal.
+        Los dividendos no se suman de nuevo.</span
+      >
+    </template>
+
+    <template id="forecasts-view-6">
+      <tr>
+        <td colspan="4">Calculando…</td>
+      </tr>
+    </template>
+
+    <template id="forecasts-view-7">
+      <tr>
+        <td>
+          <button class="text-button" data-detail="{{symbol}}">
+            {{symbol2}}
+          </button>
+        </td>
+        <td class="{{annualTone}}">{{annual}}</td>
+        <td>{{source}}</td>
+        <td>
+          <button class="text-button" data-value="{{symbol6}}">
+            Editar valoración {{{arrowIcon}}}
+          </button>
+        </td>
+      </tr>
+    </template>
+
+    <template id="forecasts-view-5">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>ACTIVO</th>
+              <th>ANCLA ANUAL</th>
+              <th>FUENTE DEL SUPUESTO</th>
+              <th>MODELO</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{{value1}}}
+          </tbody>
+        </table>
+      </div>
+    </template>
+
+    <template id="forecasts-view">
+      <div class="forecast-layout">
+        <div>
+          {{{forecastPanel}}}
+          <div class="two-column section-gap">
+            {{{panel}}}{{{validationPanel}}}
+          </div>
+        </div>
+        {{{forecastControls}}}
+      </div>
+      <div class="section-gap">{{{panel5}}}</div>
+    </template>
+
+    <template id="forecasts-view-8">
+      <button class="button" data-action="export-forecast">
+        {{{downloadIcon}}}Resultados
+      </button>
+    </template>
+
+    <template id="forecast-controls-2">
+      <option value="{{n}}" {{{value2}}}>{{toLocaleString}}</option>
+    </template>
+
+    <template id="forecast-controls-3">
+      <option {{{value1}}}>{{n}}</option>
+    </template>
+
+    <template id="forecast-controls-4">
+      <div class="field-row">
+        <div class="field">
+          <label for="jump-intensity">SALTOS / AÑO</label
+          ><input
+            id="jump-intensity"
+            type="number"
+            min="0"
+            max="5"
+            step="0.05"
+            value="{{jumpIntensity}}"
+            data-setting="jumpIntensity"
+            data-numeric
+          />
+        </div>
+        <div class="field">
+          <label for="jump-mean">SALTO LOG. MEDIO %</label
+          ><input
+            id="jump-mean"
+            type="number"
+            min="-80"
+            max="50"
+            step="1"
+            value="{{value2}}"
+            data-setting="jumpMean"
+            data-scale="100"
+          />
+        </div>
+      </div>
+      <div class="forecast-input-note">
+        Dispersión log. del salto: <b>{{jumpVol}}</b>. Salto común a la cartera;
+        parámetros de estrés propios, no estimados.
+      </div>
+    </template>
+
+    <template id="forecast-controls">
+      <div class="forecast-controls">
+        <div class="field">
+          <label for="model-select">PROCESO ESTOCÁSTICO</label
+          ><select id="model-select" data-setting="model">
+            <option value="merton" {{{value1}}}>
+              Merton · difusión + saltos
+            </option>
+            <option value="gbm" {{{value2}}}>GBM · difusión lognormal</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="horizon-select">HORIZONTE</label
+          ><select id="horizon-select" data-setting="horizon" data-numeric>
+            <option value="0.25" {{{value3}}}>3 meses</option>
+            <option value="0.5" {{{value4}}}>6 meses</option>
+            <option value="1" {{{value5}}}>1 año</option>
+            <option value="3" {{{value6}}}>3 años</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="drift-select">ANCLA DEL RETORNO</label
+          ><select id="drift-select" data-setting="driftMode">
+            <option value="fundamental" {{{value7}}}>
+              Valoración fundamental propia
+            </option>
+            <option value="manual" {{{value8}}}>
+              Retorno manual por activo
+            </option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="manual-return">RETORNO MANUAL / SIN FUNDAMENTOS</label>
+          <div class="input-unit">
+            <input
+              id="manual-return"
+              type="number"
+              min="-80"
+              max="100"
+              step="1"
+              value="{{value9}}"
+              data-setting="manualReturn"
+              data-scale="100"
+            /><span>%/año</span>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="path-count">TRAYECTORIAS</label
+            ><select id="path-count" data-setting="paths" data-numeric>
+              {{{items}}}
+            </select>
+          </div>
+          <div class="field">
+            <label for="lambda">EWMA λ</label
+            ><select id="lambda" data-setting="lambda" data-numeric>
+              {{{items11}}}
+            </select>
+          </div>
+        </div>
+        {{{value12}}}
+        <div class="forecast-input-note">
+          Volatilidad/covarianza EWMA con regularización del 5%. Ancla
+          fundamental:
+          <b>{{value13}}</b> del peso. El resto usa Treasury 3M para SHY o el
+          retorno manual.
+        </div>
+        <button class="button primary" data-action="resimulate">
+          {{{refreshIcon}}}{{value15}}
+        </button>
+        <div class="forecast-input-note">
+          Ancla fundamental triangular entre escenarios adverso y favorable, con
+          modo en el base y factor común. Semilla {{seed}}. Probabilidades
+          condicionales al modelo; no son confianza estadística sobre el retorno
+          real.
+        </div>
+      </div>
+    </template>
+
+    <template id="validation-panel">
+      <span class="panel-meta">WALK FORWARD</span>
+    </template>
+
+    <template id="validation-panel-3">
+      <span
+        class="{{value1}}"
+        title="{{date}} · Realizado {{realized}} · Banda {{low}} / {{high}}"
+      ></span>
+    </template>
+
+    <template id="validation-panel-2">
+      <div class="validation-body">
+        <div class="validation-headline">
+          <div>
+            <p class="small muted mono">COBERTURA OBSERVADA · BANDA 90%</p>
+            <div class="validation-number {{value1}}">{{coverage}}</div>
+          </div>
+          <span class="tag">{{value3}} VENTANAS</span>
+        </div>
+        <div class="validation-bars">{{{value4}}}</div>
+        <p>
+          Entrenamiento de 126 sesiones; evaluación en las 21 siguientes, sin
+          solapamiento. EWMA con centro logarítmico cero.
+        </p>
+        <p>
+          Valida bandas de riesgo. El ancla fundamental y los saltos todavía no
+          cuentan con validación histórica.
+        </p>
+      </div>
+    </template>
+
+    <template id="forecast-panel">
+      <span>{{value1}}</span><span>{{value2}}</span>
+    </template>
+
+    <template id="forecast-panel-2">
+      <div class="panel-controls">
+        <button class="range-button {{value1}}" data-chart="forecast">
+          PROYECCIÓN</button
+        ><button class="range-button {{value2}}" data-chart="history">
+          HISTÓRICO
+        </button>
+      </div>
+    </template>
+
+    <template id="forecast-panel-3">
+      <span class="panel-meta">{{{toLocaleString}}} TRAYECTORIAS</span>
+    </template>
+
+    <template id="forecast-panel-5">
+      <div class="prediction-progress"></div>
+    </template>
+
+    <template id="forecast-panel-4">
+      {{{value1}}}
+      <div class="chart-body">
+        <div class="chart-summary">
+          <div>
+            <span class="summary-label">{{value2}}</span
+            ><strong>{{value3}}</strong>
+          </div>
+          <div class="chart-legend">{{{legend}}}</div>
+        </div>
+        {{{value5}}}
+      </div>
+      {{{resultCards}}}
+    </template>
+
+    <template id="forecast-panel-7">
+      <div class="forecast-band">
+        <label>{{label}}</label><strong class="{{c}}">{{value3}}</strong
+        ><small>{{r}} en {{value5}} meses</small>
+      </div>
+    </template>
+
+    <template id="forecast-panel-6">
+      <div class="forecast-bands">{{{items}}}</div>
+    </template>
+
+    <template id="forecast-panel-9">
+      <div class="forecast-band">
+        <label>{{l}}</label><strong class="{{c}}">{{v}}</strong
+        ><small>{{value4}} sesiones comunes</small>
+      </div>
+    </template>
+
+    <template id="forecast-panel-8">
+      <div class="forecast-bands">{{{items}}}</div>
+    </template>
+
+    <template id="forecast-panel-10">
+      <span><i class="legend-line"></i>Mediana</span
+      ><span class="muted">Bandas 50% / 90%</span>
+    </template>
+
+    <template id="forecast-panel-11">
+      <span><i class="legend-line"></i>Cartera</span
+      ><span><i class="legend-line benchmark"></i>SPY</span>
+    </template>
+
+    <template id="simulation-metrics">
+      <div class="metric-grid">
+        {{{metric}}}{{{metric2}}}{{{metric3}}}{{{metric4}}}
+      </div>
+    </template>
+  </body>
+</html>

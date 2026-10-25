@@ -8,7 +8,7 @@ Herramienta de uso personal para revisar activos, configurar supuestos y analiza
 
 ## Qué incluye
 
-- **Componer cartera:** selección de activos, pesos, capital y registro de una referencia con fecha de corte.
+- **Componer cartera:** propuesta ex ante con un clic, edición de pesos y registro de una referencia con fecha de corte.
 - **Seguimiento:** comparación con la referencia registrada, revisiones con motivos y estado de atención.
 - **Proyecciones:** Monte Carlo multiactivo con difusión lognormal correlacionada y extensión con saltos sistémicos de tipo Merton. Hasta 5,000 trayectorias, semilla reproducible y horizonte de tres meses a tres años.
 - **Research:** filtros, precios, P/E, FCF yield, volatilidad y comparación contra el modelo propio.
@@ -46,6 +46,16 @@ En GitHub está disponible el workflow manual **Refresh market data**. Actualiza
 
 ## Composición y seguimiento
 
+**Proponer cartera** compara hasta 400 carteras con 1,000 escenarios futuros comunes y comprueba la elegida con 5,000 escenarios nuevos. Entre las candidatas que satisfacen los límites, elige la de mayor crecimiento logarítmico esperado. La búsqueda es aproximada, con pesos en pasos de 5 puntos porcentuales; no garantiza un óptimo global.
+
+Las acciones necesitan BPA y precio conocidos al corte y un ancla de valoración superior al rendimiento supuesto de la reserva SHY. Los índices amplios y otros ETFs permanecen disponibles para composición manual. Los precios históricos estiman covarianza y correlaciones; su rentabilidad pasada no determina la media futura de la propuesta.
+
+Se simulan difusión correlacionada, saltos sistémicos y una distribución triangular del ancla fundamental entre los escenarios adverso y favorable, con modo en el base. Un factor compartido mueve las anclas de las acciones. Estos límites y su dependencia son supuestos explícitos, no distribuciones calibradas de beneficios ni probabilidades observadas.
+
+Los límites iniciales, editables en la página, son: 20% por acción, 35% por sector, 50% en SHY, seis posiciones, correlación máxima de 0.85, CVaR 95% máximo de 20% y probabilidad de pérdida máxima de 45% al horizonte. Son parámetros de trabajo. Si no hay una propuesta que los cumpla, el programa conserva la cartera actual.
+
+El corte, los fundamentos utilizados, los supuestos, las semillas y ambas simulaciones quedan registrados al exportar o registrar la composición. Cambiar pesos o supuestos marca la propuesta como modificada. La segunda simulación comprueba estabilidad numérica con nuevas realizaciones del modelo; no constituye validación predictiva con futuros datos de mercado.
+
 La aplicación comienza sin posiciones. Selecciona activos, ajusta los pesos al 100%, configura el capital y revisa los supuestos antes de pulsar **Registrar composición**. El registro conserva precios ajustados, pesos, fundamentos y supuestos del corte utilizado. Los cambios posteriores del constructor no modifican esa referencia hasta registrar otra composición.
 
 Al cargar un corte posterior, el seguimiento evalúa:
@@ -64,12 +74,12 @@ La referencia se conserva en el navegador, junto con los supuestos y el estado d
 
 ### Fuentes
 
-| Fuente | Contenido | Acceso |
-|---|---|---|
-| SEC EDGAR Company Facts y Submissions | Conceptos XBRL y presentaciones regulatorias recientes | API oficial, sin clave |
-| Yahoo Finance chart | Cierres, Adj Close, volumen y dividendos | Endpoint público no oficial; disponibilidad sin garantía |
-| U.S. Treasury | Curva par nominal | Feed XML oficial |
-| BLS | IPC y desempleo desestacionalizados | API pública oficial |
+| Fuente                                | Contenido                                              | Acceso                                                   |
+| ------------------------------------- | ------------------------------------------------------ | -------------------------------------------------------- |
+| SEC EDGAR Company Facts y Submissions | Conceptos XBRL y presentaciones regulatorias recientes | API oficial, sin clave                                   |
+| Yahoo Finance chart                   | Cierres, Adj Close, volumen y dividendos               | Endpoint público no oficial; disponibilidad sin garantía |
+| U.S. Treasury                         | Curva par nominal                                      | Feed XML oficial                                         |
+| BLS                                   | IPC y desempleo desestacionalizados                    | API pública oficial                                      |
 
 Universo inicial: AAPL, MSFT, NVDA, AMZN, GOOGL, META, JPM, V, XOM, JNJ, PG, COST, SPY, QQQ, IWM, TLT, GLD y SHY. La cobertura financiera puede variar entre emisores: los datos ausentes se muestran como `—`.
 
@@ -118,7 +128,11 @@ Las pruebas cubren alineación de series, covarianzas, pesos, contribución al r
 ```text
 dist/
   index.html
-  assets/          Interfaz, gráficos, cálculos y worker
+  assets/
+    css/           Estilos y paleta
+    js/            Cálculos, controladores y workers
+      ui/          Vistas, formatos y carga de plantillas
+  templates/       HTML por sección y gráficos
   data/market.json Corte descargado de fuentes públicas
 scripts/
   refresh_data.py  Actualización y normalización
@@ -127,7 +141,7 @@ tests/            Cálculos financieros y estocásticos
 
 La aplicación no envía los pesos ni los supuestos a un servidor. Se guardan en el navegador y pueden exportarse a un archivo JSON.
 
-Referencias: [Merton, retornos discontinuos](https://dspace.mit.edu/entities/publication/e63635d9-d2bf-40ce-a79b-67786dd9f105), [RiskMetrics Technical Document](https://www.msci.com/research-and-insights/paper/1996-riskmetrics-technical-document), [SEC APIs](https://www.sec.gov/search-filings/edgar-application-programming-interfaces), [Treasury XML](https://home.treasury.gov/treasury-daily-interest-rate-xml-feed) y [BLS API](https://www.bls.gov/developers/).
+Referencias: [Kelly con riesgo restringido](https://www.web.stanford.edu/~boyd/papers/kelly.html), [CVaR](https://www.sciencedirect.com/science/article/pii/S0378426602002716), [Merton, retornos discontinuos](https://dspace.mit.edu/entities/publication/e63635d9-d2bf-40ce-a79b-67786dd9f105), [RiskMetrics Technical Document](https://www.msci.com/research-and-insights/paper/1996-riskmetrics-technical-document), [SEC APIs](https://www.sec.gov/search-filings/edgar-application-programming-interfaces), [Treasury XML](https://home.treasury.gov/treasury-daily-interest-rate-xml-feed) y [BLS API](https://www.bls.gov/developers/).
 
 Proyecto independiente, sin afiliación a Bloomberg.
 

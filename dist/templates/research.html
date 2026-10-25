@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <title>Plantillas de interfaz</title>
+  </head>
+  <body>
+    <!-- research: reusable HTML; double braces escape text, triple braces insert rendered fragments. -->
+
+    <template id="research">
+      <span
+        >FCF = CFO − capex; excluido para el sector financiero. — indica falta
+        de datos comparables.</span
+      >
+    </template>
+
+    <template id="research-2">
+      <span class="panel-meta">{{length}} ACTIVOS</span>
+    </template>
+
+    <template id="research-4">
+      <option {{{value1}}}>{{s}}</option>
+    </template>
+
+    <template id="research-3">
+      <div class="filters">
+        <div class="filter-search">
+          {{{searchIcon}}}<input
+            id="research-search"
+            placeholder="Buscar ticker o empresa"
+            value="{{text}}"
+            aria-label="Buscar en el universo"
+          />
+        </div>
+        <select id="sector-filter" aria-label="Filtrar sector">
+          <option value="all">Todos los sectores</option>
+          {{{items}}}</select
+        ><select id="type-filter" aria-label="Filtrar tipo">
+          <option value="all">Acciones + ETFs</option>
+          <option value="stock" {{{value4}}}>Acciones</option>
+          <option value="etf" {{{value5}}}>ETFs</option></select
+        ><label class="filter-toggle"
+          ><input id="discount-filter" type="checkbox" {{{value6}}} />Descuento
+          modelo</label
+        >
+      </div>
+      <div id="screener-table">{{{renderTable}}}</div>
+    </template>
+
+    <template id="research-5">
+      <button class="button" data-action="export-research">
+        {{{downloadIcon}}}Exportar CSV
+      </button>
+    </template>
+
+    <template id="render-table-2">
+      <th>{{{tableSort}}}</th>
+      <th>{{{tableSort2}}}</th>
+    </template>
+
+    <template id="render-table-4">
+      <td class="{{fcfYieldTone}}">{{fcfYield}}</td>
+      <td>{{volatility}}</td>
+    </template>
+
+    <template id="render-table-3">
+      <tr>
+        <td>
+          <button class="security-name" data-detail="{{symbol}}">
+            <span class="ticker-logo">{{slice}}</span
+            ><span class="ticker-info"
+              ><b>{{symbol3}}<span class="dim"> US</span></b
+              ><small>{{name}}</small></span
+            >
+          </button>
+        </td>
+        <td>{{price}}</td>
+        <td class="{{changeTone}}">{{change}}</td>
+        <td>{{value8}}</td>
+        {{{value9}}}
+        <td
+          class="{{upsideTone}}"
+          title="Valor presente del modelo / precio − 1; depende de supuestos editables"
+        >
+          {{upside}}
+        </td>
+        <td>{{{sparkline}}}</td>
+        <td>
+          <button
+            class="add-button {{value13}}"
+            data-add="{{symbol14}}"
+            aria-label="{{value15}} {{symbol16}} {{value17}} portafolio"
+          >
+            {{value18}}
+          </button>
+        </td>
+      </tr>
+    </template>
+
+    <template id="render-table">
+      <div class="table-wrap">
+        <table class="{{value1}}">
+          <thead>
+            <tr>
+              <th>{{{tableSort}}}</th>
+              <th>{{{tableSort3}}}</th>
+              <th>{{{tableSort4}}}</th>
+              <th>{{{tableSort5}}}</th>
+              {{{value6}}}
+              <th>{{{tableSort7}}}</th>
+              <th>3 MESES</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {{{items}}}
+          </tbody>
+        </table>
+      </div>
+    </template>
+
+    <template id="render-table-5">
+      <div class="empty-state">
+        No hay activos con estos filtros.<br /><button
+          class="button"
+          data-action="clear-filters"
+        >
+          Restablecer filtros
+        </button>
+      </div>
+    </template>
+
+    <template id="table-sort">
+      <button data-sort="{{key}}">{{label}}{{value3}}</button>
+    </template>
+  </body>
+</html>

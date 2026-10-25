@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <title>Plantillas de interfaz</title>
+  </head>
+  <body>
+    <!-- components: reusable HTML; double braces escape text, triple braces insert rendered fragments. -->
+
+    <template id="icon">
+      <span aria-hidden="true">{{symbol}}</span>
+    </template>
+
+    <template id="bars-empty">
+      <div class="muted small">Sin posiciones.</div>
+    </template>
+
+    <template id="bar-item">
+      <div class="bar-item">
+        <div class="bar-item-label">
+          <span>{{label}}</span><b class="{{value2}}">{{value}}</b>
+        </div>
+        <div class="bar-item-track">
+          <div
+            class="bar-item-fill"
+            data-width="{{min}}"
+            data-sign="{{value5}}"
+          ></div>
+        </div>
+      </div>
+    </template>
+
+    <template id="bars">
+      <div class="bar-list">{{{value1}}}</div>
+    </template>
+
+    <template id="title">
+      <div class="page-title">
+        <div>
+          <p class="eyebrow">{{eyebrow}}</p>
+          <h1>{{heading}}</h1>
+          <p class="subtitle">{{subtitle}}</p>
+        </div>
+        <div class="page-actions">{{{actions}}}</div>
+      </div>
+    </template>
+
+    <template id="metric-unit">
+      <span class="unit">{{unit}}</span>
+    </template>
+
+    <template id="metric">
+      <div class="metric-card">
+        <div class="metric-label">{{label}}{{{forecastsIcon}}}</div>
+        <div class="metric-value {{className}}">{{value}}{{{value5}}}</div>
+        <div class="metric-bottom">
+          <span class="mini-square"></span>{{sub}}
+        </div>
+      </div>
+    </template>
+
+    <template id="panel-footnote">
+      <div class="chart-footnote">{{{foot}}}</div>
+    </template>
+
+    <template id="panel">
+      <section class="panel">
+        <div class="panel-header">
+          <h2 class="panel-title">
+            <span class="panel-index">{{index}}</span>{{title}}
+          </h2>
+          {{{controls}}}
+        </div>
+        {{{body}}}{{{value5}}}
+      </section>
+    </template>
+  </body>
+</html>

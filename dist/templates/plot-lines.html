@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <title>Plantillas de interfaz</title>
+  </head>
+  <body>
+    <template id="chart-portfolio-chart">
+      <div class="empty-chart">
+        Selecciona al menos un activo con historia suficiente.
+      </div>
+    </template>
+
+    <template id="chart-line-chart">
+      <svg
+        class="line-chart"
+        viewBox="0 0 {{width}} {{height}}"
+        role="img"
+        aria-label="{{label}}"
+      >
+        <defs>
+          <linearGradient id="chart-fill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="{{color}}" stop-opacity=".13" />
+            <stop offset="100%" stop-color="{{color5}}" stop-opacity="0" />
+          </linearGradient>
+        </defs>
+        {{{grid}}}{{{labels}}}{{{paths}}}{{{hover}}}
+      </svg>
+    </template>
+
+    <template id="chart-line-chart-2">
+      <rect
+        x="{{value1}}"
+        y="{{top}}"
+        width="{{max}}"
+        height="{{ph}}"
+        fill="transparent"
+        ><title>{{date}}{{items}}</title></rect
+      >
+    </template>
+
+    <template id="chart-line-chart-3">
+      {{{fill}}}<path
+        d="{{d}}"
+        fill="none"
+        stroke="{{color}}"
+        stroke-width="{{value4}}"
+        {{{value5}}}
+        vector-effect="non-scaling-stroke"
+      /><circle cx="{{x}}" cy="{{y}}" r="3" fill="{{color8}}" />
+    </template>
+
+    <template id="chart-line-chart-4">
+      <path
+        d="{{d}} L{{x}},{{value3}} L{{x4}},{{value5}} Z"
+        fill="url(#chart-fill)"
+      />
+    </template>
+
+    <template id="chart-line-chart-5">
+      <text x="{{x}}" y="{{value2}}" class="axis-label" text-anchor="{{value3}}"
+        >{{slice}}</text
+      >
+    </template>
+
+    <template id="chart-line-chart-6">
+      <line
+        x1="{{left}}"
+        x2="{{value2}}"
+        y1="{{y}}"
+        y2="{{y4}}"
+        class="chart-grid"
+      /><text x="{{value5}}" y="{{value6}}" class="axis-label"
+        >{{number}}{{value8}}</text
+      >
+    </template>
+
+    <template id="chart-line-chart-7">
+      <div class="empty-chart">Agrega activos para visualizar la cartera.</div>
+    </template>
+
+    <template id="chart-sparkline">
+      <svg
+        class="sparkline"
+        viewBox="0 0 {{width}} {{height}}"
+        aria-hidden="true"
+      >
+        <polyline
+          points="{{points}}"
+          fill="none"
+          stroke="{{color}}"
+          stroke-width="1.35"
+          vector-effect="non-scaling-stroke"
+        />
+      </svg>
+    </template>
+  </body>
+</html>

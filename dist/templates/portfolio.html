@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <title>Plantillas de interfaz</title>
+  </head>
+  <body>
+    <!-- portfolio: reusable HTML; double braces escape text, triple braces insert rendered fragments. -->
+
+    <template id="portfolio-weight-notice">
+      <div class="notice">
+        Los pesos suman {{total}}. Las métricas utilizan pesos
+        normalizados.<button class="text-button" data-action="normalize">
+          Ajustar a 100%
+        </button>
+      </div>
+    </template>
+
+    <template id="portfolio-add-action">
+      <button class="text-button" data-view="research">+ AGREGAR ACTIVO</button>
+    </template>
+
+    <template id="portfolio-asset-option">
+      <button class="button" data-add="{{symbol}}">+ {{symbol2}}</button>
+    </template>
+
+    <template id="portfolio-empty">
+      <div class="empty-state portfolio-empty">
+        Selecciona los activos del corte {{price_as_of}}.
+        <div class="asset-picker">{{{items}}}</div>
+        <button class="text-button" data-view="research">
+          Abrir research de activos »
+        </button>
+      </div>
+    </template>
+
+    <template id="portfolio-position-row">
+      <tr>
+        <td>
+          <button class="security-name" data-detail="{{symbol}}">
+            <span class="ticker-logo">{{slice}}</span
+            ><span class="ticker-info"
+              ><b>{{symbol3}}</b><small>{{name}}</small></span
+            >
+          </button>
+        </td>
+        <td>{{price}}</td>
+        <td>
+          <div class="weight-cell">
+            <input
+              type="number"
+              min="0"
+              max="100"
+              step="0.5"
+              value="{{value6}}"
+              data-weight="{{symbol7}}"
+              aria-label="Peso {{symbol8}}"
+            /><span>%</span>
+          </div>
+        </td>
+        <td>{{value9}}</td>
+        <td>{{fraction}}</td>
+        <td>
+          <button
+            class="icon-button remove-position"
+            data-remove="{{symbol11}}"
+            aria-label="Quitar {{symbol12}}"
+          >
+            {{{closeIcon}}}
+          </button>
+        </td>
+      </tr>
+    </template>
+
+    <template id="portfolio-positions">
+      <div class="table-wrap">
+        <table class="weights-table">
+          <thead>
+            <tr>
+              <th>ACTIVO</th>
+              <th>PRECIO</th>
+              <th>PESO</th>
+              <th>CAPITAL ASIGNADO</th>
+              <th>CONTRIB. AL RIESGO</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {{{items}}}
+          </tbody>
+        </table>
+      </div>
+      <div class="total-row">
+        <span>PESO TOTAL</span><b class="{{value2}}">{{total}}</b>
+      </div>
+    </template>
+
+    <template id="portfolio-archive">
+      <div class="optimization">
+        <div class="field">
+          <label for="capital-input">CAPITAL DE SIMULACIÓN · USD</label
+          ><input
+            id="capital-input"
+            type="number"
+            min="100"
+            max="1000000000"
+            step="1000"
+            value="{{capital}}"
+          />
+        </div>
+        <p class="mini-note">
+          Corte de composición: {{price_as_of}}. Se registra una referencia de
+          pesos y precios; no operaciones de un broker.
+        </p>
+        <button class="button" data-action="export">
+          {{{downloadIcon}}}Exportar cartera</button
+        ><button class="button ghost" data-action="import-portfolio">
+          {{{uploadIcon}}}Importar cartera
+        </button>
+      </div>
+    </template>
+
+    <template id="portfolio-layout">
+      {{{value1}}}
+      <div class="portfolio-grid">
+        {{{panel}}}
+        <div class="research-stack portfolio-stack">
+          {{{panel3}}}{{{panel4}}}
+        </div>
+      </div>
+      <div class="two-column section-gap">{{{panel5}}}{{{riskMonitor}}}</div>
+    </template>
+
+    <template id="portfolio-actions">
+      <button
+        class="button primary"
+        data-action="compose"
+        {{{composeDisabled}}}
+      >
+        {{composeLabel}}</button
+      ><button class="button ghost" data-action="equal">Igualar pesos</button
+      ><button class="button" data-action="register" {{{value1}}}>
+        Registrar composición
+      </button>
+    </template>
+
+    <template id="risk-monitor-action">
+      <button class="text-button" data-view="risk" aria-label="Abrir riesgo">
+        {{{arrowIcon}}}
+      </button>
+    </template>
+
+    <template id="risk-monitor-row">
+      <div class="risk-row"><span>{{l}}</span><b class="number">{{v}}</b></div>
+    </template>
+
+    <template id="risk-monitor-values">
+      <div class="risk-strip">{{{items}}}</div>
+    </template>
+
+    <template id="allocation-row">
+      <tr>
+        <td>
+          <button class="text-button" data-detail="{{symbol}}">
+            {{symbol2}}
+          </button>
+        </td>
+        <td>{{weight}}</td>
+        <td>
+          <div class="allocation-track">
+            <span data-width="{{value4}}"></span>
+          </div>
+        </td>
+      </tr>
+    </template>
+
+    <template id="allocation-table">
+      <div class="table-wrap">
+        <table class="allocation-table">
+          <thead>
+            <tr>
+              <th>ACTIVO</th>
+              <th>PESO</th>
+              <th>EXPOSICIÓN</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{{items}}}
+          </tbody>
+        </table>
+      </div>
+      <div class="allocation-summary">
+        <div><label>CAPITAL SIMULADO</label><strong>{{capital}}</strong></div>
+        <div>
+          <label>POSICIONES EFECTIVAS</label
+          ><strong>{{effectivePositions}}</strong>
+        </div>
+      </div>
+    </template>
+  </body>
+</html>

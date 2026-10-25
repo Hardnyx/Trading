@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <title>Plantillas de interfaz</title>
+  </head>
+  <body>
+    <!-- risk: reusable HTML; double braces escape text, triple braces insert rendered fragments. -->
+
+    <template id="risk-view-2">
+      <div class="heatmap-wrap">{{{heatmap}}}</div>
+      <div class="heatmap-key">
+        <span>−1.00</span>
+        <div class="heatmap-gradient"></div>
+        <span>+1.00</span><span class="heatmap-caption">RETORNOS DIARIOS</span>
+      </div>
+    </template>
+
+    <template id="risk-view-3">
+      <span class="panel-meta">RETORNO ANUALIZADO ↑</span>
+    </template>
+
+    <template id="risk-view-4">
+      <span
+        >wᵢ(Σw)ᵢ / (w′Σw). Puede ser negativa si un activo cubre riesgo.</span
+      >
+    </template>
+
+    <template id="risk-view-5">
+      <span
+        >Escenarios independientes. Las correlaciones y betas pueden cambiar en
+        episodios de estrés.</span
+      >
+    </template>
+
+    <template id="risk-view-6">
+      <div class="stress-grid">
+        <div class="stress-card">
+          <label>SPY CAE 20%</label><strong>{{value1}}</strong>
+          <p>Sensibilidad lineal β × shock, sin residuo.</p>
+        </div>
+        <div class="stress-card">
+          <label>PRINCIPAL POSICIÓN CAE 30%</label><strong>{{value2}}</strong>
+          <p>{{value3}} · resto de activos constante.</p>
+        </div>
+        <div class="stress-card">
+          <label>DRAWDOWN SUPERA 20%</label
+          ><strong>{{drawdownProbability}}</strong>
+          <p>Probabilidad simulada · {{value5}} meses, pasos semanales.</p>
+        </div>
+      </div>
+    </template>
+
+    <template id="risk-view">
+      <div class="metric-grid">
+        {{{metric}}}{{{metric2}}}{{{metric3}}}{{{metric4}}}
+      </div>
+      <div class="two-column">{{{panel}}}{{{panel6}}}</div>
+      <div class="two-column section-gap">{{{panel7}}}{{{panel8}}}</div>
+      <div class="section-gap">{{{panel9}}}</div>
+    </template>
+
+    <template id="risk-view-7">
+      <div class="panel-controls">
+        <button class="button small {{value1}}" data-lookback="252">
+          1 AÑO</button
+        ><button class="button small {{value2}}" data-lookback="500">
+          2 AÑOS
+        </button>
+      </div>
+    </template>
+  </body>
+</html>

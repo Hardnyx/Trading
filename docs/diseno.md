@@ -4,7 +4,7 @@ Herramienta personal para componer una cartera con los datos del corte disponibl
 
 ## Flujo
 
-1. Seleccionar activos, capital y pesos.
+1. Proponer una cartera ex ante o seleccionar manualmente activos, capital y pesos.
 2. Revisar fundamentos, valoración y proyecciones.
 3. Registrar una composición con su corte de precios y fundamentos.
 4. Cargar cortes posteriores y revisar cambios de peso, resultados, valoración y riesgo.
@@ -12,17 +12,17 @@ Herramienta personal para componer una cartera con los datos del corte disponibl
 
 ## Decisiones aplicadas
 
-| Criterio | Aplicación |
-|---|---|
-| Visibilidad del estado | Fecha de corte, fecha del registro, estado de cálculo y avisos de datos ausentes. |
-| Correspondencia con la tarea | Nombres financieros directos y separación entre composición, seguimiento, investigación y proyección. |
-| Consistencia | Mismas columnas, unidades, formatos y acciones para cada activo. |
-| Control | Supuestos editables, importación/exportación, cierre con Escape y registro explícito de la composición. |
-| Prevención de errores | Validación de archivos y pesos; el registro requiere una suma de 100%. |
-| Reconocimiento | Funciones visibles F1–F7, nombres de activos, enlaces a las fuentes y motivos de cada revisión. |
-| Eficiencia | Búsqueda con `/`, atajos por función y simulación en un Web Worker. |
-| Legibilidad | Números tabulares, alineación decimal, signos explícitos y colores de uso estable. |
-| Densidad | Resúmenes en una fila, comparaciones en tablas; sin gráficos de dona ni bloques promocionales. |
+| Criterio                     | Aplicación                                                                                              |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------- |
+| Visibilidad del estado       | Fecha de corte, fecha del registro, estado de cálculo y avisos de datos ausentes.                       |
+| Correspondencia con la tarea | Nombres financieros directos y separación entre composición, seguimiento, investigación y proyección.   |
+| Consistencia                 | Mismas columnas, unidades, formatos y acciones para cada activo.                                        |
+| Control                      | Supuestos editables, importación/exportación, cierre con Escape y registro explícito de la composición. |
+| Prevención de errores        | Validación de archivos y pesos; el registro requiere una suma de 100%.                                  |
+| Reconocimiento               | Funciones visibles F1–F7, nombres de activos, enlaces a las fuentes y motivos de cada revisión.         |
+| Eficiencia                   | Búsqueda con `/`, atajos por función y simulación en un Web Worker.                                     |
+| Legibilidad                  | Números tabulares, alineación decimal, signos explícitos y colores de uso estable.                      |
+| Densidad                     | Resúmenes en una fila, comparaciones en tablas; sin gráficos de dona ni bloques promocionales.          |
 
 ## Color
 

@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <title>Plantillas de interfaz</title>
+  </head>
+  <body>
+    <template id="chart-histogram">
+      <svg
+        class="histogram"
+        viewBox="0 0 {{width}} {{height}}"
+        role="img"
+        aria-label="Distribución de retornos terminales de Monte Carlo"
+      >
+        {{{bars}}}{{{ticks}}}
+      </svg>
+    </template>
+
+    <template id="chart-histogram-2">
+      <text
+        x="{{value1}}"
+        y="{{value2}}"
+        text-anchor="middle"
+        class="axis-label"
+        >{{number}}%</text
+      >
+    </template>
+
+    <template id="chart-histogram-3">
+      <rect
+        x="{{value1}}"
+        y="{{value2}}"
+        width="{{value3}}"
+        height="{{h}}"
+        fill="{{color}}"
+        ><title>
+          {{number}}% a {{number7}}% · {{count}} simulaciones
+        </title></rect
+      >
+    </template>
+
+    <template id="chart-histogram-4">
+      <div class="empty-chart">Calculando…</div>
+    </template>
+
+    <template id="chart-forecast-cone-2">
+      <rect
+        x="{{value1}}"
+        width="10"
+        y="{{t}}"
+        height="{{value3}}"
+        fill="transparent"
+        ><title>
+          Mes {{number}} · P05 {{number5}} · P50 {{number6}} · P95 {{number7}}
+        </title></rect
+      >
+    </template>
+
+    <template id="chart-forecast-cone">
+      <svg
+        class="line-chart forecast-cone"
+        viewBox="0 0 {{width}} {{height}}"
+        role="img"
+        aria-label="Proyección probabilística: mediana y bandas entre percentiles 5 y 95, base 100"
+      >
+        {{{grid}}}
+        <path d="{{area}}" fill="var(--chart-primary)" opacity=".07" />
+        <path d="{{area5}}" fill="var(--chart-primary)" opacity=".15" />
+        <line
+          x1="{{l}}"
+          x2="{{value7}}"
+          y1="{{y}}"
+          y2="{{y9}}"
+          stroke="var(--chart-reference)"
+          stroke-dasharray="4 5"
+          stroke-width=".7"
+        />
+        <path
+          d="{{path}}"
+          fill="none"
+          stroke="var(--chart-band-outline)"
+          stroke-width=".7"
+          stroke-dasharray="3 4"
+        />
+        <path
+          d="{{path11}}"
+          fill="none"
+          stroke="var(--chart-band-outline)"
+          stroke-width=".7"
+          stroke-dasharray="3 4"
+        />
+        <path
+          d="{{path12}}"
+          fill="none"
+          stroke="var(--chart-primary)"
+          stroke-width="2.2"
+        />
+        <circle cx="{{x}}" cy="{{y14}}" r="3.5" fill="var(--chart-primary)" />
+        {{{ticks}}}{{{items}}}
+      </svg>
+    </template>
+
+    <template id="chart-forecast-cone-3">
+      <text x="{{x}}" y="{{value2}}" class="axis-label" text-anchor="{{value3}}"
+        >{{value4}}</text
+      >
+    </template>
+
+    <template id="chart-forecast-cone-4">
+      <line
+        x1="{{l}}"
+        x2="{{value2}}"
+        y1="{{y}}"
+        y2="{{y4}}"
+        class="chart-grid"
+      /><text x="{{value5}}" y="{{value6}}" class="axis-label">{{number}}</text>
+    </template>
+
+    <template id="chart-forecast-cone-5">
+      <div class="empty-chart">
+        <span class="orange">Calculando distribución de resultados…</span>
+      </div>
+    </template>
+  </body>
+</html>

@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <title>Plantillas de interfaz</title>
+  </head>
+  <body>
+    <!-- macro: reusable HTML; double braces escape text, triple braces insert rendered fragments. -->
+
+    <template id="macro-view">
+      <span
+        >Macro como contexto. Estas series todavía no se usan como predictores
+        del retorno.</span
+      >
+    </template>
+
+    <template id="macro-view-3">
+      <tr>
+        <td>{{label}}{{value2}}</td>
+        <td>{{value3}}</td>
+        <td>{{value4}}</td>
+        <td>{{date}}</td>
+        <td>{{{sparkline}}}</td>
+        <td>
+          <a href="{{source_url}}" target="_blank" rel="noopener noreferrer"
+            >{{value8}} ↗</a
+          >
+        </td>
+      </tr>
+    </template>
+
+    <template id="macro-view-2">
+      <div class="table-wrap">
+        <table class="full-table macro-table">
+          <thead>
+            <tr>
+              <th>SERIE</th>
+              <th>ÚLTIMO</th>
+              <th>ANTERIOR</th>
+              <th>FECHA / PERÍODO</th>
+              <th>HISTORIA</th>
+              <th>FUENTE</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{{items}}}
+          </tbody>
+        </table>
+      </div>
+    </template>
+
+    <template id="macro-view-4">
+      <div class="notice neutral">
+        10Y − 2Y: <b class="mono">{{value1}} pb</b
+        ><span class="muted">· {{date}}</span>
+      </div>
+    </template>
+  </body>
+</html>

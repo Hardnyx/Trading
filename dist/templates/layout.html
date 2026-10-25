@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <title>Plantillas de interfaz</title>
+  </head>
+  <body>
+    <!-- layout: reusable HTML; double braces escape text, triple braces insert rendered fragments. -->
+
+    <template id="command-results">
+      <div class="empty-state command-empty">
+        Sin resultados en el universo descargado.
+      </div>
+    </template>
+
+    <template id="command-results-2">
+      <button class="command-result" data-view="{{value1}}">
+        <span>{{value2}}</span><span class="muted mono small">{{value3}}</span>
+      </button>
+    </template>
+
+    <template id="command-results-3">
+      <button class="command-result" data-detail="{{symbol}}">
+        <span><b class="mono orange">{{symbol2}}</b> &nbsp; {{name}}</span
+        ><span class="muted mono small">{{price}}</span>
+      </button>
+    </template>
+
+    <template id="shell-2">
+      <button class="ticker-item" data-detail="{{s}}">
+        <span class="ticker-symbol">{{s2}}</span
+        ><span class="ticker-price">{{price}}</span
+        ><span class="change {{changeTone}}">{{value5}} {{abs}}</span>
+      </button>
+    </template>
+
+    <template id="shell-3">
+      <button class="terminal-tab {{value1}}" data-view="{{id}}" {{{value3}}}>
+        <b>{{key}}</b> {{label}}
+      </button>
+    </template>
+
+    <template id="shell-4">
+      <div class="notice">
+        {{forecastError}}<button class="text-button" data-action="resimulate">
+          REINTENTAR
+        </button>
+      </div>
+    </template>
+
+    <template id="shell">
+      <a class="skip-link" href="#workspace-main">Ir al contenido</a>
+      <header class="topbar">
+        <a class="brand-lockup" href="#portfolio" aria-label="Trading inicio"
+          ><span class="brand">TRADING</span
+          ><span class="brand-sub">PORTAFOLIO / ESTADOS UNIDOS</span></a
+        ><span class="top-divider"></span>
+        <div class="command-wrap">
+          <div class="command-bar">
+            <span>›</span
+            ><input
+              id="command-input"
+              placeholder="Ticker, empresa o función…"
+              autocomplete="off"
+              aria-label="Buscar ticker o función"
+            /><kbd>/</kbd>
+          </div>
+          <div id="command-results" class="command-results" hidden></div>
+        </div>
+        <div class="top-right">
+          <div class="market-status">
+            <div><span class="dot"></span>EE.UU. / CIERRE</div>
+            <span>{{price_as_of}} · USD</span>
+          </div>
+          <button
+            class="icon-button"
+            data-action="sources"
+            aria-label="Fuentes y estado de datos"
+            title="Fuentes y estado de datos"
+          >
+            {{{dataIcon}}}</button
+          ><button
+            class="icon-button"
+            data-action="help"
+            aria-label="Atajos de teclado"
+            title="Atajos de teclado"
+          >
+            {{{helpIcon}}}
+          </button>
+        </div>
+      </header>
+      <div class="ticker-strip">{{{items}}}</div>
+      <div class="workspace">
+        <main id="workspace-main" class="main-area" tabindex="-1">
+          <div class="function-bar">
+            <div class="path">
+              <span>TRADING</span><span>/</span><b>{{toUpperCase}}</b>
+            </div>
+            <div class="right">
+              <span>{{value6}}</span><span class="orange">{{value7}}</span>
+            </div>
+          </div>
+          <nav class="terminal-nav" aria-label="Funciones">{{{items8}}}</nav>
+          <div class="content">
+            {{{value9}}}{{{page}}}
+            <footer class="footer">
+              <div>
+                <span class="footer-brand">TRADING</span> &nbsp; RESEARCH +
+                RISK<br />Datos al cierre · escenarios sujetos a tus supuestos.
+              </div>
+              <div class="footer-right">
+                <button data-action="methodology">
+                  METODOLOGÍA & LIMITACIONES</button
+                ><span
+                  >v0.2 &nbsp; / &nbsp; US EQUITIES &nbsp; / &nbsp; USD</span
+                >
+              </div>
+            </footer>
+          </div>
+        </main>
+      </div>
+    </template>
+  </body>
+</html>

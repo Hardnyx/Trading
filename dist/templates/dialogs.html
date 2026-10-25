@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <title>Plantillas de interfaz</title>
+  </head>
+  <body>
+    <!-- dialogs: reusable HTML; double braces escape text, triple braces insert rendered fragments. -->
+
+    <template id="shortcuts-view-2">
+      <div class="shortcut"><kbd>{{value1}}</kbd>{{value2}}</div>
+    </template>
+
+    <template id="shortcuts-view">
+      <div class="shortcuts">
+        {{{items}}}
+        <div class="shortcut"><kbd>/</kbd>Buscar ticker o función</div>
+        <div class="shortcut"><kbd>Esc</kbd>Cerrar ventana</div>
+      </div>
+    </template>
+
+    <template id="detail-2">
+      <div class="detail-metric"><label>{{l}}</label><b>{{v}}</b></div>
+    </template>
+
+    <template id="detail">
+      <div class="modal-title">
+        <div>
+          <h3>{{name}}</h3>
+          <small>{{sector}} · {{value3}} · USD</small>
+        </div>
+        <div class="modal-price">
+          {{price}}
+          <div class="small mono detail-change {{changeTone}}">
+            {{change}} / 1D
+          </div>
+        </div>
+      </div>
+      <div class="detail-metrics">{{{items}}}</div>
+      <div class="panel">{{{lineChart}}}</div>
+      <p class="mini-note">
+        Precio al {{price_date}}. Fundamentos {{value10}} al {{period}};
+        presentados {{filed}}. Las métricas ausentes no se estiman.
+      </p>
+      <div class="modal-actions">
+        <a
+          class="text-button"
+          href="{{value13}}"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Documento / fuente ↗</a
+        >
+        <div>
+          <button class="button" data-add="{{symbol}}">{{value15}}</button
+          ><button class="button primary" data-value="{{symbol16}}">
+            Valorar {{{arrowIcon}}}
+          </button>
+        </div>
+      </div>
+    </template>
+
+    <template id="modal">
+      <div class="modal-backdrop">
+        <section
+          class="modal {{value1}}"
+          role="dialog"
+          aria-modal="true"
+          aria-label="{{heading}}"
+        >
+          <header class="modal-header">
+            <h2><span>TRADING /</span>{{heading3}}</h2>
+            <button
+              class="icon-button"
+              data-action="close-modal"
+              aria-label="Cerrar"
+            >
+              {{{closeIcon}}}
+            </button>
+          </header>
+          <div class="modal-content">{{{content}}}</div>
+        </section>
+      </div>
+    </template>
+
+    <template id="rules-view-2">
+      <div class="field">
+        <label for="rule-{{key}}">{{label}}</label
+        ><input
+          id="rule-{{key3}}"
+          data-rule="{{key4}}"
+          type="number"
+          min="1"
+          max="100"
+          step="1"
+          value="{{value5}}"
+        />
+      </div>
+    </template>
+
+    <template id="rules-view">
+      <div class="forecast-controls">
+        {{{items}}}
+        <p class="mini-note">
+          Umbrales iniciales de trabajo, no calibrados para maximizar
+          rendimientos. Los avisos de nuevos documentos SEC son informativos.
+        </p>
+      </div>
+    </template>
+
+    <template id="methodology-view">
+      <ol class="methodology-list">
+        <li>
+          <b>Datos observados.</b> Precios diarios y Adj Close de Yahoo Finance
+          (endpoint público no oficial). SEC Company Facts para conceptos
+          estándar de la entidad. Los valores ausentes permanecen ausentes.
+          Múltiples clases de acciones y conceptos personalizados limitan la
+          cobertura.
+        </li>
+        <li>
+          <b>Ratios.</b> P/E = precio / BPA diluido TTM. TTM usa anual +
+          acumulado actual − acumulado anterior, o anual cuando no puede
+          reconstruirse. FCF = CFO − capex con períodos compatibles; FCF yield
+          usa acciones en circulación recientes y no se aplica a
+          bancos/servicios financieros. Las fechas están en cada activo.
+        </li>
+        <li>
+          <b>Valoración.</b> BPA o FCF/acción proyectado × múltiplo de salida,
+          descontado a la tasa exigida; dividendos por acción constantes. El
+          retorno anual equivalente aproxima todos los dividendos como efectivo
+          al final del horizonte. Crecimiento y múltiplos son supuestos
+          ilustrativos editables.
+        </li>
+        <li>
+          <b>Difusión correlacionada.</b> dSᵢ/Sᵢ = (μᵢ − λκ)dt + (L dW)ᵢ +
+          (eᴶ−1)dN. L factoriza la covarianza EWMA de retornos logarítmicos (252
+          sesiones/año), con regularización diagonal del 5%. Volatilidad y
+          correlaciones se mantienen constantes en la proyección. μᵢ = ln(1 +
+          retorno anual del ancla).
+        </li>
+        <li>
+          <b>Saltos.</b> En Merton, N es Poisson y J es normal con media y
+          dispersión configuradas. Un mismo salto afecta a todos los activos: es
+          una extensión de estrés sistémico. κ = exp(media + dispersión²/2) − 1
+          compensa la media. Los saltos se añaden a la volatilidad observada; no
+          se calibran separadamente y pueden aumentar el riesgo total.
+        </li>
+        <li>
+          <b>Simulación.</b> Trayectorias semanales buy & hold, sin costos ni
+          impuestos; el ancla incorpora dividendos para evitar doble conteo.
+          P05–P95 es una banda entre cuantiles del modelo, no un intervalo de
+          confianza sobre el futuro real. La probabilidad de drawdown usa pasos
+          semanales y puede omitir mínimos intradiarios. Semilla reproducible.
+        </li>
+        <li>
+          <b>Riesgo histórico.</b> Retornos simples ajustados, fechas comunes,
+          covarianza muestral, volatilidad anualizada √252. Cartera de pesos
+          constantes (rebalanceo diario teórico). VaR histórico al 95% y CVaR a
+          1 día; Monte Carlo al horizonte configurado. La tasa de 3 meses del
+          Treasury sirve de aproximación para Sharpe; si falta, se usa 4%
+          explícito.
+        </li>
+        <li>
+          <b>Comprobación.</b> Walk forward con 126 sesiones pasadas y 21
+          futuras no solapadas. Evalúa cobertura de bandas EWMA al 90% centradas
+          en retorno logarítmico cero. No evalúa el ancla fundamental, selección
+          del universo ni parámetros de saltos. La muestra disponible es
+          pequeña.
+        </li>
+        <li>
+          <b>Capacidad predictiva.</b> Universo actual seleccionado y últimos
+          estados rectificados. No es un backtest point-in-time. Las fuentes
+          macro se muestran como contexto y todavía no alimentan una estimación
+          causal del retorno. La simulación cuantifica supuestos; no demuestra
+          capacidad de generar alpha.
+        </li>
+      </ol>
+      <div class="source-card">
+        <h3>Referencias del modelo</h3>
+        <a
+          href="https://dspace.mit.edu/entities/publication/e63635d9-d2bf-40ce-a79b-67786dd9f105"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Merton · Option pricing when underlying stock returns are
+          discontinuous ↗</a
+        ><br /><a
+          href="https://www.msci.com/research-and-insights/paper/1996-riskmetrics-technical-document"
+          target="_blank"
+          rel="noopener noreferrer"
+          >RiskMetrics · Technical Document ↗</a
+        >
+      </div>
+    </template>
+
+    <template id="sources-view-2">
+      <div class="source-card">
+        <h3>{{name}}</h3>
+        <span class="tag source-kind">{{kind}}</span>
+        <p>{{data}}</p>
+        <a href="{{url}}" target="_blank" rel="noopener noreferrer"
+          >Documentación / fuente ↗</a
+        >
+      </div>
+    </template>
+
+    <template id="sources-view-4">
+      <br />
+    </template>
+
+    <template id="sources-view-3">
+      <div class="notice section-gap">{{{items}}}</div>
+    </template>
+
+    <template id="sources-view-6">
+      <tr>
+        <td>{{symbol}}</td>
+        <td>{{price_date}}</td>
+        <td>{{period}}</td>
+        <td>{{filed}}</td>
+        <td>{{value5}}</td>
+        <td>{{value6}}</td>
+      </tr>
+    </template>
+
+    <template id="sources-view-5">
+      <div class="table-wrap">
+        <table class="coverage-table">
+          <thead>
+            <tr>
+              <th>ACTIVO</th>
+              <th>PRECIO</th>
+              <th>FUNDAMENTOS</th>
+              <th>PRESENTACIÓN</th>
+              <th>P/E</th>
+              <th>FCF YIELD</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{{items}}}
+          </tbody>
+        </table>
+      </div>
+    </template>
+
+    <template id="sources-view">
+      <div class="data-health">
+        <div><label>PRECIOS AL CIERRE</label><b>{{price_as_of}}</b></div>
+        <div><label>UNIVERSO / COBERTURA</label><b>{{length}} activos</b></div>
+        <div><label>FUNDAMENTOS CON BPA</label><b>{{length3}} acciones</b></div>
+      </div>
+      <div class="sources-grid">{{{items}}}</div>
+      <p class="mini-note">
+        Corte generado {{generated_at}}. La página utiliza un archivo de datos
+        descargados; no representa un feed en tiempo real. La actualización de
+        proveedores se ejecuta con scripts/refresh_data.py o el workflow manual
+        del repositorio.
+      </p>
+      {{{value6}}}
+      <div class="inline-actions section-gap">
+        <button class="button" data-action="reload">
+          {{{refreshIcon}}}Cargar último corte publicado</button
+        ><button class="button" data-action="import-snapshot">
+          {{{uploadIcon}}}Importar corte JSON</button
+        ><a
+          class="button"
+          href="https://github.com/Hardnyx/Trading"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Repositorio ↗</a
+        >
+      </div>
+      <div class="section-gap">{{{panel}}}</div>
+    </template>
+  </body>
+</html>

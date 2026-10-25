@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <title>Plantillas de interfaz</title>
+  </head>
+  <body>
+    <!-- valuation: reusable HTML; double braces escape text, triple braces insert rendered fragments. -->
+
+    <template id="financial-table-2">
+      <tr>
+        <td>{{label}}</td>
+        <td>{{value}}</td>
+        <td>{{period_end}} {{value4}}</td>
+      </tr>
+    </template>
+
+    <template id="financial-table">
+      <div class="table-wrap">
+        <table class="financial-table">
+          <tbody>
+            {{{items}}}
+          </tbody>
+        </table>
+      </div>
+    </template>
+
+    <template id="valuation-view-2">
+      <option value="{{symbol}}" {{{value2}}}>{{symbol3}} · {{name}}</option>
+    </template>
+
+    <template id="valuation-view-4">
+      <div class="field">
+        <div class="field-topline">
+          <label for="assumption-{{key}}">{{label}}</label
+          ><output id="output-{{key3}}">{{value4}}{{unit}}</output>
+        </div>
+        <input
+          id="assumption-{{key6}}"
+          type="range"
+          min="{{min}}"
+          max="{{max}}"
+          step="{{step}}"
+          value="{{value10}}"
+          data-assumption="{{key11}}"
+          data-scale="{{scale}}"
+        />
+      </div>
+    </template>
+
+    <template id="valuation-view-3">
+      <div class="method-picker">
+        <button class="button {{value1}}" data-method="pe">BPA × P/E</button
+        ><button class="button {{value2}}" data-method="fcf">
+          FCF × P/FCF
+        </button>
+      </div>
+      <div class="assumptions">
+        {{{items}}}
+        <div class="forecast-input-note assumption-note">
+          Estos supuestos alimentan el ancla de retorno del módulo de
+          proyecciones. P/FCF es un múltiplo simplificado sobre CFO − capex; no
+          es un DCF.
+        </div>
+      </div>
+    </template>
+
+    <template id="valuation-view-5">
+      <div class="empty-state">
+        Este activo no tiene una base positiva y comparable para este modelo.<br />Selecciona
+        otra acción o revisa la disponibilidad de fundamentos.<br /><span
+          class="small"
+          >Los ETFs se proyectan con el supuesto manual del módulo de
+          proyecciones.</span
+        >
+      </div>
+    </template>
+
+    <template id="valuation-view-7">
+      <tr>
+        <td>{{label}}</td>
+        <td>{{growth}}</td>
+        <td>{{multiple}}x</td>
+        <td>{{exitPrice}}</td>
+        <td class="{{annualReturnTone}}">{{annualReturn}}</td>
+      </tr>
+    </template>
+
+    <template id="valuation-view-6">
+      <div class="fair-value-result">
+        <div>
+          <div class="result-label">VALOR POR ACCIÓN · HOY</div>
+          <div class="result-number">{{fairValue}}</div>
+          <div class="result-sub">Precio de mercado {{price}}</div>
+        </div>
+        <div>
+          <div class="result-label">VS PRECIO ACTUAL</div>
+          <div class="result-discount {{upsideTone}}">{{upside}}</div>
+          <div class="result-sub">{{value5}}</div>
+        </div>
+      </div>
+      <div class="valuation-ruler">
+        <div class="ruler-track">
+          <i class="ruler-marker" data-marker-position="{{max}}"
+            ><span>PRECIO</span></i
+          ><i class="ruler-marker model" data-marker-position="{{max7}}"
+            ><span>MODELO</span></i
+          >
+        </div>
+        <div class="ruler-legend">
+          <span>MAYOR MARGEN DE SEGURIDAD</span><span>MENOR</span>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table class="scenario-table">
+          <thead>
+            <tr>
+              <th>ESCENARIO</th>
+              <th>CRECIMIENTO</th>
+              <th>MÚLTIPLO</th>
+              <th>PRECIO AL HORIZONTE</th>
+              <th>RETORNO ANUAL</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{{items}}}
+          </tbody>
+        </table>
+      </div>
+      <div class="equation">
+        <strong>{{value9}} {{base}}</strong> × (1 + {{growth}})<sup
+          >{{horizon}}</sup
+        >
+        × {{multiple}}x → <strong>{{exitPrice}}</strong> al horizonte.<br />Descuento
+        al {{discount}} + dividendos constantes descontados → {{fairValue16}}
+        hoy.
+      </div>
+    </template>
+
+    <template id="valuation-view-8">
+      <span
+        >{{value1}} al {{period}} · presentación {{filed}}. Sin consenso
+        externo.</span
+      >
+    </template>
+
+    <template id="valuation-view-9">
+      <a
+        class="text-button"
+        href="{{value1}}"
+        target="_blank"
+        rel="noopener noreferrer"
+        >VER FUENTE ↗</a
+      >
+    </template>
+
+    <template id="valuation-view">
+      <div class="valuation-top">
+        <div class="asset-select">
+          <select id="valuation-asset" aria-label="Activo a valorar">
+            {{{items}}}
+          </select>
+          <div class="asset-current">
+            {{price}}<small>CIERRE {{price_date}}</small>
+          </div>
+        </div>
+        <span class="tag orange">MODELO PROPIO · {{value4}} AÑOS</span>
+      </div>
+      <div class="valuation-grid">{{{panel}}}{{{panel6}}}</div>
+      <div class="section-gap">{{{panel7}}}</div>
+    </template>
+
+    <template id="valuation-view-10">
+      <button class="button" data-action="reset-valuation">
+        Restablecer supuestos
+      </button>
+    </template>
+  </body>
+</html>
