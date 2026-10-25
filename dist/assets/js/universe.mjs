@@ -26,7 +26,11 @@ export function selectCompositionUniverse(eligible, heldSymbols = [], benchmark 
   const unique = eligible.filter((asset, i) => eligible.findIndex((row) => row.symbol === asset.symbol) === i);
   if (unique.length <= limit) return { assets: unique, omitted: [] };
   const held = new Set(heldSymbols);
-  const mandatory = new Set([...held, "CASH", "SHY", "SPY", benchmark]);
+  // Fixed, auditable comparators across equities, Treasuries and credit.
+  // These are comparison instruments, not buy recommendations.
+  const core = ["CASH", "SHY", "SPY", "SGOV", "IEF", "TLT", "AGG", "LQD",
+    "HYG", "GLD", "QQQ", "VTI", "VXUS"];
+  const mandatory = new Set([...held, ...core, benchmark]);
   const chosen = [];
   const seen = new Set();
   const select = (asset) => {
