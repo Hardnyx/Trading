@@ -1,0 +1,31 @@
+name: Residual GJR research (shadow)
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/factor_volatility_research.py'
+      - 'tests/test_factor_volatility_research.py'
+      - '.github/workflows/residual-garch-research.yml'
+permissions:
+  contents: read
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-research.txt
+      - name: Validate dated residual forecasts
+        run: python -m unittest discover -s tests -p 'test_factor_volatility_research.py' -v
+      - name: Compare historical residual GJR and EWMA without promotion
+        run: python scripts/factor_volatility_research.py --symbols NVDA,SHY,GLD,TLT --output out/residual-garch-shadow.json
+      - name: Preserve research report separately from the public app
+        uses: actions/upload-artifact@v4
+        with:
+          name: residual-garch-shadow
+          path: out/residual-garch-shadow.json
+          retention-days: 14
