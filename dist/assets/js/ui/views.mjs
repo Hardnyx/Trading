@@ -1001,6 +1001,25 @@ export function createViews(context) {
         }),
         "",
         "QLIKE walk-forward frente a EWMA; Student-t solo para calibraciones aceptadas. La elección de la distribución y la cobertura del CVaR requieren validación continua."
+      ) +
+      panel(
+        "SHOCKS EXTREMOS · SIN ATRIBUCIÓN A NOTICIAS",
+        "08",
+        template("composition-notice", {
+          message: (() => {
+            if (!data.volatility) return "Sin registro de anomalías calibrado para este corte.";
+            const shocks = (a?.weights || []).flatMap((p) =>
+              (data.volatility.instruments?.[p.symbol]?.unattributed_shocks || []).map((event) =>
+                ({...event,symbol:p.symbol})))
+              .sort((x,y)=>y.date.localeCompare(x.date)).slice(0,10);
+            return shocks.length
+              ? shocks.map((event) =>
+                  `${event.date} ${event.symbol}: ${pct(event.return_pct/100,1,true)}, innovación ${fmt(event.standardized_surprise,1)}σ · noticia no verificada`).join(" | ")
+              : "No se detectaron shocks ≥3σ en los últimos 63 pronósticos fuera de muestra de la cartera. No significa ausencia de noticias.";
+          })(),
+        }),
+        "",
+        "Detectar una anomalía no identifica su causa. No se eliminan errores predictivos. Un evento requiere fuente y hora verificables y análisis causal separado."
       )
     );
   }
