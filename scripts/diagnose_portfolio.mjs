@@ -5,6 +5,12 @@ import { composePortfolio } from "../dist/assets/js/composer.mjs?v=0.3.0";
 // or a recommendation to buy the positions selected.
 const snapshot = JSON.parse(readFileSync(new URL("../dist/data/market.json", import.meta.url)));
 const search = { candidates: 120, paths: 250, finalPaths: 600 };
+console.log(JSON.stringify({
+  diagnostic: "observed-market-cut",
+  generatedAt: snapshot.generated_at,
+  instruments: snapshot.assets.length,
+  priceCutoff: snapshot.price_as_of,
+}));
 for (const [scenario, rules] of [
   ["default", {}],
   ["reserve_cap_50pct", { reserveCap: 0.5 }],
