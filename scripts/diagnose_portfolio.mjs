@@ -9,6 +9,9 @@ console.log(JSON.stringify({
   diagnostic: "observed-market-cut",
   generatedAt: snapshot.generated_at,
   instruments: snapshot.assets.length,
+  invalidatedEps: snapshot.assets
+    .filter((asset) => asset.quality_flags?.includes("eps_share_income_scale_mismatch"))
+    .map((asset) => asset.symbol),
   priceCutoff: snapshot.price_as_of,
 }));
 for (const [scenario, rules, seed, overrides] of [
