@@ -566,23 +566,61 @@ export function composePortfolio(
       certaintyEquivalent: check.metrics.certaintyEquivalent,
     }];
   }));
-  // Same out-of-sample verification paths; these are sensitivities over
-  // the searched set, NOT claims of a global optimum under tighter caps.
+  // Independently search lower-SHY alternatives on the SAME training and
+  // verification scenarios. Restricting only the original ranked list
+  // incorrectly compared 100% cash against an optimized high-SHY portfolio.
   const shyIndex = x.assets.findIndex(a => a.symbol === "SHY");
+  const cashIndex = x.assets.findIndex(a => a.symbol === "CASH");
   const capAlternatives = [0.25, 0.50, 0.75].map(cap => {
-    const candidates = ranked
-      .filter(r => shyIndex < 0 || r.weights[shyIndex] <= cap + 1e-8)
-      .slice(0, 8);
+    const cappedX = { ...x, rules: { ...x.rules, reserveCap: cap } };
+    const alternatives = [];
+    const seenCapped = new Set();
+    let examined = 0;
+    const addCap = (w, passive = false) => {
+      if (!w || !validWeights(w, cappedX)) return;
+      const key = w.map(v=>v.toFixed(5)).join(",");
+      if (seenCapped.has(key)) return;
+      seenCapped.add(key);
+      examined++;
+      const proposal = assess(w, cappedX, sample, false, passive);
+      if (proposal.feasible) alternatives.push(proposal);
+    };
+    // Direct counterfactuals of each finalist: move only the prohibited SHY
+    // fraction to cash, never assume a favorable stock-return forecast.
+    for (const row of ranked.slice(0, 16)) {
+      const w = row.weights.slice();
+      if (shyIndex >= 0 && cashIndex >= 0 && w[shyIndex] > cap) {
+        const excess = w[shyIndex] - cap;
+        w[shyIndex] = cap;
+        w[cashIndex] += excess;
+      }
+      addCap(w, row.kind === "passive");
+    }
+    for (const w of passiveCandidates(cappedX)) addCap(w, true);
+    for (const w of reserveTilts(cappedX)) addCap(w);
+    // Additional search is conditioned on this specific cap rather than
+    // recycling the weights selected under the unrestricted SHY constraint.
+    const rng = seededRandom((seed ^ 0x73594acd ^ Math.round(cap*1000)) >>> 0);
+    for (let attempts=0; attempts<1800 && examined<150; attempts++)
+      addCap(candidate(cappedX, rng));
+    alternatives.sort((a,b)=>b.metrics.score-a.metrics.score);
+    for (let attempts=0; attempts<280 && examined<220; attempts++) {
+      if (!alternatives.length) break;
+      const parent = alternatives[Math.floor(rng()*Math.min(6,alternatives.length))];
+      addCap(neighborCandidate(cappedX, parent.weights, rng));
+      if (attempts%25===24)
+        alternatives.sort((a,b)=>b.metrics.score-a.metrics.score);
+    }
+    alternatives.sort((a,b)=>b.metrics.score-a.metrics.score);
     let bestCap = null;
-    for (const row of candidates) {
-      const evaluated = assess(row.weights, x, verification, false,
+    for (const row of alternatives.slice(0,10)) {
+      const v = assess(row.weights, cappedX, verification, false,
         row.kind === "passive");
-      if (evaluated.feasible &&
-          (!bestCap || evaluated.metrics.score > bestCap.metrics.score))
-        bestCap = evaluated;
+      if (v.feasible &&
+          (!bestCap || v.metrics.score > bestCap.metrics.score)) bestCap = v;
     }
     return {
-      cap, compared: candidates.length,
+      cap, compared: examined,
       feasible: !!bestCap,
       positions: bestCap?.positions ?? [],
       meanReturn: bestCap?.metrics.meanReturn ?? null,
