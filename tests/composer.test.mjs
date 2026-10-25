@@ -100,6 +100,7 @@ test("reserve and benchmark comparators respect a tighter SHY cap", () => {
     { candidates: 45, paths: 200, finalPaths: 400 },
   );
   assert.equal(result.selection.published, snapshot().assets.length);
+  assert.ok(result.search.reserveTiltsEvaluated > 0);
   const reserve = result.diagnostics.references.reserve;
   assert.ok(reserve);
   assert.equal(reserve.positions.find((p) => p.symbol === "SHY").weight, 0.5);
