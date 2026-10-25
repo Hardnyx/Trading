@@ -82,7 +82,19 @@ export function prepareComposition(
     existing = new Set(current.positions.map((r) => r.symbol));
   const eligible = [],
     excluded = [],
-    buyAllowed = [];
+    buyAllowed = [],
+    forwardPriority = {};
+  const historicalVolatility = (asset) => {
+    const rows = (asset.history || []).slice(-127);
+    let squared = 0, observations = 0;
+    for (let k = 1; k < rows.length; k++) {
+      const previous = rows[k-1].adj_close, current = rows[k].adj_close;
+      if (!(previous > 0 && current > 0)) continue;
+      squared += Math.log(current / previous) ** 2;
+      observations++;
+    }
+    return observations >= 60 ? Math.sqrt(252 * squared / observations) : 1;
+  };
   for (const original of snapshot.assets) {
     const asset = assetAt(original, asOf, info);
     let reason = null;
@@ -102,6 +114,9 @@ export function prepareComposition(
       if (!forecast.valid) reason = forecast.error;
       else if (forecast.thesis.status === "contradicted")
         reason = "Tesis contradicha: revisar hipótesis antes de nuevas compras";
+      else forwardPriority[asset.symbol] = forecast.central -
+        0.15 * Math.max(0, forecast.high - forecast.low) -
+        0.04 * historicalVolatility(asset);
     }
     if (!reason && asset.type === "etf") {
       const own = settings.assetAssumptions?.[asset.symbol];
@@ -115,6 +130,18 @@ export function prepareComposition(
       });
       if (!isBondPriced && !hasExplicitReturn)
         reason = "ETF sin retorno esperado fundamentado: no se permite compra nueva con el supuesto genérico del 6 %. Introduce una expectativa y una incertidumbre explícitas.";
+      else {
+        const bond = bondAssumptions(asset, {
+          ...settings, asOf, informationAsOf: info,
+          yieldCurve: Object.fromEntries((snapshot.macro || [])
+            .filter((row) => row.date <= info)
+            .map((row) => [row.id, row.value])),
+        });
+        const base = bond?.carry ?? own.expectedReturn;
+        const dispersion = bond ? 0 : own.uncertainty;
+        forwardPriority[asset.symbol] = base - 0.15 * dispersion -
+          0.04 * historicalVolatility(asset);
+      }
     }
     if (reason) excluded.push({ symbol: asset.symbol, reason });
     if (!reason || existing.has(asset.symbol)) {
@@ -133,6 +160,8 @@ export function prepareComposition(
     eligible,
     current.positions.map((row) => row.symbol),
     policy.benchmark,
+    40,
+    forwardPriority,
   );
   const permissionBySymbol = new Map(
     eligible.map((asset, index) => [asset.symbol, buyAllowed[index]]),
@@ -173,6 +202,14 @@ export function prepareComposition(
       eligible: eligible.length,
       simulated: sampled.assets.length,
       outsideSample: sampled.omitted,
+      preselectionMethod: sampled.method,
+      outsideWithHigherPriority: sampled.omitted
+        .filter(symbol => Number.isFinite(forwardPriority[symbol]))
+        .sort((a,b) => forwardPriority[b] - forwardPriority[a])
+        .slice(0,8).map(symbol => ({
+          symbol, score: forwardPriority[symbol],
+          reason: "Fuera de la muestra; todavía no optimizado",
+        })),
     },
     requiredCash,
     snapshotGeneratedAt: snapshot.generated_at,
