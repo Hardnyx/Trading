@@ -5,14 +5,13 @@
  */
 export const MAX_COMPOSITION_ASSETS = 40;
 
-function dollarVolume(asset) {
+function shareVolume(asset) {
   const history = asset.history || [];
   const recent = history.slice(-20).filter((row) =>
-    Number.isFinite(row.volume) && row.volume > 0 &&
-    Number.isFinite(row.close) && row.close > 0
+    Number.isFinite(row.volume) && row.volume > 0
   );
   if (!recent.length) return 0;
-  return recent.reduce((total, row) => total + row.volume * row.close, 0) / recent.length;
+  return recent.reduce((total, row) => total + row.volume, 0) / recent.length;
 }
 
 function informationScore(asset) {
@@ -24,6 +23,8 @@ function informationScore(asset) {
 
 export function selectCompositionUniverse(eligible, heldSymbols = [], benchmark = "SPY", limit = MAX_COMPOSITION_ASSETS) {
   if (!Number.isInteger(limit) || limit < 4) throw new Error("Límite de activos inválido.");
+  const unique = eligible.filter((asset, i) => eligible.findIndex((row) => row.symbol === asset.symbol) === i);
+  if (unique.length <= limit) return { assets: unique, omitted: [] };
   const held = new Set(heldSymbols);
   const mandatory = new Set([...held, "CASH", "SHY", "SPY", benchmark]);
   const chosen = [];
@@ -34,14 +35,14 @@ export function selectCompositionUniverse(eligible, heldSymbols = [], benchmark 
       seen.add(asset.symbol);
     }
   };
-  for (const asset of eligible) if (mandatory.has(asset.symbol)) select(asset);
+  for (const asset of unique) if (mandatory.has(asset.symbol)) select(asset);
   if (chosen.length > limit) throw new Error("La cartera actual supera el límite de activos de simulación.");
   const sectors = new Map();
-  const extras = eligible
+  const extras = unique
     .filter((asset) => !seen.has(asset.symbol))
     .sort((a, b) =>
       informationScore(b) - informationScore(a) ||
-      dollarVolume(b) - dollarVolume(a) ||
+      shareVolume(b) - shareVolume(a) ||
       a.symbol.localeCompare(b.symbol)
     );
   for (const asset of extras) {
@@ -58,6 +59,6 @@ export function selectCompositionUniverse(eligible, heldSymbols = [], benchmark 
   }
   return {
     assets: chosen,
-    omitted: eligible.filter((asset) => !seen.has(asset.symbol)).map((asset) => asset.symbol),
+    omitted: unique.filter((asset) => !seen.has(asset.symbol)).map((asset) => asset.symbol),
   };
 }
