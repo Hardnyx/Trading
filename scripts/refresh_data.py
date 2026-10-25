@@ -24,8 +24,10 @@ import xml.etree.ElementTree as ET
 
 if __package__:
     from .data_providers import FRED_SERIES, ProviderError, analyst_estimates, fred_series, fred_csv_series, retained_estimates
+    from .universe import AUTO_CIK, expanded_universe
 else:
     from data_providers import FRED_SERIES, ProviderError, analyst_estimates, fred_series, fred_csv_series, retained_estimates
+    from universe import AUTO_CIK, expanded_universe
 
 ROOT = Path(__file__).resolve().parents[1]
 CACHE = ROOT / ".cache"
@@ -120,6 +122,43 @@ ASSETS = [
         ("KRE", "SPDR S&P Regional Banking", "Bancos regionales"),
     ]],
 ]
+
+
+
+def resolved_universe(previous):
+    """Resolve extra stock CIKs from the SEC, retaining verified prior CIKs on failure."""
+    requested = ASSETS + expanded_universe()
+    if len({row[0] for row in requested}) != len(requested):
+        raise ValueError("Símbolos repetidos en el universo")
+    pending = [row for row in requested if row[3] == AUTO_CIK]
+    mapping = {}
+    if pending:
+        try:
+            raw = download("https://www.sec.gov/files/company_tickers.json",
+                           f"sec-company-tickers-{dt.date.today():%Y-%m}.json",
+                           max_age=24 * 3600, sec=True)
+            data = json.loads(raw)
+            if not isinstance(data, dict):
+                raise ValueError("Catálogo CIK inválido")
+            for entry in data.values():
+                if not isinstance(entry, dict):
+                    continue
+                symbol = entry.get("ticker")
+                cik = entry.get("cik_str")
+                if isinstance(symbol, str) and isinstance(cik, int) and cik > 0:
+                    mapping[symbol.upper()] = cik
+        except (ValueError, urllib.error.URLError, TimeoutError, UnicodeError):
+            # Missing identification is explicit, never reclassified as an ETF.
+            pass
+    output, warnings = [], []
+    for symbol, name, sector, cik, growth, multiple in requested:
+        if cik == AUTO_CIK:
+            cik = mapping.get(symbol) or previous.get(symbol, {}).get("cik")
+            if not isinstance(cik, int) or cik <= 0:
+                warnings.append(f"{symbol}: CIK oficial no disponible; activo omitido")
+                continue
+        output.append((symbol, name, sector, cik, growth, multiple))
+    return output, warnings
 
 
 def download(url, cache_key, max_age=0, sec=False, payload=None):
@@ -602,9 +641,10 @@ def main():
     previous = previous_snapshot()
     collected_at = dt.datetime.now(UTC).isoformat()
     old_assets = {a["symbol"]: a for a in previous.get("assets", [])}
-    assets, errors = [], []
+    universe, warnings = resolved_universe(old_assets)
+    assets, errors = [], list(warnings)
     with concurrent.futures.ThreadPoolExecutor(max_workers=3) as pool:
-        futures = {pool.submit(build_asset, spec, args.as_of, old_assets): spec[0] for spec in ASSETS}
+        futures = {pool.submit(build_asset, spec, args.as_of, old_assets): spec[0] for spec in universe}
         for future in concurrent.futures.as_completed(futures):
             asset, failed = future.result()
             errors.extend(failed)
@@ -613,10 +653,11 @@ def main():
                 print(f"OK {asset['symbol']}: {asset['price_date']} · {len(asset['history'])} cierres", flush=True)
             else:
                 print(f"ERROR {futures[future]}", flush=True)
-    assets.sort(key=lambda a: next(i for i, s in enumerate(ASSETS) if s[0] == a["symbol"]))
+    order = {spec[0]: i for i, spec in enumerate(universe)}
+    assets.sort(key=lambda a: order[a["symbol"]])
     providers = []
     sec_failures = sum('SEC no actualizada' in warning or 'presentaciones no actualizadas' in warning for warning in errors)
-    sec_total = sum(bool(spec[3]) for spec in ASSETS) * 2
+    sec_total = sum(bool(spec[3]) for spec in universe) * 2
     sec_success = sum(asset["type"] == "stock" for asset in assets) * 2 - sec_failures
     providers.append({"id": "sec", "name": "SEC EDGAR", "status": "error" if not sec_success else "partial" if sec_success < sec_total else "ok",
                       "detail": f"{sec_success}/{sec_total} consultas actualizadas", "checked_at": collected_at})
