@@ -566,6 +566,47 @@ export function composePortfolio(
       certaintyEquivalent: check.metrics.certaintyEquivalent,
     }];
   }));
+  // Same out-of-sample verification paths; these are sensitivities over
+  // the searched set, NOT claims of a global optimum under tighter caps.
+  const shyIndex = x.assets.findIndex(a => a.symbol === "SHY");
+  const capAlternatives = [0.25, 0.50, 0.75].map(cap => {
+    const candidates = ranked
+      .filter(r => shyIndex < 0 || r.weights[shyIndex] <= cap + 1e-8)
+      .slice(0, 8);
+    let bestCap = null;
+    for (const row of candidates) {
+      const evaluated = assess(row.weights, x, verification, false,
+        row.kind === "passive");
+      if (evaluated.feasible &&
+          (!bestCap || evaluated.metrics.score > bestCap.metrics.score))
+        bestCap = evaluated;
+    }
+    return {
+      cap, compared: candidates.length,
+      feasible: !!bestCap,
+      positions: bestCap?.positions ?? [],
+      meanReturn: bestCap?.metrics.meanReturn ?? null,
+      cvar95: bestCap?.metrics.cvar95 ?? null,
+      certaintyEquivalent: bestCap?.metrics.certaintyEquivalent ?? null,
+      certaintyGapVsSelected: best && bestCap
+        ? best.metrics.certaintyEquivalent-bestCap.metrics.certaintyEquivalent
+        : null,
+    };
+  });
+  const shyAnchor = shyIndex >= 0 ? x.anchors[shyIndex] : null;
+  const concentrationAudit = {
+    shyAnnualAnchor: shyAnchor?.annual ?? null,
+    shyAnchorSource: shyAnchor?.source ?? "No disponible",
+    shyAnnualVolatility: shyIndex >= 0
+      ? Math.sqrt(Math.max(0,x.covariance[shyIndex][shyIndex])) : null,
+    shyMaxAllowed: x.rules.reserveCap,
+    actualShyWeight: best?.positions.find(p=>p.symbol==="SHY")?.weight ?? 0,
+    maximumStockPosition: x.rules.maxPosition,
+    eligibleButNotSimulated: x.selection.outsideSample.length,
+    selectionMethod: x.selection.preselectionMethod,
+    comparedCaps: capAlternatives,
+    note: "Comparaciones entre candidatas exploradas y verificadas con escenarios idénticos; no son óptimos globales. Sin prima de retorno sustentada, SHY puede prevalecer sin que la concentración sea un error numérico.",
+  };
   const riskDiagnostics = (row) => {
     if (!row) return null;
     const limits = [
@@ -589,6 +630,7 @@ export function composePortfolio(
   const diagnostics = {
     selected: riskDiagnostics(best),
     references,
+    concentrationAudit,
     dependence: x.dependence,
     volatility: {
       mode: x.conditional.enabled ? "GJR-GARCH-t / EWMA" : "EWMA",
