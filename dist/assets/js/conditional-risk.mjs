@@ -26,7 +26,15 @@ export function conditionalRisk(assets, baseCov, options = {}) {
     return empty("Sin calibración GJR compatible con el corte: se conserva EWMA");
   const fits = assets.map((asset, i) => {
     const f = source.instruments[asset.symbol], ewma = baseCov[i][i];
-    if (!f || f.status !== "accepted" || f.fitted_through !== asOf ||
+    // Never trust 'accepted' from an older, weaker research screen:
+    // the published evidence must satisfy the current confidence gate.
+    const validation = f?.verification;
+    const lower = validation?.weekly_block_confidence?.lower_95_one_sided;
+    if (!f || f.status !== "accepted" ||
+        !(validation?.observations >= 126) ||
+        !(validation?.qlike_improvement > 0.015) ||
+        !(lower > 0) ||
+        f.fitted_through !== asOf ||
         f.last_price_date !== asOf || !(ewma > 0) ||
         ![f.omega, f.alpha, f.gamma, f.beta, f.nu, f.variance_next_pct2]
           .every(Number.isFinite) ||
