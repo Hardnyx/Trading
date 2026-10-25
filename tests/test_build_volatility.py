@@ -1,7 +1,7 @@
 import unittest
 from datetime import date, timedelta
 import math
-from scripts.build_volatility import compact_volatility
+from scripts.build_volatility import compact_volatility, paired_qlike_confidence
 
 
 def mock_history(n=640):
@@ -36,6 +36,18 @@ class ConditionalPublisherTests(unittest.TestCase):
         self.assertEqual(report["instruments"]["SPY"]["fitted_through"],end)
         self.assertEqual(report["instruments"]["SPY"]["verification"]["observations"],20)
         self.assertNotIn("forecasts",report["instruments"]["SPY"])
+
+    def test_confidence_gate_requires_sustained_paired_gain(self):
+        rows = [{"ewma_qlike":1.0,"gjr_qlike":0.9}
+                for _ in range(126)]
+        good=paired_qlike_confidence(rows)
+        self.assertGreater(good["lower_95_one_sided"],0)
+        rows = [{"ewma_qlike":1.0,
+                 "gjr_qlike":0.8 if (i//7)%2==0 else 1.2}
+                for i in range(126)]
+        uncertain=paired_qlike_confidence(rows)
+        self.assertLessEqual(uncertain["lower_95_one_sided"],0)
+        self.assertIsNone(paired_qlike_confidence(rows[:21])["lower_95_one_sided"])
 
     def test_stale_price_is_not_calibrated(self):
         history=mock_history()
