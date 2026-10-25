@@ -4,12 +4,12 @@ import {
   valuation,
   portfolioAnalysis,
   finite,
-} from "./analytics.mjs?v=0.5.3";
+} from "./analytics.mjs?v=0.6.0";
 
-import { evaluateThesis } from "./research-model.mjs?v=0.5.3";
-import { adjustedReturn, factorModel } from "./factors.mjs?v=0.5.3";
+import { evaluateThesis } from "./research-model.mjs?v=0.6.0";
+import { adjustedReturn, factorModel } from "./factors.mjs?v=0.6.0";
 
-import { informationDate } from "./policy.mjs?v=0.5.3";
+import { informationDate } from "./policy.mjs?v=0.6.0";
 
 export const DEFAULT_RULES = {
   weightDrift: 0.05,
