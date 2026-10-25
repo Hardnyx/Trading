@@ -21,10 +21,10 @@ function informationScore(asset) {
   return (hasEps ? 2 : 0) + (hasSales ? 1 : 0);
 }
 
-export function selectCompositionUniverse(eligible, heldSymbols = [], benchmark = "SPY", limit = MAX_COMPOSITION_ASSETS) {
+export function selectCompositionUniverse(eligible, heldSymbols = [], benchmark = "SPY", limit = MAX_COMPOSITION_ASSETS, priorities = null) {
   if (!Number.isInteger(limit) || limit < 4) throw new Error("Límite de activos inválido.");
   const unique = eligible.filter((asset, i) => eligible.findIndex((row) => row.symbol === asset.symbol) === i);
-  if (unique.length <= limit) return { assets: unique, omitted: [] };
+  if (unique.length <= limit) return { assets: unique, omitted: [], method: "all-eligible" };
   const held = new Set(heldSymbols);
   // Fixed, auditable comparators across equities, Treasuries and credit.
   // These are comparison instruments, not buy recommendations.
@@ -42,13 +42,30 @@ export function selectCompositionUniverse(eligible, heldSymbols = [], benchmark 
   for (const asset of unique) if (mandatory.has(asset.symbol)) select(asset);
   if (chosen.length > limit) throw new Error("La cartera actual supera el límite de activos de simulación.");
   const sectors = new Map();
+  const score = (asset) => priorities && Number.isFinite(priorities[asset.symbol])
+    ? priorities[asset.symbol] : -Infinity;
   const extras = unique
     .filter((asset) => !seen.has(asset.symbol))
     .sort((a, b) =>
+      (priorities ? score(b) - score(a) : 0) ||
       informationScore(b) - informationScore(a) ||
       shareVolume(b) - shareVolume(a) ||
       a.symbol.localeCompare(b.symbol)
     );
+  // Allocate roughly half the remaining slots to economically ranked
+  // candidates; keep the other half for sector breadth. The signal uses
+  // forward valuation and uncertainty, NEVER a past-return ranking.
+  const availableSlots = Math.max(0, limit - chosen.length);
+  if (priorities) {
+    const qualitySlots = Math.floor(availableSlots / 2);
+    let used = 0;
+    for (const asset of extras) {
+      if (used >= qualitySlots) break;
+      if (!Number.isFinite(priorities[asset.symbol])) continue;
+      select(asset);
+      used++;
+    }
+  }
   for (const asset of extras) {
     const sector = asset.sector || "Otros";
     if (!sectors.has(sector)) sectors.set(sector, []);
@@ -64,5 +81,8 @@ export function selectCompositionUniverse(eligible, heldSymbols = [], benchmark 
   return {
     assets: chosen,
     omitted: unique.filter((asset) => !seen.has(asset.symbol)).map((asset) => asset.symbol),
+    method: priorities
+      ? "auditable-forward-risk-adjusted-signal-and-sector-breadth"
+      : "coverage-liquidity-sector-breadth",
   };
 }
