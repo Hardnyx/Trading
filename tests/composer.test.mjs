@@ -82,6 +82,12 @@ test("composition is reproducible, fully invested and respects position, sector 
   assert.ok(a.metrics.lossProbability <= a.rules.maxLossProbability);
   assert.notEqual(a.settings.seed, a.verification.seed);
   assert.ok(a.calibration_end <= input.price_as_of);
+  assert.equal(a.search.method, "reserve-tilts-random-local-exchanges");
+  assert.equal(a.search.exhaustive, false);
+  assert.equal(a.diagnostics.references.cash.feasible, true);
+  assert.ok(a.diagnostics.references.reserve);
+  assert.equal(a.diagnostics.references.equity20, null);
+  assert.ok(a.diagnostics.selected.largestPosition.weight > 0);
   assert.equal(JSON.stringify(input), before);
 });
 
