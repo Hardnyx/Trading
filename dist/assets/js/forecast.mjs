@@ -45,6 +45,7 @@ export function simulateForecast(
     ],
     { ...options, marketLoadings },
     overrides,
+    assets,
   );
   const sample = generatePaths(
     inputs,
@@ -80,6 +81,8 @@ export function simulateForecast(
         .map((p) => p.weight),
     ),
     covariance: inputs.covariance,
+    residualCorrelation: inputs.residualCorrelation,
+    dependence: inputs.dependence,
     histogram: bins.map((count, i) => ({
       low: min + i * width,
       high: min + (i + 1) * width,
