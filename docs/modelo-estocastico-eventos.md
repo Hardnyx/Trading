@@ -236,9 +236,9 @@ El aprendizaje no consiste en volver a escribir el pasado para que los pronósti
 1. **Pronóstico sellado:** registrar $`(\mu_{i,t},h_{i,t+1\mid t},p_{i,t})`$, parámetros, información y versión del modelo antes de conocer $`r_{i,t+1}`$.
 2. **Resultado observado:** calcular $`u_{i,t+1}`$ y, cuando corresponda, el residuo estandarizado
 
-   ```math
-   z_{i,t+1}=\frac{u_{i,t+1}}{\sqrt{h_{i,t+1\mid t}}}.
-   ```
+```math
+z_{i,t+1}=\frac{u_{i,t+1}}{\sqrt{h_{i,t+1\mid t}}}.
+```
 
 3. **Atribución tentativa:** asociar eventos con sello de tiempo y evidencia, pero mantener la pérdida de predicción original.
 4. **Actualización de estado:** actualizar $`h_{i,t+2\mid t+1}`$ con el error realizado y **parámetros previamente entrenados**.
