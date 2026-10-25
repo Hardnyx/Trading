@@ -60,11 +60,11 @@ Biblioteca estándar Python. Respuestas en `.cache/`, límites de consultas SEC,
 | Yahoo chart                     | Cinco años de cierres ajustados, volumen, dividendos y splits                                    | Endpoint público no oficial                   |
 | U.S. Treasury                   | Curva par nominal                                                                                | XML oficial                                   |
 | iShares                         | Duración, TIR, SEC yield y gastos de SHY/TLT con fecha                                           | Página pública del emisor                     |
-| BLS                             | IPC y desempleo                                                                                  | API pública; clave opcional                   |
+| BLS                             | IPC general/subyacente, desempleo, nóminas, salarios y participación laboral                     | Una consulta por lote; v2 con clave           |
 | FRED                            | Series macro y fechas de observación                                                             | CSV actual sin clave; API histórica con clave |
 | FMP                             | Consenso anual y revisiones entre capturas                                                       | Clave y acceso al endpoint; uso local/privado |
 
-Universo: 12 acciones, SPY/QQQ/IWM/TLT/GLD/SHY y los 11 Select Sector ETFs XLK/XLC/XLY/XLP/XLF/XLE/XLV/XLI/XLU/XLRE/XLB. CASH se crea localmente como reserva sin remuneración. No es una cotización descargada.
+Universo objetivo: **29 acciones y 44 ETF** (73 símbolos), con cobertura de sectores estadounidenses, geografías, duración de bonos, crédito y materias primas. Se trata de una lista curada: cada corte puede contener menos activos si un proveedor no devuelve historia válida. Los 11 Select Sector ETFs permanecen incluidos. CASH se crea localmente como reserva sin remuneración; no es una cotización descargada. Ampliar el universo no implica comprar ni cambia automáticamente el mandato de riesgo.
 
 Los vencimientos sólo se muestran cuando existe el concepto estándar en Company Facts. La dilución requiere historia de acciones y ajuste documentado por splits. No hay cobertura completa de clases múltiples, conceptos XBRL personalizados ni calendario integral de deuda.
 
@@ -78,7 +78,7 @@ Se configuran como variables de entorno o secrets de GitHub Actions; nunca se es
 | ---------------- | -------------------------------------------------------------------------------------- |
 | `SEC_USER_AGENT` | Identificación propia con contacto autorizado; también admite variable del repositorio |
 | `FRED_API_KEY`   | Versiones históricas: realtime_start/realtime_end iguales al corte                     |
-| `BLS_API_KEY`    | API v2 registrada; sin clave se usa v1                                                 |
+| `BLS_API_KEY`    | API v2 registrada y consulta conjunta de seis series; sin clave se usa v1              |
 | `FMP_API_KEY`    | Consenso anual según plan/acceso del proveedor                                         |
 
 Sin clave, FRED sólo acepta CSV para captura actual (`observed_current`), no reconstrucción histórica. FMP sólo se consulta localmente o en un repositorio privado. Este repositorio público no publica consenso aunque se configure una clave. El archivo personal `data/research/latest.json`, ignorado por git, se puede cargar en **Datos y fuentes → Importar corte JSON**. La base FMP de estimaciones es no GAAP; la moneda de reporte y el BPA base comparable deben verificarse antes de usarla en valoración. Comparar revisiones exige mismo ejercicio, moneda y base contable. La fecha de observación impide introducir consenso actual en un corte histórico.
