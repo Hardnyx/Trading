@@ -84,5 +84,6 @@ test("correlation stress refactors the simulated SPY exposure and leaves diagona
   for(let i=0;i<assets.length;i++)for(let j=0;j<assets.length;j++)
     assert.ok(Math.abs(altered.loading[i]*altered.loading[j]+
       altered.residualCovariance[i][j]-stressed[i][j])<1e-10);
-  assert.equal(factorizeStressedCovariance(stressed,assets.slice(1)),null);
+  assert.equal(factorizeStressedCovariance(stressed.slice(1).map(row=>row.slice(1)),assets.slice(1)),null);
+  assert.throws(()=>factorizeStressedCovariance(stressed,assets.slice(1)),/dimensiones/);
 });
