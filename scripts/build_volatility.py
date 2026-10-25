@@ -17,6 +17,31 @@ else:
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def paired_qlike_confidence(rows, block_days=7):
+    """One-sided normal-approximation bound using nonoverlapping daily blocks.
+
+    This is a screening diagnostic, NOT evidence of statistically valid
+    multiple-hypothesis control across all instruments.
+    """
+    improvements = [
+        r["ewma_qlike"] - r["gjr_qlike"] for r in rows
+        if r.get("gjr_qlike") is not None and
+        math.isfinite(r["ewma_qlike"]) and math.isfinite(r["gjr_qlike"])
+    ]
+    blocks = [
+        sum(improvements[i:i+block_days]) / block_days
+        for i in range(0, len(improvements)-block_days+1, block_days)
+    ]
+    if len(blocks) < 8:
+        return {"blocks": len(blocks), "lower_95_one_sided": None,
+                "block_standard_error": None}
+    avg = sum(blocks) / len(blocks)
+    variance = sum((v-avg)**2 for v in blocks) / (len(blocks)-1)
+    error = math.sqrt(max(0,variance)/len(blocks))
+    return {"blocks": len(blocks), "lower_95_one_sided": avg - 1.645*error,
+            "block_standard_error": error}
+
+
 def compact_volatility(snapshot, *, limit=None, test_days=126,
                        train_window=500, refit_every=42):
     cut = snapshot["price_as_of"]
@@ -29,7 +54,7 @@ def compact_volatility(snapshot, *, limit=None, test_days=126,
         "use": "conditional_risk_only_not_expected_return",
         "training_window": train_window,
         "walkforward_days": test_days,
-        "promotion_rule": "126 OOS days; GJR QLIKE lower than EWMA, >=2 of 3 blocks improve, VaR95 exceptions <=10%, valid variance/nu and parameters",
+        "promotion_rule": ">=126 OOS days, QLIKE gain >0.015, 7-day block one-sided lower bound >0, >=2 of 3 long blocks improve, VaR95 exceptions <=10%, 4.01<nu<61.9. This is an operational screen, not a claim of statistical superiority across 177 simultaneous trials.",
         "no_news_attribution": True,
         "instruments": {},
     }
@@ -61,11 +86,14 @@ def compact_volatility(snapshot, *, limit=None, test_days=126,
             ))
             improvement = check["qlike_improvement"]
             rate = check["gjr_var95_exception_rate"]
+            confidence = paired_qlike_confidence(sample)
             approved = (
-                len(sample) >= test_days and improvement is not None
-                and improvement > 0 and wins >= 2 and
+                len(sample) >= max(126, test_days) and improvement is not None
+                and improvement > 0.015 and wins >= 2 and
+                confidence["lower_95_one_sided"] is not None and
+                confidence["lower_95_one_sided"] > 0 and
                 rate is not None and rate <= 0.10 and
-                2 < fit.nu <= 62 and fit.persistence < 0.995 and
+                4.01 < fit.nu < 61.9 and fit.persistence < 0.995 and
                 fit.next_variance_pct2 > 0
             )
             result["instruments"][symbol] = {
@@ -102,6 +130,8 @@ def compact_volatility(snapshot, *, limit=None, test_days=126,
                     "ewma_qlike": check["ewma_qlike"],
                     "gjr_qlike": check["gjr_qlike"],
                     "qlike_improvement": improvement,
+                    "weekly_block_confidence": confidence,
+                    "screen_is_not_multiple_testing_corrected": True,
                     "blocks_better": wins,
                     "blocks_checked": len(blocks),
                     "var95_exception_rate": rate,
