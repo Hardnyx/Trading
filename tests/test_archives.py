@@ -1,4 +1,5 @@
 import copy
+import gzip
 import json
 from pathlib import Path
 import tempfile
@@ -35,6 +36,21 @@ class ObservationArchive(unittest.TestCase):
             self.assertNotIn('history', saved['macro'][0])
             self.assertEqual(len(saved['source_snapshot_sha256']), 64)
         self.assertEqual(data, before)
+
+
+    def test_public_snapshot_has_matching_deterministic_gzip_transport(self):
+        with tempfile.TemporaryDirectory() as directory:
+            destination = Path(directory) / "market.json"
+            private = Path(directory) / "research" / "latest.json"
+            snapshot = fixture()
+            module.write_snapshot(snapshot, destination, private)
+            compressed = destination.with_suffix(".json.gz")
+            self.assertTrue(compressed.exists())
+            self.assertEqual(gzip.decompress(compressed.read_bytes()), destination.read_bytes())
+            before = compressed.read_bytes()
+            module.write_snapshot(snapshot, destination, private)
+            self.assertEqual(before, compressed.read_bytes())
+            self.assertNotIn("analyst_estimates", destination.read_text())
 
     def test_existing_capture_cannot_be_rewritten_with_revised_facts(self):
         with tempfile.TemporaryDirectory() as directory:
