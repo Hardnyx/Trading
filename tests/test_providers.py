@@ -140,7 +140,8 @@ class PublicationAndFallbacks(unittest.TestCase):
              patch.object(collector, "OUTPUT", Path(directory) / "dist/market.json"), \
              patch.object(collector, "RESEARCH_OUTPUT", Path(directory) / "research/latest.json"), \
              patch.object(collector, "ARCHIVE", Path(directory) / "snapshots"), \
-             patch.object(collector, "ASSETS", [("TEST", "Test", "Sector", 1, 0.05, 20)]), \
+             patch.object(collector, "ASSETS", [("TEST", "Test", "Sector", 1, 0.05, 20)]),
+             patch.object(collector, "expanded_universe", return_value=[]), \
              patch.object(collector, "prices", return_value=quote), \
              patch.object(collector, "financials", return_value={}), \
              patch.object(collector, "filings", return_value=[]), \
