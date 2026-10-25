@@ -1,0 +1,9 @@
+# The application sources in dist are maintained directly, without a build step.
+dist/index.html linguist-vendored=false
+dist/templates/** linguist-vendored=false
+dist/assets/css/** linguist-vendored=false
+dist/assets/js/** linguist-vendored=false
+
+# Downloaded market data and daily observations are generated files.
+dist/data/** linguist-generated=true
+data/snapshots/** linguist-generated=true
