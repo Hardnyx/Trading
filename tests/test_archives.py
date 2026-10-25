@@ -1,13 +1,10 @@
 import copy
-import importlib.util
 import json
 from pathlib import Path
 import tempfile
 import unittest
 
-spec = importlib.util.spec_from_file_location('refresh_archives', Path(__file__).resolve().parents[1] / 'scripts/refresh_data.py')
-module = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(module)
+from scripts import refresh_data as module
 
 
 def fixture():

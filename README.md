@@ -44,9 +44,34 @@ El script utiliza únicamente la biblioteca estándar de Python. Guarda respuest
 
 El workflow **Refresh market data** se ejecuta diariamente a las **18:30 de Lima** (23:30 UTC) y también puede iniciarse desde Actions. Actualiza el archivo de datos en `main` y llama al despliegue de GitHub Pages con el SHA del nuevo corte. El botón de la web **Cargar último corte publicado** descarga el archivo que ya está en el hosting, sin ejecutar el extractor.
 
+### APIs opcionales
+
+El extractor lee las siguientes variables de entorno. En GitHub Actions se configuran como secrets del repositorio, en **Settings → Secrets and variables → Actions**.
+
+| Nombre           | Uso                                                                                                                                                   |
+| ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `FRED_API_KEY`   | IPC, desempleo, Fed funds efectiva, breakeven 10Y, nóminas y producción industrial.                                                                   |
+| `FMP_API_KEY`    | Consenso anual de BPA y ventas para las acciones del universo; requiere acceso al endpoint según el plan.                                             |
+| `BLS_API_KEY`    | Opcional: activa la API v2 registrada. Sin ella se usa v1 mediante POST.                                                                              |
+| `SEC_USER_AGENT` | Identificación propia del extractor con un contacto autorizado, según las reglas de acceso de EDGAR. También se admite como variable del repositorio. |
+
+FRED y FMP se omiten cuando no hay clave. El estado de configuración, los errores y la cobertura efectiva se muestran en **Datos y fuentes**. Las claves no se escriben en los JSON, en los enlaces de la interfaz ni en los diagnósticos.
+
+FRED solicita `realtime_start` y `realtime_end` iguales al corte para obtener la versión disponible en esa fecha. La fecha de observación, la fecha de la versión y la de descarga se conservan por separado. Si FRED y BLS cubren la misma serie, se elige la observación más reciente; a igualdad de período se utiliza FRED.
+
+**Consenso para uso personal:** FMP distingue el acceso a la API de los derechos para publicar sus datos. El extractor mantiene el consenso en `data/research/latest.json`, excluido del JSON público y de las capturas públicas. Esa carpeta está ignorada por git en ejecuciones locales. Puedes cargar el archivo en el terminal con **Datos y fuentes → Importar corte JSON**; el navegador procesa el archivo localmente.
+
+En GitHub Actions, FMP sólo se consulta si el repositorio es privado. En ese caso el workflow conserva `data/research/` en el repositorio, mientras GitHub Pages publica exclusivamente `dist/`. En un repositorio público FMP queda desactivado aunque exista una clave; no se modifica la visibilidad del repositorio.
+
+El consenso conserva hasta cuatro ejercicios fiscales futuros, la media y rango de BPA, las ventas medias, el número de analistas y los cambios frente a la captura anterior del mismo ejercicio. Son revisiones observadas entre descargas, no un historial de consenso reconstruido. La moneda y base GAAP/ajustada no se infieren si el proveedor no las declara. Todavía no modifica el ancla de valoración ni se utiliza como distribución probabilística. Las consultas retrospectivas no incorporan consenso descargado hoy.
+
+Documentación: [clave FRED](https://fred.stlouisfed.org/docs/api/api_key.html), [consensos FMP](https://site.financialmodelingprep.com/developer/docs/stable/financial-estimates), [acceso FMP](https://site.financialmodelingprep.com/developer/docs/quickstart), [publicación de datos FMP](https://site.financialmodelingprep.com/insights/platform/can-you-use-fmp-data-in-a-public-app-website-or-client-dashboard) y [acceso SEC](https://www.sec.gov/about/developer-resources).
+
 ### Conservación de cortes
 
 Cada descarga guarda una captura fechada en `data/snapshots/`, con precios observados, fundamentos, fechas de publicación, series macro y una huella del archivo completo. Las capturas son inmutables; no repiten toda la historia de precios. Empiezan a registrar la información conocida desde su fecha de colección. Una descarga solicitada para una fecha pasada queda identificada como retrospectiva.
+
+Cuando hay consenso, se conserva además una captura completa para research en `data/research/snapshots/`; la captura pública excluye esos campos.
 
 ## Composición y seguimiento
 
@@ -84,6 +109,8 @@ La referencia se conserva en el navegador, junto con los supuestos y el estado d
 | Yahoo Finance chart                   | Cierres, Adj Close, volumen y dividendos               | Endpoint público no oficial; disponibilidad sin garantía |
 | U.S. Treasury                         | Curva par nominal                                      | Feed XML oficial                                         |
 | BLS                                   | IPC y desempleo desestacionalizados                    | API pública oficial                                      |
+| FRED                                  | Macro y versiones disponibles al corte                 | API oficial, clave opcional para el proyecto             |
+| FMP                                   | Consenso y revisiones entre capturas                   | API con clave; ejecución local o repositorio privado     |
 
 Precios diarios: se solicitan cinco años por activo; la cobertura efectiva depende de la fuente.
 
@@ -95,7 +122,7 @@ El retorno central puede venir de la valoración propia o de un supuesto manual.
 
 En la extensión Merton se añaden saltos comunes a la cartera. Su frecuencia, media logarítmica y dispersión son parámetros de estrés propios. La compensación del salto preserva la media esperada del ancla. El modelo utiliza pasos semanales y mantiene constantes las unidades de cada posición, sin costos ni impuestos.
 
-La valoración parte de BPA diluido o FCF/acción, aplica crecimiento y múltiplo de salida y descuenta el resultado. No hay un DCF completo ni consenso externo. Los dividendos por acción se mantienen constantes. El retorno anual equivalente aproxima el efectivo de dividendos como recibido al final del horizonte. El ancla ya incorpora ese efectivo y no se suma nuevamente en Monte Carlo.
+La valoración parte de BPA diluido o FCF/acción, aplica crecimiento y múltiplo de salida y descuenta el resultado. No hay un DCF completo. El consenso externo opcional se muestra en la ficha del activo como referencia; el ancla sigue usando los supuestos propios. Los dividendos por acción se mantienen constantes. El retorno anual equivalente aproxima el efectivo de dividendos como recibido al final del horizonte. El ancla ya incorpora ese efectivo y no se suma nuevamente en Monte Carlo.
 
 Los escenarios de valoración usan variaciones explícitas respecto al supuesto base: crecimiento −7/+5 puntos porcentuales y múltiplo ×0.80/×1.15 para adverso/favorable. No se asignan probabilidades empíricas a esos escenarios.
 
@@ -142,7 +169,9 @@ dist/
   data/market.json Corte descargado de fuentes públicas
 scripts/
   refresh_data.py  Actualización y normalización
+  data_providers.py FRED y consenso con credenciales opcionales
 data/snapshots/   Cortes observados por fecha de colección
+data/research/    Consenso para importar localmente; fuera del hosting público
 tests/            Cálculos financieros, plantillas y archivos de cortes
 ```
 

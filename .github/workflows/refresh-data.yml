@@ -8,6 +8,7 @@ on:
     paths:
       - '.github/workflows/refresh-data.yml'
       - 'scripts/refresh_data.py'
+      - 'scripts/data_providers.py'
   workflow_dispatch:
 permissions:
   contents: read
@@ -20,6 +21,8 @@ jobs:
     timeout-minutes: 15
     permissions:
       contents: write
+    env:
+      REPOSITORY_PRIVATE: ${{ github.event.repository.private }}
     outputs:
       changed: ${{ steps.snapshot.outputs.changed }}
       commit_sha: ${{ steps.snapshot.outputs.commit_sha }}
@@ -30,12 +33,18 @@ jobs:
           python-version: '3.12'
       - name: Download a public market snapshot
         env:
-          SEC_USER_AGENT: ${{ vars.SEC_USER_AGENT }}
+          SEC_USER_AGENT: ${{ secrets.SEC_USER_AGENT || vars.SEC_USER_AGENT }}
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+          FMP_API_KEY: ${{ secrets.FMP_API_KEY }}
+          BLS_API_KEY: ${{ secrets.BLS_API_KEY }}
         run: python scripts/refresh_data.py
       - name: Commit the updated snapshot
         id: snapshot
         run: |
           git add dist/data/market.json data/snapshots
+          if [ "$REPOSITORY_PRIVATE" = 'true' ] && [ -d data/research ]; then
+            git add -f data/research
+          fi
           if git diff --cached --quiet; then
             echo 'changed=false' >> "$GITHUB_OUTPUT"
             exit 0

@@ -1,11 +1,8 @@
-import importlib.util
 from pathlib import Path
 import unittest
 import json
 
-spec = importlib.util.spec_from_file_location("refresh_data", Path(__file__).resolve().parents[1] / "scripts/refresh_data.py")
-module = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(module)
+from scripts import refresh_data as module
 
 
 class FinancialPeriods(unittest.TestCase):

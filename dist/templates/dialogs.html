@@ -5,6 +5,72 @@
     <title>Plantillas de interfaz</title>
   </head>
   <body>
+    <template id="provider-status-row">
+      <tr>
+        <td>{{name}}</td>
+        <td class="{{tone}}">{{status}}</td>
+        <td>{{detail}}</td>
+        <td>{{checked}}</td>
+      </tr>
+    </template>
+    <template id="provider-status">
+      <div class="table-wrap">
+        <table class="coverage-table">
+          <thead>
+            <tr>
+              <th>FUENTE</th>
+              <th>ESTADO</th>
+              <th>COBERTURA / CONFIGURACIÓN</th>
+              <th>COMPROBACIÓN</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{{items}}}
+          </tbody>
+        </table>
+      </div>
+    </template>
+    <template id="analyst-consensus-row">
+      <tr>
+        <td>{{period}}</td>
+        <td>{{eps}}<br /><span class="muted small">{{epsRange}}</span></td>
+        <td>{{revenue}}<br /><span class="muted small">{{currency}}</span></td>
+        <td>{{analysts}}</td>
+        <td>
+          {{revision}}<br /><span class="muted small">vs {{comparison}}</span>
+        </td>
+      </tr>
+    </template>
+    <template id="analyst-consensus">
+      <p class="mini-note">
+        Observado {{observed}}. Ejercicios fiscales futuros; BPA medio y mínimo
+        / máximo del proveedor. Revisión frente a la captura anterior del mismo
+        ejercicio.
+      </p>
+      <div class="table-wrap">
+        <table class="coverage-table">
+          <thead>
+            <tr>
+              <th>FIN DEL EJERCICIO</th>
+              <th>BPA / RANGO</th>
+              <th>VENTAS MEDIAS</th>
+              <th>ANALISTAS BPA / VENTAS</th>
+              <th>REVISIÓN BPA</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{{items}}}
+          </tbody>
+        </table>
+      </div>
+      <p class="mini-note">
+        La base GAAP o ajustada del consenso no está declarada. Se muestra como
+        referencia de research; todavía no modifica el ancla de la proyección.
+        <a href="{{source}}" target="_blank" rel="noopener noreferrer"
+          >Fuente ↗</a
+        >
+      </p>
+    </template>
     <!-- dialogs: reusable HTML; double braces escape text, triple braces insert rendered fragments. -->
 
     <template id="shortcuts-view-2">
@@ -250,9 +316,10 @@
       <div class="sources-grid">{{{items}}}</div>
       <p class="mini-note">
         Corte generado {{generated_at}}. La página utiliza un archivo de datos
-        descargados; no representa un feed en tiempo real. La actualización de
-        proveedores se ejecuta con scripts/refresh_data.py o el workflow manual
-        del repositorio.
+        descargados; no representa un feed en tiempo real. La actualización
+        automática está programada diariamente a las 18:30 de Lima. También
+        puede iniciarse desde GitHub Actions. Cada fuente conserva su fecha
+        efectiva.
       </p>
       {{{value6}}}
       <div class="inline-actions section-gap">

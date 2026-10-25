@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Actualiza un corte reproducible sin claves ni dependencias de terceros.
+"""Actualiza un corte reproducible con la biblioteca estándar de Python.
 
 SEC: datos XBRL oficiales. Yahoo: endpoint público no oficial; puede cambiar.
 U.S. Treasury: curva XML oficial. BLS: inflación y empleo oficiales. Nunca se sustituyen fallos por datos inventados.
@@ -22,9 +22,15 @@ import urllib.parse
 import urllib.request
 import xml.etree.ElementTree as ET
 
+if __package__:
+    from .data_providers import FRED_SERIES, ProviderError, analyst_estimates, fred_series, retained_estimates
+else:
+    from data_providers import FRED_SERIES, ProviderError, analyst_estimates, fred_series, retained_estimates
+
 ROOT = Path(__file__).resolve().parents[1]
 CACHE = ROOT / ".cache"
 OUTPUT = ROOT / "dist/data/market.json"
+RESEARCH_OUTPUT = ROOT / "data/research/latest.json"
 ARCHIVE = ROOT / "data/snapshots"
 UTC = dt.timezone.utc
 UA = "TradingResearch/0.2 (https://github.com/Hardnyx/Trading)"
@@ -55,7 +61,7 @@ ASSETS = [
 
 
 
-def download(url, cache_key, max_age=0, sec=False):
+def download(url, cache_key, max_age=0, sec=False, payload=None):
     global LAST_SEC
     CACHE.mkdir(exist_ok=True)
     path = CACHE / cache_key
@@ -74,11 +80,15 @@ def download(url, cache_key, max_age=0, sec=False):
         if host in ACCESS_FAILURES:
             raise urllib.error.HTTPError(url, ACCESS_FAILURES[host], 'Acceso rechazado previamente en esta ejecución', None, None)
         try:
-            req = urllib.request.Request(url, headers={
+            headers = {
                 "User-Agent": SEC_UA if sec else UA,
                 "Accept": "application/json,text/csv,*/*",
                 "Accept-Encoding": "gzip",
-            })
+            }
+            if payload is not None:
+                headers["Content-Type"] = "application/json"
+            req = urllib.request.Request(url, headers=headers,
+                                         data=json.dumps(payload).encode() if payload is not None else None)
             with urllib.request.urlopen(req, timeout=40) as response:
                 result = response.read()
                 if result.startswith(b'\x1f\x8b'):
@@ -89,7 +99,7 @@ def download(url, cache_key, max_age=0, sec=False):
             if isinstance(error, urllib.error.HTTPError):
                 if error.code in (401, 403):
                     ACCESS_FAILURES[host] = error.code
-                if error.code in (400, 401, 403, 404, 410):
+                if error.code in (400, 401, 402, 403, 404, 410):
                     raise
             if attempt == 2:
                 raise
@@ -101,7 +111,9 @@ def date(value):
 
 
 def error_label(error):
-    return f'HTTP {error.code}' if isinstance(error, urllib.error.HTTPError) else type(error).__name__
+    if getattr(error, 'code', None):
+        return f'HTTP {error.code}'
+    return str(error) if isinstance(error, ProviderError) else type(error).__name__
 
 
 def number(value):
@@ -279,8 +291,13 @@ def treasury_curves(cutoff):
 
 def bls_series(series_id, label, cutoff, cpi=False):
     year = date(cutoff).year
-    url = f"https://api.bls.gov/publicAPI/v1/timeseries/data/{series_id}?startyear={year-2}&endyear={year}"
-    body = json.loads(download(url, f"bls-{series_id}.json", max_age=6 * 3600))
+    api_key = os.environ.get("BLS_API_KEY", "").strip()
+    version = "v2" if api_key else "v1"
+    url = f"https://api.bls.gov/publicAPI/{version}/timeseries/data/"
+    payload = {"seriesid": [series_id], "startyear": str(year - 2), "endyear": str(year)}
+    if api_key:
+        payload["registrationkey"] = api_key
+    body = json.loads(download(url, f"bls-{version}-{series_id}-{year}-post.json", max_age=6 * 3600, payload=payload))
     if body.get("status") != "REQUEST_SUCCEEDED":
         raise ValueError("BLS no devolvió observaciones")
     rows = []
@@ -305,9 +322,9 @@ def bls_series(series_id, label, cutoff, cpi=False):
         prior = next((r for r in rows if r["date"] == previous_year), None)
         if prior:
             yoy = rows[-1]["value"] / prior["value"] - 1
-    return {"id": "CPI" if cpi else "UNRATE", "label": label, "unit": "índice" if cpi else "%",
+    return {"id": "CPI" if cpi else "UNRATE", "label": label, "unit": "índice" if cpi else "%", "provider": "BLS",
             "description": "IPC desestacionalizado" if cpi else "Tasa de desempleo desestacionalizada",
-            "value": rows[-1]["value"], "date": rows[-1]["date"], "previous": rows[-2]["value"], "yoy": yoy,
+            "value": rows[-1]["value"], "date": rows[-1]["date"], "previous": rows[-2]["value"] if len(rows) > 1 else None, "yoy": yoy,
             "history": rows, "source_url": f"https://data.bls.gov/timeseries/{series_id}"}
 
 
@@ -322,26 +339,48 @@ def build_asset(spec, cutoff, previous):
         old = previous.get(symbol)
         if not old or not old.get("history"):
             return None, [f"{symbol}: precios no disponibles ({error_label(exc)})"]
+        rows = [row for row in old["history"] if row["date"] <= cutoff]
+        if len(rows) < 2:
+            return None, [f"{symbol}: precios anteriores al corte no disponibles ({error_label(exc)})"]
         asset.update({k: old.get(k) for k in ["history", "price", "price_date", "change", "dividend_per_share", "currency", "source_url"]})
-        errors.append(f"{symbol}: se conserva el precio del {asset['price_date']}; actualización fallida")
+        asset.update(history=rows, price=rows[-1]["close"], price_date=rows[-1]["date"], change=rows[-1]["close"] / rows[-2]["close"] - 1)
+        if old.get("price_date", "9999") > cutoff:
+            asset["dividend_per_share"] = None
+        errors.append(f"{symbol}: se conserva el precio del {asset['price_date']}; actualización fallida ({error_label(exc)})")
     if cik:
         try:
             asset["financials"] = financials(cik, cutoff)
         except Exception as exc:
-            asset["financials"] = previous.get(symbol, {}).get("financials")
+            old = previous.get(symbol, {}).get("financials") or {}
+            asset["financials"] = {key: value if not isinstance(value, dict) or
+                                   (value.get("filed", "9999") <= cutoff and value.get("period_end", "9999") <= cutoff)
+                                   else None for key, value in old.items()}
             errors.append(f"{symbol}: SEC no actualizada ({error_label(exc)})")
         try:
             asset["filings"] = filings(cik, cutoff)
         except Exception as exc:
-            asset["filings"] = previous.get(symbol, {}).get("filings", [])
+            asset["filings"] = [row for row in previous.get(symbol, {}).get("filings", [])
+                                if row.get("filing_date", "9999") <= cutoff]
             errors.append(f"{symbol}: presentaciones no actualizadas ({error_label(exc)})")
     else:
         asset["financials"] = None
     return asset, errors
 
 
-def archive_observation(snapshot, directory=ARCHIVE):
+def public_snapshot(snapshot):
+    return dict(snapshot, assets=[{key: value for key, value in asset.items() if key != "analyst_estimates"}
+                                 for asset in snapshot["assets"]])
+
+
+def fmp_execution_allowed():
+    return os.environ.get("GITHUB_ACTIONS") != "true" or os.environ.get("REPOSITORY_PRIVATE") == "true"
+
+
+def archive_observation(snapshot, directory=None, include_research=False):
     """Preserve what was observed at collection time without repeating price history."""
+    if not include_research:
+        snapshot = public_snapshot(snapshot)
+    directory = ARCHIVE if directory is None else directory
     collected = dt.datetime.fromisoformat(snapshot['generated_at'].replace('Z', '+00:00'))
     if collected.tzinfo is None:
         raise ValueError('La captura necesita una hora de colección con zona horaria')
@@ -360,6 +399,7 @@ def archive_observation(snapshot, directory=ARCHIVE):
         'macro': [{k: v for k, v in series.items() if k != 'history'} for series in snapshot.get('macro', [])],
         'errors': snapshot.get('errors', []),
         'sources': snapshot.get('sources', []),
+        'providers': snapshot.get('providers', []),
     }
     content = json.dumps(payload, ensure_ascii=False, sort_keys=True, separators=(',', ':'), allow_nan=False) + '\n'
     folder = Path(directory) / collected.strftime('%Y-%m')
@@ -374,12 +414,41 @@ def archive_observation(snapshot, directory=ARCHIVE):
     return path
 
 
+def write_snapshot(snapshot, public_path=None, private_path=None):
+    """Keep personal licensed research outside the publicly deployed directory."""
+    public_path = OUTPUT if public_path is None else public_path
+    private_path = RESEARCH_OUTPUT if private_path is None else private_path
+    has_research = any(asset.get("analyst_estimates") for asset in snapshot["assets"])
+    if has_research or private_path.exists():
+        private_path.parent.mkdir(parents=True, exist_ok=True)
+        temporary = private_path.with_suffix(".tmp")
+        temporary.write_text(json.dumps(snapshot, ensure_ascii=False, separators=(",", ":"), allow_nan=False) + "\n")
+        temporary.replace(private_path)
+        archive_observation(snapshot, private_path.parent / "snapshots", include_research=True)
+    public = public_snapshot(snapshot)
+    public_path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = public_path.with_suffix(".tmp")
+    temporary.write_text(json.dumps(public, ensure_ascii=False, separators=(",", ":"), allow_nan=False) + "\n")
+    temporary.replace(public_path)
+
+
+def previous_snapshot():
+    research = json.loads(RESEARCH_OUTPUT.read_text()) if RESEARCH_OUTPUT.exists() else {}
+    previous = json.loads(OUTPUT.read_text()) if OUTPUT.exists() else research
+    estimates = {asset["symbol"]: asset.get("analyst_estimates") for asset in research.get("assets", [])}
+    for asset in previous.get("assets", []):
+        if estimates.get(asset["symbol"]):
+            asset["analyst_estimates"] = estimates[asset["symbol"]]
+    return previous
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--as-of", default=dt.datetime.now(UTC).date().isoformat(), help="Corte máximo YYYY-MM-DD")
     args = parser.parse_args()
     date(args.as_of)
-    previous = json.loads(OUTPUT.read_text()) if OUTPUT.exists() else {}
+    previous = previous_snapshot()
+    collected_at = dt.datetime.now(UTC).isoformat()
     old_assets = {a["symbol"]: a for a in previous.get("assets", [])}
     assets, errors = [], []
     with concurrent.futures.ThreadPoolExecutor(max_workers=3) as pool:
@@ -393,6 +462,12 @@ def main():
             else:
                 print(f"ERROR {futures[future]}", flush=True)
     assets.sort(key=lambda a: next(i for i, s in enumerate(ASSETS) if s[0] == a["symbol"]))
+    providers = []
+    sec_failures = sum('SEC no actualizada' in warning or 'presentaciones no actualizadas' in warning for warning in errors)
+    sec_total = sum(bool(spec[3]) for spec in ASSETS) * 2
+    sec_success = sum(asset["type"] == "stock" for asset in assets) * 2 - sec_failures
+    providers.append({"id": "sec", "name": "SEC EDGAR", "status": "error" if not sec_success else "partial" if sec_success < sec_total else "ok",
+                      "detail": f"{sec_success}/{sec_total} consultas actualizadas", "checked_at": collected_at})
     macro = []
     old_macro = {s["id"]: s for s in previous.get("macro", [])}
     macro_tasks = [("Treasury", lambda: treasury_curves(args.as_of)),
@@ -400,37 +475,77 @@ def main():
                    ("BLS Empleo", lambda: [bls_series("LNS14000000", "Desempleo", args.as_of)])]
     for name, task in macro_tasks:
         try:
-            macro.extend(task())
+            fresh = task()
+            for series in fresh:
+                series["observed_at"] = collected_at
+                series.setdefault("provider", "Treasury" if name == "Treasury" else "BLS")
+            macro.extend(fresh)
+            providers.append({"id": name.lower().replace(" ", "-"), "name": name, "status": "ok", "detail": f"{len(fresh)} series", "checked_at": collected_at})
             print(f"OK {name}", flush=True)
         except Exception as exc:
             errors.append(f"{name}: actualización fallida ({error_label(exc)})")
+            providers.append({"id": name.lower().replace(" ", "-"), "name": name, "status": "error", "detail": error_label(exc), "checked_at": collected_at})
+    fred_key = os.environ.get("FRED_API_KEY", "").strip()
+    fred_success = 0
+    if fred_key:
+        for definition in FRED_SERIES:
+            try:
+                fresh = fred_series(download, definition, args.as_of, fred_key, collected_at)
+                current = next((row for row in macro if row["id"] == fresh["id"]), None)
+                if not current or fresh["date"] >= current["date"]:
+                    macro = [row for row in macro if row["id"] != fresh["id"]] + [fresh]
+                fred_success += 1
+            except Exception as exc:
+                errors.append(f"FRED {definition[0]}: actualización fallida ({error_label(exc)})")
+    providers.append({"id": "fred", "name": "FRED", "status": "not_configured" if not fred_key else "ok" if fred_success == len(FRED_SERIES) else "partial" if fred_success else "error",
+                      "detail": f"{fred_success}/{len(FRED_SERIES)} series actualizadas" if fred_key else "FRED_API_KEY pendiente", "checked_at": collected_at})
+    fmp_key = os.environ.get("FMP_API_KEY", "").strip()
+    fmp_success = 0
+    fmp_allowed = fmp_execution_allowed()
+    stock_count = sum(asset["type"] == "stock" for asset in assets)
+    current_request = args.as_of == collected_at[:10]
+    for asset in assets:
+        if asset["type"] != "stock":
+            continue
+        old = retained_estimates(old_assets.get(asset["symbol"], {}).get("analyst_estimates"), args.as_of)
+        asset["analyst_estimates"] = old
+        if not fmp_key or not current_request or not fmp_allowed:
+            continue
+        try:
+            asset["analyst_estimates"] = analyst_estimates(download, asset["symbol"], args.as_of, fmp_key, collected_at, old)
+            fmp_success += 1
+        except Exception as exc:
+            errors.append(f"FMP {asset['symbol']}: consenso no actualizado ({error_label(exc)})")
+    providers.append({"id": "fmp", "name": "FMP · consenso", "status": "not_configured" if not fmp_key else "private_required" if not fmp_allowed else "historical_request" if not current_request else "ok" if fmp_success == stock_count else "partial" if fmp_success else "error",
+                      "detail": "FMP_API_KEY pendiente" if not fmp_key else "Usar ejecución local o repositorio privado" if not fmp_allowed else "Consenso actual omitido en corte histórico" if not current_request else f"{fmp_success}/{stock_count} activos consultados; corte privado", "checked_at": collected_at})
     for key, record in old_macro.items():
-        if not any(row['id'] == key for row in macro):
+        if record.get('date', '9999') <= args.as_of and (not record.get('vintage_date') or record['vintage_date'] <= args.as_of) and not any(row['id'] == key for row in macro):
             macro.append(record)
     if not assets:
         raise SystemExit("No hay datos válidos; el archivo anterior no se modifica")
     snapshot = {"schema_version": 1, "generated_at": dt.datetime.now(UTC).isoformat(), "requested_as_of": args.as_of,
-                "price_as_of": min(a["price_date"] for a in assets), "assets": assets, "macro": macro, "errors": errors,
+                "price_as_of": min(a["price_date"] for a in assets), "assets": assets, "macro": macro, "errors": errors, "providers": providers,
                 "sources": [
                     {"name": "Yahoo Finance", "kind": "Endpoint público no oficial", "url": "https://finance.yahoo.com/", "data": "Cierres, Adj Close, dividendos y volumen"},
                     {"name": "SEC EDGAR", "kind": "API oficial", "url": "https://www.sec.gov/search-filings/edgar-application-programming-interfaces", "data": "Hechos financieros XBRL"},
                     {"name": "U.S. Treasury", "kind": "Feed XML oficial", "url": "https://home.treasury.gov/treasury-daily-interest-rate-xml-feed", "data": "Curva par nominal"},
                     {"name": "BLS", "kind": "API oficial", "url": "https://www.bls.gov/developers/", "data": "IPC y desempleo"},
+                    {"name": "FRED", "kind": "API opcional con clave", "url": "https://fred.stlouisfed.org/docs/api/fred/", "data": "IPC, desempleo, Fed funds, inflación implícita, nóminas y producción industrial"},
+                    {"name": "FMP", "kind": "API opcional con clave · corte privado", "url": "https://site.financialmodelingprep.com/developer/docs/stable/financial-estimates", "data": "Consenso anual de BPA y ventas; revisiones entre capturas. Se carga mediante Importar corte JSON."},
                 ],
                 "methodology": {"universe_point_in_time": False, "financials_point_in_time": False,
                                 "returns": "Adj Close de Yahoo; precios ajustados por el proveedor por splits y distribuciones",
                                 "portfolio": "Pesos constantes: rebalanceo diario teórico, sin costos ni impuestos",
                                 "valuation": "Supuestos editables propios; no son consenso ni precios objetivo de analistas",
                                 "limitations": "Universo actual seleccionado. Histórico financiero con últimas rectificaciones disponibles. No constituye un backtest point-in-time."}}
-    temporary = OUTPUT.with_suffix(".tmp")
-    OUTPUT.parent.mkdir(parents=True, exist_ok=True)
-    temporary.write_text(json.dumps(snapshot, ensure_ascii=False, separators=(",", ":"), allow_nan=False) + "\n")
     archived = archive_observation(snapshot)
-    temporary.replace(OUTPUT)
+    write_snapshot(snapshot)
     print(f"Captura conservada: {archived.relative_to(ROOT)}", flush=True)
     print(f"Guardado {OUTPUT.name}: {len(assets)} activos, {len(macro)} series, {len(errors)} avisos", flush=True)
     for warning in errors:
         print(f'AVISO {warning}', flush=True)
+    for provider in providers:
+        print(f"FUENTE {provider['name']}: {provider['status']} · {provider['detail']}", flush=True)
 
 
 if __name__ == "__main__":

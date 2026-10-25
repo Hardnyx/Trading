@@ -1072,7 +1072,7 @@ export function createViews(context) {
       title(
         "MACRO / ESTADOS UNIDOS",
         "Tasas y datos macro",
-        "Curva nominal del Treasury, IPC y desempleo. Fechas por serie.",
+        "Tasas, inflación, empleo y actividad. Cobertura y fechas por serie.",
       ) +
       `${ten && two ? template("macro-view-4", { value1: fmt((ten.value - two.value) * 100, 0), date: dateLabel(ten.date) }) : ""}` +
       panel(
@@ -1101,7 +1101,8 @@ export function createViews(context) {
                 ),
                 source_url: url(s.source_url),
                 value8:
-                  s.id === "CPI" || s.id === "UNRATE" ? "BLS" : "Treasury",
+                  s.provider ||
+                  (s.id === "CPI" || s.id === "UNRATE" ? "BLS" : "Treasury"),
               }),
             )
             .join(""),
@@ -1136,25 +1137,57 @@ export function createViews(context) {
         : "",
       refreshIcon: icon("refresh"),
       uploadIcon: icon("upload"),
-      panel: panel(
-        "COBERTURA Y FECHAS",
-        "",
-        template("sources-view-5", {
-          items: data.assets
-            .map((a) => {
-              const m = metrics(a);
-              return template("sources-view-6", {
-                symbol: a.symbol,
-                price_date: dateLabel(a.price_date),
-                period: dateLabel(m.period),
-                filed: dateLabel(m.filed),
-                value5: m.pe ? "DISPONIBLE" : "—",
-                value6: finite(m.fcfYield) ? "DISPONIBLE" : "—",
-              });
-            })
-            .join(""),
-        }),
-      ),
+      panel:
+        panel(
+          "ESTADO DE FUENTES",
+          "",
+          template("provider-status", {
+            items: (data.providers || [])
+              .map((provider) =>
+                template("provider-status-row", {
+                  name: provider.name,
+                  status:
+                    {
+                      ok: "ACTUALIZADA",
+                      partial: "PARCIAL",
+                      error: "ERROR",
+                      not_configured: "CLAVE PENDIENTE",
+                      historical_request: "CORTE HISTÓRICO",
+                      private_required: "ENTORNO PRIVADO PENDIENTE",
+                    }[provider.status] || "SIN ESTADO",
+                  tone:
+                    provider.status === "ok"
+                      ? "positive"
+                      : provider.status === "error" ||
+                          provider.status === "partial"
+                        ? "negative"
+                        : "muted",
+                  detail: provider.detail,
+                  checked: dateLabel(provider.checked_at),
+                }),
+              )
+              .join(""),
+          }),
+        ) +
+        panel(
+          "COBERTURA Y FECHAS",
+          "",
+          template("sources-view-5", {
+            items: data.assets
+              .map((a) => {
+                const m = metrics(a);
+                return template("sources-view-6", {
+                  symbol: a.symbol,
+                  price_date: dateLabel(a.price_date),
+                  period: dateLabel(m.period),
+                  filed: dateLabel(m.filed),
+                  value5: m.pe ? "DISPONIBLE" : "—",
+                  value6: finite(m.fcfYield) ? "DISPONIBLE" : "—",
+                });
+              })
+              .join(""),
+          }),
+        ),
     });
   }
 
@@ -1241,44 +1274,74 @@ export function createViews(context) {
     const m = metrics(a),
       s = assetStats(a),
       v = model(a);
-    return template("detail", {
-      name: a.name,
-      sector: a.sector,
-      value3: a.type === "stock" ? "ACCIÓN" : "ETF",
-      price: money(a.price),
-      changeTone: color(a.change),
-      change: pct(a.change, 2, true),
-      items: [
-        ["P/E " + (m.periodType || ""), m.pe ? fmt(m.pe, 1) + "x" : "—"],
-        ["FCF YIELD", pct(m.fcfYield)],
-        ["VOLATILIDAD ANUAL", pct(s?.volatility)],
-        ["VS MODELO", pct(v?.upside, 1, true)],
-      ]
-        .map(([l, v]) => template("detail-2", { l: l, v: v }))
-        .join(""),
-      lineChart: lineChart(
-        [
-          {
-            name: symbol,
-            color: "var(--chart-primary)",
-            values: a.history.slice(-252).map((r) => r.close),
-          },
-        ],
-        a.history.slice(-252).map((r) => r.date),
-        { height: 220, label: "Precio de " + symbol },
-      ),
-      price_date: dateLabel(a.price_date),
-      value10: m.periodType || "—",
-      period: dateLabel(m.period),
-      filed: dateLabel(m.filed),
-      value13: url(a.financials?.source_url || a.source_url),
-      symbol: symbol,
-      value15: state.positions.some((p) => p.symbol === symbol)
-        ? "Quitar de cartera"
-        : "+ Agregar a cartera",
-      symbol16: symbol,
-      arrowIcon: icon("arrow"),
-    });
+    return (
+      template("detail", {
+        name: a.name,
+        sector: a.sector,
+        value3: a.type === "stock" ? "ACCIÓN" : "ETF",
+        price: money(a.price),
+        changeTone: color(a.change),
+        change: pct(a.change, 2, true),
+        items: [
+          ["P/E " + (m.periodType || ""), m.pe ? fmt(m.pe, 1) + "x" : "—"],
+          ["FCF YIELD", pct(m.fcfYield)],
+          ["VOLATILIDAD ANUAL", pct(s?.volatility)],
+          ["VS MODELO", pct(v?.upside, 1, true)],
+        ]
+          .map(([l, v]) => template("detail-2", { l: l, v: v }))
+          .join(""),
+        lineChart: lineChart(
+          [
+            {
+              name: symbol,
+              color: "var(--chart-primary)",
+              values: a.history.slice(-252).map((r) => r.close),
+            },
+          ],
+          a.history.slice(-252).map((r) => r.date),
+          { height: 220, label: "Precio de " + symbol },
+        ),
+        price_date: dateLabel(a.price_date),
+        value10: m.periodType || "—",
+        period: dateLabel(m.period),
+        filed: dateLabel(m.filed),
+        value13: url(a.financials?.source_url || a.source_url),
+        symbol: symbol,
+        value15: state.positions.some((p) => p.symbol === symbol)
+          ? "Quitar de cartera"
+          : "+ Agregar a cartera",
+        symbol16: symbol,
+        arrowIcon: icon("arrow"),
+      }) + analystConsensus(a)
+    );
+  }
+  function analystConsensus(a) {
+    const consensus = a.analyst_estimates;
+    if (!consensus?.periods?.length) return "";
+    return panel(
+      "CONSENSO ANUAL · FMP",
+      "",
+      template("analyst-consensus", {
+        observed: dateLabel(consensus.observed_at),
+        source: url(consensus.source_url),
+        items: consensus.periods
+          .map((row) =>
+            template("analyst-consensus-row", {
+              period: dateLabel(row.period_end),
+              eps: fmt(row.eps_mean, 2),
+              epsRange: `${fmt(row.eps_low, 2)} / ${fmt(row.eps_high, 2)}`,
+              revenue: finite(row.revenue_mean)
+                ? fmt(row.revenue_mean / 1e9, 2) + " B"
+                : "—",
+              currency: row.currency || "sin moneda declarada",
+              analysts: `${fmt(row.eps_analysts, 0)} / ${fmt(row.revenue_analysts, 0)}`,
+              revision: pct(row.eps_revision_pct, 1, true),
+              comparison: dateLabel(row.comparison_observed_at),
+            }),
+          )
+          .join(""),
+      }),
+    );
   }
   function commandResults(matches, sections) {
     return (

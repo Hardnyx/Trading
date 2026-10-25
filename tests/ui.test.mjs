@@ -59,9 +59,61 @@ test("partial refreshes remain visible with a direct link to source dates", () =
   });
   const html = views.shell("<h1>Cartera</h1>");
   assert.ok(html.includes("Actualización parcial: 2 incidencias."));
-  assert.ok(html.replace(/\s+/g, " ").includes("Se conservaron los últimos datos"));
+  assert.ok(
+    html.replace(/\s+/g, " ").includes("Se conservaron los últimos datos"),
+  );
   assert.ok(html.includes('data-action="sources"'));
   assert.ok(!html.includes("{{count}}"));
+});
+
+test("provider configuration and imported consensus show dates, coverage and revisions", () => {
+  const stock = {
+    ...data.assets.find((a) => a.symbol === "MSFT"),
+    analyst_estimates: {
+      observed_at: "2026-10-24T18:00:00Z",
+      source_url: "https://example.test/estimates",
+      periods: [
+        {
+          period_end: "2027-06-30",
+          eps_mean: 12.5,
+          eps_low: 11,
+          eps_high: 14,
+          revenue_mean: 1250000000,
+          currency: null,
+          eps_analysts: 10,
+          revenue_analysts: 12,
+          eps_revision_pct: 0.05,
+          comparison_observed_at: "2026-10-23T18:00:00Z",
+        },
+      ],
+    },
+  };
+  const views = createViews({
+    state: { positions: [] },
+    data: {
+      ...data,
+      assets: [stock],
+      providers: [
+        {
+          name: "FRED",
+          status: "not_configured",
+          detail: "FRED_API_KEY pendiente",
+          checked_at: data.generated_at,
+        },
+      ],
+    },
+    asset: () => stock,
+    assetStats: () => ({ volatility: 0.2 }),
+    model: () => valuation(stock),
+  });
+  const detail = views.detail("MSFT");
+  assert.ok(detail.includes("CONSENSO ANUAL · FMP"));
+  assert.ok(detail.includes("30 JUN 2027"));
+  assert.ok(detail.includes("+5.0%"));
+  assert.ok(detail.includes("10 / 12"));
+  assert.ok(detail.includes("1.25 B"));
+  assert.ok(detail.includes("sin moneda declarada"));
+  assert.ok(views.sourcesView().includes("CLAVE PENDIENTE"));
 });
 
 for (const populated of [false, true])
