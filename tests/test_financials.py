@@ -26,6 +26,33 @@ class FinancialPeriods(unittest.TestCase):
         self.assertIsNone(module.ttm({}, ["Revenue"], "2026-10-24"))
         self.assertIsNone(module.instant({}, ["Shares"], "2026-10-24", "shares"))
 
+    def test_inconsistent_split_adjusted_eps_is_not_used_for_valuation(self):
+        stock = {
+            "symbol": "TEST", "splits": [{"date": "2026-04-06", "ratio": 25}],
+            "financials": {
+                "eps": {"value": 167.95, "method": "TTM", "period_end": "2026-06-30"},
+                "net_income": {"value": 5404000000, "method": "FY", "period_end": "2025-12-31"},
+                "shares": {"value": 751380500, "period_end": "2026-07-27"},
+            },
+        }
+        warning = module.flag_inconsistent_eps(stock, "2026-10-25")
+        self.assertIn("BPA no comparable", warning)
+        self.assertIsNone(stock["financials"]["eps"])
+        self.assertEqual(stock["financials"]["eps_unverified"]["value"], 167.95)
+        self.assertEqual(stock["quality_flags"], ["eps_share_income_scale_mismatch"])
+
+    def test_consistent_eps_remains_available(self):
+        stock = {
+            "symbol": "TEST", "splits": [{"date": "2025-11-17", "ratio": 10}],
+            "financials": {
+                "eps": {"value": 3.46, "method": "TTM", "period_end": "2026-09-30"},
+                "net_income": {"value": 14766452000, "method": "TTM", "period_end": "2026-09-30"},
+                "shares": {"value": 4106325903, "period_end": "2026-09-30"},
+            },
+        }
+        self.assertIsNone(module.flag_inconsistent_eps(stock, "2026-10-25"))
+        self.assertEqual(stock["financials"]["eps"]["value"], 3.46)
+
     def test_bls_missing_values_are_omitted(self):
         original = module.download
         fixture = {"status": "REQUEST_SUCCEEDED", "Results": {"series": [{"data": [
