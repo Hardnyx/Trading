@@ -1008,6 +1008,9 @@ export function createViews(context) {
         template("composition-notice", {
           message: (() => {
             if (!data.volatility) return "Sin registro de anomalías calibrado para este corte.";
+            const covered = (a?.weights || []).some((p) =>
+              Array.isArray(data.volatility.instruments?.[p.symbol]?.unattributed_shocks));
+            if (!covered) return "El corte aún no incluye evaluación de shocks. No se puede concluir que no hayan ocurrido.";
             const shocks = (a?.weights || []).flatMap((p) =>
               (data.volatility.instruments?.[p.symbol]?.unattributed_shocks || []).map((event) =>
                 ({...event,symbol:p.symbol})))
