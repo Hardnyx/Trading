@@ -82,6 +82,21 @@ def compact_volatility(snapshot, *, limit=None, test_days=126,
                 "annualized_volatility_next": math.sqrt(
                     fit.next_variance_pct2 * 252) / 100,
                 "persistence": fit.persistence,
+                # Anomalies are scored from forecasts issued BEFORE outcomes.
+                # These are not verified news events and never delete errors.
+                "unattributed_shocks": [
+                    {
+                        "date": row["for_date"],
+                        "issued_after_close": row["issued_after_close"],
+                        "standardized_surprise": float(row["standardized_surprise"]),
+                        "return_pct": float(row["observation_pct"]),
+                        "status": "unattributed_statistical_shock",
+                        "news_verified": False,
+                    }
+                    for row in sample[-63:]
+                    if row["standardized_surprise"] is not None
+                    and abs(row["standardized_surprise"]) >= 3.0
+                ][-8:],
                 "verification": {
                     "observations": len(sample),
                     "ewma_qlike": check["ewma_qlike"],
