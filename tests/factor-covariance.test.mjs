@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { marketFactorCovariance, conditionalFactorization } from "../dist/assets/js/factor-covariance.mjs";
+import { marketFactorCovariance, conditionalFactorization, factorizeStressedCovariance } from "../dist/assets/js/factor-covariance.mjs";
 import { cholesky } from "../dist/assets/js/risk-math.mjs?v=0.6.0";
 import { updateEwmaVariance, conditionalRisk } from "../dist/assets/js/conditional-risk.mjs";
 
@@ -71,4 +71,18 @@ test("factorization is unbiased to a standalone sector proxy's absence",()=>{
   const spy=sel.findIndex(a=>a.symbol==="SPY");
   assert.ok(model.residualCovariance[spy][spy]<1e-12);
   cholesky(model.residualCovariance);
+});
+
+test("correlation stress refactors the simulated SPY exposure and leaves diagonals intact",()=>{
+  const assets=[{symbol:"SPY"},{symbol:"AAA"},{symbol:"BBB"}];
+  const original=[[.04,.01,-.005],[.01,.09,.002],[-.005,.002,.08]];
+  const stressed=original.map((row,i)=>row.map((v,j)=>
+    i===j?v:.8*v+.2*Math.sqrt(original[i][i]*original[j][j])));
+  const base=factorizeStressedCovariance(original,assets);
+  const altered=factorizeStressedCovariance(stressed,assets);
+  assert.ok(Math.abs(base.loading[1]-altered.loading[1])>0.01);
+  for(let i=0;i<assets.length;i++)for(let j=0;j<assets.length;j++)
+    assert.ok(Math.abs(altered.loading[i]*altered.loading[j]+
+      altered.residualCovariance[i][j]-stressed[i][j])<1e-10);
+  assert.equal(factorizeStressedCovariance(stressed,assets.slice(1)),null);
 });
