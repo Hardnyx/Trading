@@ -34,7 +34,7 @@ test("shortlisting does not select past winners based on price return", () => {
 });
 
 test("no duplicate eligible assets and invalid cap rejected", () => {
-  assert.throws(()=> selectCompositionUniverse([], [], "SPY", 2),/límite/);
+  assert.throws(()=> selectCompositionUniverse([], [], "SPY", 2),/[Ll]ímite/);
   const assets = [asset("CASH","Efectivo"), asset("CASH","Efectivo"), asset("SPY","Índice")];
   assert.equal(selectCompositionUniverse(assets).assets.length,2);
 });
