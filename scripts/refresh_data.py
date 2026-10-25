@@ -567,8 +567,8 @@ def common_price_cutoff(assets):
             counts[day] = counts.get(day, 0) + 1
     if not counts:
         raise ValueError("No hay precios para determinar el corte")
-    benchmark = next((a["price_date"] for a in assets if a["symbol"] == "SPY"), None)
-    return max(counts, key=lambda day: (counts[day], day == benchmark, day))
+    # A tie favors the newer common date, not a lagging benchmark or stale ETF.
+    return max(counts, key=lambda day: (counts[day], day))
 
 
 def public_snapshot(snapshot):
