@@ -1,5 +1,7 @@
 """Optional data sources. Credentials are only read by the server-side collector."""
 import datetime as dt
+import csv
+import io
 import json
 import math
 import urllib.error
@@ -73,6 +75,31 @@ def fred_series(download, definition, cutoff, api_key, observed_at):
         "observation_start": f"{end.year - 5}-01-01", "observation_end": cutoff,
         "realtime_start": cutoff, "realtime_end": cutoff, "sort_order": "asc",
     }, f"fred-{source_id}-{cutoff}.json")
+    return normalize_fred_series(body, definition, cutoff, observed_at, "api_realtime_period")
+
+
+def fred_csv_series(download, definition, cutoff, observed_at):
+    if observation_time(observed_at).date().isoformat() != cutoff:
+        raise ProviderError("El CSV actual de FRED no se incorpora a un corte histórico")
+    source_id = definition[0]
+    query = urllib.parse.urlencode({"id": source_id, "cosd": f"{int(cutoff[:4]) - 5}-01-01", "coed": cutoff})
+    try:
+        raw = download("https://fred.stlouisfed.org/graph/fredgraph.csv?" + query, f"fred-csv-{source_id}-{cutoff}.csv")
+        reader = csv.DictReader(io.StringIO(raw.decode("utf-8-sig")))
+        if source_id not in (reader.fieldnames or []):
+            raise ProviderError("La exportación FRED no contiene la serie solicitada")
+        observations = [{"date": row.get("observation_date") or row.get("DATE") or row.get("date"), "value": row.get(source_id)} for row in reader]
+    except urllib.error.HTTPError as error:
+        raise ProviderError("La exportación FRED no está disponible", error.code) from None
+    except (urllib.error.URLError, TimeoutError):
+        raise ProviderError("La exportación FRED no está disponible") from None
+    except (UnicodeError, csv.Error):
+        raise ProviderError("La exportación FRED no contiene un CSV válido") from None
+    return normalize_fred_series({"observations": observations}, definition, cutoff, observed_at, "observed_current")
+
+
+def normalize_fred_series(body, definition, cutoff, observed_at, vintage_mode):
+    source_id, target_id, label, unit, description = definition
     if not isinstance(body, dict) or not isinstance(body.get("observations"), list):
         raise ProviderError("FRED no devolvió una serie válida")
     observations = {}
@@ -83,7 +110,7 @@ def fred_series(download, definition, cutoff, api_key, observed_at):
         value = numeric(row.get("value"))
         available_from = iso_day(row.get("realtime_start"))
         available_until = iso_day(row.get("realtime_end"))
-        if (day and day <= cutoff and value is not None
+        if (day and f"{int(cutoff[:4]) - 5}-01-01" <= day <= cutoff and value is not None
                 and (not available_from or available_from <= cutoff)
                 and (not available_until or available_until >= cutoff)):
             observations[day] = {"date": day, "value": value}
@@ -99,7 +126,7 @@ def fred_series(download, definition, cutoff, api_key, observed_at):
         "previous": rows[-2]["value"] if len(rows) > 1 else None,
         "yoy": latest["value"] / prior["value"] - 1 if target_id == "CPI" and prior and prior["value"] else None,
         "history": rows, "provider": "FRED", "source_id": source_id,
-        "vintage_date": cutoff, "observed_at": observed_at,
+        "vintage_date": cutoff, "vintage_mode": vintage_mode, "observed_at": observed_at,
         "source_url": f"https://fred.stlouisfed.org/series/{source_id}",
     }
 

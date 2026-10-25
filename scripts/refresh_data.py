@@ -23,9 +23,9 @@ import urllib.request
 import xml.etree.ElementTree as ET
 
 if __package__:
-    from .data_providers import FRED_SERIES, ProviderError, analyst_estimates, fred_series, retained_estimates
+    from .data_providers import FRED_SERIES, ProviderError, analyst_estimates, fred_series, fred_csv_series, retained_estimates
 else:
-    from data_providers import FRED_SERIES, ProviderError, analyst_estimates, fred_series, retained_estimates
+    from data_providers import FRED_SERIES, ProviderError, analyst_estimates, fred_series, fred_csv_series, retained_estimates
 
 ROOT = Path(__file__).resolve().parents[1]
 CACHE = ROOT / ".cache"
@@ -487,23 +487,26 @@ def main():
             providers.append({"id": name.lower().replace(" ", "-"), "name": name, "status": "error", "detail": error_label(exc), "checked_at": collected_at})
     fred_key = os.environ.get("FRED_API_KEY", "").strip()
     fred_success = 0
-    if fred_key:
+    current_request = args.as_of == collected_at[:10]
+    fred_enabled = bool(fred_key) or current_request
+    if fred_enabled:
         for definition in FRED_SERIES:
             try:
-                fresh = fred_series(download, definition, args.as_of, fred_key, collected_at)
+                fresh = fred_series(download, definition, args.as_of, fred_key, collected_at) if fred_key else fred_csv_series(download, definition, args.as_of, collected_at)
                 current = next((row for row in macro if row["id"] == fresh["id"]), None)
                 if not current or fresh["date"] >= current["date"]:
                     macro = [row for row in macro if row["id"] != fresh["id"]] + [fresh]
                 fred_success += 1
             except Exception as exc:
                 errors.append(f"FRED {definition[0]}: actualización fallida ({error_label(exc)})")
-    providers.append({"id": "fred", "name": "FRED", "status": "not_configured" if not fred_key else "ok" if fred_success == len(FRED_SERIES) else "partial" if fred_success else "error",
-                      "detail": f"{fred_success}/{len(FRED_SERIES)} series actualizadas" if fred_key else "FRED_API_KEY pendiente", "checked_at": collected_at})
+                if not fred_key:
+                    break
+    providers.append({"id": "fred", "name": "FRED", "status": "not_configured" if not fred_enabled else "ok" if fred_success == len(FRED_SERIES) else "partial" if fred_success else "error",
+                      "detail": f"{fred_success}/{len(FRED_SERIES)} series; " + ("API con versión al corte" if fred_key else "CSV público observado hoy") if fred_enabled else "FRED_API_KEY necesaria para cortes históricos", "checked_at": collected_at})
     fmp_key = os.environ.get("FMP_API_KEY", "").strip()
     fmp_success = 0
     fmp_allowed = fmp_execution_allowed()
     stock_count = sum(asset["type"] == "stock" for asset in assets)
-    current_request = args.as_of == collected_at[:10]
     for asset in assets:
         if asset["type"] != "stock":
             continue
@@ -530,7 +533,7 @@ def main():
                     {"name": "SEC EDGAR", "kind": "API oficial", "url": "https://www.sec.gov/search-filings/edgar-application-programming-interfaces", "data": "Hechos financieros XBRL"},
                     {"name": "U.S. Treasury", "kind": "Feed XML oficial", "url": "https://home.treasury.gov/treasury-daily-interest-rate-xml-feed", "data": "Curva par nominal"},
                     {"name": "BLS", "kind": "API oficial", "url": "https://www.bls.gov/developers/", "data": "IPC y desempleo"},
-                    {"name": "FRED", "kind": "API opcional con clave", "url": "https://fred.stlouisfed.org/docs/api/fred/", "data": "IPC, desempleo, Fed funds, inflación implícita, nóminas y producción industrial"},
+                    {"name": "FRED", "kind": "CSV público / API histórica con clave", "url": "https://fred.stlouisfed.org/docs/api/fred/", "data": "IPC, desempleo, Fed funds, inflación implícita, nóminas y producción industrial"},
                     {"name": "FMP", "kind": "API opcional con clave · corte privado", "url": "https://site.financialmodelingprep.com/developer/docs/stable/financial-estimates", "data": "Consenso anual de BPA y ventas; revisiones entre capturas. Se carga mediante Importar corte JSON."},
                 ],
                 "methodology": {"universe_point_in_time": False, "financials_point_in_time": False,

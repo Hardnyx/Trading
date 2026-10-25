@@ -50,14 +50,14 @@ El extractor lee las siguientes variables de entorno. En GitHub Actions se confi
 
 | Nombre           | Uso                                                                                                                                                   |
 | ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `FRED_API_KEY`   | IPC, desempleo, Fed funds efectiva, breakeven 10Y, nóminas y producción industrial.                                                                   |
+| `FRED_API_KEY`   | Opcional para versiones históricas de las seis series macro. Sin clave se utiliza el CSV público para la captura del día.                             |
 | `FMP_API_KEY`    | Consenso anual de BPA y ventas para las acciones del universo; requiere acceso al endpoint según el plan.                                             |
 | `BLS_API_KEY`    | Opcional: activa la API v2 registrada. Sin ella se usa v1 mediante POST.                                                                              |
 | `SEC_USER_AGENT` | Identificación propia del extractor con un contacto autorizado, según las reglas de acceso de EDGAR. También se admite como variable del repositorio. |
 
-FRED y FMP se omiten cuando no hay clave. El estado de configuración, los errores y la cobertura efectiva se muestran en **Datos y fuentes**. Las claves no se escriben en los JSON, en los enlaces de la interfaz ni en los diagnósticos.
+FMP se omite cuando no hay clave. FRED puede descargar las series actuales mediante su exportación pública CSV, también utilizada por pandas-datareader. El estado de configuración, los errores y la cobertura efectiva se muestran en **Datos y fuentes**. Las claves no se escriben en los JSON, en los enlaces de la interfaz ni en los diagnósticos.
 
-FRED solicita `realtime_start` y `realtime_end` iguales al corte para obtener la versión disponible en esa fecha. La fecha de observación, la fecha de la versión y la de descarga se conservan por separado. Si FRED y BLS cubren la misma serie, se elige la observación más reciente; a igualdad de período se utiliza FRED.
+Con clave, FRED solicita `realtime_start` y `realtime_end` iguales al corte para obtener la versión disponible en esa fecha. Sin clave, el CSV sólo se acepta para la captura del día y se identifica como `observed_current`: no reconstruye versiones históricas. La fecha de observación, la fecha de la versión y la de descarga se conservan por separado. Si FRED y BLS cubren la misma serie, se elige la observación más reciente; a igualdad de período se utiliza FRED.
 
 **Consenso para uso personal:** FMP distingue el acceso a la API de los derechos para publicar sus datos. El extractor mantiene el consenso en `data/research/latest.json`, excluido del JSON público y de las capturas públicas. Esa carpeta está ignorada por git en ejecuciones locales. Puedes cargar el archivo en el terminal con **Datos y fuentes → Importar corte JSON**; el navegador procesa el archivo localmente.
 
@@ -109,7 +109,7 @@ La referencia se conserva en el navegador, junto con los supuestos y el estado d
 | Yahoo Finance chart                   | Cierres, Adj Close, volumen y dividendos               | Endpoint público no oficial; disponibilidad sin garantía |
 | U.S. Treasury                         | Curva par nominal                                      | Feed XML oficial                                         |
 | BLS                                   | IPC y desempleo desestacionalizados                    | API pública oficial                                      |
-| FRED                                  | Macro y versiones disponibles al corte                 | API oficial, clave opcional para el proyecto             |
+| FRED                                  | Macro y versiones disponibles al corte                 | CSV público actual; API histórica con clave              |
 | FMP                                   | Consenso y revisiones entre capturas                   | API con clave; ejecución local o repositorio privado     |
 
 Precios diarios: se solicitan cinco años por activo; la cobertura efectiva depende de la fuente.

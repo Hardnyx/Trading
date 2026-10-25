@@ -19,6 +19,19 @@ CUTOFF = "2026-10-24"
 
 
 class ProviderInputs(unittest.TestCase):
+    def test_public_fred_exports_work_without_a_key_and_are_identified_as_observed_current_data(self):
+        request = Mock(return_value='\ufeffobservation_date,CPIAUCSL\n2010-01-01,50\n2025-08-01,100\n2026-08-01,102\n2026-09-01,.\n2026-11-01,999\n'.encode())
+        result = providers.fred_csv_series(request, providers.FRED_SERIES[0], CUTOFF, OBSERVED)
+        self.assertEqual(result["value"], 102)
+        self.assertAlmostEqual(result["yoy"], 0.02)
+        self.assertEqual(result["vintage_mode"], "observed_current")
+        self.assertEqual(len(result["history"]), 2)
+        self.assertNotIn("api_key", request.call_args.args[0])
+        request.reset_mock()
+        with self.assertRaisesRegex(providers.ProviderError, "histórico"):
+            providers.fred_csv_series(request, providers.FRED_SERIES[0], "2025-01-01", OBSERVED)
+        request.assert_not_called()
+
     def test_fred_uses_the_requested_vintage_and_omits_missing_future_or_unavailable_observations(self):
         request = Mock(return_value=json.dumps({"observations": [
             {"date": "2025-08-01", "value": "100"},
@@ -132,6 +145,7 @@ class PublicationAndFallbacks(unittest.TestCase):
              patch.object(collector, "financials", return_value={}), \
              patch.object(collector, "filings", return_value=[]), \
              patch.object(collector, "treasury_curves", return_value=[]), \
+             patch.object(collector, "fred_csv_series", side_effect=providers.ProviderError("CSV no disponible")), \
              patch.object(collector, "bls_series", side_effect=lambda series_id, *args, **kwargs: {"id": series_id, "value": 1, "date": today}), \
              patch.object(collector, "analyst_estimates") as estimates, \
              patch("sys.argv", ["refresh_data.py"]):
