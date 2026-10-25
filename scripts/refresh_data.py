@@ -324,44 +324,98 @@ def treasury_curves(cutoff):
     return output
 
 
-def bls_series(series_id, label, cutoff, cpi=False):
+BLS_SERIES = [
+    ("CUSR0000SA0", "CPI", "IPC EE.UU.", "índice", "IPC general desestacionalizado"),
+    ("CUSR0000SA0L1E", "CPI_CORE", "IPC subyacente", "índice", "IPC sin alimentos ni energía, desestacionalizado"),
+    ("LNS14000000", "UNRATE", "Desempleo", "%", "Tasa de desempleo desestacionalizada"),
+    ("CES0000000001", "PAYEMS", "Nóminas no agrícolas", "miles de personas", "Empleo total no agrícola desestacionalizado"),
+    ("CES0500000003", "AHE", "Salario horario privado", "USD/hora", "Salario horario medio de empleados privados, desestacionalizado"),
+    ("LNS11300000", "LFPR", "Participación laboral", "%", "Participación en la fuerza laboral desestacionalizada"),
+]
+
+
+def bls_batch(definitions, cutoff):
+    """Fetch all BLS series in one POST; never expose the registration key."""
     year = date(cutoff).year
     api_key = os.environ.get("BLS_API_KEY", "").strip()
     version = "v2" if api_key else "v1"
-    url = f"https://api.bls.gov/publicAPI/{version}/timeseries/data/"
-    payload = {"seriesid": [series_id], "startyear": str(year - 2), "endyear": str(year)}
+    endpoint = f"https://api.bls.gov/publicAPI/{version}/timeseries/data/"
+    ids = [entry[0] for entry in definitions]
+    if len(set(ids)) != len(ids) or not ids or len(ids) > (50 if api_key else 25):
+        raise ProviderError("Número de series BLS fuera de límite")
+    payload = {"seriesid": ids, "startyear": str(year - 2), "endyear": str(year)}
     if api_key:
         payload["registrationkey"] = api_key
-    body = json.loads(download(url, f"bls-{version}-{series_id}-{year}-post.json", max_age=6 * 3600, payload=payload))
-    if body.get("status") != "REQUEST_SUCCEEDED":
-        raise ValueError("BLS no devolvió observaciones")
-    rows = []
-    for record in body["Results"]["series"][0]["data"]:
-        period = record.get("period", "")
-        if not period.startswith("M") or not 1 <= int(period[1:]) <= 12:
+    signature = hashlib.sha256(",".join(ids).encode()).hexdigest()[:12]
+    try:
+        response = download(endpoint, f"bls-{version}-{year}-{signature}-post.json",
+                            max_age=6 * 3600, payload=payload)
+        body = json.loads(response)
+    except urllib.error.HTTPError as error:
+        raise ProviderError("BLS rechazó la petición" if error.code in (400, 401, 403)
+                            else "BLS temporalmente no disponible", error.code) from None
+    except (urllib.error.URLError, TimeoutError):
+        raise ProviderError("BLS temporalmente no disponible") from None
+    except (ValueError, UnicodeError, TypeError):
+        raise ProviderError("Respuesta BLS no válida") from None
+    if not isinstance(body, dict) or body.get("status") != "REQUEST_SUCCEEDED":
+        raise ProviderError("BLS no completó la consulta")
+    results = body.get("Results")
+    series = results.get("series") if isinstance(results, dict) else None
+    if not isinstance(series, list):
+        raise ProviderError("BLS no devolvió series válidas")
+    by_id = {item.get("seriesID"): item for item in series
+             if isinstance(item, dict) and isinstance(item.get("seriesID"), str)}
+    # Some BLS responses omit seriesID for single-series queries; accept only
+    # when there is a single requested and returned series.
+    if len(ids) == len(series) == 1 and not by_id:
+        by_id[ids[0]] = series[0]
+    output = []
+    for source_id, target, label, unit, description in definitions:
+        item = by_id.get(source_id)
+        if not item or not isinstance(item.get("data"), list):
             continue
-        day = f"{record['year']}-{int(period[1:]):02d}-01"
-        if day <= cutoff:
-            try:
-                value = float(record["value"])
-            except (ValueError, TypeError):
+        records = {}
+        for row in item["data"]:
+            if not isinstance(row, dict):
                 continue
-            if math.isfinite(value):
-                rows.append({"date": day, "value": value})
-    rows.sort(key=lambda r: r["date"])
-    if not rows:
-        raise ValueError("Sin observaciones BLS")
-    yoy = None
-    if cpi:
+            period = row.get("period")
+            if not isinstance(period, str) or len(period) != 3 or not period.startswith("M") or not period[1:].isdigit():
+                continue
+            month = int(period[1:])
+            if not 1 <= month <= 12:  # Ignore M13 annual averages.
+                continue
+            try:
+                day = f"{int(row['year']):04d}-{month:02d}-01"
+                value = float(row["value"].replace(",", "") if isinstance(row["value"], str) else row["value"])
+            except (ValueError, TypeError, KeyError):
+                continue
+            if day <= cutoff and math.isfinite(value):
+                records[day] = {"date": day, "value": value}
+        rows = [records[key] for key in sorted(records)]
+        if not rows:
+            continue
         previous_year = f"{int(rows[-1]['date'][:4])-1}{rows[-1]['date'][4:]}"
-        prior = next((r for r in rows if r["date"] == previous_year), None)
-        if prior:
-            yoy = rows[-1]["value"] / prior["value"] - 1
-    return {"id": "CPI" if cpi else "UNRATE", "label": label, "unit": "índice" if cpi else "%", "provider": "BLS",
-            "description": "IPC desestacionalizado" if cpi else "Tasa de desempleo desestacionalizada",
-            "value": rows[-1]["value"], "date": rows[-1]["date"], "previous": rows[-2]["value"] if len(rows) > 1 else None, "yoy": yoy,
-            "history": rows, "source_url": f"https://data.bls.gov/timeseries/{series_id}"}
+        prior = records.get(previous_year)
+        yoy = (rows[-1]["value"] / prior["value"] - 1
+               if target.startswith("CPI") and prior and prior["value"] else None)
+        output.append({
+            "id": target, "label": label, "unit": unit, "description": description,
+            "value": rows[-1]["value"], "date": rows[-1]["date"],
+            "previous": rows[-2]["value"] if len(rows) > 1 else None, "yoy": yoy,
+            "history": rows, "provider": "BLS", "source_id": source_id,
+            "vintage_mode": "observed_current", "source_url": f"https://data.bls.gov/timeseries/{source_id}",
+        })
+    if not output:
+        raise ProviderError("BLS no devolvió observaciones válidas")
+    return output
 
+
+def bls_series(series_id, label, cutoff, cpi=False):
+    """Backwards-compatible single-series call for collectors and tests."""
+    definition = (series_id, "CPI" if cpi else "UNRATE", label,
+                  "índice" if cpi else "%", "IPC desestacionalizado" if cpi else "Tasa de desempleo desestacionalizada")
+    return bls_batch([definition], cutoff)[0]
 
 def build_asset(spec, cutoff, previous):
     symbol, name, sector, cik, growth, multiple = spec
@@ -524,9 +578,8 @@ def main():
                       "detail": f"{sec_success}/{sec_total} consultas actualizadas", "checked_at": collected_at})
     macro = []
     old_macro = {s["id"]: s for s in previous.get("macro", [])}
-    macro_tasks = [("Treasury", lambda: treasury_curves(args.as_of)),
-                   ("BLS IPC", lambda: [bls_series("CUSR0000SA0", "IPC EE.UU.", args.as_of, cpi=True)]),
-                   ("BLS Empleo", lambda: [bls_series("LNS14000000", "Desempleo", args.as_of)])]
+    current_request = args.as_of == collected_at[:10]
+    macro_tasks = [("Treasury", lambda: treasury_curves(args.as_of))]
     for name, task in macro_tasks:
         try:
             fresh = task()
@@ -539,9 +592,28 @@ def main():
         except Exception as exc:
             errors.append(f"{name}: actualización fallida ({error_label(exc)})")
             providers.append({"id": name.lower().replace(" ", "-"), "name": name, "status": "error", "detail": error_label(exc), "checked_at": collected_at})
+    if current_request:
+        try:
+            fresh = bls_batch(BLS_SERIES, args.as_of)
+            for series in fresh:
+                series["observed_at"] = collected_at
+            macro.extend(fresh)
+            missing = len(BLS_SERIES) - len(fresh)
+            providers.append({"id": "bls", "name": "BLS", "status": "ok" if not missing else "partial",
+                              "detail": f"{len(fresh)}/{len(BLS_SERIES)} series · API {'v2 registrada' if os.environ.get('BLS_API_KEY') else 'v1 pública'}",
+                              "checked_at": collected_at})
+            if missing:
+                errors.append(f"BLS: {missing} series no disponibles")
+        except Exception as exc:
+            errors.append(f"BLS: actualización fallida ({error_label(exc)})")
+            providers.append({"id": "bls", "name": "BLS", "status": "error",
+                              "detail": error_label(exc), "checked_at": collected_at})
+    else:
+        providers.append({"id": "bls", "name": "BLS", "status": "historical_request",
+                          "detail": "Sin vintage BLS para reconstruir el corte histórico",
+                          "checked_at": collected_at})
     fred_key = os.environ.get("FRED_API_KEY", "").strip()
     fred_success = 0
-    current_request = args.as_of == collected_at[:10]
     fred_enabled = bool(fred_key) or current_request
     if fred_enabled:
         for definition in FRED_SERIES:
@@ -576,7 +648,10 @@ def main():
     providers.append({"id": "fmp", "name": "FMP · consenso", "status": "not_configured" if not fmp_key else "private_required" if not fmp_allowed else "historical_request" if not current_request else "ok" if fmp_success == stock_count else "partial" if fmp_success else "error",
                       "detail": "FMP_API_KEY pendiente" if not fmp_key else "Usar ejecución local o repositorio privado" if not fmp_allowed else "Consenso actual omitido en corte histórico" if not current_request else f"{fmp_success}/{stock_count} activos consultados; corte privado", "checked_at": collected_at})
     for key, record in old_macro.items():
-        if record.get('date', '9999') <= args.as_of and (not record.get('vintage_date') or record['vintage_date'] <= args.as_of) and not any(row['id'] == key for row in macro):
+        if (record.get('date', '9999') <= args.as_of and
+                (not record.get('vintage_date') or record['vintage_date'] <= args.as_of) and
+                (not record.get('observed_at') or record['observed_at'][:10] <= args.as_of) and
+                not any(row['id'] == key for row in macro)):
             macro.append(record)
     if not assets:
         raise SystemExit("No hay datos válidos; el archivo anterior no se modifica")
