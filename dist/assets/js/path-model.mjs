@@ -11,6 +11,7 @@ import { ewmaCovariance, cholesky } from "./risk-math.mjs?v=0.4.0";
 import { buildReturnAnchors, sampleDrifts } from "./return-model.mjs?v=0.4.0";
 import { assetAt } from "./research-model.mjs?v=0.4.0";
 import { factorModel } from "./factors.mjs?v=0.4.0";
+import { conditionalRisk, studentScale, updateGjrVariance } from "./conditional-risk.mjs?v=0.5.0";
 import {
   mandate,
   regimes,
@@ -40,10 +41,12 @@ export function pathSettings(input = {}) {
     jumpMean: -0.12,
     jumpVol: 0.08,
     uncertainFundamentals: true,
+    volatilityMode: "hybrid",
     ...input,
   };
   if (
     !["gbm", "merton"].includes(s.model) ||
+    !["ewma", "hybrid"].includes(s.volatilityMode) ||
     !["fundamental", "manual"].includes(s.driftMode) ||
     !finite(s.horizon) ||
     s.horizon < 0.25 ||
@@ -78,10 +81,13 @@ export function preparePaths(assets, options = {}, overrides = {}, references = 
   const aligned = alignReturns(clean, 500);
   if (aligned.dates.length < 20)
     throw new Error("Historia común insuficiente para la simulación.");
-  const covariance = ewmaCovariance(
+  const baselineCovariance = ewmaCovariance(
     aligned.columns.map((c) => c.map(Math.log1p)),
     settings.lambda,
   );
+  const conditional = conditionalRisk(clean, baselineCovariance,
+    { ...settings, asOf });
+  const covariance = conditional.covariance;
   const exposures = factorModel(
     clean,
     clean.map((a) => ({ symbol: a.symbol, weight: 1 / clean.length })),
@@ -99,6 +105,11 @@ export function preparePaths(assets, options = {}, overrides = {}, references = 
     assets: clean,
     options: { ...settings, asOf, marketLoadings },
     covariance,
+    conditional: {
+      ...conditional,
+      // The raw fit data is internal, but a concise summary is shown in reports.
+      asOf,
+    },
     residualCorrelation: exposures.available ? exposures.residualCorrelation : null,
     dependence: {
       available: exposures.available,
@@ -160,10 +171,21 @@ export function generatePaths(inputs, paths, seed, stepsPerYear = 52) {
     );
   const policy = mandate({ ...options.mandate, horizon: H }),
     macro = regimes(inputs.regimes || [BASE_REGIME]),
-    factor = cholesky(covariance);
+    factor = cholesky(covariance),
+    conditional = inputs.conditional,
+    dynamic = conditional?.enabled === true;
+  // Preserve total covariance and correlation: only the conditional diagonal
+  // dynamics change. Every shocked return still carries systematic exposure.
+  const correlation = dynamic
+    ? covariance.map((row, i) => row.map((v, j) =>
+        covariance[i][i] > 0 && covariance[j][j] > 0
+          ? v / Math.sqrt(covariance[i][i]*covariance[j][j]) : 0))
+    : null;
+  const correlationFactor = dynamic ? cholesky(correlation) : null;
   const random = seededRandom(seed),
     normal = normalGenerator(random),
-    intensity = options.model === "merton" ? options.jumpIntensity : 0;
+    intensity = dynamic ? 0 : options.model === "merton"
+      ? options.jumpIntensity : 0;
   const marketIndex = assets.findIndex((a) => a.symbol === "SPY");
   if (
     policy.fxVolatility > 0 &&
@@ -218,10 +240,48 @@ export function generatePaths(inputs, paths, seed, stepsPerYear = 52) {
       );
     });
     const values = Array(n).fill(1);
+    const variances = dynamic
+      ? assets.map((a,i) => conditional.fits[i]?.hInitial ?? Math.max(0,covariance[i][i]/252))
+      : null;
+    const annualLogDrift = dynamic
+      ? drift.map((v,i) => v/dt + covariance[i][i]/2) : null;
     let exchange = policy.fxSpot;
     for (let i = 0; i < n; i++) gross[i][p * (steps + 1)] = 1;
     fx[p * (steps + 1)] = exchange;
     for (let t = 1; t <= steps; t++) {
+      if (dynamic) {
+        // Exact daily GJR recursion; store values at the existing weekly/monthly
+        // reporting grid. This avoids using weekly shocks in a daily equation.
+        const dayStart = Math.round((t-1) * 252 * dt);
+        const dayEnd = Math.round(t * 252 * dt);
+        const days = Math.max(1, dayEnd-dayStart);
+        let marketSum = 0;
+        for (let day = 0; day < days; day++) {
+          const z = Array.from({ length:n }, normal),
+            radial = studentScale(conditional.studentNu, random, normal);
+          for (let i = 0; i < n; i++) {
+            let standardized = 0;
+            for (let j = 0; j <= i; j++)
+              standardized += correlationFactor[i][j] * z[j];
+            standardized *= radial;
+            const h = variances[i];
+            const innovation = Math.sqrt(Math.max(0,h))*standardized;
+            values[i] *= Math.exp(annualLogDrift[i]/252 - h/2 + innovation);
+            if (conditional.fits[i])
+              variances[i] = updateGjrVariance(conditional.fits[i],h,innovation);
+            if (i === marketIndex) marketSum += standardized;
+          }
+        }
+        for (let i=0;i<n;i++)
+          gross[i][p*(steps+1)+t] = values[i];
+        const fxZ = policy.fxMarketCorrelation * (marketSum / Math.sqrt(days)) +
+          Math.sqrt(1-policy.fxMarketCorrelation**2)*normal();
+        exchange *= Math.exp(
+          (Math.log1p(policy.fxAnnualChange)-policy.fxVolatility**2/2)*dt +
+          policy.fxVolatility*Math.sqrt(dt)*fxZ);
+        fx[p*(steps+1)+t]=exchange;
+        continue;
+      }
       const z = Array.from({ length: n }, normal),
         count = intensity ? poisson(random, intensity * dt) : 0,
         jumpZ = count ? normal() : 0;
