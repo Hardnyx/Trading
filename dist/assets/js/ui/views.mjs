@@ -235,7 +235,11 @@ export function createViews(context) {
       template("forecast-panel", {
         value1: historical
           ? "Pesos constantes · base 100 · sin costos"
-          : `${state.settings.model === "merton" ? "Difusión con saltos" : "Movimiento browniano geométrico"} · buy & hold · base 100`,
+          : `${f?.volatility?.accepted > 0
+              ? "Volatilidad condicional GJR-t"
+              : state.settings.model === "merton"
+                ? "Difusión con saltos genéricos"
+                : "Difusión GBM/EWMA"} · buy & hold · base 100`,
         value2: historical
           ? "VENTANA " + state.lookback + "D"
           : "SUPUESTOS EDITABLES",
@@ -878,7 +882,11 @@ export function createViews(context) {
         : (p.settings.model==="merton" ? "Merton supuesto" : "Normal"),
       verificationPaths: p.verification.paths,
       months: p.settings.horizon * 12,
-      model: p.settings.model === "merton" ? "con saltos sistémicos" : "GBM",
+      model: p.diagnostics?.volatility?.additionalMertonJumps
+        ? "con saltos genéricos de Merton"
+        : p.diagnostics?.volatility?.accepted > 0
+          ? "con volatilidad condicional GJR-t; saltos Merton desactivados"
+          : "GBM/EWMA sin saltos",
     });
   }
 
