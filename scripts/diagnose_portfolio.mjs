@@ -11,16 +11,17 @@ console.log(JSON.stringify({
   instruments: snapshot.assets.length,
   priceCutoff: snapshot.price_as_of,
 }));
-for (const [scenario, rules, seed] of [
-  ["default", {}, 20261025],
-  ["default_seed_2", {}, 20261101],
-  ["default_seed_3", {}, 20261215],
-  ["reserve_cap_50pct", { reserveCap: 0.5 }, 20261025],
+for (const [scenario, rules, seed, overrides] of [
+  ["default", {}, 20261025, {}],
+  ["default_seed_2", {}, 20261101, {}],
+  ["default_seed_3", {}, 20261215, {}],
+  ["reserve_cap_50pct", { reserveCap: 0.5 }, 20261025, {}],
+  ["nflx_conservative", {}, 20261025, { NFLX: { growth: 0.04, multiple: 20 } }],
 ]) {
   const started = Date.now();
   const result = composePortfolio(snapshot, {
     seed, model: "merton", horizon: 1,
-  }, {}, rules, search);
+  }, overrides, rules, search);
   console.log(JSON.stringify({
     scenario,
     seed,
@@ -32,6 +33,8 @@ for (const [scenario, rules, seed] of [
       simulated: result.selection?.simulated,
     },
     proposed: result.positions,
+    signals: result.signals?.map(({symbol,anchor,adverseAnchor,favorableAnchor,confidence,source}) =>
+      ({symbol,anchor,adverseAnchor,favorableAnchor,confidence,source})),
     riskLimits: result.diagnostics?.selected?.nearLimits || [],
     references: result.diagnostics?.references,
     indicators: result.metrics ? {
