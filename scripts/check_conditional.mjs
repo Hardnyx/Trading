@@ -40,10 +40,16 @@ const compositionInputs=prepareComposition(market,{
 if(!compositionInputs.conditional.enabled ||
     compositionInputs.selection.simulated>40)
   throw Error("El compositor no adoptó la calibración validada");
+const blockedGold=compositionInputs.excluded.find(x=>x.symbol==="GLD");
+if(!blockedGold || !blockedGold.reason.includes("retorno esperado fundamentado"))
+  throw Error("El optimizador sigue aceptando GLD con el retorno genérico del 6%");
+
 const began=Date.now();
 const decision=composePortfolio(market,{
   ...baseOptions,horizon:1,capital:100000,
 }, {}, {}, budget);
+if(decision.positions?.some(p=>p.symbol==="GLD"))
+  throw Error("Se propone GLD sin una expectativa económica verificada");
 if(!["proposed","hold","no_feasible"].includes(decision.status))
   throw Error("Estado inválido del compositor");
 const benchmarkDecision=composePortfolio(market,{
