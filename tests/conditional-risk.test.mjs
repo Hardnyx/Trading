@@ -10,6 +10,10 @@ function accepted(symbol,variance=1.8) {
     status:"accepted",last_price_date:DATE,fitted_through:DATE,
     omega:.06,alpha:.07,gamma:.1,beta:.78,nu:8,
     variance_next_pct2:variance,symbol,
+    verification: {
+      observations:126,qlike_improvement:.04,
+      weekly_block_confidence:{lower_95_one_sided:.008},
+    },
   };
 }
 function sampleSource(data={AAA:accepted("AAA")}) {
