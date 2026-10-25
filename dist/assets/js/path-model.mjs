@@ -47,7 +47,7 @@ export function pathSettings(input = {}) {
   };
   if (
     !["gbm", "merton"].includes(s.model) ||
-    !["ewma", "hybrid"].includes(s.volatilityMode) ||
+    !["ewma", "hybrid", "legacy"].includes(s.volatilityMode) ||
     !["fundamental", "manual"].includes(s.driftMode) ||
     !finite(s.horizon) ||
     s.horizon < 0.25 ||
