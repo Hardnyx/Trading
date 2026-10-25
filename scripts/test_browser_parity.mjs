@@ -1,0 +1,83 @@
+import { chromium } from "playwright";
+import { spawn } from "node:child_process";
+import { readFileSync, mkdirSync } from "node:fs";
+import { composePortfolio } from "../dist/assets/js/composer.mjs?v=0.5.2";
+import { referenceRequest } from "../dist/assets/js/reference-preset.mjs?v=0.5.2";
+
+const market=JSON.parse(readFileSync("dist/data/market.json","utf8"));
+const volatility=JSON.parse(readFileSync("dist/data/volatility.json","utf8"));
+const snapshot={...market,volatility};
+const {settings,overrides,rules}=referenceRequest(snapshot);
+const expected=composePortfolio(snapshot,settings,overrides,rules,
+  {candidates:300,paths:600,finalPaths:3000});
+if(expected.status!=="proposed")throw Error("La referencia no produjo una cartera");
+const expectedWeights=Object.fromEntries(expected.positions.map(p=>
+  [p.symbol,Math.round(p.weight*1000)/10]));
+
+const server=spawn("python3",["-m","http.server","8813","--directory","dist"],
+  {stdio:"ignore"});
+const sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+let browser;
+try {
+  for(let i=0;i<50;i++){
+    try {const r=await fetch("http://127.0.0.1:8813/");
+      if(r.ok)break;}catch{}
+    await sleep(100);
+  }
+  browser=await chromium.launch({headless:true});
+  const context=await browser.newContext({viewport:{width:1460,height:1080},locale:"es-PE"});
+  const page=await context.newPage();
+  const issues=[];
+  page.on("pageerror",e=>issues.push(e.message));
+  page.on("console",e=>{if(e.type()==="error")issues.push(e.text())});
+  await page.goto("http://127.0.0.1:8813/?build=0.5.2#portfolio",
+    {waitUntil:"networkidle",timeout:60000});
+  const button=page.locator('[data-action="compose-reference"]');
+  await button.waitFor({state:"visible",timeout:45000});
+  const baselineStorage=await page.evaluate(()=>{
+    const raw=localStorage.getItem("trading-workspace-v1");
+    const state=raw?JSON.parse(raw):{};
+    return {positions:state.positions||[],baseline:state.baseline||null,
+      account:state.account||null,settings:state.settings||null};
+  });
+  await button.click();
+  await page.locator(".composition-report").waitFor({state:"visible",timeout:180000});
+  const rendered=await page.locator(".composition-report tbody tr").evaluateAll(rows=>
+    rows.map(row=>({
+      symbol:row.querySelector("td")?.textContent?.trim(),
+      weight:row.querySelectorAll("td")[1]?.textContent?.trim(),
+    })));
+  const result=Object.fromEntries(rendered.map(row=>[
+    row.symbol, Number(row.weight.replace("%","").replace(",",".").trim())]));
+  const source=await page.locator(".composition-source").innerText();
+  const report=await page.locator(".composition-report").innerText();
+  mkdirSync("out",{recursive:true});
+  await page.screenshot({path:"out/browser-parity.png",fullPage:true});
+  if(!source.includes("CONFIGURACIÓN BASE"))
+    throw Error("La vista no identifica el origen de la referencia: "+source);
+  for(const [symbol,weight] of Object.entries(expectedWeights)){
+    if(Math.abs((result[symbol]??NaN)-weight)>.11)
+      throw Error(`Desajuste en ${symbol}: vista=${result[symbol]}, motor=${weight}`);
+  }
+  if(Object.keys(result).length!==Object.keys(expectedWeights).length)
+    throw Error("Número de posiciones diferente: "+JSON.stringify(result));
+  const afterStorage=await page.evaluate(()=>{
+    const state=JSON.parse(localStorage.getItem("trading-workspace-v1")||"{}");
+    return {positions:state.positions||[],baseline:state.baseline||null,
+      account:state.account||null,settings:state.settings||null};
+  });
+  if(JSON.stringify(baselineStorage)!==JSON.stringify(afterStorage))
+    throw Error("La comparación base alteró las posiciones o preferencias");
+  if(issues.length)throw Error("Errores del navegador: "+issues.join("; "));
+  console.log(JSON.stringify({
+    browserParity:"PASS",
+    expected:expectedWeights,
+    rendered:result,
+    model:expected.model_version,
+    source,retainedUserSettings:true,
+    reportExcerpt:report.slice(0,220),
+  }));
+} finally {
+  await browser?.close();
+  server.kill();
+}
