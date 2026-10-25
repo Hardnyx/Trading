@@ -20,5 +20,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Evaluate real prices, conditional risk and EWMA control
+      - name: Evaluate complete optimizer with 300 candidates and 3000 verification paths
+        env:
+          TRADING_FULL_DIAGNOSTIC: '1'
         run: node scripts/check_conditional.mjs
