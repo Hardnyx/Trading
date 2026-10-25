@@ -1,10 +1,10 @@
 # Trading
 
-Terminal de research para acciones y ETFs de Estados Unidos. La interfaz combina una estética de terminal financiero con proyecciones, valoración y análisis de riesgo.
+Terminal de research para acciones y ETFs de Estados Unidos. Incluye proyecciones, valoración y análisis de riesgo.
 
 Herramienta de uso personal para revisar activos, configurar supuestos y analizar la distribución de resultados de una cartera.
 
-![Pantalla de research](docs/terminal.jpg)
+[Abrir aplicación](https://hardnyx.github.io/Trading/)
 
 ## Qué incluye
 
@@ -42,9 +42,7 @@ python scripts/refresh_data.py --as-of 2026-10-24
 
 El script utiliza únicamente la biblioteca estándar de Python. Guarda respuestas temporalmente en `.cache/`, limita las solicitudes a la SEC y reemplaza el corte de forma atómica. Si una fuente falla, conserva datos previos y registra el aviso; no fabrica observaciones.
 
-En GitHub está disponible el workflow manual **Actualizar datos**. Actualiza el archivo de datos en `main`; para actualizar una publicación externa hay que volver a publicar ese corte. El botón de la web **Cargar último corte publicado** descarga el archivo que ya está en el hosting, sin ejecutar el extractor.
-
-Para identificar las solicitudes a la SEC, puede configurarse `SEC_USER_AGENT`. Por defecto se usa el nombre del proyecto y su URL. No hay claves ni datos personales incluidos en el código.
+En GitHub está disponible el workflow manual **Refresh market data**. Actualiza el archivo de datos en `main` y llama al despliegue de GitHub Pages con el SHA del nuevo corte. El botón de la web **Cargar último corte publicado** descarga el archivo que ya está en el hosting, sin ejecutar el extractor.
 
 ## Composición y seguimiento
 
@@ -60,7 +58,7 @@ Al cargar un corte posterior, el seguimiento evalúa:
 
 Cada revisión muestra el criterio, la evidencia y qué revisar. Los umbrales son editables. La aparición de una presentación regulatoria no se interpreta por sí sola como una orden de compra o venta.
 
-**Avisos:** se evalúan al cargar datos y al detectar un nuevo corte publicado mientras la página está abierta. Los avisos del navegador requieren permiso explícito. No hay un monitor en segundo plano con la página cerrada. La actualización de proveedores y la publicación del nuevo corte siguen siendo pasos separados.
+**Avisos:** se evalúan al cargar datos y al detectar un nuevo corte publicado mientras la página está abierta. Los avisos del navegador requieren permiso explícito. No hay un monitor en segundo plano con la página cerrada. El workflow de actualización publica el corte cuando termina la descarga.
 
 La referencia se conserva en el navegador, junto con los supuestos y el estado de las revisiones. La exportación JSON permite conservarla y trasladarla. La evolución de la cartera registrada usa Adj Close y representa una evolución teórica ajustada, no una conciliación de posiciones del broker.
 

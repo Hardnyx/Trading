@@ -1,8 +1,8 @@
-name: Actualizar datos
+name: Refresh market data
 on:
   workflow_dispatch:
 permissions:
-  contents: write
+  contents: read
 concurrency:
   group: actualizar-datos
   cancel-in-progress: false
@@ -10,20 +10,39 @@ jobs:
   refresh:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    permissions:
+      contents: write
+    outputs:
+      changed: ${{ steps.snapshot.outputs.changed }}
+      commit_sha: ${{ steps.snapshot.outputs.commit_sha }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Descargar corte de fuentes públicas
+      - name: Download a public market snapshot
         run: python scripts/refresh_data.py
-      - name: Guardar datos actualizados
+      - name: Commit the updated snapshot
+        id: snapshot
         run: |
           git add dist/data/market.json
           if git diff --cached --quiet; then
+            echo 'changed=false' >> "$GITHUB_OUTPUT"
             exit 0
           fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git commit -m 'chore(data): actualizar corte de mercado'
+          git commit -m 'chore(data): refresh market snapshot'
           git push origin HEAD:main
+          echo 'changed=true' >> "$GITHUB_OUTPUT"
+          echo "commit_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+  deploy:
+    needs: refresh
+    if: needs.refresh.outputs.changed == 'true'
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    uses: ./.github/workflows/pages.yml
+    with:
+      ref: ${{ needs.refresh.outputs.commit_sha }}
