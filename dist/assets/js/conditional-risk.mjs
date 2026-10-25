@@ -16,6 +16,8 @@ export function conditionalRisk(assets, baseCov, options = {}) {
     multipliers: Array(assets.length).fill(1),
   });
   if (options.volatilityMode === "ewma") return empty("EWMA seleccionado");
+  if (options.volatilityMode === "legacy")
+    return empty("Comparador Merton antiguo solicitado explícitamente; saltos sin calibración informativa");
   const source = options.volatilityData;
   const asOf = options.asOf;
   if (!source || source.schema_version !== 1 ||
