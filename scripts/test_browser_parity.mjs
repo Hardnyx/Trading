@@ -1,8 +1,8 @@
 import { chromium } from "playwright";
 import { spawn } from "node:child_process";
 import { readFileSync, mkdirSync } from "node:fs";
-import { composePortfolio } from "../dist/assets/js/composer.mjs?v=0.5.2";
-import { referenceRequest } from "../dist/assets/js/reference-preset.mjs?v=0.5.2";
+import { composePortfolio } from "../dist/assets/js/composer.mjs?v=0.5.3";
+import { referenceRequest } from "../dist/assets/js/reference-preset.mjs?v=0.5.3";
 
 const market=JSON.parse(readFileSync("dist/data/market.json","utf8"));
 const volatility=JSON.parse(readFileSync("dist/data/volatility.json","utf8"));
