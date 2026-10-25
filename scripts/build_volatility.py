@@ -9,9 +9,10 @@ import json
 import math
 from pathlib import Path
 
-from volatility_research import (
-    fit_gjr_t, prices_to_returns, walk_forward, MIN_FIT,
-)
+if __package__:
+    from .volatility_research import fit_gjr_t, prices_to_returns, walk_forward, MIN_FIT
+else:
+    from volatility_research import fit_gjr_t, prices_to_returns, walk_forward, MIN_FIT
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -54,10 +55,10 @@ def compact_volatility(snapshot, *, limit=None, test_days=126,
             blocks = [
                 sample[k:k+42] for k in range(0, len(sample), 42)
             ]
-            wins = sum(
-                sum(row["gjr_qlike"]-row["ewma_qlike"] for row in block) < 0
+            wins = int(sum(
+                bool(sum(row["gjr_qlike"]-row["ewma_qlike"] for row in block) < 0)
                 for block in blocks if len(block) >= 30
-            )
+            ))
             improvement = check["qlike_improvement"]
             rate = check["gjr_var95_exception_rate"]
             approved = (
