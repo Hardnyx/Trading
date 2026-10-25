@@ -12,7 +12,7 @@ Se propone un sistema predictivo para carteras multiactivo que distingue entre (
 
 ### Estado de implementación (25 de octubre de 2026)
 
-La versión 0.6.0 descompone una única matriz EWMA común en factor SPY y residuo PSD, actualiza GJR y EWMA diariamente, y elimina un factor radial Student-t universal no calibrado. **No** equivale aún al modelo factorial-GARCH completo: GJR se estima sobre retornos totales y la estimación de residuos por régimen/sector sigue siendo diagnóstica. La dependencia de cola, GARCH residual, GARCH-X, DCC y saltos informativos continúan pendientes de validación.
+La versión 0.7.0 descompone una única matriz EWMA común en factor SPY y residuo PSD, actualiza GJR y EWMA diariamente, y elimina un factor radial Student-t universal no calibrado. **No** equivale aún al modelo factorial-GARCH completo: GJR se estima sobre retornos totales y la estimación de residuos por régimen/sector sigue siendo diagnóstica. La dependencia de cola, GARCH residual, GARCH-X, DCC y saltos informativos continúan pendientes de validación.
 
 ## 1. Problema y pregunta de investigación
 
@@ -322,3 +322,8 @@ La investigación preserva la posibilidad de que la mejor decisión sea **manten
 4. Engle, R. F. (2002). *Dynamic Conditional Correlation: A Simple Class of Multivariate GARCH Models*. Journal of Business & Economic Statistics, 20(3), 339–350. https://doi.org/10.1198/073500102288618487
 5. Hansen, P. R., & Lunde, A. (2005). *A Forecast Comparison of Volatility Models: Does Anything Beat a GARCH(1,1)?* Journal of Applied Econometrics, 20(7), 873–889. https://doi.org/10.1002/jae.800
 6. Christoffersen, P. F. (1998). *Evaluating Interval Forecasts*. International Economic Review, 39(4), 841–862.
+
+
+## 12. Integración y cambios de seguridad en la versión 0.7.0
+
+La matriz de sensibilidad de correlación reconstruye el factor SPY y los residuos de la covarianza realmente estresada, evitando conservar una factorización obsoleta. El modo híbrido de volatilidad utiliza GJR solo con evidencia walk-forward más estricta; de no existir, permanece en EWMA diario. El modelo de saltos Merton anterior requiere una selección explícita, porque sus intensidades no proceden de noticias verificadas. La preselección de hasta 40 instrumentos usa señales financieras prospectivas ajustadas por incertidumbre y mantiene representación sectorial. La concentración de SHY se compara con alternativas de menor tope bajo el mismo conjunto de escenarios, sin imponer pesos arbitrarios. Las asociaciones informativas y GARCH-X siguen pendientes de validación científica.

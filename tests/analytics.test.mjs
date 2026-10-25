@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { correlation, covariance, normalizeWeights, alignReturns, returnStats, metrics, valuation, portfolioAnalysis, validateSnapshot } from '../dist/assets/js/analytics.mjs?v=0.6.0';
-import { cholesky, simulateForecast, validateRiskBands, seededRandom } from '../dist/assets/js/forecast.mjs?v=0.6.0';
+import { correlation, covariance, normalizeWeights, alignReturns, returnStats, metrics, valuation, portfolioAnalysis, validateSnapshot } from '../dist/assets/js/analytics.mjs?v=0.7.0';
+import { cholesky, simulateForecast, validateRiskBands, seededRandom } from '../dist/assets/js/forecast.mjs?v=0.7.0';
 const close = (a,b,tol=1e-9) => assert.ok(Math.abs(a-b)<tol,`${a} != ${b}`);
 function series(symbol, values) { return {symbol,name:symbol,price:values.at(-1),type:'stock',sector:'Test',assumptions:{growth:0,multiple:10,discount:.1,horizon:1},history:values.map((v,i)=>({date:new Date(Date.UTC(2023,0,i+1)).toISOString().slice(0,10),close:v,adj_close:v}))}; }
 
