@@ -865,6 +865,19 @@ export function createViews(context) {
           return r ? `${label}: ${r.feasible ? "factible" : "no factible"} · rendimiento medio ${pct(r.meanReturn, 1)} · CVaR ${pct(r.cvar95, 1)}`
             : `${label}: no comparable`;
         }).join(" | "),
+      shyExplanation: (() => {
+        const a=p.diagnostics?.concentrationAudit;
+        return a?.shyAnnualAnchor==null ? "Sin diagnóstico" :
+          `SHY: retorno supuesto ${pct(a.shyAnnualAnchor,1)} (${a.shyAnchorSource}); volatilidad condicional anual ${pct(a.shyAnnualVolatility,1)}. Tope editable ${pct(a.shyMaxAllowed,0)}; peso elegido ${pct(a.actualShyWeight,0)}. Una tasa relativamente elevada y bajo riesgo pueden dominar al no existir primas accionarias suficientemente respaldadas.`;
+      })(),
+      shyCapAlternatives: (p.diagnostics?.concentrationAudit?.comparedCaps||[])
+        .map(r => r.feasible
+          ? `SHY ≤${pct(r.cap,0)}: retorno medio ${pct(r.meanReturn,1)}, CVaR ${pct(r.cvar95,1)}, coste de equivalente cierto vs propuesta USD ${fmt(r.certaintyGapVsSelected,0)} (de ${r.compared} candidatas comparadas)`
+          : `SHY ≤${pct(r.cap,0)}: ninguna candidata verificada de las exploradas`)
+        .join(" | "),
+      shortlistNote: p.selection?.preselectionMethod || "selección no identificada",
+      omittedTop: (p.selection?.outsideWithHigherPriority||[])
+        .map(r=>r.symbol).join(", ") || "ninguno",
       assumedETFCount: p.diagnostics?.selected?.uncalibratedEtfs?.length ?? "—",
       engineVersion: p.model_version || "—",
       seed: p.settings.seed,
