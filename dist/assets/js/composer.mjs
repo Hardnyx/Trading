@@ -539,11 +539,21 @@ export function composePortfolio(
     selected: riskDiagnostics(best),
     references,
     dependence: x.dependence,
+    volatility: {
+      mode: x.conditional.enabled ? "GJR-GARCH-t / EWMA" : "EWMA",
+      accepted: x.conditional.active,
+      fallback: x.conditional.fallback,
+      studentNu: x.conditional.studentNu,
+      reason: x.conditional.reason,
+      asOf: x.conditional.asOf,
+      additionalMertonJumps: !x.conditional.enabled && x.options.model==="merton",
+    },
     note: "El límite de correlación se aplica a los residuos tras SPY alcista/bajista y sector, salvo falta de historia; CVaR y shocks conservan riesgo sistémico. Las correlaciones residuales NO son dependencias causales.",
   };
   const {
     baseline: _baseline,
     account: _account,
+    volatilityData: _volatilityData,
     ...recordedOptions
   } = x.options;
   const metadata = {

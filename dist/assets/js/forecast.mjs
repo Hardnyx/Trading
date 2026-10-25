@@ -73,7 +73,18 @@ export function simulateForecast(
     bins[Math.max(0, Math.min(25, Math.floor((value - min) / width)))]++;
   return {
     ...metrics,
-    settings: inputs.options,
+    settings: (()=> {
+      const { volatilityData: _source, ...kept }=inputs.options;
+      return kept;
+    })(),
+    volatility: {
+      mode: inputs.conditional.enabled ? "GJR-GARCH-t / EWMA" : "EWMA",
+      accepted: inputs.conditional.active,
+      fallback: inputs.conditional.fallback,
+      reason: inputs.conditional.reason,
+      studentNu: inputs.conditional.studentNu,
+      additionalMertonJumps: !inputs.conditional.enabled && inputs.options.model==="merton",
+    },
     drifts: inputs.anchors,
     coverage: sum(
       weights

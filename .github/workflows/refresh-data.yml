@@ -11,6 +11,9 @@ on:
       - 'scripts/data_providers.py'
       - 'scripts/bond_profiles.py'
       - 'scripts/universe.py'
+      - 'scripts/volatility_research.py'
+      - 'scripts/build_volatility.py'
+      - 'requirements-research.txt'
   workflow_dispatch:
 permissions:
   contents: read
@@ -33,6 +36,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Install research dependencies
+        run: python -m pip install -r requirements-research.txt
       - name: Download a public market snapshot
         env:
           SEC_USER_AGENT: ${{ secrets.SEC_USER_AGENT || vars.SEC_USER_AGENT }}
@@ -40,10 +45,12 @@ jobs:
           FMP_API_KEY: ${{ secrets.FMP_API_KEY }}
           BLS_API_KEY: ${{ secrets.BLS_API_KEY }}
         run: python scripts/refresh_data.py
+      - name: Calibrate conditional volatility (point-in-time)
+        run: python scripts/build_volatility.py
       - name: Commit the updated snapshot
         id: snapshot
         run: |
-          git add dist/data/market.json dist/data/market.json.gz data/snapshots
+          git add dist/data/market.json dist/data/market.json.gz dist/data/volatility.json data/snapshots
           if [ "$REPOSITORY_PRIVATE" = 'true' ] && [ -d data/research ]; then
             git add -f data/research
           fi

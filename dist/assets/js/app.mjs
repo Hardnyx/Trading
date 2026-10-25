@@ -93,6 +93,7 @@ const state = {
     jumpMean: -0.12,
     jumpVol: 0.08,
     uncertainFundamentals: true,
+    volatilityMode: "hybrid",
   },
   ...saved,
 };
@@ -347,6 +348,7 @@ function calculationOptions(forComposition = false) {
     research: state.research,
     assetAssumptions: state.assetAssumptions,
     yieldCurve: Object.fromEntries(data.macro.map((r) => [r.id, r.value])),
+    volatilityData: data.volatility ?? null,
     ...(forComposition
       ? { account: state.account, baseline: state.baseline }
       : {
@@ -650,6 +652,20 @@ function importFile(kind) {
   $("#import-file").value = "";
   $("#import-file").click();
 }
+async function matchingVolatility(snapshot) {
+  try {
+    const url=new URL("../../data/volatility.json",import.meta.url);
+    const response=await fetch(url,{cache:"no-cache"});
+    if(!response.ok)return null;
+    const source=await response.json();
+    return source.schema_version===1 &&
+      source.as_of===snapshot.price_as_of &&
+      source.source_market_generated_at===snapshot.generated_at
+      ? source : null;
+  } catch {
+    return null; // A missing or malformed research file must not break the site.
+  }
+}
 let marketETag = null;
 let marketURL = null;
 
@@ -678,7 +694,9 @@ async function loadData() {
   const result = await fetchMarketCut();
   marketETag = result.etag;
   marketURL = result.url;
-  data = withCashAsset(validateSnapshot(result.snapshot));
+  const checked=validateSnapshot(result.snapshot);
+  checked.volatility=await matchingVolatility(checked);
+  data = withCashAsset(checked);
   statsCache.clear();
   state.positions = Array.isArray(state.positions)
     ? state.positions.filter(
@@ -703,6 +721,7 @@ async function loadData() {
     jumpIntensity: 0.35,
     jumpMean: -0.12,
     jumpVol: 0.08,
+    volatilityMode: "hybrid",
     ...state.settings,
   };
   if (!asset(state.selected)) state.selected = data.assets[0].symbol;
@@ -725,6 +744,7 @@ setInterval(async () => {
     marketURL = result.url;
     if (next.generated_at === data.generated_at) return;
     const previous = monitoring()?.alerts.map((a) => a.id) || [];
+    next.volatility=await matchingVolatility(next);
     data = withCashAsset(next);
     statsCache.clear();
     notifyReview(previous);

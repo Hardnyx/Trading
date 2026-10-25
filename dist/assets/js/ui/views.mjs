@@ -850,6 +850,13 @@ export function createViews(context) {
         ? "residual SPY bull/bear + sector"
         : "total (historia insuficiente)",
       dependenceObservations: p.diagnostics?.dependence?.observations ?? 0,
+      volatilityUsed: p.diagnostics?.volatility?.mode || "EWMA",
+      volatilityAccepted: p.diagnostics?.volatility?.accepted ?? 0,
+      volatilityFallback: p.diagnostics?.volatility?.fallback ?? 0,
+      volatilityNote: p.diagnostics?.volatility?.reason || "Sin calibración disponible",
+      stochasticTail: p.diagnostics?.volatility?.studentNu
+        ? "Student-t, grados efectivos " + fmt(p.diagnostics.volatility.studentNu,1)
+        : (p.settings.model==="merton" ? "Merton supuesto" : "Normal"),
       verificationPaths: p.verification.paths,
       months: p.settings.horizon * 12,
       model: p.settings.model === "merton" ? "con saltos sistémicos" : "GBM",
