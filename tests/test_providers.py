@@ -178,5 +178,45 @@ class PublicationAndFallbacks(unittest.TestCase):
         self.assertIsNone(result["previous"])
 
 
+    def test_registered_bls_batch_normalizes_multiple_series_without_exposing_key(self):
+        response = {"status": "REQUEST_SUCCEEDED", "Results": {"series": [
+            {"seriesID": "CUSR0000SA0", "data": [
+                {"year": "2026", "period": "M09", "value": "320.5"},
+                {"year": "2025", "period": "M09", "value": "310.0"},
+                {"year": "2026", "period": "M13", "value": "999"}]},
+            {"seriesID": "LNS14000000", "data": [
+                {"year": "2026", "period": "M09", "value": "4.1"}]},
+        ]}}
+        definitions = [collector.BLS_SERIES[0], collector.BLS_SERIES[2]]
+        with patch.dict(os.environ, {"BLS_API_KEY": "never-log-this-key"}), \
+             patch.object(collector, "download", return_value=json.dumps(response).encode()) as request:
+            rows = collector.bls_batch(definitions, CUTOFF)
+        self.assertEqual({row["id"] for row in rows}, {"CPI", "UNRATE"})
+        cpi = next(row for row in rows if row["id"] == "CPI")
+        self.assertAlmostEqual(cpi["yoy"], 320.5 / 310 - 1)
+        self.assertEqual(cpi["date"], "2026-09-01")
+        self.assertEqual(cpi["vintage_mode"], "observed_current")
+        url, cache = request.call_args.args[:2]
+        self.assertIn("/v2/", url)
+        self.assertNotIn("never-log-this-key", url + cache)
+        self.assertEqual(request.call_args.kwargs["payload"]["registrationkey"], "never-log-this-key")
+
+    def test_bls_partial_series_and_failure_message_are_safe(self):
+        definition = collector.BLS_SERIES[0]
+        response = {"status": "REQUEST_SUCCEEDED", "Results": {"series": [
+            {"seriesID": "CUSR0000SA0", "data": [{"year": "2026", "period": "M09", "value": "320.5"}]}
+        ]}}
+        with patch.dict(os.environ, {"BLS_API_KEY": "secret"}, clear=True), \
+             patch.object(collector, "download", return_value=json.dumps(response).encode()):
+            rows = collector.bls_batch([definition, collector.BLS_SERIES[2]], CUTOFF)
+        self.assertEqual(len(rows), 1)
+        with patch.dict(os.environ, {"BLS_API_KEY": "secret"}, clear=True), \
+             patch.object(collector, "download", side_effect=urllib.error.HTTPError("https://example/?key=secret", 403, "secret", None, None)):
+            with self.assertRaises(providers.ProviderError) as caught:
+                collector.bls_batch([definition], CUTOFF)
+        self.assertNotIn("secret", str(caught.exception))
+        self.assertEqual(caught.exception.code, 403)
+
+
 if __name__ == "__main__":
     unittest.main()
