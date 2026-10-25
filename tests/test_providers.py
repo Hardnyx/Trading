@@ -146,7 +146,7 @@ class PublicationAndFallbacks(unittest.TestCase):
              patch.object(collector, "filings", return_value=[]), \
              patch.object(collector, "treasury_curves", return_value=[]), \
              patch.object(collector, "fred_csv_series", side_effect=providers.ProviderError("CSV no disponible")), \
-             patch.object(collector, "bls_series", side_effect=lambda series_id, *args, **kwargs: {"id": series_id, "value": 1, "date": today}), \
+             patch.object(collector, "bls_batch", return_value=[{"id": "CPI", "value": 1, "date": today}]), \
              patch.object(collector, "analyst_estimates") as estimates, \
              patch("sys.argv", ["refresh_data.py"]):
             collector.main()
