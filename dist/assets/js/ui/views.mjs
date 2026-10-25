@@ -827,6 +827,21 @@ export function createViews(context) {
       published: p.selection?.published ?? data.assets.length,
       eligible: p.selection?.eligible ?? "—",
       simulated: p.selection?.simulated ?? "—",
+      concentration: p.diagnostics?.selected?.largestPosition
+        ? `${p.diagnostics.selected.largestPosition.symbol} ${pct(p.diagnostics.selected.largestPosition.weight, 1)}`
+        : "No determinada",
+      nearLimits: p.diagnostics?.selected?.nearLimits?.length
+        ? p.diagnostics.selected.nearLimits.map((r) =>
+            `${r.name} ${pct(r.observed, 1)} / ${pct(r.limit, 1)}`
+          ).join("; ")
+        : "ninguna al 90% del límite",
+      referenceSummary: [["cash", "Efectivo"], ["reserve", "SHY/efectivo"],
+        ["equity20", "Índice 20%"]].map(([id, label]) => {
+          const r = p.diagnostics?.references?.[id];
+          return r ? `${label}: ${r.feasible ? "factible" : "no factible"} · rendimiento medio ${pct(r.meanReturn, 1)} · CVaR ${pct(r.cvar95, 1)}`
+            : `${label}: no comparable`;
+        }).join(" | "),
+      assumedETFCount: p.diagnostics?.selected?.uncalibratedEtfs?.length ?? "—",
       verificationPaths: p.verification.paths,
       months: p.settings.horizon * 12,
       model: p.settings.model === "merton" ? "con saltos sistémicos" : "GBM",
