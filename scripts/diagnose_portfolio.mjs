@@ -11,16 +11,19 @@ console.log(JSON.stringify({
   instruments: snapshot.assets.length,
   priceCutoff: snapshot.price_as_of,
 }));
-for (const [scenario, rules] of [
-  ["default", {}],
-  ["reserve_cap_50pct", { reserveCap: 0.5 }],
+for (const [scenario, rules, seed] of [
+  ["default", {}, 20261025],
+  ["default_seed_2", {}, 20261101],
+  ["default_seed_3", {}, 20261215],
+  ["reserve_cap_50pct", { reserveCap: 0.5 }, 20261025],
 ]) {
   const started = Date.now();
   const result = composePortfolio(snapshot, {
-    seed: 20261025, model: "merton", horizon: 1,
+    seed, model: "merton", horizon: 1,
   }, {}, rules, search);
   console.log(JSON.stringify({
     scenario,
+    seed,
     status: result.status,
     cut: result.as_of,
     selection: {
