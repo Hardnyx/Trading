@@ -1,4 +1,4 @@
-import { finite } from "../analytics.mjs?v=0.3.0";
+import { finite } from "../analytics.mjs?v=0.4.0";
 
 export const esc = (s) =>
   String(s ?? "").replace(
