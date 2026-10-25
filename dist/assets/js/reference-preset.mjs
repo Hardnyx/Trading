@@ -1,10 +1,10 @@
 import { DEFAULT_MANDATE, DEFAULT_EXECUTION, DEFAULT_REGIMES,
-  informationDate } from "./policy.mjs?v=0.6.0";
-import { DEFAULT_COMPOSITION_RULES } from "./composer.mjs?v=0.6.0";
+  informationDate } from "./policy.mjs?v=0.7.0";
+import { DEFAULT_COMPOSITION_RULES } from "./composer.mjs?v=0.7.0";
 
 // Canonical comparison: no account, holdings, localStorage or user overrides.
 // Used by the actual web worker AND continuous integration.
-export const REFERENCE_ID = "default-20261024-4-regimes-v1";
+export const REFERENCE_ID = "default-20261024-4-regimes-v2";
 export function referenceRequest(snapshot) {
   return {
     settings: {
