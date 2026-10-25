@@ -138,7 +138,7 @@ export function prepareComposition(
     yieldCurve,
     mandate: policy,
   };
-  const paths = preparePaths(sampled.assets, options, overrides);
+  const paths = preparePaths(sampled.assets, options, overrides, snapshot.assets);
   const requiredCash = Math.max(
     policy.minimumCash,
     sum(withdrawalSchedule(policy, asOf).map((r) => r.amount)) /
@@ -201,6 +201,10 @@ export function evaluateWeights(weights, gross) {
   };
 }
 function corr(inputs, i, j) {
+  // Compare idiosyncratic dependence after removing observed SPY bull/bear
+  // and sector proxy effects; the Monte Carlo still uses TOTAL covariance.
+  const residual = inputs.residualCorrelation?.[i]?.[j];
+  if (Number.isFinite(residual)) return residual;
   const c = inputs.covariance;
   return c[i][i] > 0 && c[j][j] > 0
     ? c[i][j] / Math.sqrt(c[i][i] * c[j][j])
@@ -534,7 +538,8 @@ export function composePortfolio(
   const diagnostics = {
     selected: riskDiagnostics(best),
     references,
-    note: "Comparadores simulados con los mismos escenarios; ninguna restricción cercana prueba causalidad. Los retornos asumidos de ETF no son pronósticos calibrados.",
+    dependence: x.dependence,
+    note: "El límite de correlación se aplica a los residuos tras SPY alcista/bajista y sector, salvo falta de historia; CVaR y shocks conservan riesgo sistémico. Las correlaciones residuales NO son dependencias causales.",
   };
   const {
     baseline: _baseline,
@@ -736,6 +741,8 @@ export function composePortfolio(
         assumptions: { ...a.assumptions, ...overrides[a.symbol] },
       })),
       covariance: x.covariance,
+      residualCorrelation: x.residualCorrelation,
+      dependence: x.dependence,
       anchors: x.anchors,
       regimes: x.regimes,
     },
