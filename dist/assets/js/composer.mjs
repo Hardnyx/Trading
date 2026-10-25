@@ -24,6 +24,7 @@ import {
 import { buildReturnAnchors } from "./return-model.mjs?v=0.6.0";
 import { assetAt, fundamentalForecast, bondAssumptions } from "./research-model.mjs?v=0.6.0";
 import { selectCompositionUniverse } from "./universe.mjs?v=0.6.0";
+import { factorizeStressedCovariance } from "./factor-covariance.mjs?v=0.6.0";
 
 export const DEFAULT_COMPOSITION_RULES = {
   maxPosition: 0.2,
@@ -716,6 +717,11 @@ export function composePortfolio(
       ...x,
       options,
       covariance,
+      // Rebuild decomposition from the stressed covariance. Reusing the
+      // original factorization made correlation sensitivity ineffective.
+      factorization: test.correlation
+        ? factorizeStressedCovariance(covariance, x.assets)
+        : x.factorization,
       anchors: buildReturnAnchors(x.assets, options, changedOverrides),
     };
     const draws = generatePaths(altered, Math.min(paths, 600), seed, 12);
