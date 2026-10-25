@@ -291,16 +291,19 @@ function reserveTilts(x) {
     bond = x.assets.findIndex((a) => a.symbol === "SHY");
   if (cash < 0) return [];
   const minimum = Math.min(1, Math.ceil(x.requiredCash * 20 - 1e-9) / 20);
-  const source = bond >= 0 && x.buyAllowed[bond] ? bond : cash;
+  const useBond = bond >= 0 && x.buyAllowed[bond],
+    baseBond = useBond ? Math.min(x.rules.reserveCap, 1 - minimum) : 0;
   const result = [];
   for (let i = 0; i < x.assets.length; i++) {
-    if (i === cash || i === source || !x.buyAllowed[i]) continue;
+    if (i === cash || (useBond && i === bond) || !x.buyAllowed[i]) continue;
     const w = Array(x.assets.length).fill(0);
-    w[cash] = minimum;
-    w[source] += 1 - minimum;
+    w[cash] = 1 - baseBond;
+    if (useBond) w[bond] = baseBond;
     const invest = Math.min(0.2, Math.floor((1 - minimum) * 20 + 1e-9) / 20);
     if (invest < 0.05) continue;
-    w[source] -= invest;
+    const fromBond = Math.min(invest, baseBond);
+    if (useBond) w[bond] -= fromBond;
+    w[cash] -= invest - fromBond;
     w[i] += invest;
     if (validWeights(w, x)) result.push(w);
   }
