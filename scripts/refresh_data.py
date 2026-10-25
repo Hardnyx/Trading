@@ -10,6 +10,7 @@ import csv
 import datetime as dt
 import io
 import hashlib
+import gzip
 import json
 import math
 import os
@@ -30,6 +31,7 @@ UA = "TradingResearch/0.2 (https://github.com/Hardnyx/Trading)"
 SEC_UA = os.environ.get("SEC_USER_AGENT") or UA
 LOCK = threading.Lock()
 LAST_SEC = 0.0
+ACCESS_FAILURES = {}
 ASSETS = [
     ("AAPL", "Apple", "Tecnología", 320193, 0.06, 25),
     ("MSFT", "Microsoft", "Tecnología", 789019, 0.10, 29),
@@ -59,6 +61,9 @@ def download(url, cache_key, max_age=0, sec=False):
     path = CACHE / cache_key
     if path.exists() and max_age and time.time() - path.stat().st_mtime < max_age:
         return path.read_bytes()
+    host = urllib.parse.urlsplit(url).hostname
+    if host in ACCESS_FAILURES:
+        raise urllib.error.HTTPError(url, ACCESS_FAILURES[host], 'Acceso rechazado previamente en esta ejecución', None, None)
     for attempt in range(3):
         if sec:
             with LOCK:
@@ -66,16 +71,26 @@ def download(url, cache_key, max_age=0, sec=False):
                 if pause:
                     time.sleep(pause)
                 LAST_SEC = time.monotonic()
+        if host in ACCESS_FAILURES:
+            raise urllib.error.HTTPError(url, ACCESS_FAILURES[host], 'Acceso rechazado previamente en esta ejecución', None, None)
         try:
             req = urllib.request.Request(url, headers={
                 "User-Agent": SEC_UA if sec else UA,
                 "Accept": "application/json,text/csv,*/*",
+                "Accept-Encoding": "gzip",
             })
             with urllib.request.urlopen(req, timeout=40) as response:
                 result = response.read()
+                if result.startswith(b'\x1f\x8b'):
+                    result = gzip.decompress(result)
             path.write_bytes(result)
             return result
-        except (urllib.error.URLError, TimeoutError):
+        except (urllib.error.URLError, TimeoutError) as error:
+            if isinstance(error, urllib.error.HTTPError):
+                if error.code in (401, 403):
+                    ACCESS_FAILURES[host] = error.code
+                if error.code in (400, 401, 403, 404, 410):
+                    raise
             if attempt == 2:
                 raise
             time.sleep(1 + attempt)
@@ -83,6 +98,10 @@ def download(url, cache_key, max_age=0, sec=False):
 
 def date(value):
     return dt.date.fromisoformat(value[:10])
+
+
+def error_label(error):
+    return f'HTTP {error.code}' if isinstance(error, urllib.error.HTTPError) else type(error).__name__
 
 
 def number(value):
@@ -302,7 +321,7 @@ def build_asset(spec, cutoff, previous):
     except Exception as exc:
         old = previous.get(symbol)
         if not old or not old.get("history"):
-            return None, [f"{symbol}: precios no disponibles ({type(exc).__name__})"]
+            return None, [f"{symbol}: precios no disponibles ({error_label(exc)})"]
         asset.update({k: old.get(k) for k in ["history", "price", "price_date", "change", "dividend_per_share", "currency", "source_url"]})
         errors.append(f"{symbol}: se conserva el precio del {asset['price_date']}; actualización fallida")
     if cik:
@@ -310,12 +329,12 @@ def build_asset(spec, cutoff, previous):
             asset["financials"] = financials(cik, cutoff)
         except Exception as exc:
             asset["financials"] = previous.get(symbol, {}).get("financials")
-            errors.append(f"{symbol}: SEC no actualizada ({type(exc).__name__})")
+            errors.append(f"{symbol}: SEC no actualizada ({error_label(exc)})")
         try:
             asset["filings"] = filings(cik, cutoff)
         except Exception as exc:
             asset["filings"] = previous.get(symbol, {}).get("filings", [])
-            errors.append(f"{symbol}: presentaciones no actualizadas ({type(exc).__name__})")
+            errors.append(f"{symbol}: presentaciones no actualizadas ({error_label(exc)})")
     else:
         asset["financials"] = None
     return asset, errors
@@ -384,7 +403,7 @@ def main():
             macro.extend(task())
             print(f"OK {name}", flush=True)
         except Exception as exc:
-            errors.append(f"{name}: actualización fallida ({type(exc).__name__})")
+            errors.append(f"{name}: actualización fallida ({error_label(exc)})")
     for key, record in old_macro.items():
         if not any(row['id'] == key for row in macro):
             macro.append(record)
@@ -410,6 +429,8 @@ def main():
     temporary.replace(OUTPUT)
     print(f"Captura conservada: {archived.relative_to(ROOT)}", flush=True)
     print(f"Guardado {OUTPUT.name}: {len(assets)} activos, {len(macro)} series, {len(errors)} avisos", flush=True)
+    for warning in errors:
+        print(f'AVISO {warning}', flush=True)
 
 
 if __name__ == "__main__":

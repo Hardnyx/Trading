@@ -51,6 +51,19 @@ const data = JSON.parse(
   await readFile(new URL("../dist/data/market.json", import.meta.url), "utf8"),
 );
 
+test("partial refreshes remain visible with a direct link to source dates", () => {
+  const views = createViews({
+    state: { view: "portfolio" },
+    data: { ...data, errors: ["SEC: HTTP 403", "BLS: HTTP 403"] },
+    asset: () => null,
+  });
+  const html = views.shell("<h1>Cartera</h1>");
+  assert.ok(html.includes("Actualización parcial: 2 incidencias."));
+  assert.ok(html.replace(/\s+/g, " ").includes("Se conservaron los últimos datos"));
+  assert.ok(html.includes('data-action="sources"'));
+  assert.ok(!html.includes("{{count}}"));
+});
+
 for (const populated of [false, true])
   test(`all views render valid fragments with ${populated ? "a registered" : "an empty"} portfolio`, () => {
     const positions = populated

@@ -1220,7 +1220,9 @@ export function createViews(context) {
       ).join(""),
       value9: state.forecastError
         ? template("shell-4", { forecastError: state.forecastError })
-        : "",
+        : data.errors?.length
+          ? template("source-health", { count: data.errors.length })
+          : "",
       page: page,
     });
   }

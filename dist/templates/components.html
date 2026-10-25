@@ -5,6 +5,14 @@
     <title>Plantillas de interfaz</title>
   </head>
   <body>
+    <template id="source-health">
+      <div class="notice" role="status">
+        Actualización parcial: {{count}} incidencias. Se conservaron los últimos
+        datos válidos.<button class="text-button" data-action="sources">
+          Ver fuentes y fechas
+        </button>
+      </div>
+    </template>
     <!-- components: reusable HTML; double braces escape text, triple braces insert rendered fragments. -->
 
     <template id="icon">
