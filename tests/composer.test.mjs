@@ -107,6 +107,27 @@ test("reserve and benchmark comparators respect a tighter SHY cap", () => {
   assert.equal(reserve.positions.find((p) => p.symbol === "CASH").weight, 0.5);
 });
 
+test("uncalibrated ETF cannot be newly purchased until return and uncertainty are explicit", () => {
+  const cut = snapshot();
+  const etf = structuredClone(cut.assets[0]);
+  etf.symbol = "GLD";
+  etf.name = "Gold";
+  etf.type = "etf";
+  etf.sector = "Oro";
+  etf.financials = {};
+  cut.assets.push(etf);
+  const blocked = prepareComposition(cut, { model: "gbm" });
+  assert.ok(blocked.excluded.some((row) => row.symbol === "GLD" &&
+    row.reason.includes("sin retorno esperado fundamentado")));
+  assert.ok(!blocked.assets.some((asset) => asset.symbol === "GLD"));
+  const approved = prepareComposition(cut, {
+    model: "gbm",
+    assetAssumptions: { GLD: { expectedReturn: 0.025, uncertainty: 0.15 } },
+  });
+  assert.ok(approved.assets.some((asset) => asset.symbol === "GLD"));
+  assert.equal(approved.anchors.find((anchor) => anchor.symbol === "GLD").annual, 0.025);
+});
+
 test("future prices and unpublished earnings never enter an ex ante composition", () => {
   const input = snapshot();
   input.assets[0].financials.eps.filed = "2026-10-24";
