@@ -9,18 +9,18 @@ import {
   alignReturns,
   returnStats,
   validateSnapshot,
-} from "./analytics.mjs?v=0.3.0";
+} from "./analytics.mjs?v=0.4.0";
 import {
   registerPortfolio,
   reviewPortfolio,
   DEFAULT_RULES,
-} from "./monitor.mjs?v=0.3.0";
+} from "./monitor.mjs?v=0.4.0";
 
-import { fmt, pct, money, dateLabel } from "./ui/format.mjs?v=0.3.0";
-import { createViews, NAV } from "./ui/views.mjs?v=0.3.0";
-import { loadTemplates } from "./ui/templates.mjs?v=0.3.0";
-import { applyVisualValues, showStartupError } from "./ui/dom.mjs?v=0.3.0";
-import { DEFAULT_COMPOSITION_RULES } from "./composer.mjs?v=0.3.0";
+import { fmt, pct, money, dateLabel } from "./ui/format.mjs?v=0.4.0";
+import { createViews, NAV } from "./ui/views.mjs?v=0.4.0";
+import { loadTemplates } from "./ui/templates.mjs?v=0.4.0";
+import { applyVisualValues, showStartupError } from "./ui/dom.mjs?v=0.4.0";
+import { DEFAULT_COMPOSITION_RULES } from "./composer.mjs?v=0.4.0";
 
 import {
   DEFAULT_MANDATE,
@@ -32,15 +32,16 @@ import {
   withCashAsset,
   currentAccount,
   informationDate,
-} from "./policy.mjs?v=0.3.0";
-import { validateResearch } from "./research-model.mjs?v=0.3.0";
+  MODEL_VERSION,
+} from "./policy.mjs?v=0.4.0";
+import { validateResearch } from "./research-model.mjs?v=0.4.0";
 import {
   journalOrigin,
   appendForecast,
   freezeMaturedOutcomes,
-} from "./journal.mjs?v=0.3.0";
+} from "./journal.mjs?v=0.4.0";
 
-import { openJournal, saveJournal } from "./journal-store.mjs?v=0.3.0";
+import { openJournal, saveJournal } from "./journal-store.mjs?v=0.4.0";
 
 let journalDBReady = false,
   storageErrorShown = false;
@@ -106,6 +107,11 @@ state.compositionRules = {
   ...DEFAULT_COMPOSITION_RULES,
   ...state.compositionRules,
 };
+if (state.proposal && state.proposal.model_version !== MODEL_VERSION) {
+  state.proposal = null;
+  state.compositionError =
+    "Propuesta anterior incompatible con el motor 0.4.0. Se conservaron tus posiciones y supuestos: pulsa Proponer cartera para recalcular con correlaciones residuales por régimen.";
+}
 if (
   !saved.workspaceVersion &&
   saved.compositionRules?.reserveCap === 0.5 &&
@@ -379,7 +385,7 @@ function runForecast() {
       state.research,
     );
     worker ||= new Worker(
-      new URL("./forecast-worker.mjs?v=0.3.0", import.meta.url),
+      new URL("./forecast-worker.mjs?v=0.4.0", import.meta.url),
       {
         type: "module",
       },
@@ -420,7 +426,7 @@ function runForecast() {
 }
 function proposalSignature() {
   return JSON.stringify({
-    modelVersion: "0.3.0",
+    modelVersion: MODEL_VERSION,
     asOf: data?.price_as_of,
     snapshot: data?.generated_at,
     positions: [...state.positions].sort((a, b) =>
@@ -446,7 +452,7 @@ function runComposition() {
   state.compositionError = null;
   try {
     compositionWorker ||= new Worker(
-      new URL("./composer-worker.mjs?v=0.3.0", import.meta.url),
+      new URL("./composer-worker.mjs?v=0.4.0", import.meta.url),
       { type: "module" },
     );
     compositionWorker.onmessage = (event) => {
@@ -1298,6 +1304,7 @@ document.addEventListener("change", async (event) => {
         if (
           [1, 2].includes(proposal?.version) &&
           proposal.method === "ex-ante-fundamental-monte-carlo" &&
+          proposal.model_version === MODEL_VERSION &&
           proposal.status === "proposed" &&
           Array.isArray(proposal.signals) &&
           proposal.signals.length <= 100 &&

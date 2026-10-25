@@ -4,7 +4,7 @@ import {
   normalizeWeights,
   metrics,
   scenarios,
-} from "../analytics.mjs?v=0.3.0";
+} from "../analytics.mjs?v=0.4.0";
 import {
   sparkline,
   portfolioChart,
@@ -13,7 +13,7 @@ import {
   scatter,
   forecastCone,
   histogram,
-} from "../charts.mjs?v=0.3.0";
+} from "../charts.mjs?v=0.4.0";
 import {
   esc,
   url,
@@ -23,11 +23,12 @@ import {
   compact,
   color,
   dateLabel,
-} from "./format.mjs?v=0.3.0";
-import { template } from "./templates.mjs?v=0.3.0";
-import { DEFAULT_COMPOSITION_RULES } from "../composer.mjs?v=0.3.0";
+} from "./format.mjs?v=0.4.0";
+import { template } from "./templates.mjs?v=0.4.0";
+import { DEFAULT_COMPOSITION_RULES } from "../composer.mjs?v=0.4.0";
+import { factorModel } from "../factors.mjs?v=0.4.0";
 
-import { createDecisionViews } from "./decision-views.mjs?v=0.3.0";
+import { createDecisionViews } from "./decision-views.mjs?v=0.4.0";
 
 export const NAV = [
   ["portfolio", "Componer cartera", "F1"],
@@ -842,6 +843,13 @@ export function createViews(context) {
             : `${label}: no comparable`;
         }).join(" | "),
       assumedETFCount: p.diagnostics?.selected?.uncalibratedEtfs?.length ?? "—",
+      engineVersion: p.model_version || "—",
+      seed: p.settings.seed,
+      maxCorr: fmt(p.rules.maxCorrelation, 2),
+      dependenceMethod: p.diagnostics?.dependence?.available
+        ? "residual SPY bull/bear + sector"
+        : "total (historia insuficiente)",
+      dependenceObservations: p.diagnostics?.dependence?.observations ?? 0,
       verificationPaths: p.verification.paths,
       months: p.settings.horizon * 12,
       model: p.settings.model === "merton" ? "con saltos sistémicos" : "GBM",
@@ -868,6 +876,18 @@ export function createViews(context) {
   function riskView() {
     const a = analyze(),
       s = a?.stats;
+    const factor = a?.weights?.length
+      ? factorModel(data.assets, a.weights, data.price_as_of,
+          state.lookback, state.settings.lambda, data.assets)
+      : null;
+    const residual = factor?.available
+      ? { ...a, matrix: factor.residualCorrelation } : null;
+    const validPairs = residual
+      ? factor.residualCorrelation.flatMap((row, i) =>
+          row.filter((v, j) => i !== j && finite(v))) : [];
+    const residualAverage = validPairs.length
+      ? validPairs.reduce((total, v) => total + v, 0) / validPairs.length
+      : null;
     const points =
       a?.selected.map((x) => {
         const s = assetStats(x);
@@ -910,7 +930,7 @@ export function createViews(context) {
           `${a?.stats.n || 0} retornos comunes · Pearson`,
         ),
         panel: panel(
-          "MATRIZ DE CORRELACIÓN",
+          "MATRIZ DE CORRELACIÓN TOTAL",
           "01",
           template("risk-view-2", { heatmap: heatmap(a) }),
         ),
@@ -948,7 +968,19 @@ export function createViews(context) {
           "",
           template("risk-view-5"),
         ),
-      })
+      }) +
+      panel(
+        "MATRIZ RESIDUAL · SPY BULL/BEAR + SECTOR",
+        "06",
+        residual ? template("risk-view-2", { heatmap: heatmap(residual) })
+          : template("composition-notice", {
+              message: factor?.note || "Sin observaciones suficientes.",
+            }),
+        "",
+        residual
+          ? `Media residual ${fmt(residualAverage, 2)} · ${factor.observations} sesiones. Betas SPY por régimen determinado con 63 retornos anteriores, más proxy sectorial. La matriz total anterior sigue alimentando Monte Carlo y CVaR. No implica independencia causal.`
+          : "Con datos insuficientes, se conserva explícitamente la correlación total."
+      )
     );
   }
 
