@@ -735,8 +735,9 @@ export function createViews(context) {
     return template("composition-controls", {
       months: state.settings.horizon * 12,
       budget: pct(rules.cvarBudget, 0),
-      volatilityHybridSelected: state.settings.volatilityMode !== "ewma" ? "selected" : "",
+      volatilityHybridSelected: !["ewma", "legacy"].includes(state.settings.volatilityMode) ? "selected" : "",
       volatilityEWMASelected: state.settings.volatilityMode === "ewma" ? "selected" : "",
+      volatilityLegacySelected: state.settings.volatilityMode === "legacy" ? "selected" : "",
       fields: fields
         .map(([key, label, min, max, step, scale, unit]) =>
           template("composition-field", {
