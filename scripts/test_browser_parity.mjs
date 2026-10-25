@@ -30,15 +30,35 @@ try {
   const issues=[];
   page.on("pageerror",e=>issues.push(e.message));
   page.on("console",e=>{if(e.type()==="error")issues.push(e.text())});
-  await page.goto("http://127.0.0.1:8813/?build=0.5.2#portfolio",
+  await page.goto("http://127.0.0.1:8813/?build=0.5.3#portfolio",
     {waitUntil:"networkidle",timeout:60000});
   const button=page.locator('[data-action="compose-reference"]');
+  await button.waitFor({state:"visible",timeout:45000});
+  // Simulate a genuine long-lived user workspace: previously selected stock,
+  // different seed, tighter reserve cap, custom macro weights and broker holdings.
+  await page.evaluate(()=>{
+    const key="trading-workspace-v1";
+    const stored=JSON.parse(localStorage.getItem(key)||"{}");
+    stored.workspaceVersion="0.5.3";
+    stored.positions=[{symbol:"NVDA",weight:1}];
+    stored.settings={...stored.settings,seed:20261025,volatilityMode:"ewma"};
+    stored.compositionRules={...stored.compositionRules,reserveCap:0.1,
+      maxPosition:0.1};
+    stored.account={enabled:true,cash:95000,positions:[
+      {symbol:"NVDA",quantity:3,costBasis:100}
+    ]};
+    localStorage.setItem(key,JSON.stringify(stored));
+  });
+  await page.reload({waitUntil:"networkidle"});
   await button.waitFor({state:"visible",timeout:45000});
   const baselineStorage=await page.evaluate(()=>{
     const raw=localStorage.getItem("trading-workspace-v1");
     const state=raw?JSON.parse(raw):{};
     return {positions:state.positions||[],baseline:state.baseline||null,
-      account:state.account||null,settings:state.settings||null};
+      account:state.account||null,settings:state.settings||null,
+      compositionRules:state.compositionRules||null,
+      macroRegimes:state.macroRegimes||null,
+      mandate:state.mandate||null};
   });
   await button.click();
   await page.locator(".composition-report").waitFor({state:"visible",timeout:180000});
@@ -64,10 +84,19 @@ try {
   const afterStorage=await page.evaluate(()=>{
     const state=JSON.parse(localStorage.getItem("trading-workspace-v1")||"{}");
     return {positions:state.positions||[],baseline:state.baseline||null,
-      account:state.account||null,settings:state.settings||null};
+      account:state.account||null,settings:state.settings||null,
+      compositionRules:state.compositionRules||null,
+      macroRegimes:state.macroRegimes||null,
+      mandate:state.mandate||null};
   });
   if(JSON.stringify(baselineStorage)!==JSON.stringify(afterStorage))
     throw Error("La comparación base alteró las posiciones o preferencias");
+  if(baselineStorage.settings.seed!==20261025 ||
+     baselineStorage.compositionRules.reserveCap!==0.1 ||
+     baselineStorage.account.positions[0].symbol!=="NVDA")
+    throw Error("La prueba no restauró realmente la sesión personalizada");
+  if(!report.includes("MOTOR 0.5.3") && !report.includes("Motor 0.5.3"))
+    throw Error("El informe no identifica el motor 0.5.3");
   if(issues.length)throw Error("Errores del navegador: "+issues.join("; "));
   console.log(JSON.stringify({
     browserParity:"PASS",
