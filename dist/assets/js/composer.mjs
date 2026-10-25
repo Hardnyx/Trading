@@ -466,6 +466,67 @@ export function composePortfolio(
     ? assess(bestPassive.weights, x, verification, false, true)
     : null;
   let best = verified.sort((a, b) => b.metrics.score - a.metrics.score)[0];
+  // Counterfactual allocations use the same independent verification paths.
+  // They are comparators, not transactions or recommendations.
+  const cash = x.assets.findIndex((a) => a.symbol === "CASH"),
+    shortBond = x.assets.findIndex((a) => a.symbol === "SHY"),
+    equity = x.assets.findIndex((a) => a.symbol === x.policy.benchmark);
+  const reserve = Array(x.assets.length).fill(0);
+  const equityTilt = Array(x.assets.length).fill(0);
+  if (cash >= 0) {
+    const minCash = Math.min(1, Math.ceil(x.requiredCash * 20 - 1e-9) / 20);
+    reserve[cash] = minCash;
+    if (shortBond >= 0) reserve[shortBond] = 1 - minCash;
+    else reserve[cash] = 1;
+    equityTilt.splice(0, equityTilt.length, ...reserve);
+    if (equity >= 0) {
+      const targetEquity = Math.min(0.2, 1 - minCash);
+      const funding = shortBond >= 0 ? shortBond : cash;
+      equityTilt[funding] -= targetEquity;
+      equityTilt[equity] += targetEquity;
+    }
+  }
+  const references = Object.fromEntries([
+    ["cash", allCash],
+    ["reserve", reserve],
+    ["equity20", equityTilt],
+  ].map(([name, w]) => {
+    if (!validWeights(w, x)) return [name, null];
+    const check = assess(w, x, verification);
+    return [name, {
+      positions: check.positions,
+      feasible: check.feasible,
+      meanReturn: check.metrics.meanReturn,
+      cvar95: check.metrics.cvar95,
+      lossProbability: check.metrics.lossProbability,
+      certaintyEquivalent: check.metrics.certaintyEquivalent,
+    }];
+  }));
+  const riskDiagnostics = (row) => {
+    if (!row) return null;
+    const limits = [
+      ["CVaR 95", row.metrics.cvar95, x.rules.cvarBudget],
+      ["Prob. pérdida", row.metrics.lossProbability, x.rules.maxLossProbability],
+      ["Prob. drawdown", row.metrics.drawdownProbability, x.policy.maxDrawdownProbability],
+      ["Riesgo liquidez", row.metrics.liquidityFailureProbability, x.policy.maxLiquidityFailure],
+    ];
+    const nearby = limits.filter(([, used, limit]) => limit > 0 && used >= limit * 0.9)
+      .map(([name, used, limit]) => ({
+        name, observed: used, limit,
+      }));
+    return {
+      largestPosition: [...row.positions].sort((a, b) => b.weight - a.weight)[0] || null,
+      nearLimits: nearby,
+      uncalibratedEtfs: x.anchors.filter((a) =>
+        a.kind === "etf" && !a.bond && a.source === "Retorno y rango asumidos del ETF"
+      ).map((a) => a.symbol),
+    };
+  };
+  const diagnostics = {
+    selected: riskDiagnostics(best),
+    references,
+    note: "Comparadores simulados con los mismos escenarios; ninguna restricción cercana prueba causalidad. Los retornos asumidos de ETF no son pronósticos calibrados.",
+  };
   const {
     baseline: _baseline,
     account: _account,
@@ -493,6 +554,7 @@ export function composePortfolio(
     capital: x.current.capital,
     excluded: x.excluded,
     selection: x.selection,
+    diagnostics,
     search: {
       evaluated, feasible, paths, allocationStep: 0.05,
       method: "reserve-tilts-random-local-exchanges",
