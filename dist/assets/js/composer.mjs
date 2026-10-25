@@ -571,6 +571,7 @@ export function composePortfolio(
   // incorrectly compared 100% cash against an optimized high-SHY portfolio.
   const shyIndex = x.assets.findIndex(a => a.symbol === "SHY");
   const cashIndex = x.assets.findIndex(a => a.symbol === "CASH");
+  const verifiedCapCandidates = [];
   const capAlternatives = [0.25, 0.50, 0.75].map(cap => {
     const cappedX = { ...x, rules: { ...x.rules, reserveCap: cap } };
     const alternatives = [];
@@ -619,6 +620,7 @@ export function composePortfolio(
       if (v.feasible &&
           (!bestCap || v.metrics.score > bestCap.metrics.score)) bestCap = v;
     }
+    if (bestCap) verifiedCapCandidates.push(bestCap);
     return {
       cap, compared: examined,
       feasible: !!bestCap,
@@ -626,11 +628,17 @@ export function composePortfolio(
       meanReturn: bestCap?.metrics.meanReturn ?? null,
       cvar95: bestCap?.metrics.cvar95 ?? null,
       certaintyEquivalent: bestCap?.metrics.certaintyEquivalent ?? null,
-      certaintyGapVsSelected: best && bestCap
-        ? best.metrics.certaintyEquivalent-bestCap.metrics.certaintyEquivalent
-        : null,
+      certaintyGapVsSelected: null,
     };
   });
+  // Search under the 25/50/75% caps explores candidates the unrestricted
+  // pass can miss. Never ignore a verified, feasible improvement.
+  for (const candidate of verifiedCapCandidates)
+    if (!best || candidate.metrics.score > best.metrics.score) best = candidate;
+  for (const row of capAlternatives)
+    if (row.feasible && best)
+      row.certaintyGapVsSelected =
+        best.metrics.certaintyEquivalent - row.certaintyEquivalent;
   const shyAnchor = shyIndex >= 0 ? x.anchors[shyIndex] : null;
   const concentrationAudit = {
     shyAnnualAnchor: shyAnchor?.annual ?? null,
@@ -719,7 +727,8 @@ export function composePortfolio(
     search: {
       evaluated, feasible, paths, allocationStep: 0.05,
       reserveTiltsEvaluated: initialTilts.length,
-      method: "reserve-tilts-random-local-exchanges",
+      method: "reserve-tilts-random-local-exchanges-with-capped-challengers",
+      capChallengersExamined: capAlternatives.reduce((total,row)=>total+row.compared,0),
       exhaustive: false,
     },
     verification: {
