@@ -4,22 +4,22 @@ import { readFile } from "node:fs/promises";
 import {
   createTemplateRenderer,
   loadTemplates,
-} from "../dist/assets/js/ui/templates.mjs?v=0.3.0";
-import { createViews, NAV } from "../dist/assets/js/ui/views.mjs?v=0.3.0";
+} from "../dist/assets/js/ui/templates.mjs?v=0.4.0";
+import { createViews, NAV } from "../dist/assets/js/ui/views.mjs?v=0.4.0";
 import {
   valuation,
   portfolioAnalysis,
   metrics,
-} from "../dist/assets/js/analytics.mjs?v=0.3.0";
+} from "../dist/assets/js/analytics.mjs?v=0.4.0";
 import {
   simulateForecast,
   validateRiskBands,
-} from "../dist/assets/js/forecast.mjs?v=0.3.0";
+} from "../dist/assets/js/forecast.mjs?v=0.4.0";
 import {
   registerPortfolio,
   reviewPortfolio,
   DEFAULT_RULES,
-} from "../dist/assets/js/monitor.mjs?v=0.3.0";
+} from "../dist/assets/js/monitor.mjs?v=0.4.0";
 
 test("external templates escape untrusted text and attributes without interpreting inserted placeholders", () => {
   const render = createTemplateRenderer([
