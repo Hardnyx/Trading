@@ -107,6 +107,21 @@ test("reserve and benchmark comparators respect a tighter SHY cap", () => {
   assert.equal(reserve.positions.find((p) => p.symbol === "CASH").weight, 0.5);
 });
 
+test("lower-SHY alternatives are searched independently and respect their own cap",()=>{
+  const result=composePortfolio(snapshot(),
+    {model:"gbm",seed:981,horizon:1}, {}, {},
+    {candidates:70,paths:160,finalPaths:320});
+  const rows=result.diagnostics.concentrationAudit.comparedCaps;
+  assert.deepEqual(rows.map(r=>r.cap),[.25,.5,.75]);
+  assert.ok(rows.every(r=>r.compared>1));
+  for(const row of rows){
+    if(!row.feasible)continue;
+    const shy=row.positions.find(p=>p.symbol==="SHY")?.weight||0;
+    assert.ok(shy<=row.cap+1e-8);
+    assert.ok(row.certaintyEquivalent>0);
+  }
+});
+
 test("uncalibrated ETF cannot be newly purchased until return and uncertainty are explicit", () => {
   const cut = snapshot();
   const etf = structuredClone(cut.assets[0]);
