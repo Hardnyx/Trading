@@ -4,14 +4,14 @@ import {
   mean,
   quantile,
   normalizeWeights,
-} from "./analytics.mjs?v=0.5.1";
-import { seededRandom } from "./random.mjs?v=0.5.1";
+} from "./analytics.mjs?v=0.5.2";
+import { seededRandom } from "./random.mjs?v=0.5.2";
 import {
   preparePaths,
   generatePaths,
   evaluatePaths,
   marginalRisk,
-} from "./path-model.mjs?v=0.5.1";
+} from "./path-model.mjs?v=0.5.2";
 import {
   withCashAsset,
   mandate,
@@ -20,10 +20,10 @@ import {
   tradePlan,
   withdrawalSchedule,
   MODEL_VERSION,
-} from "./policy.mjs?v=0.5.1";
-import { buildReturnAnchors } from "./return-model.mjs?v=0.5.1";
-import { assetAt, fundamentalForecast, bondAssumptions } from "./research-model.mjs?v=0.5.1";
-import { selectCompositionUniverse } from "./universe.mjs?v=0.5.1";
+} from "./policy.mjs?v=0.5.2";
+import { buildReturnAnchors } from "./return-model.mjs?v=0.5.2";
+import { assetAt, fundamentalForecast, bondAssumptions } from "./research-model.mjs?v=0.5.2";
+import { selectCompositionUniverse } from "./universe.mjs?v=0.5.2";
 
 export const DEFAULT_COMPOSITION_RULES = {
   maxPosition: 0.2,

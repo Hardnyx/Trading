@@ -9,18 +9,18 @@ import {
   alignReturns,
   returnStats,
   validateSnapshot,
-} from "./analytics.mjs?v=0.5.1";
+} from "./analytics.mjs?v=0.5.2";
 import {
   registerPortfolio,
   reviewPortfolio,
   DEFAULT_RULES,
-} from "./monitor.mjs?v=0.5.1";
+} from "./monitor.mjs?v=0.5.2";
 
-import { fmt, pct, money, dateLabel } from "./ui/format.mjs?v=0.5.1";
-import { createViews, NAV } from "./ui/views.mjs?v=0.5.1";
-import { loadTemplates } from "./ui/templates.mjs?v=0.5.1";
-import { applyVisualValues, showStartupError } from "./ui/dom.mjs?v=0.5.1";
-import { DEFAULT_COMPOSITION_RULES } from "./composer.mjs?v=0.5.1";
+import { fmt, pct, money, dateLabel } from "./ui/format.mjs?v=0.5.2";
+import { createViews, NAV } from "./ui/views.mjs?v=0.5.2";
+import { loadTemplates } from "./ui/templates.mjs?v=0.5.2";
+import { applyVisualValues, showStartupError } from "./ui/dom.mjs?v=0.5.2";
+import { DEFAULT_COMPOSITION_RULES } from "./composer.mjs?v=0.5.2";
 
 import {
   DEFAULT_MANDATE,
@@ -33,15 +33,15 @@ import {
   currentAccount,
   informationDate,
   MODEL_VERSION,
-} from "./policy.mjs?v=0.5.1";
-import { validateResearch } from "./research-model.mjs?v=0.5.1";
+} from "./policy.mjs?v=0.5.2";
+import { validateResearch } from "./research-model.mjs?v=0.5.2";
 import {
   journalOrigin,
   appendForecast,
   freezeMaturedOutcomes,
-} from "./journal.mjs?v=0.5.1";
+} from "./journal.mjs?v=0.5.2";
 
-import { openJournal, saveJournal } from "./journal-store.mjs?v=0.5.1";
+import { openJournal, saveJournal } from "./journal-store.mjs?v=0.5.2";
 
 let journalDBReady = false,
   storageErrorShown = false;
@@ -387,7 +387,7 @@ function runForecast() {
       state.research,
     );
     worker ||= new Worker(
-      new URL("./forecast-worker.mjs?v=0.5.1", import.meta.url),
+      new URL("./forecast-worker.mjs?v=0.5.2", import.meta.url),
       {
         type: "module",
       },
@@ -454,7 +454,7 @@ function runComposition() {
   state.compositionError = null;
   try {
     compositionWorker ||= new Worker(
-      new URL("./composer-worker.mjs?v=0.5.1", import.meta.url),
+      new URL("./composer-worker.mjs?v=0.5.2", import.meta.url),
       { type: "module" },
     );
     compositionWorker.onmessage = (event) => {
