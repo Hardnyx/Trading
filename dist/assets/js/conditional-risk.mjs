@@ -9,7 +9,9 @@ export function conditionalRisk(assets, baseCov, options = {}) {
     active: 0, fallback: assets.length, enabled: false,
     // Uncalibrated legacy Merton remains the explicit comparator; with
     // accepted GJR, fallback instruments always receive DAILY EWMA updates.
-    dynamic: options.model !== "merton", mode: "ewma", reason, studentNu: null,
+    // Hybrid never silently switches to uncalibrated Merton jumps when GJR
+    // is unavailable. Legacy Merton is an explicit research-only selection.
+    dynamic: options.volatilityMode !== "legacy", mode: "ewma", reason, studentNu: null,
     innovationLaw: "gaussian-factor-residual",
     multipliers: Array(assets.length).fill(1),
   });
