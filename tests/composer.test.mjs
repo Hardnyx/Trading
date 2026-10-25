@@ -82,7 +82,7 @@ test("composition is reproducible, fully invested and respects position, sector 
   assert.ok(a.metrics.lossProbability <= a.rules.maxLossProbability);
   assert.notEqual(a.settings.seed, a.verification.seed);
   assert.ok(a.calibration_end <= input.price_as_of);
-  assert.equal(a.search.method, "reserve-tilts-random-local-exchanges");
+  assert.equal(a.search.method, "reserve-tilts-random-local-exchanges-with-capped-challengers");
   assert.equal(a.search.exhaustive, false);
   assert.equal(a.diagnostics.references.cash.feasible, true);
   assert.ok(a.diagnostics.references.reserve);
@@ -114,8 +114,11 @@ test("lower-SHY alternatives are searched independently and respect their own ca
   const rows=result.diagnostics.concentrationAudit.comparedCaps;
   assert.deepEqual(rows.map(r=>r.cap),[.25,.5,.75]);
   assert.ok(rows.every(r=>r.compared>1));
+  assert.ok(result.search.capChallengersExamined>0);
   for(const row of rows){
     if(!row.feasible)continue;
+    assert.ok(result.metrics.certaintyEquivalent+1e-6 >= row.certaintyEquivalent,
+      "Cannot ignore a verified higher-utility lower-SHY challenger");
     const shy=row.positions.find(p=>p.symbol==="SHY")?.weight||0;
     assert.ok(shy<=row.cap+1e-8);
     assert.ok(row.certaintyEquivalent>0);
