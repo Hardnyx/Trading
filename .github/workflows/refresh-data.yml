@@ -43,7 +43,7 @@ jobs:
       - name: Commit the updated snapshot
         id: snapshot
         run: |
-          git add dist/data/market.json data/snapshots
+          git add dist/data/market.json dist/data/market.json.gz data/snapshots
           if [ "$REPOSITORY_PRIVATE" = 'true' ] && [ -d data/research ]; then
             git add -f data/research
           fi
