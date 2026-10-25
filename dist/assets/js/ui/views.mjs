@@ -624,6 +624,12 @@ export function createViews(context) {
         "Pesos por activo y capital de simulación.",
         template("portfolio-actions", {
           composeDisabled: state.compositionBusy ? "disabled" : "",
+          referenceDisabled: state.compositionBusy ? "disabled" : "",
+          applyDisabled: state.proposal?.status === "proposed" &&
+            state.proposal.model_version === MODEL_VERSION &&
+            state.proposal.as_of === data.price_as_of &&
+            state.proposal.snapshot_generated_at === data.generated_at &&
+            !state.proposal.modified ? "" : "disabled",
           composeLabel: state.compositionBusy
             ? "Evaluando…"
             : "Proponer cartera",
@@ -806,6 +812,10 @@ export function createViews(context) {
     ];
     return template("composition-report", {
       asOf: dateLabel(p.as_of),
+      sourceNotice: p.reference_id
+        ? "CONFIGURACIÓN BASE · Capital USD 100.000 · cuenta vacía · 4 escenarios originales · semilla " + p.settings.seed + ". No se modificaron tus posiciones ni supuestos."
+        : "CONFIGURACIÓN DE TU SESIÓN · " + p.account_source +
+          " · semilla " + p.settings.seed + ". Esta propuesta no se aplica automáticamente.",
       notice: p.modified
         ? template("composition-notice", {
             message:

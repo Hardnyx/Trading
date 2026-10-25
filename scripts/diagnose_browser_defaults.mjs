@@ -3,6 +3,7 @@ import { composePortfolio, DEFAULT_COMPOSITION_RULES } from "../dist/assets/js/c
 import { informationDate, DEFAULT_MANDATE, DEFAULT_EXECUTION,
   DEFAULT_REGIMES } from "../dist/assets/js/policy.mjs?v=0.5.2";
 import { BASE_REGIME } from "../dist/assets/js/path-model.mjs?v=0.5.2";
+import { referenceRequest, REFERENCE_ID, resultFingerprint } from "../dist/assets/js/reference-preset.mjs?v=0.5.2";
 
 const snapshot=JSON.parse(readFileSync(new URL("../dist/data/market.json",import.meta.url)));
 const volatility=JSON.parse(readFileSync(new URL("../dist/data/volatility.json",import.meta.url)));
@@ -29,12 +30,25 @@ const tests=[
   {id:"web_defaults_20261025",seed:20261025,macroRegimes:DEFAULT_REGIMES},
   {id:"previous_single_regime",seed:20261025,macroRegimes:[BASE_REGIME]},
 ];
+const referenceInput = referenceRequest({...snapshot,volatility});
+const canonical = composePortfolio(snapshot, referenceInput.settings,
+  referenceInput.overrides, referenceInput.rules,
+  {candidates:300,paths:600,finalPaths:3000});
+console.log(JSON.stringify({
+  check:"canonical-reference",id:REFERENCE_ID,
+  positions:canonical.positions,median:canonical.metrics?.medianReturn,
+  cvar95:canonical.metrics?.cvar95,
+  fingerprint:resultFingerprint(canonical),
+}));
 for(const test of tests){
   const options={...common,seed:test.seed,macroRegimes:structuredClone(test.macroRegimes)};
   const started=Date.now();
   const result=composePortfolio(snapshot,options,{},DEFAULT_COMPOSITION_RULES,{
     candidates:300,paths:600,finalPaths:3000,
   });
+  if(test.id==="web_defaults_20261024" &&
+    resultFingerprint(result)!==resultFingerprint(canonical))
+    throw Error("El preset utilizado por la web difiere del baseline CI.");
   console.log(JSON.stringify({
     check:"configuration-parity",
     id:test.id,model_version:result.model_version,

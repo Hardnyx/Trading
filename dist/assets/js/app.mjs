@@ -48,6 +48,8 @@ let journalDBReady = false,
 
 const $ = (s, root = document) => root.querySelector(s);
 
+import { referenceRequest, REFERENCE_ID } from "./reference-preset.mjs?v=0.5.2";
+
 let saved = {};
 try {
   saved = JSON.parse(localStorage.getItem("trading-workspace-v1") || "{}");
@@ -446,10 +448,17 @@ function proposalSignature() {
   });
 }
 
-function runComposition() {
+function runComposition(reference = false) {
   if (!data || state.compositionBusy) return;
   const id = ++compositionJob,
     signature = proposalSignature();
+  const request = reference
+    ? referenceRequest(data)
+    : {
+        settings: calculationOptions(true),
+        overrides: state.overrides,
+        rules: state.compositionRules,
+      };
   state.compositionBusy = true;
   state.compositionError = null;
   try {
@@ -473,22 +482,16 @@ function runComposition() {
         return;
       }
       state.proposal = event.data.proposal;
-      if (state.proposal.status === "proposed") {
-        state.positions = state.proposal.positions.map((p) => ({ ...p }));
-        state.capital = state.proposal.capital;
-        for (const key of Object.keys(state.settings))
-          if (Object.hasOwn(state.proposal.settings, key))
-            state.settings[key] = state.proposal.settings[key];
-        state.proposal.signature = proposalSignature();
-        state.proposal.modified = false;
-        changePositions();
-        toast(
-          "Propuesta ex ante compuesta. Revisa sus supuestos antes de registrar.",
-        );
-      } else {
-        persist();
-        render();
-      }
+      if (reference) state.proposal.reference_id = REFERENCE_ID;
+      state.proposal.signature = proposalSignature();
+      state.proposal.modified = false;
+      // A recommendation never mutates actual or working positions.
+      // It must be deliberately applied by the user.
+      persist();
+      render();
+      toast(reference
+        ? "Referencia base calculada con entradas independientes de tu sesión."
+        : "Propuesta calculada. Tus posiciones no se han modificado.");
     };
     compositionWorker.onerror = () => {
       state.compositionBusy = false;
@@ -499,9 +502,9 @@ function runComposition() {
     compositionWorker.postMessage({
       id,
       snapshot: data,
-      settings: calculationOptions(true),
-      overrides: state.overrides,
-      rules: state.compositionRules,
+      settings: request.settings,
+      overrides: request.overrides,
+      rules: request.rules,
     });
   } catch (error) {
     state.compositionBusy = false;
@@ -868,6 +871,30 @@ document.addEventListener("click", async (event) => {
   if (action === "close-modal") closeModal();
   if (action === "compose") {
     runComposition();
+    return;
+  }
+  if (action === "compose-reference") {
+    runComposition(true);
+    return;
+  }
+  if (action === "apply-proposal") {
+    if (!state.proposal || state.proposal.status !== "proposed" ||
+        state.proposal.model_version !== MODEL_VERSION ||
+        state.proposal.as_of !== data.price_as_of ||
+        state.proposal.snapshot_generated_at !== data.generated_at ||
+        state.proposal.modified) {
+      toast("Esta propuesta ya no está vigente. Vuelve a calcularla.");
+      return;
+    }
+    state.positions = state.proposal.positions.map(p => ({...p}));
+    state.capital = state.proposal.capital;
+    if (state.proposal.reference_id) {
+      // Preserve the user's own mandate, settings, and registered holdings:
+      // applying a reference changes working weights only.
+      toast("Pesos de referencia aplicados a la cartera de trabajo.");
+    }
+    state.proposal.signature = proposalSignature();
+    changePositions();
     return;
   }
   if (action === "sources")
