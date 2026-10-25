@@ -2,6 +2,8 @@
 
 **Documento técnico de diseño · versión 1.0 (propuesta de investigación) · 25 de octubre de 2026**
 
+> **Alcance:** especificación **teórica y metodológica**. No es una descripción de un modelo ya validado ni una autorización para utilizarlo en decisiones reales. Este documento no modifica la interfaz, el optimizador ni las recomendaciones de Trading. Las implementaciones experimentales que puedan existir deben tratarse por separado.
+
 ## Resumen
 
 Se propone un sistema predictivo para carteras multiactivo que distingue entre (i) rentabilidad esperada, (ii) volatilidad condicional, (iii) dependencias de mercado y residuales, (iv) saltos y eventos informativos, y (v) decisión de invertir bajo restricciones. La propuesta evita dos errores: considerar que una misma rentabilidad supuesta sirve para todos los instrumentos y etiquetar retrospectivamente toda desviación como «noticia» para absolver al pronóstico. La validación será estrictamente *ex ante*: cada predicción y cada dato empleado conservarán su fecha de conocimiento. La primera implementación será un candidato de volatilidad **GJR-GARCH(1,1) con innovaciones Student-t estandarizadas**, contrastado con EWMA en modo experimental, sin modificar aún las recomendaciones. La atribución de noticias, los saltos informativos y las correlaciones dinámicas se incorporarán únicamente después de acreditar mejoras fuera de muestra.
@@ -23,122 +25,273 @@ El incumplimiento de H1, H2 o H3 implica **no promover** el componente correspon
 
 ## 2. Información y prevención del sesgo retrospectivo
 
-La filtración de información se evita imponiendo un conjunto de información disponible \(\mathcal F_t\). Un cálculo realizado al cierre de \(t\) puede usar únicamente precios, datos, revisiones y publicaciones conocidos hasta ese momento; predice \(t+1\) o el horizonte definido.
+La filtración de información se evita imponiendo un conjunto de información disponible $\mathcal F_t$. Un cálculo realizado al cierre de $t$ puede usar únicamente precios, datos, revisiones y publicaciones conocidos hasta ese momento; predice $t+1$ o el horizonte definido.
 
 Cada observación guarda como mínimo: identificador, fecha económica, fecha y hora de publicación, primera fecha de disponibilidad, proveedor, fecha de descarga, revisión/vintage, moneda, transformación y calidad. Los datos publicados después del cierre no se utilizan como si hubieran sido conocidos durante la sesión. Los eventos intradía requieren distinguir su hora exacta y la ventana de precios analizada. Eventos sin timestamp verificable quedan **sin atribuir**.
 
 Se emplean retornos logarítmicos ajustados por dividendos y splits, con calendarios compatibles. No se inventan valores ausentes ni se utilizan revisiones futuras de series macroeconómicas. Los retornos realizados y los índices de precios no sustituyen la tasa de crecimiento de beneficios ni las primas económicas en las expectativas *ex ante*.
 
-## 3. Separación de media, riesgo y shocks
+## 3. Modelo probabilístico conjunto: retorno, factores, residuo y saltos
 
-Para el activo \(i\), en frecuencia diaria:
+**Convención temporal:** $t$ es el cierre de una sesión y $\mathcal{F}_t$ es toda la información verificablemente disponible entonces. Se define el retorno logarítmico del día siguiente como
 
-\[
-r_{i,t}=\mu_{i,t|t-1}+b_{i,t-1}^{\top}f_t+u_{i,t}+j_{i,t}.
-\]
+$$
+r_{i,t+1}=\ln\!\left(\frac{P^{\mathrm{aj}}_{i,t+1}}{P^{\mathrm{aj}}_{i,t}}\right).
+$$
 
-- \(\mu_{i,t|t-1}\) es la expectativa condicionada con información anterior al retorno.
-- \(f_t\) son innovaciones factoriales comunes: mercado, tasas, crédito, moneda y sectores.
-- \(u_{i,t}\) es el residual continuo, de media condicional cero.
-- \(j_{i,t}\) es un salto adicional **solo si puede identificarse y calibrarse**, no un comodín para cualquier retorno inusual.
+El **modelo discreto de un día** será:
 
-El motor actual ya contiene una estimación de correlaciones residuales por mercado bull/bear y sector. Es útil como diagnóstico de redundancia, pero **no equivale a dependencia causal ni elimina pérdidas conjuntas durante crisis**. Por ello, las simulaciones siguen reteniendo las exposiciones factoriales.
+$$
+\boxed{
+r_{i,t+1}
+=\mu_{i,t}
++\boldsymbol{\beta}_{i,t}^{\mathsf T}\mathbf f_{t+1}
++u_{i,t+1}
++j^{c}_{i,t+1}
+}
+$$
 
-Para activos especializados se estimará \(\mu\) de manera diferenciada: acciones (beneficios, flujo de caja, dilución, valoración y prima factorial), bonos (carry, rolldown, cambios de curva, crédito, convexidad según disponibilidad), oro (tasas reales, USD y escenarios con incertidumbre explícita), y efectivo (rendimiento neto de la cuenta o cero si se asume no remunerado).
+con las condiciones de centrado
+
+$$
+\begin{aligned}
+\mu_{i,t}&=\mathbb E[r_{i,t+1}\mid\mathcal F_t],\\
+\mathbb E[\mathbf f_{t+1}\mid\mathcal F_t]&=\mathbf 0,\\
+\mathbb E[u_{i,t+1}\mid\mathcal F_t]&=0,\\
+\mathbb E[j^c_{i,t+1}\mid\mathcal F_t]&=0.
+\end{aligned}
+$$
+
+Aquí $P^{\mathrm{aj}}$ es un precio total-return ajustado; $\mu_{i,t}$ es la previsión condicionada **conocida antes del resultado**; $\boldsymbol{\beta}_{i,t}$ recoge exposiciones a factores; $\mathbf f_{t+1}$ representa sus sorpresas (mercado, curva de tasas, crédito, USD, sectores); $u_{i,t+1}$ representa una innovación residual; $j^c_{i,t+1}$ es un salto *centrado*, **solo si más adelante se justifica estadísticamente**.
+
+**No se sumará un salto realizado sin compensar su expectativa**, porque de lo contrario la ecuación dejaría de identificar a $\mu_{i,t}$ como media condicionada. Si se omite el módulo de saltos, se fija $j^c=0$ y sus eventos permanecen en los residuos observados.
+
+La previsión de retorno $\mu$ se obtiene de modelos económicos por clase de instrumento, no del GARCH:
+- Acciones: flujos, crecimiento por acción, rentabilidad distribuida, dilución, márgenes y valoración relativa, con incertidumbre explícita.
+- Bonos/ETF de bonos: TIR, carry neto, rolldown, duración, convexidad cuando esté medida, spreads y riesgo de crédito.
+- Oro: escenarios de tasas reales, USD y demanda de refugio, sin atribuirle automáticamente una prima positiva constante.
+- Efectivo: rendimiento efectivo neto de la cuenta; cero solo si el efectivo se considera explícitamente no remunerado.
+
+Las expectativas deben ser coherentes en horizonte y unidades: **un retorno diario logarítmico no es intercambiable con un retorno simple anual**, y una varianza diaria no se compara directamente con un CVaR anual. La transformación de horizonte depende de la dinámica condicional y no de multiplicar mecánicamente los parámetros de un proceso con regímenes y saltos.
+
+### 3.1. ¿Dónde entra el cálculo estocástico?
+
+La ecuación anterior define un sistema **discreto** de pronóstico y control de volatilidad. GARCH también es discreto: no es, por sí mismo, una ecuación diferencial de Itô. Si se necesitan trayectorias continuas o simulación intradía, una **aproximación alternativa** puede escribirse como
+
+$$
+\frac{\mathrm dS_{i,t}}{S_{i,t^-}}
+=\bigl(a_{i,t}-\lambda_{i,t}\kappa_{i,t}\bigr)\,\mathrm dt
++\boldsymbol{\sigma}_{i,t}^{\mathsf T}\,\mathrm d\mathbf W_t
++(J_{i,t}-1)\,\mathrm dN_{i,t},
+$$
+
+donde $\kappa_{i,t}=\mathbb E[J_{i,t}-1\mid\mathcal F_{t^-}]$. Esta representación **no debe sumarse encima** de la simulación discreta previa: es otra especificación que necesitaría una correspondencia documentada de derivas, volatilidades, saltos y frecuencias.
 
 ## 4. Volatilidad asimétrica: GJR-GARCH-t
 
-Inicialmente, sobre residuos diarios adecuados (o retornos centrados, cuando todavía no existe una descomposición factorial válida):
+El punto de partida preferente es el residuo $u_{i,t}$ obtenido **después** de controlar los factores disponibles. Si todavía no existe una descomposición factorial confiable, puede modelarse temporalmente un retorno centrado, pero no sumarse más adelante esa varianza a una matriz factorial que ya contenga el mismo movimiento común.
 
-\[
-u_t=\sqrt{h_t}z_t,\quad z_t\sim t_{\nu}\ \text{estandarizada},\quad E[z_t]=0,\quad Var(z_t)=1,\quad \nu>2.
-\]
+$$
+\begin{aligned}
+u_{i,t}&=\sqrt{h_{i,t\mid t-1}}\,z_{i,t},\\
+z_{i,t}&\sim\sqrt{\frac{\nu_i-2}{\nu_i}}\,t_{\nu_i},
+\qquad \nu_i>2,\\
+\mathbb E[z_{i,t}]&=0,\qquad
+\operatorname{Var}(z_{i,t})=1.
+\end{aligned}
+$$
 
-\[
-\boxed{h_{t+1}=\omega+\alpha u_t^2+\gamma\mathbf 1(u_t<0)u_t^2+\beta h_t.}
-\]
+La varianza **pronosticada al cierre $t$ para la próxima sesión** es:
 
-La hipótesis económica para renta variable suele ser \(\gamma>0\): a igualdad de magnitud, un residuo negativo aumenta más la varianza futura que uno positivo. **Este es un efecto estadístico de noticias desfavorables, NO una clasificación automática de noticias periodísticas.**
+$$
+\boxed{
+h_{i,t+1\mid t}
+=\omega_i
++\alpha_i u_{i,t}^{\,2}
++\gamma_i\mathbf 1_{\{u_{i,t}<0\}}u_{i,t}^{\,2}
++\beta_i h_{i,t\mid t-1}.
+}
+$$
 
-Las restricciones del caso básico incluyen \(\omega>0\), \(\alpha,\beta,\gamma\ge0\) y \(\alpha+\beta+\gamma/2<1\), suponiendo innovaciones simétricas y sin covariables, para obtener varianza incondicional finita. No se impone \(\gamma>0\) universalmente: oro, deuda y divisas pueden no seguir la misma asimetría; se contrasta contra una versión simétrica.
+Una innovación negativa puede elevar más la volatilidad futura que otra positiva de igual magnitud. Si $\gamma_i>0$, el modelo representa un **efecto asimétrico de malas noticias financieras**; *no* demuestra que una noticia periodística específica haya causado el retorno.
 
-En investigación se calibra por máxima verosimilitud con Student-t estandarizada, límites de parámetros, distintas inicializaciones y comprobación de convergencia. Se informan tamaño de muestra, parámetros, persistencia, errores y advertencias; si falla, se mantiene EWMA.
+Para la versión no exógena, con innovaciones simétricas de varianza unitaria, se consideran las restricciones:
 
-**Referencia:** \(\hat h_{t+1}^{EWMA}=\lambda\hat h_t+(1-\lambda)u_t^2\). La elección de \(\lambda\) y del periodo de entrenamiento también debe respetar las fechas de corte.
+$$
+\omega_i>0,\qquad
+\alpha_i,\beta_i,\gamma_i\ge 0,\qquad
+\alpha_i+\beta_i+\frac{\gamma_i}{2}<1.
+$$
 
-### ¿Por qué Student-t?
+Estas condiciones son suficientes para el caso básico de persistencia de segundo momento aquí definido; no se extrapolan automáticamente a GARCH-X, cambios de régimen o distribuciones asimétricas. Tampoco se fuerza $\gamma_i>0$ para oro, divisas o renta fija: una versión simétrica debe permanecer entre los candidatos.
 
-Los residuos financieros pueden presentar colas más pesadas que una normal. Student-t no elimina la necesidad de simular saltos extraordinarios, pero evita atribuir automáticamente cada valor extremo a una noticia extraordinaria.
+Se preferirá estimación por verosimilitud con Student-t **estandarizada**, múltiples inicializaciones, chequeos de convergencia y controles de estabilidad. Una varianza casi no estacionaria, un parámetro en el borde o historia insuficiente activará la reserva EWMA en lugar de producir certeza artificial.
 
-## 5. Noticias reales y variables exógenas
+**Referencia comparable:**
 
-Un evento debe identificarse **independientemente del movimiento de precio**: calendario de resultados, publicación de IPC o empleo, decisiones de bancos centrales, cambios regulatorios, hechos relevantes u otras noticias verificadas. Una noticia coincidente con una caída no prueba por sí sola causalidad.
+$$
+h^{\mathrm{EWMA}}_{i,t+1\mid t}
+=\lambda h^{\mathrm{EWMA}}_{i,t\mid t-1}
++(1-\lambda)u_{i,t}^{\,2},
+\qquad 0<\lambda<1.
+$$
 
-La fase posterior propone GJR-GARCH-X:
+En toda comparación, ambos candidatos deben recibir la misma información y definición de innovación. Student-t permite colas más pesadas, pero no acredita por sí sola una dinámica de saltos causados por noticias.
 
-\[
-h_{t+1}=\omega+\alpha u_t^2+\gamma\mathbf1(u_t<0)u_t^2+\beta h_t
-+\delta^\top X_t,
-\]
+## 5. Noticias verificadas, sorpresas y variables exógenas
 
-donde \(X_t\) representa **variables conocidas antes de emitir la previsión de \(t+1\)**, como magnitudes absolutas de sorpresas publicadas durante \(t\), indicadores de calendario futuro ya anunciado y medidas escaladas de incertidumbre. No se permite insertar la sorpresa aún no conocida de \(t+1\). Para evitar negatividad, una parametrización alternativa usa componentes positivos de varianza o una función de enlace exponencial.
+Se distinguen **tres conceptos distintos**:
 
-Ejemplo: si el IPC observado es 3,2 % y el consenso previo era 3,4 %, se utiliza la sorpresa \(-0,2\) puntos porcentuales y sus unidades; no se clasifica de manera automática «inflación alta = mala noticia».
+1. **Signo del retorno inesperado:** determina el término asimétrico de GJR-GARCH, incluso si no se conoce una noticia.
+2. **Evento identificado:** existe una publicación con fecha, hora y fuente verificable, independiente del movimiento observado.
+3. **Vinculación estadística o causal:** requiere un procedimiento de identificación; una coincidencia temporal no basta.
 
-Registro sugerido de evento: \`event_id\`, \`published_at_utc\`, \`known_at_utc\`, \`type\`, \`asset_ids\`, \`factor_ids\`, \`actual\`, \`consensus_asof\`, \`surprise\`, \`unit\`, \`source_url\`, \`quality\`, \`association_status\`. Las etiquetas deben admitir: confirmado como publicación; asociado estadísticamente; coincidencia débil; no atribuido.
+Una extensión investigable, **GJR-GARCH-X**, sería:
 
-## 6. Saltos, asimetría y no duplicación
+$$
+h_{i,t+1\mid t}
+=\omega_i+\alpha_i u_{i,t}^{\,2}
++\gamma_i\mathbf1_{\{u_{i,t}<0\}}u_{i,t}^{\,2}
++\beta_i h_{i,t\mid t-1}
++\boldsymbol{\delta}_i^{\mathsf T}\mathbf x_t.
+$$
 
-Para incorporar saltos discontinuos, una extensión de Merton con intensidad condicional puede escribirse:
+El vector $\mathbf x_t$ contiene únicamente características **conocidas al cierre $t$**. Podría incluir intensidad de sorpresa ya publicada, indicadores de acontecimientos programados para el día siguiente e incertidumbre observable. Esta forma aditiva requiere restricciones de positividad (por ejemplo, $\mathbf x_t\ge 0$ y $\boldsymbol{\delta}_i\ge 0$). Con covariables firmadas se consideraría una formulación de **log-varianza**, en vez de dejar que la varianza se haga negativa.
 
-\[
-\frac{dS_t}{S_{t^-}}=(\mu_t-\lambda_t E[J-1])dt+\sigma_t dW_t+(J-1)dN_t.
-\]
+La sorpresa de un indicador macroeconómico debe definirse antes de observar su reacción de precio:
 
-La compensación evita sumar dos veces la deriva esperada por saltos. Sin embargo, **calibrar GARCH y además introducir saltos arbitrarios sobre retornos que ya contienen esos eventos puede duplicar riesgos**.
+$$
+\operatorname{Sorpresa}_{k,t}
+=\operatorname{Dato}_{k,t}
+-\operatorname{Consenso}_{k,t^-}.
+$$
 
-Se debe elegir una estrategia verificable:
-1. Estimar conjuntamente difusión y saltos en un modelo identificable, o
-2. Estimar primero saltos de forma robusta y calibrar la difusión sobre residuales coherentemente separados; conservar su incertidumbre de clasificación.
+El consenso debe corresponder a la información disponible **antes de publicar el dato**, no a una revisión posterior. Por ejemplo, IPC observado de 3,2 % frente a consenso previo de 3,4 % implica sorpresa de $-0{,}2$ puntos porcentuales. Esto no determina universalmente el signo de su impacto en acciones o bonos.
 
-En la primera entrega **no se descomponen saltos**: los movimientos extremos cuentan como innovaciones y penalizan el ajuste. La atribución de noticias se registra por separado. Solo después de validar la separación se habilita un proceso de saltos.
+Las noticias del día $t+1$ desconocidas en $t$ no se pueden introducir como regresores realizados para el pronóstico $t+1$. Sí cabe modelar la **probabilidad de que ocurra un evento** a partir de un calendario publicado o una intensidad condicionada.
 
-## 7. Dependencia común, residual y dinámica
+Se define un registro reproducible: \`event_id\`, \`published_at_utc\`, \`known_at_utc\`, \`actual\`, \`consensus_asof\`, \`surprise\`, \`unit\`, \`source_url\`, \`asset_ids\`, \`factor_ids\`, \`association_status\`. Los estados incluyen evento verificado, asociación estadística, coincidencia insuficiente y sin atribución. El clasificador puede ayudar a **encontrar** eventos, no a declararlos causas ni a suprimir errores del modelo.
 
-\[
-\Sigma_t=B_t\Sigma_{f,t}B_t^\top+D_tR_{\varepsilon,t}D_t.
-\]
+## 6. Saltos condicionales y riesgo de doble conteo
 
-La matriz factorial representa riesgo compartido; \(D_t\) contiene volatilidades condicionales y \(R_{\varepsilon,t}\) las correlaciones residuales. Un DCC-GARCH por factores y/o bloques sectoriales sería candidato posterior, no un ajuste simultáneo masivo sobre 177 activos sin suficiente historia.
+Un salto económico es una innovación discontinua que puede no quedar bien representada por una Student-t continua. En tiempo discreto, si $N_{i,t+1}$ es un indicador de salto y $J_{i,t+1}$ su magnitud logarítmica, el término centrado es:
 
-Se mantienen explícitamente tres diagnósticos: correlación total, correlación residual tras controlar factores y dependencia de pérdidas extremas. **Solo las correlaciones residuales no bastan para decidir si la cartera puede resistir una crisis.**
+$$
+j^c_{i,t+1}
+=N_{i,t+1}J_{i,t+1}
+-\mathbb E[N_{i,t+1}J_{i,t+1}\mid\mathcal F_t].
+$$
 
-Toda matriz aplicada a Monte Carlo debe ser simétrica y semidefinida positiva; se documentan regularización, shrinkage, pérdidas de observaciones y fallbacks.
+Su probabilidad debe depender solo de información anterior: $p_{i,t}=\Pr(N_{i,t+1}=1\mid\mathcal F_t)$. Esta ecuación no convierte todo retorno extremo en un salto identificado; el módulo requiere una prueba de identificación y calibración independiente.
 
-## 8. Aprendizaje secuencial sin justificar errores
+Si se opta por un modelo continuo de Merton, puede emplearse la ecuación de la sección 3.1 con intensidad $\lambda_{i,t}$ y multiplicador $J_{i,t}$. La compensación del drift y la dependencia conjunta entre saltos se especifican explícitamente.
 
-Para cada día:
-1. Registrar la **distribución pronosticada** y la versión de parámetros antes de observar el retorno.
-2. Observar el resultado y calcular \(z_t=u_t/\sqrt{h_t}\), probabilidad predictiva y métricas de calibración.
-3. Registrar eventos con hora y fuente; la presencia de evento no borra ni mejora retrospectivamente el pronóstico archivado.
-4. Actualizar el estado \(h_{t+1}\) con los coeficientes vigentes.
-5. Reentrenar coeficientes solo en fechas predefinidas, con datos hasta el corte.
-6. Promover un candidato nuevo únicamente si supera la validación fuera de muestra y controles de robustez.
+**Riesgo principal:** ajustar GARCH con series que incluyen crashes y, luego, añadir un segundo proceso de saltos extraordinarios calibrado sobre esos mismos crashes puede **duplicar la varianza y el riesgo de cola**. Antes de habilitar ambos procesos habrá que:
 
-Un movimiento de \(-4\sigma\) vinculado a resultados trimestrales sigue contando como excepción del modelo; puede ser un evento explicable económicamente y, simultáneamente, revelar subestimación de colas.
+- Estimar la separación de componentes de manera conjunta; o
+- Identificar saltos con un método validado y recalibrar los residuos continuos con incertidumbre de clasificación.
 
-## 9. Validación empírica y criterio de promoción
+La **primera especificación teórica utilizable** no obliga a incluir saltos explícitos; mantiene las pérdidas extremas en el historial y exige comprobar si Student-t y volatilidad condicional ya capturan su frecuencia.
 
-Se evalúan varios cortes *walk-forward* (entrenamiento inicial, pronóstico fuera de muestra, reestimación periódica), usando idénticas fechas y universo para comparadores. Las métricas incluyen:
-- **QLIKE:** \(L(h_t,u_t^2)=\log h_t+u_t^2/h_t\), reportando su diferencia contra EWMA. Si solo hay datos diarios, \(u_t^2\) es un proxy muy ruidoso de la varianza latente; con intradía validado se preferiría varianza realizada.
-- Log-score predictivo Student-t / normal con parámetros **congelados** en cada corte.
-- Cobertura, independencia y agrupación de excepciones VaR; CVaR/Expected Shortfall con evaluación pertinente, no mediante «aciertos» aislados.
-- Estabilidad de \(\alpha,\beta,\gamma,\nu\), ganancias por sector y régimen, colas y estrés.
-- En la etapa decisional: costos, turnover, utilidad neta, drawdown, probabilidad de pérdida y comparación con mantener, SHY y benchmarks apropiados.
+## 7. Covarianzas, correlaciones residuales y estados del mercado
 
-**Regla de decisión:** la versión experimental no modifica la cartera. Un modelo nuevo se habilitará únicamente si (a) no usa información futura, (b) mejora de forma estable métricas predefinidas de pronóstico sobre EWMA, (c) no deteriora cobertura de riesgos extremos, y (d) demuestra beneficio económico incremental en evaluación separada. Sin mejora clara, se conserva la opción sencilla.
+Bajo la **hipótesis explícita** de innovaciones factoriales y residuales condicionalmente ortogonales, la covarianza predictiva se descompone:
 
-## 10. Plan de implementación en Trading
+$$
+\boxed{
+\boldsymbol{\Sigma}_{t+1\mid t}
+=\mathbf B_t\boldsymbol{\Sigma}_{f,t+1\mid t}\mathbf B_t^{\mathsf T}
++\mathbf D_{t+1\mid t}
+ \mathbf R_{\varepsilon,t+1\mid t}
+ \mathbf D_{t+1\mid t}
++\boldsymbol{\Sigma}_{J,t+1\mid t}.
+}
+$$
+
+Aquí $\mathbf B_t$ son cargas factoriales; $\boldsymbol{\Sigma}_f$ representa shocks comunes; $\mathbf D$ contiene desviaciones estándar residuales; $\mathbf R_{\varepsilon}$ sus correlaciones; $\boldsymbol{\Sigma}_J$ recoge saltos centrados **solo cuando se modelan separadamente sin doble conteo**. Si hay covarianzas cruzadas no nulas entre componentes, deben incluirse: la expresión no constituye una identidad incondicional.
+
+Las fases bull/bear sirven para contrastar betas condicionales y dependencias en distintas circunstancias. Una clasificación operacional posible es:
+
+$$
+s_t=\mathbf1_{\left\{
+\sum_{k=0}^{62}r^{M}_{t-k}\ge 0
+\right\}},
+$$
+
+usando únicamente retornos del índice de mercado disponibles en $t$. El umbral y la ventana son **hipótesis metodológicas**, no definiciones universales de ciclo económico.
+
+Se distinguen:
+- **Correlación total:** dependencia relevante para las pérdidas de cartera observadas.
+- **Correlación residual:** asociación después de explicar componentes factoriales, útil para detectar exposiciones empresariales redundantes.
+- **Dependencia de cola:** probabilidad de caídas simultáneas, potencialmente distinta de la correlación lineal.
+
+Es válido ensayar **DCC-GARCH** en residuos estandarizados y por bloques o factores, comparándolo con matrices regulares más simples. No se asume que DCC sea mejor ni que sea viable aplicarlo sin regularización a todo el universo.
+
+**El riesgo sistémico no desaparece al descontar SPY de una matriz residual.** En Monte Carlo se recomponen factores y residuos; la matriz final debe ser semidefinida positiva y documentar su calibración, regularización y estabilidad.
+
+## 8. Aprendizaje secuencial y evaluación honesta de shocks
+
+El aprendizaje no consiste en volver a escribir el pasado para que los pronósticos parezcan acertados. Para cada corte $t$:
+
+1. **Pronóstico sellado:** registrar $(\mu_{i,t},h_{i,t+1\mid t},p_{i,t})$, parámetros, información y versión del modelo antes de conocer $r_{i,t+1}$.
+2. **Resultado observado:** calcular $u_{i,t+1}$ y, cuando corresponda, el residuo estandarizado
+
+   $$
+   z_{i,t+1}=\frac{u_{i,t+1}}{\sqrt{h_{i,t+1\mid t}}}.
+   $$
+
+3. **Atribución tentativa:** asociar eventos con sello de tiempo y evidencia, pero mantener la pérdida de predicción original.
+4. **Actualización de estado:** actualizar $h_{i,t+2\mid t+1}$ con el error realizado y **parámetros previamente entrenados**.
+5. **Reestimación:** recalibrar coeficientes solamente en fechas predeterminadas, usando una ventana anterior y sin modificar pronósticos archivados.
+6. **Promoción:** autorizar un cambio metodológico únicamente después de pruebas fuera de muestra independientes.
+
+Una caída observada de cuatro desviaciones estándar puede estar relacionada con resultados empresariales y, simultáneamente, indicar que el modelo subestimó la probabilidad de eventos extremos. Son afirmaciones diferentes que no se cancelan.
+
+### 8.1. ¿Cómo se distingue error de shock?
+
+- **Innovación extrema aislada, cobertura adecuada a largo plazo:** riesgo realizado compatible con una distribución que admite colas.
+- **Exceso persistente de excepciones:** colas o volatilidad condicional mal calibradas, aunque cada excepción tenga una noticia asociada.
+- **Errores recurrentes de media o factor:** expectativas económicas o exposiciones mal especificadas.
+- **Cambio estructural sustentado en evidencia:** analizar regímenes y necesidad de reentrenar, sin recalificar retrospectivamente el desempeño.
+
+## 9. Validación empírica, decisión y criterio de aceptación
+
+Se propone evaluación *walk-forward*: en cada fecha se entrenan modelos con información hasta $t$, se congelan parámetros y se puntúa el pronóstico de $t+1$. La ventana, frecuencia de reentrenamiento y filtros deben definirse **antes** de examinar resultados fuera de muestra.
+
+### 9.1. Criterios de volatilidad
+
+Un criterio principal es **QLIKE**, aplicado a la varianza pronosticada y un proxy de realización:
+
+$$
+L_{\mathrm{QLIKE}}\!\left(h_{t+1\mid t},u_{t+1}^{\,2}\right)
+=\log h_{t+1\mid t}
++\frac{u_{t+1}^{\,2}}{h_{t+1\mid t}}.
+$$
+
+Cuanto menor, mejor en promedio bajo las condiciones pertinentes. Los residuos cuadrados diarios son proxies muy ruidosos de la varianza latente; si se dispone de datos intradía limpios y legalmente utilizables, se puede evaluar contra varianza realizada.
+
+También se compararán *log-scores* predictivos completos, cobertura y **agrupamiento de excepciones VaR** y medidas de Expected Shortfall. La estabilidad de coeficientes, diferencias por activo, subperiodo y régimen, y el riesgo de múltiples comparaciones serán parte del reporte, no notas marginales.
+
+### 9.2. Separar pronóstico de riesgo y selección de cartera
+
+Un mejor QLIKE **no garantiza** mejores inversiones. Las carteras se optimizarían posteriormente con pronósticos económicos de retorno, escenarios conjuntos, costos de transacción y restricciones de mandato. Para un enfoque estático condicionado, una formulación de investigación es:
+
+$$
+\max_{\mathbf w\in\mathcal W}
+\inf_{\theta\in\Theta_t}
+\left\{
+\mathbb E_{\theta}\!\left[U(W_T(\mathbf w))\mid\mathcal F_t\right]
+-C(\mathbf w,\mathbf w_t)
+\right\}.
+$$
+
+$\mathcal W$ es el conjunto de carteras permitidas; $\Theta_t$ representa parámetros razonablemente inciertos; $U$ es utilidad del patrimonio final y $C$ los costos de rebalanceo. En particular, **no se fuerza una distribución de pesos**. SHY o efectivo pueden dominar justificadamente si las demás opciones no compensan su riesgo.
+
+### 9.3. Regla de promoción
+
+Un candidato experimental no modifica composición ni señales. Su promoción exige, como mínimo, (a) trazabilidad temporal verificable, (b) mejor puntuación predictiva preespecificada en múltiples ventanas fuera de muestra, (c) colas y excepciones no peores de forma material, (d) parámetros estables y fallbacks identificables y (e) mejora económica neta en una **evaluación de decisiones separada**. Si no mejora suficientemente, se conserva el modelo de referencia sencillo.
+
+## 10. Secuencia de investigación (sin cambios a la página)
 
 | Fase | Contenido | Estado del objetivo |
 |---|---|---|
