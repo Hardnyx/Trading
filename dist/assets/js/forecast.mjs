@@ -82,8 +82,13 @@ export function simulateForecast(
       accepted: inputs.conditional.active,
       fallback: inputs.conditional.fallback,
       reason: inputs.conditional.reason,
-      studentNu: inputs.conditional.studentNu,
-      additionalMertonJumps: !inputs.conditional.enabled && inputs.options.model==="merton",
+      studentNu: null,
+      innovationLaw: inputs.conditional.dynamic
+        ? "Gaussian common-market plus residual innovations"
+        : "Legacy covariance/Merton",
+      factorMethod: inputs.factorCovariance.method,
+      residualGarchValidated: false,
+      additionalMertonJumps: !inputs.conditional.dynamic && inputs.options.model==="merton",
     },
     drifts: inputs.anchors,
     coverage: sum(

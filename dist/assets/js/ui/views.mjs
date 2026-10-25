@@ -876,10 +876,13 @@ export function createViews(context) {
       volatilityUsed: p.diagnostics?.volatility?.mode || "EWMA",
       volatilityAccepted: p.diagnostics?.volatility?.accepted ?? 0,
       volatilityFallback: p.diagnostics?.volatility?.fallback ?? 0,
-      volatilityNote: p.diagnostics?.volatility?.reason || "Sin calibración disponible",
-      stochasticTail: p.diagnostics?.volatility?.studentNu
-        ? "Student-t, grados efectivos " + fmt(p.diagnostics.volatility.studentNu,1)
-        : (p.settings.model==="merton" ? "Merton supuesto" : "Normal"),
+      volatilityNote: (p.diagnostics?.volatility?.reason || "Sin calibración disponible") +
+        " · Covarianza: " + (p.diagnostics?.volatility?.factorMethod || "total"),
+      stochasticTail: p.diagnostics?.volatility?.accepted > 0
+        ? "Innovaciones gaussianas en riesgo conjunto; GJR-t solo estimación"
+        : p.diagnostics?.volatility?.additionalMertonJumps
+          ? "Saltos genéricos de Merton (comparador)"
+          : "Innovaciones gaussianas EWMA",
       verificationPaths: p.verification.paths,
       months: p.settings.horizon * 12,
       model: p.diagnostics?.volatility?.additionalMertonJumps
