@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import { preparePaths, generatePaths } from "../dist/assets/js/path-model.mjs?v=0.5.0";
 import { BASE_REGIME } from "../dist/assets/js/path-model.mjs?v=0.5.0";
+import { composePortfolio, prepareComposition } from "../dist/assets/js/composer.mjs?v=0.5.0";
 
 const market=JSON.parse(readFileSync(new URL("../dist/data/market.json",import.meta.url)));
 const vol=JSON.parse(readFileSync(new URL("../dist/data/volatility.json",import.meta.url)));
@@ -30,6 +31,28 @@ for(const series of generated.gross)
   if(!Array.from(series).every(v=>Number.isFinite(v)&&v>0))
     throw Error("Se generaron precios inválidos");
 const legacy=generatePaths(ewma,100,20261025,52);
+const compositionInputs=prepareComposition(market,{
+  ...baseOptions,horizon:1,capital:100000,
+}, {}, {});
+if(!compositionInputs.conditional.enabled ||
+    compositionInputs.selection.simulated>40)
+  throw Error("El compositor no adoptó la calibración validada");
+const began=Date.now();
+const decision=composePortfolio(market,{
+  ...baseOptions,horizon:1,capital:100000,
+}, {}, {}, {candidates:45,paths:100,finalPaths:200});
+if(!["proposed","hold","no_feasible"].includes(decision.status))
+  throw Error("Estado inválido del compositor");
+console.log(JSON.stringify({
+  integration:"complete-portfolio-composition",
+  model:compositionInputs.conditional.mode,
+  validated:compositionInputs.conditional.active,
+  fallback:compositionInputs.conditional.fallback,
+  status:decision.status,
+  simulated:compositionInputs.selection.simulated,
+  scenarios:decision.search?.evaluated,
+  elapsedSeconds:Math.round((Date.now()-began)/1000),
+}));
 console.log(JSON.stringify({
   cut:vol.as_of,reportedCount:vol.summary,
   instruments:ids.map((symbol,i)=>({
