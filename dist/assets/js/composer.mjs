@@ -23,6 +23,7 @@ import {
 } from "./policy.mjs?v=0.3.0";
 import { buildReturnAnchors } from "./return-model.mjs?v=0.3.0";
 import { assetAt, fundamentalForecast } from "./research-model.mjs?v=0.3.0";
+import { selectCompositionUniverse } from "./universe.mjs?v=0.3.0";
 
 export const DEFAULT_COMPOSITION_RULES = {
   maxPosition: 0.2,
@@ -114,6 +115,14 @@ export function prepareComposition(
   for (const row of current.positions)
     if (!eligible.some((a) => a.symbol === row.symbol))
       throw new Error(`Falta ${row.symbol} de la cuenta actual.`);
+  const sampled = selectCompositionUniverse(
+    eligible,
+    current.positions.map((row) => row.symbol),
+    policy.benchmark,
+  );
+  const permissionBySymbol = new Map(
+    eligible.map((asset, index) => [asset.symbol, buyAllowed[index]]),
+  );
   const yieldCurve = Object.fromEntries(
     (snapshot.macro || [])
       .filter((r) => r.date <= info)
@@ -129,7 +138,7 @@ export function prepareComposition(
     yieldCurve,
     mandate: policy,
   };
-  const paths = preparePaths(eligible, options, overrides);
+  const paths = preparePaths(sampled.assets, options, overrides);
   const requiredCash = Math.max(
     policy.minimumCash,
     sum(withdrawalSchedule(policy, asOf).map((r) => r.amount)) /
@@ -144,7 +153,13 @@ export function prepareComposition(
     asOf,
     informationAsOf: info,
     excluded,
-    buyAllowed,
+    buyAllowed: sampled.assets.map((asset) => permissionBySymbol.get(asset.symbol)),
+    selection: {
+      published: snapshot.assets.length,
+      eligible: eligible.length,
+      simulated: sampled.assets.length,
+      outsideSample: sampled.omitted,
+    },
     requiredCash,
     snapshotGeneratedAt: snapshot.generated_at,
     riskFree: yieldCurve.DGS3MO / 100,
@@ -419,6 +434,7 @@ export function composePortfolio(
     account_source: x.current.source,
     capital: x.current.capital,
     excluded: x.excluded,
+    selection: x.selection,
     search: { evaluated, feasible, paths, allocationStep: 0.05 },
     verification: {
       seed: verificationSeed,
