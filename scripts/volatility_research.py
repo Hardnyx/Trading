@@ -218,7 +218,7 @@ def walk_forward(history: list[dict], as_of: str, *,
                 errors.append({"at": dates[i-1], "reason": str(exc)})
             # Each EWMA refit uses exactly the same known training window.
             ewma_h = ewma_next(training, float(np.mean(training)*100), ewma_decay)
-        common_mu = float(np.mean(training)*100)
+        common_mu = fit.mean_pct if fit else float(np.mean(training)*100)
         obs_pct = float(returns[i]*100)
         issued_at = dates[i-1] + "T23:59:59Z"  # end-of-day research cut, not intraday
         row = {
@@ -238,14 +238,14 @@ def walk_forward(history: list[dict], as_of: str, *,
         }
         if fit:
             q = student_t.ppf(.05, fit.nu)*math.sqrt((fit.nu-2)/fit.nu)
-            row["var95_log_return"] = (fit.mean_pct+math.sqrt(gh)*q)/100
+            row["var95_log_return"] = float((fit.mean_pct+math.sqrt(gh)*q)/100)
             gh = updated_variance(fit, gh, float(returns[i]))
         ewma_h = ewma_decay*ewma_h + (1-ewma_decay)*(obs_pct-common_mu)**2
         rows.append(row)
     pairs = [row for row in rows if row["gjr_qlike"] is not None]
     mean_ewma = float(np.mean([row["ewma_qlike"] for row in pairs])) if pairs else None
     mean_gjr = float(np.mean([row["gjr_qlike"] for row in pairs])) if pairs else None
-    exceptions = [row["observation_pct"]/100 < row["var95_log_return"]
+    exceptions = [bool(row["observation_pct"]/100 < row["var95_log_return"])
                   for row in pairs]
     return {
         "method": "shadow-gjr-garch-student-t-v1",
