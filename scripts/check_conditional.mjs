@@ -20,8 +20,11 @@ const baseOptions={
   macroRegimes:[BASE_REGIME],
 };
 const hybrid=preparePaths(assets,baseOptions,{},market.assets);
-if(hybrid.conditional.active<1 || !hybrid.conditional.enabled)
-  throw Error("El modelo no aceptó un activo que validó la calibración");
+const expectedAccepted=ids.filter(id=>vol.instruments[id]?.status==="accepted").length;
+if(hybrid.conditional.active!==expectedAccepted)
+  throw Error("El número de calibraciones GJR activas no concuerda con la publicación");
+if(!hybrid.conditional.dynamic)
+  throw Error("El modo híbrido debe utilizar EWMA diario incluso sin GJR aceptado");
 if(hybrid.conditional.active+hybrid.conditional.fallback!==assets.length)
   throw Error("Pérdida de activos en selección de riesgo");
 const ewma=preparePaths(assets,{...baseOptions,volatilityMode:"ewma"}, {}, market.assets);
@@ -37,9 +40,9 @@ const budget=full?{candidates:300,paths:600,finalPaths:3000}
 const compositionInputs=prepareComposition(market,{
   ...baseOptions,horizon:1,capital:100000,
 }, {}, {});
-if(!compositionInputs.conditional.enabled ||
+if(!compositionInputs.conditional.dynamic ||
     compositionInputs.selection.simulated>40)
-  throw Error("El compositor no adoptó la calibración validada");
+  throw Error("El compositor abandonó el riesgo condicional o superó el límite de muestra");
 const blockedGold=compositionInputs.excluded.find(x=>x.symbol==="GLD");
 if(!blockedGold || !blockedGold.reason.includes("retorno esperado fundamentado"))
   throw Error("El optimizador sigue aceptando GLD con el retorno genérico del 6%");
