@@ -38,3 +38,18 @@ test("no duplicate eligible assets and invalid cap rejected", () => {
   const assets = [asset("CASH","Efectivo"), asset("CASH","Efectivo"), asset("SPY","Índice")];
   assert.equal(selectCompositionUniverse(assets).assets.length,2);
 });
+
+test("forward-valued names can enter the shortlist even if share volume is lower",()=>{
+  const names=[asset("CASH","Efectivo",0,"cash"),asset("SHY","Treasuries",1),
+    asset("SPY","Índice",100)];
+  for(let i=0;i<50;i++)names.push(asset("N"+i,"Sector "+(i%6),1000+i));
+  const signals=Object.fromEntries(names.map(a=>[a.symbol,0.02]));
+  signals.N47=0.18;signals.N48=0.15;signals.N49=0.12;
+  const selected=selectCompositionUniverse(names,[],"SPY",14,signals);
+  for(const symbol of ["N47","N48","N49"])assert.ok(selected.assets.some(a=>a.symbol===symbol));
+  assert.equal(selected.method,"auditable-forward-risk-adjusted-signal-and-sector-breadth");
+  const swapped=structuredClone(names);
+  swapped.find(a=>a.symbol==="N49").history.at(-1).close=1e6;
+  assert.deepEqual(selectCompositionUniverse(swapped,[],"SPY",14,signals)
+    .assets.map(a=>a.symbol),selected.assets.map(a=>a.symbol));
+});
