@@ -38,6 +38,7 @@ console.log(JSON.stringify({
   check:"SHY-concentration-attribution",
   selection:canonical.selection,
   audit:canonical.diagnostics?.concentrationAudit,
+  interpretation:"SHY caps are independently searched, not filtered from an unrestricted candidate list",
   GJRaccepted:canonical.diagnostics?.volatility?.accepted,
 }));
 console.log(JSON.stringify({
