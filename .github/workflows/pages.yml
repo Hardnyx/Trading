@@ -38,6 +38,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Install Python research dependencies
+        run: python -m pip install -r requirements-research.txt
       - name: Validate the application
         run: |
           npm run check
