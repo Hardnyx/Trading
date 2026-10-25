@@ -39,7 +39,7 @@ try {
   await page.evaluate(()=>{
     const key="trading-workspace-v1";
     const stored=JSON.parse(localStorage.getItem(key)||"{}");
-    stored.workspaceVersion="0.5.3";
+    stored.workspaceVersion="0.6.0";
     stored.positions=[{symbol:"NVDA",weight:1}];
     stored.settings={...stored.settings,seed:20261025,volatilityMode:"ewma"};
     stored.compositionRules={...stored.compositionRules,reserveCap:0.1,
@@ -95,8 +95,8 @@ try {
      baselineStorage.compositionRules.reserveCap!==0.1 ||
      baselineStorage.account.positions[0].symbol!=="NVDA")
     throw Error("La prueba no restauró realmente la sesión personalizada");
-  if(!report.includes("MOTOR 0.5.3") && !report.includes("Motor 0.5.3"))
-    throw Error("El informe no identifica el motor 0.5.3");
+  if(!report.includes("MOTOR 0.6.0") && !report.includes("Motor 0.6.0"))
+    throw Error("El informe no identifica el motor 0.6.0");
   if(issues.length)throw Error("Errores del navegador: "+issues.join("; "));
   console.log(JSON.stringify({
     browserParity:"PASS",
