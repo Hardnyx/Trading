@@ -200,7 +200,7 @@ test("terminal scenarios preserve the configured annual anchor at zero diffusion
 test("a tight risk budget keeps cash and an impossible capital floor returns no proposal", () => {
   const p = composePortfolio(
     snapshot(),
-    { jumpIntensity: 3, jumpMean: -0.5, jumpVol: 0.15 },
+    { volatilityMode: "legacy", jumpIntensity: 3, jumpMean: -0.5, jumpVol: 0.15 },
     {},
     { cvarBudget: 0.001, maxLossProbability: 0.001 },
     { candidates: 50, paths: 500, finalPaths: 1000 },
