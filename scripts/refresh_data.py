@@ -621,6 +621,15 @@ def write_snapshot(snapshot, public_path=None, private_path=None):
     temporary = public_path.with_suffix(".tmp")
     temporary.write_text(json.dumps(public, ensure_ascii=False, separators=(",", ":"), allow_nan=False) + "\n")
     temporary.replace(public_path)
+    # A transport-ready copy. The ordinary JSON remains the source of truth
+    # for local tooling and the historical fallback in the browser.
+    compressed = public_path.with_suffix(public_path.suffix + ".gz")
+    encoded = public_path.read_bytes()
+    zipped = gzip.compress(encoded, compresslevel=6, mtime=0)
+    temp_gzip = compressed.with_suffix(".gz.tmp")
+    temp_gzip.write_bytes(zipped)
+    temp_gzip.replace(compressed)
+    print(f"Mercado: {len(encoded):,} bytes JSON · {len(zipped):,} bytes gzip", flush=True)
 
 
 def previous_snapshot():
