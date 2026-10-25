@@ -43,6 +43,16 @@ const decision=composePortfolio(market,{
 }, {}, {}, {candidates:45,paths:100,finalPaths:200});
 if(!["proposed","hold","no_feasible"].includes(decision.status))
   throw Error("Estado inválido del compositor");
+const benchmarkDecision=composePortfolio(market,{
+  ...baseOptions,volatilityMode:"ewma",horizon:1,capital:100000,
+}, {}, {}, {candidates:45,paths:100,finalPaths:200});
+console.log(JSON.stringify({
+  comparison:"same-cut-same-seed-different-risk-engine",
+  GJR:{status:decision.status,positions:decision.positions,
+    cvar:decision.metrics?.cvar95,median:decision.metrics?.medianReturn},
+  EWMA:{status:benchmarkDecision.status,positions:benchmarkDecision.positions,
+    cvar:benchmarkDecision.metrics?.cvar95,median:benchmarkDecision.metrics?.medianReturn},
+}));
 console.log(JSON.stringify({
   integration:"complete-portfolio-composition",
   model:compositionInputs.conditional.mode,
