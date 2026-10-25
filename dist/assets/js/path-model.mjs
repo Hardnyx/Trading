@@ -11,7 +11,8 @@ import { ewmaCovariance, cholesky } from "./risk-math.mjs?v=0.5.3";
 import { buildReturnAnchors, sampleDrifts } from "./return-model.mjs?v=0.5.3";
 import { assetAt } from "./research-model.mjs?v=0.5.3";
 import { factorModel } from "./factors.mjs?v=0.5.3";
-import { conditionalRisk, studentScale, updateGjrVariance } from "./conditional-risk.mjs?v=0.5.3";
+import { conditionalRisk, updateGjrVariance, updateEwmaVariance } from "./conditional-risk.mjs?v=0.5.3";
+import { marketFactorCovariance, conditionalFactorization } from "./factor-covariance.mjs?v=0.5.3";
 import {
   mandate,
   regimes,
@@ -81,13 +82,14 @@ export function preparePaths(assets, options = {}, overrides = {}, references = 
   const aligned = alignReturns(clean, 500);
   if (aligned.dates.length < 20)
     throw new Error("Historia común insuficiente para la simulación.");
-  const baselineCovariance = ewmaCovariance(
-    aligned.columns.map((c) => c.map(Math.log1p)),
-    settings.lambda,
-  );
+  const riskFactor = marketFactorCovariance(clean, references, asOf, settings.lambda);
+  const baselineCovariance = riskFactor.available
+    ? riskFactor.covariance
+    : ewmaCovariance(aligned.columns.map((c) => c.map(Math.log1p)), settings.lambda);
   const conditional = conditionalRisk(clean, baselineCovariance,
     { ...settings, asOf });
-  const covariance = conditional.covariance;
+  const covariance = conditional.covariance,
+    factorization = conditionalFactorization(riskFactor, conditional.multipliers);
   const exposures = factorModel(
     clean,
     clean.map((a) => ({ symbol: a.symbol, weight: 1 / clean.length })),
@@ -105,6 +107,14 @@ export function preparePaths(assets, options = {}, overrides = {}, references = 
     assets: clean,
     options: { ...settings, asOf, marketLoadings },
     covariance,
+    factorization,
+    factorCovariance: {
+      available: !!factorization,
+      method: factorization?.method || "joint-Gaussian-total-covariance",
+      observations: factorization?.observations || 0,
+      note: riskFactor.note || riskFactor.reason,
+      conditionalResidualGarch: false,
+    },
     conditional: {
       ...conditional,
       // The raw fit data is internal, but a concise summary is shown in reports.
@@ -173,7 +183,8 @@ export function generatePaths(inputs, paths, seed, stepsPerYear = 52) {
     macro = regimes(inputs.regimes || [BASE_REGIME]),
     factor = cholesky(covariance),
     conditional = inputs.conditional,
-    dynamic = conditional?.enabled === true;
+    dynamic = conditional?.dynamic === true,
+    factorization = inputs.factorization;
   // Preserve total covariance and correlation: only the conditional diagonal
   // dynamics change. Every shocked return still carries systematic exposure.
   const correlation = dynamic
@@ -243,6 +254,7 @@ export function generatePaths(inputs, paths, seed, stepsPerYear = 52) {
     const variances = dynamic
       ? assets.map((a,i) => conditional.fits[i]?.hInitial ?? Math.max(0,covariance[i][i]/252))
       : null;
+    const baseDailyVariances = covariance.map((row,i)=>Math.max(0,row[i]/252));
     const annualLogDrift = dynamic
       ? drift.map((v,i) => v/dt + covariance[i][i]/2) : null;
     let exchange = policy.fxSpot;
@@ -257,20 +269,30 @@ export function generatePaths(inputs, paths, seed, stepsPerYear = 52) {
         const days = Math.max(1, dayEnd-dayStart);
         let marketSum = 0;
         for (let day = 0; day < days; day++) {
+          // A single Gaussian SPY factor and PSD residual covariance are
+          // estimated on the same historical dates. There is NO global
+          // Student-t radial shock: its tail dependence was not calibrated.
           const z = Array.from({ length:n }, normal),
-            radial = studentScale(conditional.studentNu, random, normal);
+            marketZ = factorization ? normal() : 0;
           for (let i = 0; i < n; i++) {
-            let standardized = 0;
-            for (let j = 0; j <= i; j++)
-              standardized += correlationFactor[i][j] * z[j];
-            standardized *= radial;
+            let shock = factorization ? factorization.loading[i]*marketZ : 0;
+            const lower = factorization
+              ? factorization.residualFactor[i] : correlationFactor[i];
+            for (let j = 0; j <= i; j++) shock += lower[j]*z[j];
             const h = variances[i];
-            const innovation = Math.sqrt(Math.max(0,h))*standardized;
-            values[i] *= Math.exp(annualLogDrift[i]/252 - h/2 + innovation);
-            if (conditional.fits[i])
-              variances[i] = updateGjrVariance(conditional.fits[i],h,innovation);
-            if (i === marketIndex) marketSum += standardized;
+            const innovation = factorization
+              ? shock/Math.sqrt(252) *
+                (baseDailyVariances[i]>0
+                  ? Math.sqrt(Math.max(0,h)/baseDailyVariances[i]) : 0)
+              : Math.sqrt(Math.max(0,h))*shock;
+            values[i] *= Math.exp(annualLogDrift[i]/252-h/2+innovation);
+            variances[i] = conditional.fits[i]
+              ? updateGjrVariance(conditional.fits[i],h,innovation)
+              : updateEwmaVariance(h,innovation,options.lambda);
+            if (i === marketIndex && baseDailyVariances[i]>0)
+              marketSum += innovation/Math.sqrt(Math.max(h,1e-18));
           }
+          if (marketIndex < 0 && factorization) marketSum += marketZ;
         }
         for (let i=0;i<n;i++)
           gross[i][p*(steps+1)+t] = values[i];
