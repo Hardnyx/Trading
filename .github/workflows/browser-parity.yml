@@ -5,6 +5,12 @@ on:
     branches: [main]
     paths:
       - 'scripts/diagnose_browser_defaults.mjs'
+      - 'dist/assets/js/composer.mjs'
+      - 'dist/assets/js/universe.mjs'
+      - 'dist/assets/js/path-model.mjs'
+      - 'dist/assets/js/conditional-risk.mjs'
+      - 'dist/data/volatility.json'
+      - 'dist/data/market.json'
       - '.github/workflows/browser-parity.yml'
 permissions:
   contents: read
