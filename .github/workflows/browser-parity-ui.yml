@@ -1,0 +1,40 @@
+name: Validate real browser composition
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/test_browser_parity.mjs'
+      - 'dist/assets/js/app.mjs'
+      - 'dist/assets/js/reference-preset.mjs'
+      - 'dist/assets/js/ui/views.mjs'
+      - 'dist/templates/portfolio.html'
+      - 'dist/templates/composition.html'
+      - '.github/workflows/browser-parity-ui.yml'
+permissions:
+  contents: read
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install browser engine
+        run: |
+          npm install --no-save playwright@1.56.0
+          npx playwright install --with-deps chromium
+      - name: Compare rendered portfolio with canonical engine
+        run: node scripts/test_browser_parity.mjs
+      - name: Save browser screenshot
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: browser-composition
+          path: out/browser-parity.png
+          retention-days: 14
