@@ -31,6 +31,9 @@ for(const series of generated.gross)
   if(!Array.from(series).every(v=>Number.isFinite(v)&&v>0))
     throw Error("Se generaron precios inválidos");
 const legacy=generatePaths(ewma,100,20261025,52);
+const full=process.env.TRADING_FULL_DIAGNOSTIC==="1";
+const budget=full?{candidates:300,paths:600,finalPaths:3000}
+  :{candidates:45,paths:100,finalPaths:200};
 const compositionInputs=prepareComposition(market,{
   ...baseOptions,horizon:1,capital:100000,
 }, {}, {});
@@ -40,12 +43,12 @@ if(!compositionInputs.conditional.enabled ||
 const began=Date.now();
 const decision=composePortfolio(market,{
   ...baseOptions,horizon:1,capital:100000,
-}, {}, {}, {candidates:45,paths:100,finalPaths:200});
+}, {}, {}, budget);
 if(!["proposed","hold","no_feasible"].includes(decision.status))
   throw Error("Estado inválido del compositor");
 const benchmarkDecision=composePortfolio(market,{
   ...baseOptions,volatilityMode:"ewma",horizon:1,capital:100000,
-}, {}, {}, {candidates:45,paths:100,finalPaths:200});
+}, {}, {}, budget);
 console.log(JSON.stringify({
   comparison:"same-cut-same-seed-different-risk-engine",
   GJR:{status:decision.status,positions:decision.positions,
