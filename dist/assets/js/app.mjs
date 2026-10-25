@@ -1261,6 +1261,8 @@ document.addEventListener("change", async (event) => {
         }
         if (input.settings) {
           const allowed = ["gbm", "merton"];
+          if (["hybrid","ewma"].includes(input.settings.volatilityMode))
+            state.settings.volatilityMode = input.settings.volatilityMode;
           if (allowed.includes(input.settings.model))
             state.settings.model = input.settings.model;
           if (

@@ -15,6 +15,13 @@
         <div class="composition-fields">
           {{{fields}}}
           <div class="field">
+            <label for="composition-volatility">VOLATILIDAD / RIESGO</label>
+            <select id="composition-volatility" data-setting="volatilityMode">
+              <option value="hybrid" {{{volatilityHybridSelected}}}>GJR validado + EWMA (automático)</option>
+              <option value="ewma" {{{volatilityEWMASelected}}}>EWMA / simulación anterior</option>
+            </select>
+          </div>
+          <div class="field">
             <label for="composition-horizon">HORIZONTE</label
             ><select
               id="composition-horizon"

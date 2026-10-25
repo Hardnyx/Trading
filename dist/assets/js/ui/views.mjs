@@ -724,6 +724,8 @@ export function createViews(context) {
     return template("composition-controls", {
       months: state.settings.horizon * 12,
       budget: pct(rules.cvarBudget, 0),
+      volatilityHybridSelected: state.settings.volatilityMode !== "ewma" ? "selected" : "",
+      volatilityEWMASelected: state.settings.volatilityMode === "ewma" ? "selected" : "",
       fields: fields
         .map(([key, label, min, max, step, scale, unit]) =>
           template("composition-field", {
@@ -987,6 +989,18 @@ export function createViews(context) {
         residual
           ? `Media residual ${fmt(residualAverage, 2)} · ${factor.observations} sesiones. Betas SPY por régimen determinado con 63 retornos anteriores, más proxy sectorial. La matriz total anterior sigue alimentando Monte Carlo y CVaR. No implica independencia causal.`
           : "Con datos insuficientes, se conserva explícitamente la correlación total."
+      ) +
+      panel(
+        "VOLATILIDAD CONDICIONAL · GJR / EWMA",
+        "07",
+        template("composition-notice", {
+          message: data.volatility
+            ? `Corte ${data.volatility.as_of}. Aceptados ${data.volatility.summary?.eligible ?? 0} de ${data.volatility.summary?.evaluated ?? 0} activos. ${(a?.weights || []).map((p) =>
+                `${p.symbol}: ${data.volatility.instruments?.[p.symbol]?.status === "accepted" ? "GJR verificado" : "EWMA / investigación"}`).join(" · ")}. Los errores no se descartan por coincidir con noticias.`
+            : "No existe un corte de volatilidad compatible. Simulación con EWMA y los supuestos previos, sin atribución automática de noticias.",
+        }),
+        "",
+        "QLIKE walk-forward frente a EWMA; Student-t solo para calibraciones aceptadas. La elección de la distribución y la cobertura del CVaR requieren validación continua."
       )
     );
   }
