@@ -20,7 +20,13 @@ const baseOptions={
   macroRegimes:[BASE_REGIME],
 };
 const hybrid=preparePaths(assets,baseOptions,{},market.assets);
-const expectedAccepted=ids.filter(id=>vol.instruments[id]?.status==="accepted").length;
+const expectedAccepted=ids.filter(id=>{
+  const row=vol.instruments[id];
+  return row?.status==="accepted" &&
+    row.verification?.observations>=126 &&
+    row.verification?.qlike_improvement>.015 &&
+    row.verification?.weekly_block_confidence?.lower_95_one_sided>0;
+}).length;
 if(hybrid.conditional.active!==expectedAccepted)
   throw Error("El número de calibraciones GJR activas no concuerda con la publicación");
 if(!hybrid.conditional.dynamic)
