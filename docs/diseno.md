@@ -43,3 +43,11 @@ Se incluyen foco visible, etiquetas de campos, enlace para saltar al contenido, 
 - [W3C: referencia rápida de accesibilidad](https://www.w3.org/WAI/WCAG22/quickref/).
 
 La referencia visual es Bloomberg Terminal. El proyecto tiene identidad propia y no utiliza sus datos, logotipos ni software.
+
+## Estado de las fuentes
+
+El panel distingue una descarga correcta, una descarga fallida y una fuente pendiente de configuración. Las fechas de precios y fundamentos se mantienen visibles aunque una fuente no se actualice.
+
+Captura de verificación del 24 de octubre de 2026:
+
+![Estado de las fuentes de datos](data-sources.jpg)

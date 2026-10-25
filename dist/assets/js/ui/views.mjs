@@ -1087,11 +1087,13 @@ export function createViews(context) {
                 value3:
                   s.id === "CPI" && finite(s.yoy)
                     ? pct(s.yoy)
-                    : fmt(s.value, 2) + (s.unit === "%" ? "%" : ""),
+                    : fmt(s.value, 2) +
+                      (s.unit === "%" ? "%" : s.unit ? " " + s.unit : ""),
                 value4:
                   s.id === "CPI"
                     ? fmt(s.previous, 2) + " índice"
-                    : fmt(s.previous, 2) + (s.unit === "%" ? "%" : ""),
+                    : fmt(s.previous, 2) +
+                      (s.unit === "%" ? "%" : s.unit ? " " + s.unit : ""),
                 date: dateLabel(s.date),
                 sparkline: sparkline(
                   s.history.map((r) => r.value),
