@@ -54,7 +54,7 @@ def compact_volatility(snapshot, *, limit=None, test_days=126,
         "use": "conditional_risk_only_not_expected_return",
         "training_window": train_window,
         "walkforward_days": test_days,
-        "promotion_rule": ">=126 OOS days, QLIKE gain >0.015, 7-day block one-sided lower bound >0, >=2 of 3 long blocks improve, VaR95 exceptions <=10%, 4.01<nu<61.9. This is an operational screen, not a claim of statistical superiority across 177 simultaneous trials.",
+        "promotion_rule": ">=126 OOS days, QLIKE gain >0.015, 7-day block one-sided lower bound >0, >=2 of 3 long blocks improve, VaR95 exceptions <=10%, 4.01<nu<61.9. This is an operational screen, not a claim of statistical superiority across all simultaneous catalog trials.",
         "no_news_attribution": True,
         "instruments": {},
     }

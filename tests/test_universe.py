@@ -9,14 +9,14 @@ from scripts.universe import AUTO_CIK, EXTRA_STOCKS, EXTRA_ETFS, expanded_univer
 
 
 class UniverseTests(unittest.TestCase):
-    def test_universe_contains_unique_100_stocks_and_77_etfs(self):
+    def test_universe_contains_unique_160_stocks_and_100_etfs(self):
         specs = collector.ASSETS + expanded_universe()
-        self.assertEqual(len(specs), 177)
-        self.assertEqual(len({x[0] for x in specs}), 177)
-        self.assertEqual(sum(x[3] is None for x in specs), 77)
-        self.assertEqual(sum(x[3] == AUTO_CIK for x in specs), 71)
-        self.assertEqual(len(EXTRA_STOCKS), 71)
-        self.assertEqual(len(EXTRA_ETFS), 33)
+        self.assertEqual(len(specs), 260)
+        self.assertEqual(len({x[0] for x in specs}), 260)
+        self.assertEqual(sum(x[3] is None for x in specs), 100)
+        self.assertEqual(sum(x[3] == AUTO_CIK for x in specs), 131)
+        self.assertEqual(len(EXTRA_STOCKS), 131)
+        self.assertEqual(len(EXTRA_ETFS), 56)
 
     def test_stale_single_ticker_does_not_backdate_market_price_cut(self):
         items = [

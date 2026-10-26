@@ -4,7 +4,7 @@ import {
   normalizeWeights,
   metrics,
   scenarios,
-} from "../analytics.mjs?v=0.12.0";
+} from "../analytics.mjs?v=0.13.0";
 import {
   sparkline,
   portfolioChart,
@@ -13,7 +13,7 @@ import {
   scatter,
   forecastCone,
   histogram,
-} from "../charts.mjs?v=0.12.0";
+} from "../charts.mjs?v=0.13.0";
 import {
   esc,
   url,
@@ -23,15 +23,15 @@ import {
   compact,
   color,
   dateLabel,
-} from "./format.mjs?v=0.12.0";
-import { template } from "./templates.mjs?v=0.12.0";
-import { DEFAULT_COMPOSITION_RULES } from "../composer.mjs?v=0.12.0";
-import { factorModel } from "../factors.mjs?v=0.12.0";
-import { MODEL_VERSION } from "../policy.mjs?v=0.12.0";
-import { financialFreshness } from '../financial-freshness.mjs?v=0.12.0';
-import { priceMonitor } from '../price-monitor.mjs?v=0.12.0';
+} from "./format.mjs?v=0.13.0";
+import { template } from "./templates.mjs?v=0.13.0";
+import { DEFAULT_COMPOSITION_RULES } from "../composer.mjs?v=0.13.0";
+import { factorModel } from "../factors.mjs?v=0.13.0";
+import { MODEL_VERSION } from "../policy.mjs?v=0.13.0";
+import { financialFreshness } from '../financial-freshness.mjs?v=0.13.0';
+import { priceMonitor } from '../price-monitor.mjs?v=0.13.0';
 
-import { createDecisionViews } from "./decision-views.mjs?v=0.12.0";
+import { createDecisionViews } from "./decision-views.mjs?v=0.13.0";
 
 export function compositionValuationEvidence(signal) {
   if(!signal.filed)return "";
@@ -841,6 +841,10 @@ export function createViews(context) {
     ];
     return template("composition-controls", {
       months: state.settings.horizon * 12,
+      universeOptions:[20,40,60,80].map(value=>template('composition-horizon-option',{
+        value,label:value+' activos'+(value===40?' · predeterminado':''),
+        selected:value===(state.settings.compositionUniverseLimit??state.settings.researchUniverseLimit??40)?'selected':''
+      })).join(''),
       budget: pct(rules.cvarBudget, 0),
       volatilityHybridSelected: !["ewma", "legacy"].includes(state.settings.volatilityMode) ? "selected" : "",
       volatilityEWMASelected: state.settings.volatilityMode === "ewma" ? "selected" : "",

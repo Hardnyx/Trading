@@ -4,6 +4,7 @@
  * Selection uses coverage, liquidity and sector diversification, not past winners.
  */
 export const MAX_COMPOSITION_ASSETS = 40;
+export const MAX_SUPPORTED_COMPOSITION_ASSETS = 80;
 
 function shareVolume(asset) {
   const history = asset.history || [];
@@ -22,7 +23,7 @@ function informationScore(asset) {
 }
 
 export function selectCompositionUniverse(eligible, heldSymbols = [], benchmark = "SPY", limit = MAX_COMPOSITION_ASSETS, priorities = null) {
-  if (!Number.isInteger(limit) || limit < 4) throw new Error("Límite de activos inválido.");
+  if (!Number.isInteger(limit) || limit < 4 || limit>MAX_SUPPORTED_COMPOSITION_ASSETS) throw new Error("Límite de activos inválido.");
   const unique = eligible.filter((asset, i) => eligible.findIndex((row) => row.symbol === asset.symbol) === i);
   if (unique.length <= limit) return { assets: unique, omitted: [], method: "all-eligible" };
   const held = new Set(heldSymbols);

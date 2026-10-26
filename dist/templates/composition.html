@@ -15,6 +15,11 @@
         <div class="composition-fields">
           {{{fields}}}
           <div class="field">
+            <label for="composition-universe-limit">MUESTRA MÁXIMA DEL OPTIMIZADOR</label>
+            <select id="composition-universe-limit" data-setting="compositionUniverseLimit" data-numeric>{{{universeOptions}}}</select>
+            <small>Más activos requieren más tiempo y memoria. El catálogo completo permanece disponible en Research y en el monitor.</small>
+          </div>
+          <div class="field">
             <label for="composition-volatility">VOLATILIDAD / RIESGO</label>
             <select id="composition-volatility" data-setting="volatilityMode">
               <option value="hybrid" {{{volatilityHybridSelected}}}>GJR validado + EWMA (automático)</option>

@@ -4,15 +4,15 @@ import {
   mean,
   quantile,
   normalizeWeights,
-} from "./analytics.mjs?v=0.12.0";
-import { seededRandom } from "./random.mjs?v=0.12.0";
-import { portfolioAttribution } from "./attribution.mjs?v=0.12.0";
+} from "./analytics.mjs?v=0.13.0";
+import { seededRandom } from "./random.mjs?v=0.13.0";
+import { portfolioAttribution } from "./attribution.mjs?v=0.13.0";
 import {
   preparePaths,
   generatePaths,
   evaluatePaths,
   marginalRisk,
-} from "./path-model.mjs?v=0.12.0";
+} from "./path-model.mjs?v=0.13.0";
 import {
   withCashAsset,
   mandate,
@@ -21,12 +21,12 @@ import {
   tradePlan,
   withdrawalSchedule,
   MODEL_VERSION,
-} from "./policy.mjs?v=0.12.0";
-import { buildReturnAnchors, bondScenarioAnnualReturn } from "./return-model.mjs?v=0.12.0";
-import { assetAt, fundamentalForecast, bondAssumptions } from "./research-model.mjs?v=0.12.0";
-import { selectCompositionUniverse } from "./universe.mjs?v=0.12.0";
-import { factorizeStressedCovariance } from "./factor-covariance.mjs?v=0.12.0";
-import { economicClass, exposureReport, rawCorrelation, qualifiedOpportunity, holdingsOverlap, knownFundOverlap } from "./economic-exposure.mjs?v=0.12.0";
+} from "./policy.mjs?v=0.13.0";
+import { buildReturnAnchors, bondScenarioAnnualReturn } from "./return-model.mjs?v=0.13.0";
+import { assetAt, fundamentalForecast, bondAssumptions } from "./research-model.mjs?v=0.13.0";
+import { selectCompositionUniverse } from "./universe.mjs?v=0.13.0";
+import { factorizeStressedCovariance } from "./factor-covariance.mjs?v=0.13.0";
+import { economicClass, exposureReport, rawCorrelation, qualifiedOpportunity, holdingsOverlap, knownFundOverlap } from "./economic-exposure.mjs?v=0.13.0";
 
 export const DEFAULT_COMPOSITION_RULES = {
   maxPosition: 0.2,
@@ -65,6 +65,13 @@ function validateRules(rules) {
   )
     throw new Error("Revisa los límites de composición.");
 }
+export function compositionUniverseLimit(settings={}){
+  const value=settings.compositionUniverseLimit??settings.researchUniverseLimit??40;
+  if(!Number.isInteger(value)||value<20||value>80)
+    throw new Error('La muestra de composición debe estar entre 20 y 80 activos');
+  return value;
+}
+
 export function prepareComposition(
   raw,
   settings = {},
@@ -185,12 +192,7 @@ export function prepareComposition(
     eligible,
     [...current.positions.map((row) => row.symbol), ...forcedResearch],
     policy.benchmark,
-    settings.researchUniverseLimit === undefined ? 40 :
-      (Number.isInteger(settings.researchUniverseLimit) &&
-       settings.researchUniverseLimit >= 20 &&
-       settings.researchUniverseLimit <= 40
-        ? settings.researchUniverseLimit
-        : (() => { throw new Error("Tamaño de muestra experimental fuera de 20–40"); })()),
+    compositionUniverseLimit(settings),
     forwardPriority,
   );
   const permissionBySymbol = new Map(

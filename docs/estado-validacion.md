@@ -103,6 +103,14 @@ Indicadores descriptivos: MA50/MA200 de cierres ajustados, retorno de 126 sesion
 
 Yahoo sigue siendo un endpoint público no oficial para cierres ajustados; se conserva fecha económica y primera captura disponible del resultado descargado. La colección evita la barra diaria incompleta de la sesión en curso. [HISTORIALCOTIZACIONES](https://support.microsoft.com/es-es/excel/functions/stockhistory-function) ofrece históricos y generalmente actualiza tras completar la sesión, no sustituye el estado contable ni una fuente intradía. Un adaptador Excel puede ser una alternativa local, no un requisito del sitio público. **Pendiente:** validar reglas técnicas y su utilidad incremental con costos fuera de muestra antes de darles capacidad de decisión.
 
+### Universo ampliado y presupuesto de composición 0.13.0
+
+El catálogo curado pasa a 260 instrumentos previstos: 160 empresas y 100 ETF. Se añaden 60 empresas de software, semiconductores, seguros, salud, industria, comercio, energía y materiales, además de 23 ETF globales, de estilo y capitalización. Cada CIK nuevo debe resolverse por símbolo exacto en el registro SEC; en la comprobación de identidad se sustituyó MMC por el ticker vigente MRSH. Una identidad válida no acredita precio descargado, cobertura contable completa ni inclusión histórica en un índice.
+
+Los nuevos estados financieros siguen las mismas reglas de fechas, BPA comparable y advertencias de informes posteriores. No se relajan para conseguir más candidatas. Los ETF sin clasificación, holdings o ancla económica suficiente permanecen en observación y no reciben permiso automático de compra. Los supuestos sectoriales son hipótesis editables, no consenso.
+
+En Límites de la propuesta se habilitan muestras máximas de 20, 40, 60 u 80 activos. Cuarenta sigue siendo el presupuesto predeterminado. Cuenta, comparadores y diversificación se retienen con los mismos controles; el presupuesto se guarda en la propuesta y cambiarlo invalida el resultado. Mayor tamaño aumenta memoria y tiempo; no prueba convergencia ni optimalidad global. La selección sigue dependiendo del conjunto elegible y las hipótesis. El registro shadow y la comprobación de estabilidad siguen siendo necesarios.
+
 ## 7. Cómo ejecutar la investigación
 
 ```bash

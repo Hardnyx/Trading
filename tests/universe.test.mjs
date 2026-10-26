@@ -1,6 +1,18 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { selectCompositionUniverse, MAX_COMPOSITION_ASSETS } from "../dist/assets/js/universe.mjs";
+import {compositionUniverseLimit} from '../dist/assets/js/composer.mjs?v=0.13.0';
+
+test('expanded search budget retains defaults and supports bounded 60/80-asset samples',()=>{
+ assert.equal(compositionUniverseLimit(),40);
+ assert.equal(compositionUniverseLimit({compositionUniverseLimit:80}),80);
+ assert.equal(compositionUniverseLimit({researchUniverseLimit:30}),30);
+ assert.throws(()=>compositionUniverseLimit({compositionUniverseLimit:81}),/20 y 80/);
+ const assets=Array.from({length:120},(_,i)=>asset('A'+i,'Sector'+i%10));
+ assert.equal(selectCompositionUniverse(assets,['A119'],'SPY',80).assets.length,80);
+ assert.ok(selectCompositionUniverse(assets,['A119'],'SPY',80).assets.some(a=>a.symbol==='A119'));
+ assert.throws(()=>selectCompositionUniverse(assets,[],'SPY',81),/inválido/);
+});
 
 const asset = (symbol, sector, volume=1000, type="etf") => ({
   symbol, sector, type, history: Array.from({length: 30}, (_, i) => ({

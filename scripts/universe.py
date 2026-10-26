@@ -133,6 +133,66 @@ EXTRA_ETFS = [
     ("KWEB", "KraneShares CSI China Internet", "China tecnológica"),
 ]
 
+# Expanded sector coverage. Identity is verified through the SEC ticker map;
+# these names are a research catalog, not historical index constituents.
+EXTRA_STOCKS += [
+    ("ACN", "Accenture", "Tecnología"), ("ADSK", "Autodesk", "Tecnología"),
+    ("ANET", "Arista Networks", "Tecnología"), ("CRWD", "CrowdStrike", "Tecnología"),
+    ("FTNT", "Fortinet", "Tecnología"), ("WDAY", "Workday", "Tecnología"),
+    ("TEAM", "Atlassian", "Tecnología"), ("DDOG", "Datadog", "Tecnología"),
+    ("NET", "Cloudflare", "Tecnología"), ("DELL", "Dell Technologies", "Tecnología"),
+    ("HPE", "Hewlett Packard Enterprise", "Tecnología"), ("HPQ", "HP", "Tecnología"),
+    ("MCHP", "Microchip Technology", "Tecnología"), ("ON", "ON Semiconductor", "Tecnología"),
+    ("MPWR", "Monolithic Power Systems", "Tecnología"), ("ADP", "Automatic Data Processing", "Industrial"),
+    ("PGR", "Progressive", "Financiero"), ("TRV", "Travelers", "Financiero"),
+    ("AON", "Aon", "Financiero"), ("MRSH", "Marsh & McLennan", "Financiero"),
+    ("AJG", "Arthur J. Gallagher", "Financiero"), ("CME", "CME Group", "Financiero"),
+    ("MCO", "Moody's", "Financiero"), ("USB", "U.S. Bancorp", "Financiero"),
+    ("PNC", "PNC Financial Services", "Financiero"), ("TFC", "Truist Financial", "Financiero"),
+    ("VRTX", "Vertex Pharmaceuticals", "Salud"), ("BSX", "Boston Scientific", "Salud"),
+    ("SYK", "Stryker", "Salud"), ("MDT", "Medtronic", "Salud"),
+    ("BDX", "Becton Dickinson", "Salud"), ("CI", "The Cigna Group", "Salud"),
+    ("HUM", "Humana", "Salud"), ("HCA", "HCA Healthcare", "Salud"),
+    ("ETN", "Eaton", "Industrial"), ("PH", "Parker-Hannifin", "Industrial"),
+    ("ITW", "Illinois Tool Works", "Industrial"), ("EMR", "Emerson Electric", "Industrial"),
+    ("ROK", "Rockwell Automation", "Industrial"), ("CMI", "Cummins", "Industrial"),
+    ("PCAR", "PACCAR", "Industrial"), ("FDX", "FedEx", "Industrial"),
+    ("UPS", "United Parcel Service", "Industrial"), ("CTAS", "Cintas", "Industrial"),
+    ("FAST", "Fastenal", "Industrial"), ("TGT", "Target", "Consumo básico"),
+    ("ROST", "Ross Stores", "Consumo discrecional"), ("DG", "Dollar General", "Consumo básico"),
+    ("DLTR", "Dollar Tree", "Consumo básico"), ("ORLY", "O'Reilly Automotive", "Consumo discrecional"),
+    ("AZO", "AutoZone", "Consumo discrecional"), ("YUM", "Yum! Brands", "Consumo discrecional"),
+    ("WEC", "WEC Energy Group", "Servicios públicos"), ("DTE", "DTE Energy", "Servicios públicos"),
+    ("ED", "Consolidated Edison", "Servicios públicos"), ("PSX", "Phillips 66", "Energía"),
+    ("VLO", "Valero Energy", "Energía"), ("OXY", "Occidental Petroleum", "Energía"),
+    ("NEM", "Newmont", "Materiales"), ("NUE", "Nucor", "Materiales"),
+]
+EXTRA_ETFS += [
+    ("VT", "Vanguard Total World Stock", "Acciones globales"),
+    ("ACWI", "iShares MSCI ACWI", "Acciones globales"),
+    ("ACWX", "iShares MSCI ACWI ex U.S.", "Acciones internacionales"),
+    ("URTH", "iShares MSCI World", "Mercados desarrollados"),
+    ("SCHB", "Schwab U.S. Broad Market", "Índice amplio USA"),
+    ("ITOT", "iShares Core S&P Total U.S. Stock Market", "Índice amplio USA"),
+    ("SCHX", "Schwab U.S. Large-Cap", "Gran capitalización USA"),
+    ("VV", "Vanguard Large-Cap", "Gran capitalización USA"),
+    ("VO", "Vanguard Mid-Cap", "Mediana capitalización USA"),
+    ("VB", "Vanguard Small-Cap", "Pequeña capitalización USA"),
+    ("IJR", "iShares Core S&P Small-Cap", "Pequeña capitalización USA"),
+    ("IJH", "iShares Core S&P Mid-Cap", "Mediana capitalización USA"),
+    ("IWB", "iShares Russell 1000", "Gran capitalización USA"),
+    ("IWF", "iShares Russell 1000 Growth", "Crecimiento USA"),
+    ("IWD", "iShares Russell 1000 Value", "Valor USA"),
+    ("VBR", "Vanguard Small-Cap Value", "Valor pequeña capitalización"),
+    ("VOE", "Vanguard Mid-Cap Value", "Valor mediana capitalización"),
+    ("VOT", "Vanguard Mid-Cap Growth", "Crecimiento mediana capitalización"),
+    ("VBK", "Vanguard Small-Cap Growth", "Crecimiento pequeña capitalización"),
+    ("SPDW", "SPDR Portfolio Developed World ex-US", "Mercados desarrollados"),
+    ("SPEM", "SPDR Portfolio Emerging Markets", "Mercados emergentes"),
+    ("SPSM", "SPDR Portfolio S&P 600 Small Cap", "Pequeña capitalización USA"),
+    ("SPTM", "SPDR Portfolio S&P 1500 Composite", "Índice amplio USA"),
+]
+
 def expanded_universe():
     stocks = [(symbol, name, sector, AUTO_CIK, *SECTOR_PRIORS[sector])
               for symbol, name, sector in EXTRA_STOCKS]
