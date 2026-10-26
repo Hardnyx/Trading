@@ -1,5 +1,6 @@
 import { readFileSync } from "node:fs";
 import { composePortfolio } from "../dist/assets/js/composer.mjs?v=0.8.2";
+import { actualHoldings } from "../dist/assets/js/economic-exposure.mjs?v=0.8.2";
 
 // Reproducible diagnostic on the actual published cut. Not a backtest
 // or a recommendation to buy the positions selected.
@@ -13,6 +14,31 @@ console.log(JSON.stringify({
     .filter((asset) => asset.quality_flags?.includes("eps_share_income_scale_mismatch"))
     .map((asset) => asset.symbol),
   priceCutoff: snapshot.price_as_of,
+}));
+const informationAsOf=snapshot.generated_at?.slice(0,10);
+const fundCoverage=snapshot.assets.filter(asset=>asset.type==="etf"&&asset.holdings)
+  .map(asset=>{
+    const original=actualHoldings(asset,snapshot.price_as_of,informationAsOf);
+    return {
+      symbol:asset.symbol,
+      holdingsAsOf:asset.holdings.as_of,
+      firstObservedAt:asset.holdings.observed_at,
+      eligibleForInformationDate:!!original,
+      coverage:asset.holdings.covered_weight,
+      positionsReported:asset.holdings.positions_reported,
+      sourceLayer:asset.holdings.source_layer,
+      originalHash:asset.holdings.source_sha256||null,
+    };
+  });
+console.log(JSON.stringify({
+  diagnostic:"etf-issuer-holdings",
+  asOf:snapshot.price_as_of,
+  informationAsOf,
+  downloaded:fundCoverage.length,
+  usable:fundCoverage.filter(f=>f.eligibleForInformationDate).length,
+  minimumCoverage:fundCoverage.length?Math.min(...fundCoverage.map(f=>f.coverage)):null,
+  incomplete:fundCoverage.filter(f=>f.coverage<.95).map(f=>f.symbol),
+  funds:fundCoverage,
 }));
 for (const [scenario, rules, seed, overrides] of [
   ["default", {}, 20261025, {}],
