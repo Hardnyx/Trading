@@ -8,3 +8,6 @@ coverage/
 data/research/
 *.tar.gz
 
+
+# Reproducible research outputs and local account inputs
+out/

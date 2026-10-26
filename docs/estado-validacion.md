@@ -151,3 +151,9 @@ La composición distingue ahora el BPA publicado de los supuestos efectivos de c
 En el corte de precios del 23 de octubre, CMCSA utiliza crecimiento del BPA de 4%, P/E de salida 16 y valoración a tres años. El modelo de valoración produce 38,92% anual; la mezcla con un prior de 6% y confianza asignada de 51,43% reduce el ancla a 22,93%. Esto explica su prioridad bajo esos supuestos; no prueba que el múltiplo sea alcanzable ni que la rentabilidad se materialice en los doce meses simulados. El margen normalizado, por sí solo, tampoco modifica la base de BPA del modo de valoración propio.
 
 La cartera mostrada (SHY 35%, efectivo 15%, CMCSA 20%, AMZN 15%, MU/NFLX/NVDA 5% cada una) alcanza los topes de SHY, CMCSA y renta variable agregada. Las correcciones contables y la ampliación de fuentes no se usan para forzar una cartera distinta. Continúan pendientes calibración de supuestos, normalización de beneficios cíclicos y evidencia prospectiva madura.
+
+### Comparación robusta de carteras
+
+Se incorpora [optimización bajo incertidumbre de valoración](optimizacion-robusta.md): cinco modelos económicos alternativos, universo fijo, números aleatorios comunes, búsqueda por asignaciones e intercambios locales, minimización del arrepentimiento y verificación semanal con semilla independiente. La mejora frente a mantener exige un margen superior al costo mínimo y al error Monte Carlo aproximado ajustado por la familia de comparaciones.
+
+El procedimiento vive en investigación; no altera las anclas de producción. Distingue un estrés proporcional del BPA de una normalización contable, y la admisibilidad por topes de una demostración de superioridad económica. El workflow conserva una referencia sintética; las cuentas locales y sus informes están excluidos de Git. Ninguna salida constituye un óptimo global ni una validación prospectiva madura.

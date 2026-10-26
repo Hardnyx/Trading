@@ -22,3 +22,10 @@ class BondProfiles(unittest.TestCase):
     def test_future_profiles_and_changed_labels_are_rejected(self):
         with self.assertRaises(ValueError):parse_profile(self.html(20261024),"SHY","2026-10-23","2026-10-24T00:00:00Z")
         with self.assertRaises(ValueError):parse_profile(self.html(label="Different measure"),"SHY","2026-10-23","2026-10-24T00:00:00Z")
+
+    def test_research_profile_keeps_an_explicit_issuer_source_without_changing_live_catalog(self):
+        from scripts.bond_profiles import ISSUER_URLS
+        source = 'https://www.ishares.com/us/products/239456/ishares-7-10-year-treasury-bond-etf'
+        p = parse_profile(self.html(), 'IEF', '2026-10-23', '2026-10-24T00:00:00Z', source_url=source)
+        self.assertEqual(p['source_url'], source)
+        self.assertNotIn('IEF', ISSUER_URLS)

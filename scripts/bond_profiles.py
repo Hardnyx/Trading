@@ -23,7 +23,7 @@ class _Components(HTMLParser):
                 except (ValueError, TypeError):
                     pass
 
-def parse_profile(html, symbol, cutoff, observed_at):
+def parse_profile(html, symbol, cutoff, observed_at, *, source_url=None):
     parser = _Components()
     parser.feed(html)
     points, expense = {}, None
@@ -35,7 +35,7 @@ def parse_profile(html, symbol, cutoff, observed_at):
         fee = component.get("feeDataPoints", {}).get("expr", {})
         if isinstance(fee, dict) and fee.get("formattedValue", "").endswith("%"):
             expense = float(fee["formattedValue"].replace("%", "")) / 100
-    result = {"source_url": ISSUER_URLS[symbol], "observed_at": observed_at, "expenseRatio": expense}
+    result = {"source_url": source_url or ISSUER_URLS[symbol], "observed_at": observed_at, "expenseRatio": expense}
     dates = []
     for source, target, scale, label in [
         ("modelOad", "duration", 1, "Effective Duration"),

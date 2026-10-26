@@ -1,0 +1,56 @@
+name: Portfolio robustness research
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/portfolio_robustness.mjs'
+      - 'scripts/robust_portfolio_core.mjs'
+      - 'scripts/run_portfolio_robustness.py'
+      - 'tests/robust-portfolio.test.mjs'
+      - '.github/workflows/portfolio-robustness.yml'
+permissions:
+  contents: read
+concurrency:
+  group: portfolio-robustness-shadow
+  cancel-in-progress: true
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-research.txt
+      - run: node --test tests/robust-portfolio.test.mjs
+      - name: Prepare a synthetic reference account, never a personal broker account
+        run: |
+          mkdir -p out
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          market = json.loads(Path('dist/data/market.json').read_text())
+          prices = {a['symbol']: a['price'] for a in market['assets']}
+          weights = {'VTI': .4, 'SHY': .35, 'IEF': .1, 'GLD': .05}
+          account = {'enabled': True, 'cash': 10000, 'positions': [
+              {'symbol': symbol, 'quantity': 100000 * weight / prices[symbol]}
+              for symbol, weight in weights.items()]}
+          Path('out/synthetic-account.json').write_text(json.dumps({
+              'account': account, 'basis': 'Synthetic USD 100000 reference allocation at saved snapshot prices; not a personal account'}))
+          PY
+      - name: Compare fixed-universe valuation stresses with independent verification
+        run: python scripts/run_portfolio_robustness.py out/synthetic-account.json
+      - name: Retain experimental evidence without publishing trade signals
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: portfolio-robustness-research
+          path: |
+            out/portfolio-robustness.json
+            out/robustness-bond-inputs.json
+          retention-days: 90
