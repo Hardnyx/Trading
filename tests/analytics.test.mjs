@@ -1,9 +1,16 @@
 import test from 'node:test';
+import {readFileSync} from 'node:fs';
 import assert from 'node:assert/strict';
 import { correlation, covariance, normalizeWeights, alignReturns, returnStats, metrics, valuation, portfolioAnalysis, validateSnapshot } from '../dist/assets/js/analytics.mjs?v=0.13.0';
 import { cholesky, simulateForecast, validateRiskBands, seededRandom } from '../dist/assets/js/forecast.mjs?v=0.13.0';
 const close = (a,b,tol=1e-9) => assert.ok(Math.abs(a-b)<tol,`${a} != ${b}`);
 function series(symbol, values) { return {symbol,name:symbol,price:values.at(-1),type:'stock',sector:'Test',assumptions:{growth:0,multiple:10,discount:.1,horizon:1},history:values.map((v,i)=>({date:new Date(Date.UTC(2023,0,i+1)).toISOString().slice(0,10),close:v,adj_close:v}))}; }
+
+test('the browser validator accepts the actual published catalog and rejects unbounded imports',()=>{
+ const snapshot=JSON.parse(readFileSync(new URL('../dist/data/market.json',import.meta.url)));
+ assert.equal(validateSnapshot(snapshot).assets.length,snapshot.assets.length);
+ assert.throws(()=>validateSnapshot({schema_version:1,assets:Array.from({length:1001},(_,i)=>series('A'+i,Array(25).fill(100)))}),/corte de Trading/);
+});
 
 test('correlation and sample covariance preserve scale and handle constant series',()=>{close(correlation([1,2,3],[2,4,6]),1);close(covariance([1,2,3],[2,4,6]),2);assert.equal(correlation([1,1,1],[1,2,3]),null);});
 test('weights normalize without negative or nonfinite positions',()=>{const w=normalizeWeights([{symbol:'A',weight:20},{symbol:'B',weight:30},{symbol:'C',weight:-1},{symbol:'D',weight:NaN}]);close(w[0].weight,.4);close(w[1].weight,.6);assert.deepEqual(normalizeWeights([{weight:0}]),[]);});

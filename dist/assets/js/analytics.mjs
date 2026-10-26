@@ -297,12 +297,13 @@ export function scenarios(asset, assumptions, method = "pe") {
     },
   ];
 }
+export const MAX_SNAPSHOT_ASSETS = 1000;
 export function validateSnapshot(data) {
   if (
     data?.schema_version !== 1 ||
     !Array.isArray(data.assets) ||
     !data.assets.length ||
-    data.assets.length > 200
+    data.assets.length > MAX_SNAPSHOT_ASSETS
   )
     throw new Error("El archivo no es un corte de Trading válido.");
   const symbols = new Set();
