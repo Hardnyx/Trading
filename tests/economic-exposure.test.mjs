@@ -57,6 +57,19 @@ test("Only dated issuer holdings count as issuer overlap, unknown is never silen
  assert.ok(Math.abs(rawCorrelation([[.04,.018],[.018,.09]],0,1)-.3)<1e-8);
 });
 
+test("ETF holdings first observed Monday may inform Monday analysis with Friday price cut, not prior Friday forecasts",()=>{
+ const fund={symbol:"SPY",type:"etf",sector:"Índice amplio",holdings:{
+  as_of:"2026-10-22",observed_at:"2026-10-26T11:00:00Z",
+  positions:[{symbol:"AAPL",weight:.08},{symbol:"MSFT",weight:.06}]}};
+ assert.equal(actualHoldings(fund,"2026-10-23"),null);
+ assert.ok(actualHoldings(fund,"2026-10-23","2026-10-26"));
+ const previous=exposureReport([fund],[.35],"2026-10-23");
+ const later=exposureReport([fund],[.35],"2026-10-23","2026-10-26",{"AAPL":"Tecnología","MSFT":"Tecnología"});
+ assert.equal(previous.issuers.AAPL,undefined);
+ assert.ok(Math.abs(later.issuers.AAPL-.028)<1e-10);
+ assert.ok(Math.abs(later.sectors.Tecnología-.049)<1e-10);
+});
+
 test("sector ETFs always use their advertised economic sector, even with known issuer holdings",()=>{
  const assets=[
   {symbol:"AAPL",type:"stock",sector:"Tecnología"},

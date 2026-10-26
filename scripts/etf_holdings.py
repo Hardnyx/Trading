@@ -13,7 +13,7 @@ API="https://tickerinside.com/api/v1/fund/{symbol}.json"
 ATTRIBUTION="TickerInside (https://tickerinside.com/), CC BY 4.0; filings or issuer holdings"
 EQUITY_ETFS=frozenset("""SPY QQQ IWM VTI VXUS VEA VWO EEM EFA EWJ EWZ EWW ECH EPU
  XLK XLC XLY XLP XLF XLE XLV XLI XLU XLRE XLB SMH SOXX VNQ KRE""".split())
-VALID_TICKER=re.compile(r"^[A-Z][A-Z0-9.\-]{0,13}$")
+VALID_TICKER=re.compile(r"^[A-Z0-9][A-Z0-9.\-]{0,13}$")
 DATE=re.compile(r"^\d{4}-\d\d-\d\d$")
 
 def parse_fund(raw, ticker, price_cut, observed_at, depth=300):
@@ -28,21 +28,31 @@ def parse_fund(raw, ticker, price_cut, observed_at, depth=300):
     if not isinstance(holdings,dict) or not holdings:
         raise ValueError("Missing constituents")
     weights=[]
+    negative_exposure=0.0
+    non_numeric=0
     for symbol,pct in holdings.items():
         if not isinstance(symbol,str) or not VALID_TICKER.fullmatch(symbol):
             continue  # unrecognized instrument stays unknown, not fabricated
-        if type(pct) not in (float,int) or not 0<=pct<=100:
+        if pct is None:
+            non_numeric+=1  # Keep the instrument unmatched; no fake weights.
+            continue
+        if type(pct) not in (float,int) or not -100<=pct<=100:
             raise ValueError("Invalid holding weight")
-        if pct>0: weights.append((symbol,pct/100))
+        if pct<0:
+            negative_exposure+=abs(pct)/100
+        if pct>0:weights.append((symbol,pct/100))
     total=sum(weight for _,weight in weights)
-    if total<.65 or total>1.02:
-        raise ValueError("Insufficient or leveraged equity coverage")
+    if total<.65 or total>1.05 or negative_exposure>.05:
+        raise ValueError("Unverified gross holdings or meaningful short exposure")
     weights.sort(key=lambda row:(-row[1],row[0]))
     positions=[{"symbol":s,"weight":round(w,9)} for s,w in weights[:depth]]
     return {"as_of":date,"observed_at":observed_at,
             "positions":positions,"positions_reported":len(weights),
             "covered_weight":round(sum(p["weight"] for p in positions),9),
             "all_equity_weight":round(total,9),
+            "unmatched_non_numeric":non_numeric,
+            "excluded_short_weight":round(negative_exposure,9),
+            "gross_exposure_above_100_percent":total>1.000001,
             "source_layer":raw["source_layer"],
             "source_url":API.format(symbol=ticker.lower()),
             "attribution":ATTRIBUTION,

@@ -29,7 +29,7 @@ export function actualHoldings(a,asOf,informationAsOf=asOf){
   if(!/^[A-Z0-9.-]{1,15}$/.test(p?.symbol||"") || seen.has(p.symbol) || !Number.isFinite(p.weight) || p.weight<0 || p.weight>1)return null;
   coverage+=p.weight;seen.add(p.symbol);
  }
- if(coverage>1.000001)return null;
+ if(coverage>1.050001)return null; // small gross leverage kept as exposure, never rescaled
  return {positions:h.positions,coverage,asOf:h.as_of,source_url:h.source_url||null};
 }
 export function exposureReport(assets,weights,asOf,informationAsOf=asOf,universeSectors={}){

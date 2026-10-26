@@ -24,6 +24,21 @@ class HoldingsTests(unittest.TestCase):
             lambda *_:json.dumps(self.payload).encode("utf-8"))
         self.assertEqual(result["downloaded"],1)
         self.assertEqual(assets[0]["holdings"]["observed_at"],old["observed_at"])
+    def test_small_short_cash_line_does_not_hide_long_equity_positions(self):
+        p={**self.payload,"holdings":{**self.payload["holdings"],"CASH":-.2}}
+        r=parse_fund(p,"SPY","2026-10-23","2026-10-26T09:00:00Z")
+        self.assertAlmostEqual(r["excluded_short_weight"],.002)
+        self.assertAlmostEqual(r["all_equity_weight"],.999)
+        p={**self.payload,"holdings":{**self.payload["holdings"],"CASH":-10}}
+        with self.assertRaises(ValueError):
+            parse_fund(p,"SPY","2026-10-23","2026-10-26T09:00:00Z")
+
+    def test_foreign_exchange_tickers_are_not_dropped_silently(self):
+        p={**self.payload,"holdings":{"7203.JP":65,"NOVO-B.CO":20,"TM":10}}
+        r=parse_fund(p,"SPY","2026-10-23","2026-10-26T09:00:00Z")
+        self.assertEqual(len(r["positions"]),3)
+        self.assertAlmostEqual(r["covered_weight"],.95)
+
     def test_reject_wrong_source_and_holdings(self):
         p={**self.payload,"source_layer":"unknown"}
         with self.assertRaises(ValueError):
