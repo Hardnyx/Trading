@@ -12,6 +12,7 @@ on:
       - 'scripts/news_garchx_research.py'
       - 'scripts/build_event_registry.py'
       - 'scripts/portfolio_stability.mjs'
+      - 'scripts/portfolio_coverage.mjs'
       - 'data/events/verified.json'
       - 'dist/data/market.json'
       - 'dist/data/volatility.json'
@@ -55,6 +56,8 @@ jobs:
         run: python scripts/joint_tail_research.py
       - name: Audit optimizer robustness to candidates and seeds
         run: node scripts/portfolio_stability.mjs
+      - name: Check omitted candidates without promoting unverified trades
+        run: node scripts/portfolio_coverage.mjs
       - name: Preserve evidence without publishing unvalidated models
         if: always()
         uses: actions/upload-artifact@v4
