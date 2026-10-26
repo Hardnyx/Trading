@@ -1,8 +1,8 @@
 import { chromium } from "playwright";
 import { spawn } from "node:child_process";
 import { readFileSync, mkdirSync } from "node:fs";
-import { composePortfolio } from "../dist/assets/js/composer.mjs?v=0.7.1";
-import { referenceRequest } from "../dist/assets/js/reference-preset.mjs?v=0.7.1";
+import { composePortfolio } from "../dist/assets/js/composer.mjs?v=0.7.2";
+import { referenceRequest } from "../dist/assets/js/reference-preset.mjs?v=0.7.2";
 
 const market=JSON.parse(readFileSync("dist/data/market.json","utf8"));
 const volatility=JSON.parse(readFileSync("dist/data/volatility.json","utf8"));
@@ -30,12 +30,12 @@ try {
   const issues=[];
   page.on("pageerror",e=>issues.push(e.message));
   page.on("console",e=>{if(e.type()==="error")issues.push(e.text())});
-  await page.goto("http://127.0.0.1:8813/?build=0.7.1#portfolio",
+  await page.goto("http://127.0.0.1:8813/?build=0.7.2#portfolio",
     {waitUntil:"networkidle",timeout:60000});
   const button=page.locator('[data-action="compose-reference"]');
   await button.waitFor({state:"visible",timeout:45000});
   const actualFooter=await page.locator(".footer-right").innerText();
-  if(!actualFooter.includes("v0.7.1") || actualFooter.includes("v0.6.0"))
+  if(!actualFooter.includes("v0.7.2") || actualFooter.includes("v0.6.0"))
     throw Error("La etiqueta de versión del pie de página no corresponde al motor: "+
       actualFooter);
 
@@ -44,7 +44,7 @@ try {
   await page.evaluate(()=>{
     const key="trading-workspace-v1";
     const stored=JSON.parse(localStorage.getItem(key)||"{}");
-    stored.workspaceVersion="0.7.1";
+    stored.workspaceVersion="0.7.2";
     stored.positions=[{symbol:"NVDA",weight:1}];
     stored.settings={...stored.settings,seed:20261025,volatilityMode:"ewma"};
     stored.compositionRules={...stored.compositionRules,reserveCap:0.1,
@@ -100,8 +100,8 @@ try {
      baselineStorage.compositionRules.reserveCap!==0.1 ||
      baselineStorage.account.positions[0].symbol!=="NVDA")
     throw Error("La prueba no restauró realmente la sesión personalizada");
-  if(!report.includes("MOTOR 0.7.1") && !report.includes("Motor 0.7.1"))
-    throw Error("El informe no identifica el motor 0.7.1");
+  if(!report.includes("MOTOR 0.7.2") && !report.includes("Motor 0.7.2"))
+    throw Error("El informe no identifica el motor 0.7.2");
   if(issues.length)throw Error("Errores del navegador: "+issues.join("; "));
   console.log(JSON.stringify({
     browserParity:"PASS",

@@ -1,9 +1,9 @@
 import { readFileSync } from "node:fs";
-import { composePortfolio, DEFAULT_COMPOSITION_RULES } from "../dist/assets/js/composer.mjs?v=0.7.1";
+import { composePortfolio, DEFAULT_COMPOSITION_RULES } from "../dist/assets/js/composer.mjs?v=0.7.2";
 import { informationDate, DEFAULT_MANDATE, DEFAULT_EXECUTION,
-  DEFAULT_REGIMES } from "../dist/assets/js/policy.mjs?v=0.7.1";
-import { BASE_REGIME } from "../dist/assets/js/path-model.mjs?v=0.7.1";
-import { referenceRequest, REFERENCE_ID, resultFingerprint } from "../dist/assets/js/reference-preset.mjs?v=0.7.1";
+  DEFAULT_REGIMES } from "../dist/assets/js/policy.mjs?v=0.7.2";
+import { BASE_REGIME } from "../dist/assets/js/path-model.mjs?v=0.7.2";
+import { referenceRequest, REFERENCE_ID, resultFingerprint } from "../dist/assets/js/reference-preset.mjs?v=0.7.2";
 
 const snapshot=JSON.parse(readFileSync(new URL("../dist/data/market.json",import.meta.url)));
 const volatility=JSON.parse(readFileSync(new URL("../dist/data/volatility.json",import.meta.url)));
