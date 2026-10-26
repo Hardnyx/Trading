@@ -8,6 +8,7 @@ on:
       - 'scripts/run_research_audit.py'
       - 'scripts/multifactor_research.py'
       - 'scripts/tail_research.py'
+      - 'scripts/joint_tail_research.py'
       - 'scripts/news_garchx_research.py'
       - 'scripts/build_event_registry.py'
       - 'scripts/portfolio_stability.mjs'
@@ -15,6 +16,7 @@ on:
       - 'tests/test_research_gate.py'
       - 'tests/test_multifactor_research.py'
       - 'tests/test_tail_research.py'
+      - 'tests/test_joint_tail_research.py'
       - 'tests/test_news_garchx_research.py'
       - 'tests/test_build_event_registry.py'
       - '.github/workflows/research-evidence.yml'
@@ -42,8 +44,10 @@ jobs:
         run: python scripts/multifactor_research.py --symbols AMZN,NVDA,SHY --test-days 63 --window 500
       - name: Evaluate VaR/ES and joint tail diagnostics
         run: python scripts/tail_research.py
-      - name: Test whether verified news adds value
-        run: python scripts/news_garchx_research.py --events data/events/verified.json
+      - name: Test whether verified SEC releases add GARCH-X value
+        run: python scripts/news_garchx_research.py --events out/sec-filing-events.json
+      - name: Compare Gaussian vs Student-t joint-return tails
+        run: python scripts/joint_tail_research.py
       - name: Audit optimizer robustness to candidates and seeds
         run: node scripts/portfolio_stability.mjs
       - name: Preserve evidence without publishing unvalidated models
