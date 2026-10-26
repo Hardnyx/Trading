@@ -4,22 +4,22 @@ import { readFile } from "node:fs/promises";
 import {
   createTemplateRenderer,
   loadTemplates,
-} from "../dist/assets/js/ui/templates.mjs?v=0.7.2";
-import { createViews, NAV } from "../dist/assets/js/ui/views.mjs?v=0.7.2";
+} from "../dist/assets/js/ui/templates.mjs?v=0.8.0";
+import { createViews, NAV } from "../dist/assets/js/ui/views.mjs?v=0.8.0";
 import {
   valuation,
   portfolioAnalysis,
   metrics,
-} from "../dist/assets/js/analytics.mjs?v=0.7.2";
+} from "../dist/assets/js/analytics.mjs?v=0.8.0";
 import {
   simulateForecast,
   validateRiskBands,
-} from "../dist/assets/js/forecast.mjs?v=0.7.2";
+} from "../dist/assets/js/forecast.mjs?v=0.8.0";
 import {
   registerPortfolio,
   reviewPortfolio,
   DEFAULT_RULES,
-} from "../dist/assets/js/monitor.mjs?v=0.7.2";
+} from "../dist/assets/js/monitor.mjs?v=0.8.0";
 
 test("external templates escape untrusted text and attributes without interpreting inserted placeholders", () => {
   const render = createTemplateRenderer([
@@ -43,7 +43,7 @@ test("template configuration rejects missing bindings and duplicate template nam
   assert.throws(() => render("missing"), /no disponible/);
 });
 
-import { MODEL_VERSION } from "../dist/assets/js/policy.mjs?v=0.7.2";
+import { MODEL_VERSION } from "../dist/assets/js/policy.mjs?v=0.8.0";
 
 await loadTemplates(async (url) => ({
   ok: true,
