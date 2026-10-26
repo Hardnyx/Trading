@@ -852,7 +852,9 @@ export function composePortfolio(
             bondScenarioAnnualReturn(anchor.bond, r.rateShift, x.options.horizon)))
         : anchor.high,
       confidence: anchor.confidence,
-      source: anchor.source,
+      source: anchor.bond
+        ? anchor.source + " · sensibilidad duración/convexidad por régimen; reinversión y curva completa no modeladas"
+        : anchor.source,
       risk: risks[i],
       assumptions: { ...a.assumptions, ...overrides[a.symbol] },
     };
