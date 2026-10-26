@@ -125,6 +125,40 @@ test("lower-SHY alternatives are searched independently and respect their own ca
   }
 });
 
+test("conservative cash baseline is verified under all SHY concentration limits", () => {
+  const r=composePortfolio(snapshot(), {model:"gbm",seed:131,horizon:1},
+    {},{}, {candidates:85,paths:160,finalPaths:300});
+  const limits=r.diagnostics.concentrationAudit.comparedCaps;
+  assert.deepEqual(limits.map(row=>row.cap),[.25,.5,.75]);
+  assert.ok(limits.every(row=>row.feasible),
+    "Each frontier must contain a feasible all-cash portfolio");
+  assert.ok(limits.every(row=>row.verified>0));
+  assert.ok(limits.every(row=>row.compared>0));
+  assert.ok(limits.every(row=>row.positions.every(p=>
+    p.symbol!=="SHY" || p.weight<=row.cap+1e-8)));
+});
+
+test("uncalibrated SPY is a visible comparator, never a buy recommendation", () => {
+  const input=snapshot();
+  input.assets.push({
+    ...structuredClone(input.assets[0]),
+    symbol:"SPY",name:"Broad US market",type:"etf",
+    sector:"Índice amplio",financials:{},bond_profile:null,
+  });
+  const prepared=prepareComposition(input, {horizon:1,model:"gbm"});
+  assert.equal(prepared.selection.benchmarkOnlyProxy,"SPY");
+  const spy=prepared.assets.findIndex(a=>a.symbol==="SPY");
+  assert.ok(spy>=0);
+  assert.equal(prepared.buyAllowed[spy],false);
+  assert.match(prepared.anchors[spy].source,/Solo|Índice comparador/);
+  const proposed=composePortfolio(input,{horizon:1,model:"gbm",seed:133},{},{},
+    {candidates:90,paths:160,finalPaths:300});
+  assert.ok(proposed.diagnostics.references.equity20);
+  assert.equal(proposed.diagnostics.references.equity20.researchOnly,true);
+  assert.ok(proposed.diagnostics.references.equity20.positions.some(p=>p.symbol==="SPY"));
+  assert.ok(!(proposed.positions||[]).some(p=>p.symbol==="SPY"));
+});
+
 test("uncalibrated ETF cannot be newly purchased until return and uncertainty are explicit", () => {
   const cut = snapshot();
   const etf = structuredClone(cut.assets[0]);
