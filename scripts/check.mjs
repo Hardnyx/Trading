@@ -18,6 +18,11 @@ if (!index.includes("app.mjs?v=" + version) ||
   throw new Error("index.html loads a different application version");
 if (!templateLoader.includes(".html?v=" + version))
   throw new Error("HTML templates use stale cache version");
+const layout = await readFile(join(root, "dist", "templates", "layout.html"), "utf8");
+if (!layout.includes("v{{modelVersion}}") ||
+    /\bv\d+\.\d+\.\d+\b/.test(layout))
+  throw new Error("Footer version must come from the engine; fixed version labels are forbidden");
+
 
 async function checkDirectory(directory) {
   for (const entry of await readdir(directory, { withFileTypes: true })) {

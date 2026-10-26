@@ -1401,6 +1401,7 @@ export function createViews(context) {
   function shell(page) {
     const nav = NAV.find((n) => n[0] === state.view) || NAV[0];
     return template("shell", {
+      modelVersion: MODEL_VERSION,
       price_as_of: dateLabel(data.price_as_of),
       dataIcon: icon("data"),
       helpIcon: icon("help"),

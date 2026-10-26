@@ -43,6 +43,8 @@ test("template configuration rejects missing bindings and duplicate template nam
   assert.throws(() => render("missing"), /no disponible/);
 });
 
+import { MODEL_VERSION } from "../dist/assets/js/policy.mjs?v=0.7.1";
+
 await loadTemplates(async (url) => ({
   ok: true,
   text: () => readFile(url, "utf8"),
@@ -50,6 +52,19 @@ await loadTemplates(async (url) => ({
 const data = JSON.parse(
   await readFile(new URL("../dist/data/market.json", import.meta.url), "utf8"),
 );
+
+test("footer version is rendered from the actual engine, never hardcoded", () => {
+  const views = createViews({
+    state: { view: "portfolio", busy: false, forecastError: null },
+    data,
+    asset: () => null,
+  });
+  const html = views.shell("<h1>Revisión</h1>");
+  assert.match(html, new RegExp('v' + MODEL_VERSION.replaceAll('.', '\\\\.') + '\\\\s'));
+  assert.ok(html.includes("MULTIACTIVO"));
+  assert.ok(!html.includes("v0.6.0"));
+  assert.ok(!html.includes("{{modelVersion}}"));
+});
 
 test("partial refreshes remain visible with a direct link to source dates", () => {
   const views = createViews({
