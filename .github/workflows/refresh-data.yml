@@ -36,6 +36,9 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
       - name: Install research dependencies
         run: python -m pip install -r requirements-research.txt
       - name: Download a public market snapshot
@@ -47,10 +50,15 @@ jobs:
         run: python scripts/refresh_data.py
       - name: Calibrate conditional volatility (point-in-time)
         run: python scripts/build_volatility.py
+      - name: Seal one prospective proposal per original market close
+        run: node scripts/seal_forecast.mjs --skip-ineligible
+      - name: Score previously sealed forecasts only after maturity
+        run: node scripts/seal_forecast.mjs --score
       - name: Commit the updated snapshot
         id: snapshot
         run: |
           git add dist/data/market.json dist/data/market.json.gz dist/data/volatility.json data/snapshots
+          git add data/forecasts || true
           if [ "$REPOSITORY_PRIVATE" = 'true' ] && [ -d data/research ]; then
             git add -f data/research
           fi
