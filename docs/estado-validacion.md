@@ -97,7 +97,7 @@ La guarda de vigencia compara el período del último 10-Q/10-K/20-F con el BPA 
 
 ### Monitor de precios 0.12.0
 
-Se separan tres capas: precios observados para todo el catálogo (176 instrumentos más efectivo en el corte revisado), anclas económicas con cobertura fundamental/renta fija y composición restringida a una muestra de hasta 40. El monitor no reduce el catálogo a la muestra del optimizador. Permite filtrar acciones con BPA pendiente, posiciones de cuenta/cartera y rupturas/cruces observados. Las cuentas existentes no se borran por falta de BPA.
+Se separan tres capas: precios observados para todo el catálogo (177 instrumentos: 100 acciones y 77 ETF en el corte revisado; el efectivo se añade por separado en el compositor), anclas económicas con cobertura fundamental/renta fija y composición restringida a una muestra de hasta 40. El monitor no reduce el catálogo a la muestra del optimizador. Permite filtrar acciones con BPA pendiente, posiciones de cuenta/cartera y rupturas/cruces observados. Las cuentas existentes no se borran por falta de BPA.
 
 Indicadores descriptivos: MA50/MA200 de cierres ajustados, retorno de 126 sesiones, ruptura frente a las 63 previas excluyendo el cierre actual, caída desde máximo de 252 y volatilidad logarítmica anualizada de 63 sesiones con razón 21/63. Se requieren al menos 252 observaciones válidas, orden estricto y cierre común vigente. No se usa retorno histórico como ancla esperada, no se interpreta BPA ausente como venta y no se habilitan compras nuevas por una ruptura. Las distancias son sobre el índice ajustado por distribuciones, no precios de órdenes.
 
