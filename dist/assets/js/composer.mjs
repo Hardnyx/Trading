@@ -597,6 +597,18 @@ export function composePortfolio(
       }
       addCap(w, row.kind === "passive");
     }
+    // The all-cash comparator is known to satisfy reserve caps and must
+    // never disappear from the constrained frontier.
+    if (cashIndex >= 0) addCap(allCash);
+    // Deterministic cash+reserve holdings ensure each cap is actually tested.
+    if (shyIndex >= 0 && cashIndex >= 0 && cappedX.buyAllowed[shyIndex]) {
+      for (let bondWeight = 0.05; bondWeight <= cap + 1e-8; bondWeight += 0.05) {
+        const w = allCash.slice();
+        w[shyIndex] = Math.round(bondWeight * 100) / 100;
+        w[cashIndex] = 1 - w[shyIndex];
+        addCap(w);
+      }
+    }
     for (const w of passiveCandidates(cappedX)) addCap(w, true);
     for (const w of reserveTilts(cappedX)) addCap(w);
     // Additional search is conditioned on this specific cap rather than
@@ -614,7 +626,13 @@ export function composePortfolio(
     }
     alternatives.sort((a,b)=>b.metrics.score-a.metrics.score);
     let bestCap = null;
-    for (const row of alternatives.slice(0,10)) {
+    // Always verify the zero-risk / reserve-only baselines, even if their
+    // exploratory score ranks below riskier candidates in a smaller sample.
+    const conservative = alternatives.filter(r =>
+      r.positions.every(p => p.symbol === "CASH" || p.symbol === "SHY"));
+    const finalReview = [...conservative,
+      ...alternatives.filter(r => !conservative.includes(r)).slice(0,10)];
+    for (const row of finalReview) {
       const v = assess(row.weights, cappedX, verification, false,
         row.kind === "passive");
       if (v.feasible &&
@@ -623,6 +641,7 @@ export function composePortfolio(
     if (bestCap) verifiedCapCandidates.push(bestCap);
     return {
       cap, compared: examined,
+      verified: finalReview.length,
       feasible: !!bestCap,
       positions: bestCap?.positions ?? [],
       meanReturn: bestCap?.metrics.meanReturn ?? null,
@@ -651,7 +670,7 @@ export function composePortfolio(
     eligibleButNotSimulated: x.selection.outsideSample.length,
     selectionMethod: x.selection.preselectionMethod,
     comparedCaps: capAlternatives,
-    note: "Comparaciones entre candidatas exploradas y verificadas con escenarios idénticos; no son óptimos globales. Sin prima de retorno sustentada, SHY puede prevalecer sin que la concentración sea un error numérico.",
+    note: "Cada tope se contrasta con efectivo y reservas deterministas, además de carteras exploradas. Los escenarios son idénticos; la búsqueda no garantiza el óptimo global. SHY puede prevalecer cuando su prima ajustada por riesgo es mayor.",
   };
   const riskDiagnostics = (row) => {
     if (!row) return null;
