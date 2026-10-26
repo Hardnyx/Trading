@@ -131,3 +131,15 @@ Referencias: [CFA: mandato](https://www.cfainstitute.org/insights/professional-l
 El motor 0.7.0 selecciona activos para la muestra limitada utilizando una valoración prospectiva penalizada por dispersión, volatilidad y cobertura sectorial, no retornos históricos ganadores. Explica por qué SHY puede recibir mucho peso: su carry observado, su riesgo condicional y la prima incierta de la renta variable. Compara candidatos explorados con máximos orientativos de SHY de 25%, 50% y 75%, presentando utilidad equivalente, retorno y CVaR sin forzar cuotas ni prometer óptimos globales. La búsqueda sigue siendo aproximada; fuera de muestra continúan los candidatos excluidos.
 
 El filtro de GJR exige al menos 126 días OOS, mejora QLIKE >0.015, cota inferior unilateral positiva mediante bloques semanales y controles de cola y parámetros. Estos umbrales reducen activaciones débiles pero no prueban superioridad estadística conjunta de 177 comparaciones. El respaldo diario EWMA es deliberado. Sin fundamento económico suficiente no se infla la rentabilidad accionaria para fabricar diversificación.
+
+
+### Alcance del parche 0.7.2
+
+- La comparación de topes SHY de 25/50/75 % **incluye siempre** efectivo y escalones deterministas CASH/SHY, y los evalúa fuera de muestra de simulación con las mismas trayectorias. No afirmar «ninguna candidata» sin probar las alternativas conservadoras.
+- SPY puede incorporarse a las **referencias, sin autorización de compra**, cuando faltan retornos ETF fundamentados: prima hipotética **3,5 puntos porcentuales sobre DGS3MO**, con incertidumbre **±15 pp**, visible y marcada como *no validada*. No se utiliza ese proxy para autorizar nuevas posiciones del optimizador.
+- Las anclas que se muestran para fondos Treasury ya distinguen escenarios de tasas mediante duración y una **aproximación explícita de convexidad**. El modelo aún NO calcula toda la curva, cupones y reinversión de forma exacta. La TIR neta no es una rentabilidad garantizada.
+- El CVaR es una estimación de Monte Carlo con innovaciones conjuntas gaussianas; **no es un límite garantizado ni una estimación de colas validada en eventos extremos**.
+- La selección sigue limitada a **40 instrumentos por ejecución** por costo de simulación. La rentabilidad esperada fundamental de las acciones y la probabilidad de regímenes siguen sujetas a validación fuera de muestra; no se presenta la búsqueda como óptimo global.
+- Se añadió una prueba de que los benchmarks no comprables no se conviertan silenciosamente en posiciones sugeridas.
+
+**Criterio para usar recomendaciones:** no ejecutar operaciones únicamente por esta simulación. Las correcciones arreglan inconsistencias verificables, pero no sustituyen una evaluación walk-forward del error en retornos, riesgo extremo, cambio de carteras y costos netos.

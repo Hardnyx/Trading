@@ -327,3 +327,20 @@ La investigación preserva la posibilidad de que la mejor decisión sea **manten
 ## 12. Integración y cambios de seguridad en la versión 0.7.0
 
 La matriz de sensibilidad de correlación reconstruye el factor SPY y los residuos de la covarianza realmente estresada, evitando conservar una factorización obsoleta. El modo híbrido de volatilidad utiliza GJR solo con evidencia walk-forward más estricta; de no existir, permanece en EWMA diario. El modelo de saltos Merton anterior requiere una selección explícita, porque sus intensidades no proceden de noticias verificadas. La preselección de hasta 40 instrumentos usa señales financieras prospectivas ajustadas por incertidumbre y mantiene representación sectorial. La concentración de SHY se compara con alternativas de menor tope bajo el mismo conjunto de escenarios, sin imponer pesos arbitrarios. Las asociaciones informativas y GARCH-X siguen pendientes de validación científica.
+
+
+## 13. Estado operativo posterior al parche 0.7.2
+
+Se corrigió el error de exploración por el que un límite bajo de SHY podía arrojar «ninguna candidata verificada» aun existiendo efectivo factible. Cada frontera de concentración añade ahora CASH y escalones SHY/CASH, y no promueve carteras fuera de la verificación final.
+
+Se introdujo un benchmark de SPY reservado **solo para investigación** cuando el retorno de ese ETF no está calibrado. Se especifica una prima accionaria hipotética de 3,5 pp respecto de DGS3MO con banda ±15 pp; no es una previsión respaldada por un backtest y, por diseño, no puede usarse como autorización de compra.
+
+Para activos de renta fija se distingue carry anual del efecto de precio de un desplazamiento de tasas. La variación de precio se aproxima mediante duración modificada y convexidad proxy:
+
+[
+P_{T}/P_{0}approx 1-DDelta y + 	frac12 D(D+1)(Delta y)^2.
+]
+
+La rentabilidad anualizada de escenario se calcula con el carry observado neto de gastos, multiplicado por esa aproximación de precio. Los escenarios de rates se aplican una sola vez a cada trayectoria. Ello no modela una curva de rendimiento completa, reinversión de cupones ni opciones del bono; son pendientes de calibración, no funcionalidades terminadas.
+
+**Advertencia vigente:** las colas conjuntas de Monte Carlo siguen siendo gaussianas, las hipótesis macro no son probabilidades empíricas verificadas y solo un subconjunto de 40 activos se optimiza por corrida. Los cálculos de GJR-t todavía no constituyen identificación semántica de noticias o un GARCH-X productivo. La previsión fundamental de retorno, costes de transacción, primas de riesgo y selección entre 93+ activos necesitan validación prospectiva/point-in-time antes de promover decisiones reales.
