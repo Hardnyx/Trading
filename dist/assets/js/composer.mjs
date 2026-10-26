@@ -230,6 +230,8 @@ export function prepareComposition(
   return {
     ...paths,
     rules: limits,
+    securitySectors:Object.fromEntries(snapshot.assets.filter(a=>a.type==="stock")
+      .map(a=>[a.symbol,a.sector])),
     // Only signed/reviewed evidence published with the market snapshot may
     // lift a global concentration cap; session values are not certification.
     opportunityEvidence: snapshot.validated_opportunities || {},
@@ -326,7 +328,7 @@ export function validWeights(w,x){
    if(overlap>x.rules.maxCorrelation+1e-8)return false;
   }
  }
- const exposure=exposureReport(x.assets,w,x.asOf);
+ const exposure=exposureReport(x.assets,w,x.asOf,x.informationAsOf,x.securitySectors);
  if(exposure.sleeves.treasury>x.rules.maxTreasury+1e-8)return false;
  if(exposure.sleeves.usEquity+exposure.sleeves.globalEquity>x.rules.maxEquity+1e-8)return false;
  if(Object.values(exposure.sectors).some(v=>v>x.rules.maxSector+1e-8))return false;
@@ -760,7 +762,8 @@ export function composePortfolio(
     comparedCaps: capAlternatives,
     note: "Fronteras anidadas sobre la misma muestra acumulativa de finalistas verificados; la cartera seleccionada se incorpora a cada tope que cumple. Ninguna frontera afirma optimalidad global. SHY puede prevalecer con mejor utilidad ajustada por riesgo.",
   };
-  const exposure = best ? exposureReport(x.assets,best.weights,x.asOf) : null;
+  const exposure = best ? exposureReport(x.assets,best.weights,
+    x.asOf,x.informationAsOf,x.securitySectors) : null;
   const etfCorrelations = best ? x.assets.flatMap((a,i)=>{
     if(!(best.weights[i]>.001))return [];
     return x.assets.slice(i+1).flatMap((b,k)=>{

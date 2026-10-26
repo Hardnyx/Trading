@@ -18,12 +18,12 @@ export function economicClass(a){
  if(US.has(s))return "us-equity";
  return a.type==="etf"?"unclassified-etf":"other";
 }
-export function actualHoldings(a,asOf){
+export function actualHoldings(a,asOf,informationAsOf=asOf){
  const h=a.holdings;
  if(!h || !Array.isArray(h.positions) ||
     !/^\d{4}-\d\d-\d\d$/.test(h.as_of||"") || h.as_of>asOf ||
     !/^\d{4}-\d\d-\d\dT/.test(h.observed_at||"") ||
-    h.observed_at.slice(0,10)>asOf)return null;
+    h.observed_at.slice(0,10)>informationAsOf)return null;
  let coverage=0;const seen=new Set();
  for(const p of h.positions){
   if(!/^[A-Z0-9.-]{1,15}$/.test(p?.symbol||"") || seen.has(p.symbol) || !Number.isFinite(p.weight) || p.weight<0 || p.weight>1)return null;
@@ -32,8 +32,11 @@ export function actualHoldings(a,asOf){
  if(coverage>1.000001)return null;
  return {positions:h.positions,coverage,asOf:h.as_of,source_url:h.source_url||null};
 }
-export function exposureReport(assets,weights,asOf){
- const knownSectors=new Map(assets.filter(a=>a.type==="stock").map(a=>[a.symbol,a.sector]));
+export function exposureReport(assets,weights,asOf,informationAsOf=asOf,universeSectors={}){
+ const knownSectors=new Map([
+  ...Object.entries(universeSectors),
+  ...assets.filter(a=>a.type==="stock").map(a=>[a.symbol,a.sector]),
+ ]);
  const sleeves={treasury:0,credit:0,mixedBonds:0,usEquity:0,globalEquity:0,gold:0,unknownEtf:0},sectors={},issuers={},unknown=[];
  for(let i=0;i<assets.length;i++){
   const a=assets[i],w=weights[i]||0;if(w<=1e-8)continue;
@@ -54,7 +57,7 @@ export function exposureReport(assets,weights,asOf){
    // Sector-specific ETFs are entirely assigned to their published mandate.
    // This applies whether or not an issuer-level holdings feed is present.
    if(sector)sectors[sector]=(sectors[sector]||0)+w;
-   const h=actualHoldings(a,asOf);
+   const h=actualHoldings(a,asOf,informationAsOf);
    if(h){
      let sectorCovered=0;
      for(const p of h.positions){
