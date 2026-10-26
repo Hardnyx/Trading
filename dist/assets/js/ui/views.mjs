@@ -870,7 +870,10 @@ export function createViews(context) {
         return r.length
           ? r.slice(0,5).map(x =>
               x.pair+" corr. total "+fmt(x.totalCorrelation,2)+
-              (x.residualCorrelation===null?"":", residual "+fmt(x.residualCorrelation,2)))
+              (x.residualCorrelation===null?"":", residual "+fmt(x.residualCorrelation,2))+
+              (x.holdingsOverlap?.available
+                ?", holdings compartidos identificados ≥"+pct(x.holdingsOverlap.lowerBound,1)
+                :""))
             .join(" · ")
           : "No hay parejas relevantes con ETF en la propuesta.";
       })(),

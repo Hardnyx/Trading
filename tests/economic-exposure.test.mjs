@@ -70,6 +70,22 @@ test("ETF holdings first observed Monday may inform Monday analysis with Friday 
  assert.ok(Math.abs(later.sectors.Tecnología-.049)<1e-10);
 });
 
+test("fund overlap is a dated lower bound, with share classes consolidated",()=>{
+ const a={symbol:"SPY",type:"etf",holdings:{
+  as_of:"2026-10-22",observed_at:"2026-10-23T01:00:00Z",
+  positions:[{symbol:"GOOG",weight:.10},{symbol:"AAPL",weight:.15}]}};
+ const b={symbol:"VTI",type:"etf",holdings:{
+  as_of:"2026-10-21",observed_at:"2026-10-22T01:00:00Z",
+  positions:[{symbol:"GOOGL",weight:.08},{symbol:"AAPL",weight:.12}]}};
+ const {knownFundOverlap}=await import("../dist/assets/js/economic-exposure.mjs?v=0.8.1");
+ const f=knownFundOverlap(a,b,"2026-10-23");
+ assert.equal(f.available,true);
+ assert.ok(Math.abs(f.lowerBound-.20)<1e-10);
+ const exp=exposureReport([a,b],[.35,.35],"2026-10-23");
+ assert.ok(Math.abs(exp.issuers.GOOGL-.063)<1e-10);
+ assert.equal(knownFundOverlap(a,b,"2026-10-21").available,false);
+});
+
 test("sector ETFs always use their advertised economic sector, even with known issuer holdings",()=>{
  const assets=[
   {symbol:"AAPL",type:"stock",sector:"Tecnología"},

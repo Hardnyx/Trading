@@ -5,6 +5,8 @@ const MIXED=new Set(["AGG","BND"]);
 const GOLD=new Set(["GLD","IAU"]);
 const INTL=new Set(["VXUS","VEA","VWO","EFA","EEM","EWJ","EWZ","EWW","ECH","EPU"]);
 const US=new Set(["SPY","VTI","QQQ","IWM","XLK","XLC","XLY","XLP","XLF","XLE","XLV","XLI","XLU","XLRE","XLB","SMH","SOXX","VNQ","KRE"]);
+const SHARE_CLASSES={GOOG:"GOOGL","BRK.A":"BRK.B",FOXA:"FOX",NWSA:"NWS"};
+export const issuerSymbol=(symbol)=>SHARE_CLASSES[symbol]||symbol;
 const sectorETF={XLK:"Tecnología",XLC:"Comunicación",XLY:"Consumo discrecional",XLP:"Consumo básico",XLF:"Financiero",XLE:"Energía",XLV:"Salud",XLI:"Industrial",XLU:"Servicios públicos",XLRE:"Inmobiliario",XLB:"Materiales",SMH:"Tecnología",SOXX:"Tecnología",VNQ:"Inmobiliario",KRE:"Financiero"};
 export function economicClass(a){
  if(a.type==="cash")return "cash";
@@ -50,7 +52,8 @@ export function exposureReport(assets,weights,asOf,informationAsOf=asOf,universe
   if(k==="unclassified-etf"){sleeves.unknownEtf+=w;unknown.push(a.symbol);}
   if(k==="direct-equity"){
     sectors[a.sector]=(sectors[a.sector]||0)+w;
-    issuers[a.symbol]=(issuers[a.symbol]||0)+w;
+    const key=issuerSymbol(a.symbol);
+    issuers[key]=(issuers[key]||0)+w;
   }
   if(a.type==="etf"){
    const sector=sectorETF[a.symbol];
@@ -72,11 +75,12 @@ export function exposureReport(assets,weights,asOf,informationAsOf=asOf,universe
    if(h){
      let sectorCovered=0;
      for(const p of h.positions){
-       issuers[p.symbol]=(issuers[p.symbol]||0)+w*p.weight;
+       const key=issuerSymbol(p.symbol);
+       issuers[key]=(issuers[key]||0)+w*p.weight;
        // Broad-market ETFs: allocate ONLY the issuer weights with a known
        // stock sector. Missing constituent classifications stay unassigned.
        if(!sector && knownSectors.has(p.symbol)){
-         const group=knownSectors.get(p.symbol);
+         const group=knownSectors.get(p.symbol)||knownSectors.get(issuerSymbol(p.symbol));
          sectors[group]=(sectors[group]||0)+w*p.weight;
          sectorCovered+=p.weight;
        }
@@ -91,6 +95,32 @@ export function exposureReport(assets,weights,asOf,informationAsOf=asOf,universe
  }
  return {sleeves,sectors,issuers,funds,unknownHoldings:unknown,
    note:"Carteras subyacentes solo cuando el emisor proporcionó posiciones fechadas. La categoría Treasury proviene del mandato del ETF; no supone correlaciones perfectas ni inventa ponderaciones."};
+}
+/** Lower bound for duplicated ETF constituent weight, only on dated observations. */
+export function knownFundOverlap(a,b,asOf,informationAsOf=asOf){
+ const x=actualHoldings(a,asOf,informationAsOf),y=actualHoldings(b,asOf,informationAsOf);
+ if(!x||!y)return {available:false,reason:"Requiere carteras fechadas y conocidas al corte"};
+ const left=new Map();
+ for(const p of x.positions){
+   const key=issuerSymbol(p.symbol);
+   left.set(key,(left.get(key)||0)+p.weight);
+ }
+ const right=new Map();
+ for(const p of y.positions){
+   const key=issuerSymbol(p.symbol);
+   right.set(key,(right.get(key)||0)+p.weight);
+ }
+ let lowerBound=0;
+ for(const [key,value] of left)
+   lowerBound+=Math.min(value,right.get(key)||0);
+ const missingA=Math.max(0,1-x.coverage),missingB=Math.max(0,1-y.coverage);
+ return {
+   available:true,lowerBound,
+   looseUpperBound:Math.min(1,lowerBound+missingA+missingB),
+   coverageA:x.coverage,coverageB:y.coverage,
+   sourceDates:[x.asOf,y.asOf],
+   note:"Intersección mínima observada sobre participaciones conocidas. La exposición no cubierta podría coincidir más.",
+ };
 }
 export function rawCorrelation(cov,i,j){
  return cov[i][i]>0&&cov[j][j]>0?cov[i][j]/Math.sqrt(cov[i][i]*cov[j][j]):0;

@@ -26,7 +26,7 @@ import { buildReturnAnchors, bondScenarioAnnualReturn } from "./return-model.mjs
 import { assetAt, fundamentalForecast, bondAssumptions } from "./research-model.mjs?v=0.8.1";
 import { selectCompositionUniverse } from "./universe.mjs?v=0.8.1";
 import { factorizeStressedCovariance } from "./factor-covariance.mjs?v=0.8.1";
-import { economicClass, exposureReport, rawCorrelation, qualifiedOpportunity } from "./economic-exposure.mjs?v=0.8.1";
+import { economicClass, exposureReport, rawCorrelation, qualifiedOpportunity, knownFundOverlap } from "./economic-exposure.mjs?v=0.8.1";
 
 export const DEFAULT_COMPOSITION_RULES = {
   maxPosition: 0.2,
@@ -777,6 +777,8 @@ export function composePortfolio(
         totalCorrelation:total,
         residualCorrelation:Number.isFinite(residual)?residual:null,
         overlappingWeight:best.weights[i]*best.weights[j],
+        holdingsOverlap:a.type==="etf"&&b.type==="etf"
+          ? knownFundOverlap(a,b,x.asOf,x.informationAsOf):null,
         warning:total>.8?"Dependencia total elevada":"Dependencia observada",
       }];
     });
