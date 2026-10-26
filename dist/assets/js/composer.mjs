@@ -330,7 +330,13 @@ export function validWeights(w,x){
  if(exposure.sleeves.treasury>x.rules.maxTreasury+1e-8)return false;
  if(exposure.sleeves.usEquity+exposure.sleeves.globalEquity>x.rules.maxEquity+1e-8)return false;
  if(Object.values(exposure.sectors).some(v=>v>x.rules.maxSector+1e-8))return false;
- if(Object.values(exposure.issuers).some(v=>v>x.rules.maxGlobal+1e-8))return false;
+ for(const [issuer,weight] of Object.entries(exposure.issuers)){
+   const stock=x.assets.find(a=>a.symbol===issuer && a.type==="stock");
+   const exception=stock && qualifiedOpportunity(
+     stock,x.opportunityEvidence?.[issuer],x.asOf);
+   if(weight>(exception?x.rules.maxOpportunity:x.rules.maxGlobal)+1e-8)
+     return false;
+ }
  return true;
 }
 function passes(metrics, x) {
