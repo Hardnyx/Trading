@@ -883,8 +883,10 @@ export function createViews(context) {
           coverage:f.coveredWeight===null?"—":pct(f.coveredWeight,1),
           positions:f.topHoldings.map(h=>h.symbol+" "+pct(h.weight,2)).join(" · ")||
             "Sin datos válidos de composición al corte",
-          url:url(f.sourceUrl||""),
-          source:f.sourceLayer||"Sin fuente"
+          sourceCell:f.sourceUrl
+            ? '<a href="'+esc(url(f.sourceUrl))+'" target="_blank" rel="noopener noreferrer">'+
+                esc(f.sourceLayer||"Fuente")+'</a>'
+            : "Sin fuente verificable"
         })
       ).join(""),
       exposureWarning: (() => {

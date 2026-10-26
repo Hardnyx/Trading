@@ -25,6 +25,7 @@ La aprobación de GitHub Actions certifica ejecución y consistencia de software
 | Densidad conjunta Student-t vs normal | `python scripts/joint_tail_research.py` | Ganancia estable de logscore predictivo fuera de muestra, no solo dentro de muestra |
 | Noticias y GARCH-X | `python scripts/news_garchx_research.py --events out/sec-filing-events.json` | Necesita sorpresas verificadas con consenso conocido ANTES del evento y mejora incremental en holdout |
 | Estabilidad de cartera | `node scripts/portfolio_stability.mjs` | Estabilidad ante semillas, límites del universo y presupuesto de búsqueda |
+| Holdings fechadas de ETF | `python scripts/refresh_data.py` (captura actual) | Conservar primeros accesos, cobertura parcial y fuente TickerInside/issuer/SEC; no usar nuevas capturas para reconstruir carteras históricas |
 | Pronóstico prospectivo permanente | `node scripts/seal_forecast.mjs --skip-ineligible` | Sellado antes de la siguiente sesión de mercado, sin sobrescritura |
 | Resultados posteriores a maduración | `node scripts/seal_forecast.mjs --score` | No evaluar un retorno a doce meses antes de conocerlo |
 
@@ -76,6 +77,7 @@ Los resultados son **aditivos para la muestra simulada y sus supuestos específi
 | Eventos/news y GARCH-X | Registro de releases; challenger sin datos de sorpresa suficientes | Sorpresas con consenso original, modelos de enlace, inferencia temporal y suficientes eventos |
 | Renta fija | TIR, duración y convexidad proxy | Cero cupón/par, rolldown de curva completa, reinversión, crédito y liquidez |
 | Universo de activos | 177+ instrumentos, 40 simulados en la web | Incorporación iterativa del catálogo, convergencia de pesos y búsqueda más rigurosa |
+| Holdings de ETF | Ingesta automática, parcial, con datos fechados, atribuidos y originales comprimidos | Mayor cobertura oficial, auditoría de clasificación sectorial, reconciliación de posiciones no reconocidas y vintages suficientemente largos |
 | Backtest de decisiones | Registro prospectivo y diagnósticos | Maduración de observaciones y comparaciones con SPY, SHY, efectivo y cartera pasiva neta de costos |
 | Operativa | Costos y reglas parciales | Política de mantener/reducir/salir asociada a invalidación de tesis y utilidad incremental |
 
