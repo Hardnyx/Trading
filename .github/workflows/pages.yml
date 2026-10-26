@@ -56,3 +56,43 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+      - name: Verify public site serves this exact build
+        env:
+          SITE_URL: ${{ steps.deployment.outputs.page_url }}
+        run: |
+          set -euo pipefail
+          sha="$(git rev-parse HEAD)"
+          version="$(node -p 'require("./package.json").version')"
+          short="${sha:0:12}"
+          base="${SITE_URL%/}"
+          ready=0
+          for attempt in $(seq 1 15); do
+            if curl -fsSL --max-time 20 "${base}/build.json?audit=${sha}" -o /tmp/trading-build.json &&
+              EXPECTED_SHA="$sha" EXPECTED_VERSION="$version" node -e '
+                const fs = require("node:fs");
+                const b = JSON.parse(fs.readFileSync("/tmp/trading-build.json","utf8"));
+                if (b.commit !== process.env.EXPECTED_SHA ||
+                    b.model_version !== process.env.EXPECTED_VERSION)
+                  process.exit(1);
+              '; then
+              ready=1
+              break
+            fi
+            echo "Waiting for public build ${short} (attempt ${attempt})"
+            sleep 8
+          done
+          if [ "$ready" -ne 1 ]; then
+            echo "::error::Pages does not serve the expected build metadata"
+            exit 1
+          fi
+          curl -fsSL --max-time 20 "${base}/?audit=${sha}" -o /tmp/trading-index.html
+          if ! grep -Fq "app.mjs?v=${version}-${short}" /tmp/trading-index.html; then
+            echo "::error::Public HTML references stale application modules"
+            exit 1
+          fi
+          curl -fsSL --max-time 20 "${base}/assets/js/app.mjs?v=${version}-${short}" -o /tmp/trading-app.mjs
+          if ! grep -Fq "composer-worker.mjs?v=${version}-${short}" /tmp/trading-app.mjs; then
+            echo "::error::Public application mixes cached modules"
+            exit 1
+          fi
+          echo "Public build verified: ${version}-${short}"
