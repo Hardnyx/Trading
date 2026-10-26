@@ -34,6 +34,7 @@ export const DEFAULT_COMPOSITION_RULES = {
   maxGlobal: 0.35,
   maxOpportunity: 0.5,
   maxTreasury: 0.6,
+  maxEquity: 0.5,
   maxSector: 0.35,
   maxCorrelation: 0.95,
   cvarBudget: 0.2,
@@ -48,6 +49,7 @@ function validateRules(rules) {
     "maxGlobal",
     "maxOpportunity",
     "maxTreasury",
+    "maxEquity",
     "maxSector",
     "maxCorrelation",
     "cvarBudget",
@@ -326,6 +328,7 @@ export function validWeights(w,x){
  }
  const exposure=exposureReport(x.assets,w,x.asOf);
  if(exposure.sleeves.treasury>x.rules.maxTreasury+1e-8)return false;
+ if(exposure.sleeves.usEquity+exposure.sleeves.globalEquity>x.rules.maxEquity+1e-8)return false;
  if(Object.values(exposure.sectors).some(v=>v>x.rules.maxSector+1e-8))return false;
  if(Object.values(exposure.issuers).some(v=>v>x.rules.maxGlobal+1e-8))return false;
  return true;
@@ -802,6 +805,7 @@ export function composePortfolio(
       global:x.rules.maxGlobal,
       opportunity:x.rules.maxOpportunity,
       treasury:x.rules.maxTreasury,
+      equity:x.rules.maxEquity,
       qualified:best?.positions.filter(p=>qualifiedOpportunity(
         x.assets.find(a=>a.symbol===p.symbol),
         x.opportunityEvidence[p.symbol],x.asOf)).map(p=>p.symbol)||[],

@@ -56,3 +56,21 @@ test("Only dated issuer holdings count as issuer overlap, unknown is never silen
  assert.equal(actualHoldings(assets[1],"2026-10-20"),null);
  assert.ok(Math.abs(rawCorrelation([[.04,.018],[.018,.09]],0,1)-.3)<1e-8);
 });
+
+test("aggregate equity cap prevents SHY reduction from forcing 60% risky stocks",()=>{
+ const assets=[
+  {symbol:"AAA",type:"stock",sector:"Tecnología"},
+  {symbol:"BBB",type:"stock",sector:"Salud"},
+  {symbol:"CCC",type:"stock",sector:"Industrial"},
+  {symbol:"SHY",type:"etf",sector:"Treasuries cortos"},
+  {symbol:"CASH",type:"cash",sector:"Efectivo"}
+ ];
+ const context={
+  assets,asOf:"2026-10-23",buyAllowed:assets.map(()=>true),
+  covariance:assets.map((_,i)=>assets.map((_,j)=>i===j?.04:0)),
+  requiredCash:.05,rules:{...DEFAULT_COMPOSITION_RULES}
+ };
+ assert.equal(validWeights([.20,.20,.20,.35,.05],context),false);
+ assert.equal(validWeights([.20,.15,.15,.35,.15],context),true);
+ assert.equal(exposureReport(assets,[.20,.20,.20,.35,.05],"2026-10-23").sleeves.usEquity,.60);
+});

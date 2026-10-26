@@ -728,6 +728,7 @@ export function createViews(context) {
       ["maxGlobal", "MÁX. GLOBAL POR ACTIVO", 5, 75, 5, 100, "%"],
       ["maxOpportunity", "TOPE POR OPORTUNIDAD VALIDADA", 5, 75, 5, 100, "%"],
       ["maxTreasury", "MÁX. TREASURIES COMBINADOS", 5, 100, 5, 100, "%"],
+      ["maxEquity", "MÁX. ACCIONES COMBINADAS", 5, 100, 5, 100, "%"],
       ["maxSector", "MÁX. SECTOR DIRECTO", 10, 100, 5, 100, "%"],
       ["reserveCap", "MÁX. RESERVA SHY", 5, 100, 5, 100, "%"],
       ["maxPositions", "MÁX. POSICIONES", 2, 12, 1, 1, ""],
@@ -882,7 +883,7 @@ export function createViews(context) {
       incomeSummary: p.metrics?.dividendPolicy==="cash"
         ? `Dividendos netos estimados a efectivo USD ${fmt(p.metrics.expectedNetDividendCash,0)}; brutos USD ${fmt(p.metrics.expectedGrossDividendCash,0)}; retención supuesta ${pct(p.metrics.dividendWithholding,0)}. Flujo estimado a partir de los últimos 12 meses, no garantizado.`
         : "Distribuciones reinvertidas dentro de los rendimientos totales; sin ingresos en efectivo separados.",
-      globalLimitNote: `Límite global ${pct(p.rules.maxGlobal,0)} por instrumento; tope de excepción ${pct(p.rules.maxOpportunity,0)} únicamente con validación prospectiva independiente. Treasuries combinados ${pct(p.rules.maxTreasury,0)}. Excepciones aprobadas: ${(p.diagnostics?.concentrationPolicy?.qualified||[]).join(", ")||"ninguna"}.`,
+      globalLimitNote: `Límite global ${pct(p.rules.maxGlobal,0)} por instrumento; tope de excepción ${pct(p.rules.maxOpportunity,0)} únicamente con validación prospectiva independiente. Treasuries combinados ${pct(p.rules.maxTreasury,0)}. Acciones combinadas ${pct(p.rules.maxEquity,0)}. Excepciones aprobadas: ${(p.diagnostics?.concentrationPolicy?.qualified||[]).join(", ")||"ninguna"}.`,
       concentration: p.diagnostics?.selected?.largestPosition
         ? `${p.diagnostics.selected.largestPosition.symbol} ${pct(p.diagnostics.selected.largestPosition.weight, 1)}`
         : "No determinada",
