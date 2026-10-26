@@ -362,3 +362,17 @@ Ahora se reconcilian los finalistas verificados de las búsquedas global y condi
 Esta desigualdad se refiere a los máximos *entre candidatas efectivamente verificadas*, no a óptimos globales. La propuesta final entra en toda frontera cuyo tope cumpla, y su brecha es cero en esa frontera. El tope diagnóstico nunca amplía el mandato original. Las invariantes tienen pruebas automatizadas con diferentes semillas y restricciones.
 
 **Límites pendientes:** la selección solo simula un subconjunto del universo, las hipótesis de retorno no están calibradas exhaustivamente con datos *point-in-time* y GARCH-X y colas multivariantes siguen siendo investigación, no características validadas.
+
+
+## 14. Investigación reproducible posterior: versión 0.8.0
+
+Los componentes de investigación se ejecutan **en paralelo**, mediante el workflow `Research evidence (shadow)`; sus parámetros no modifican automáticamente el motor que propone pesos.
+
+1. **Control de información disponible:** `scripts/research_gate.py` rechaza datos obtenidos después de la emisión, capturas históricas sin vintage original y noticias con consenso posterior al anuncio. Se conservan los errores de pronóstico.
+2. **Factor-GJR residual:** `scripts/multifactor_research.py` recalibra cargas conocidas previamente (SPY, renta fija, crédito y oro como candidatos) y compara GJR-t contra EWMA sobre residuales, exclusivamente fuera de muestra. Un mejor QLIKE individual no autoriza introducir ese modelo en la optimización.
+3. **Pruebas de cola:** `scripts/tail_research.py` examina cobertura de VaR, independencia de excepciones, medias de cola y co-excedencias. `scripts/joint_tail_research.py` contrasta logscore de un modelo bivariante Student-t con uno gaussiano. La segunda prueba NO constituye un DCC-GARCH multivariante.
+4. **Registro de eventos:** `scripts/build_event_registry.py` conserva la fecha oficial SEC y la primera fecha en que el sistema capturó la publicación. El ejemplo actual no contiene consenso numérico previo validado, por lo que `news_garchx_research.py` reporta información insuficiente en lugar de inventar un *bad news effect* semántico.
+5. **Estabilidad y cobertura:** `scripts/portfolio_stability.mjs` contrasta semillas, presupuestos y muestras de activos; `portfolio_coverage.mjs` prueba admitir algunas candidatas excluidas sin permitir que entren directamente en producción. Diferentes universos no producen resultados pareados.
+6. **Pronósticos prospectivos originales:** el refresh intenta guardar `data/forecasts/YYYY-MM-DD.json` con hash de mercado, emisión real, pesos y distribución. El puntaje futuro se archiva aparte al madurar y en la primera sesión disponible posterior al vencimiento. No se reescribe la predicción original.
+
+No hay suficientes pronósticos maduros para afirmar que los retornos fundamentales, el CVaR anual, las estrategias de rebalanceo o una distribución Student-t superan modelos sencillos. La falta de vintages históricos de consenso, cambios en la composición del universo y delisted securities impide un backtest retrospectivo completo. La documentación detallada del nivel de evidencia está en [estado-validacion.md](estado-validacion.md).

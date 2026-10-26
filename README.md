@@ -14,6 +14,14 @@ Research, composición y seguimiento de una cartera personal de acciones y ETFs 
 
 La cuenta, tesis, supuestos y pronósticos quedan en este navegador. **Exportar cartera** permite conservarlos y trasladarlos. Los avisos requieren permiso del navegador y la página abierta; no hay vigilancia de la cartera personal con la página cerrada.
 
+## Validación y evidencia (0.8.0)
+
+El modelo de producción y sus pronósticos **siguen siendo experimentales**. La versión 0.8.0 añade investigaciones independientes sobre vintages/point-in-time, GJR multifactorial, coexcedencias y colas, Student-t bivariante, registros de eventos SEC y estabilidad de selección. Estas pruebas no se convierten automáticamente en nuevas reglas de inversión.
+
+[**Estado de validación, resultados, límites y comandos reproducibles**](docs/estado-validacion.md)
+
+GitHub Actions conserva diagnósticos como artefactos en **Research evidence (shadow)**; la actualización de datos intenta sellar un pronóstico independiente una sola vez por corte de mercado en `data/forecasts/` y guardará su resultado al madurar. Eso **no incluye tu cartera personal**, que permanece en el navegador. No se ha demostrado todavía calidad predictiva a doce meses ni ventaja frente a portafolios sencillos netos de costos.
+
 ## Método
 
 **Previsión.** Para acciones, BPA y múltiplo de salida propios; también ventas × margen neto / dilución, consenso comparable o mezcla 50/50. El crecimiento implícito en precio usa la misma ecuación de dividendos descontados que la valoración. El retorno anual equivalente aproxima los dividendos al final; no se suman otra vez al simular. No es un DCF completo.
@@ -24,7 +32,7 @@ La confianza subjetiva se reduce por cobertura y antigüedad de fundamentos y co
 
 Difusión correlacionada con covarianza EWMA de retornos logarítmicos, regularización fuera de diagonal del 5% y 252 sesiones/año. El retorno histórico no se utiliza como retorno esperado. En Merton, los eventos son comunes y las cargas difieren por activo: beta histórica de mercado para renta variable, duración/shock de tasas para bonos, carga asumida para oro y cero para efectivo. Cada activo utiliza su propio compensador `exp(media_i + varianza_i/2) - 1`. Los saltos y escenarios se añaden a una covarianza histórica que ya contiene shocks; es incertidumbre adicional del modelo, sin calibración estructural independiente.
 
-**Bonos y efectivo.** SHY y TLT usan TIR bruta, gastos y duración de perfiles iShares fechados. Aproximación local: carry = TIR − gastos; respuesta a tasas = −duración × cambio de tasa. Con un perfil antiguo se puede usar la curva Treasury de plazo próximo como proxy de TIR, conservando duración y fecha del perfil. No se usa Treasury 3M como retorno de SHY. No se supone convexidad de unidades desconocidas ni se modela en detalle el rolado de un ETF. CASH es efectivo sintético USD, sin remuneración ni riesgo de precio.
+**Bonos y efectivo.** SHY y TLT usan TIR bruta, gastos y duración de perfiles iShares fechados. Aproximación local: carry = TIR − gastos; respuesta a tasas = −duración × cambio de tasa. Con un perfil antiguo se puede usar la curva Treasury de plazo próximo como proxy de TIR, conservando duración y fecha del perfil. No se usa Treasury 3M como retorno de SHY. El escenario de precios utiliza una convexidad **proxy** (D(D+1)), no la convexidad efectiva publicada del fondo. No hay estimación completa del rolldown de la curva, cupones ni reinversión. CASH es efectivo sintético USD, sin remuneración ni riesgo de precio.
 
 **Mandato y decisión.** Objetivos: crecimiento logarítmico, preservación con utilidad CRRA o minimizar el faltante cuadrático frente a una meta final. Retiros/metas se expresan en moneda de referencia; cuenta y órdenes, en USD. Otras monedas requieren tipo de cambio, variación, volatilidad, correlación y confirmación explícitos. FX se compone multiplicativamente.
 
