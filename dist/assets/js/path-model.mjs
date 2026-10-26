@@ -5,20 +5,20 @@ import {
   quantile,
   sum,
   normalizeWeights,
-} from "./analytics.mjs?v=0.7.0";
-import { seededRandom, normalGenerator, poisson } from "./random.mjs?v=0.7.0";
-import { ewmaCovariance, cholesky } from "./risk-math.mjs?v=0.7.0";
-import { buildReturnAnchors, sampleDrifts } from "./return-model.mjs?v=0.7.0";
-import { assetAt } from "./research-model.mjs?v=0.7.0";
-import { factorModel } from "./factors.mjs?v=0.7.0";
-import { conditionalRisk, updateGjrVariance, updateEwmaVariance } from "./conditional-risk.mjs?v=0.7.0";
-import { marketFactorCovariance, conditionalFactorization } from "./factor-covariance.mjs?v=0.7.0";
+} from "./analytics.mjs?v=0.7.1";
+import { seededRandom, normalGenerator, poisson } from "./random.mjs?v=0.7.1";
+import { ewmaCovariance, cholesky } from "./risk-math.mjs?v=0.7.1";
+import { buildReturnAnchors, sampleDrifts } from "./return-model.mjs?v=0.7.1";
+import { assetAt } from "./research-model.mjs?v=0.7.1";
+import { factorModel } from "./factors.mjs?v=0.7.1";
+import { conditionalRisk, updateGjrVariance, updateEwmaVariance } from "./conditional-risk.mjs?v=0.7.1";
+import { marketFactorCovariance, conditionalFactorization } from "./factor-covariance.mjs?v=0.7.1";
 import {
   mandate,
   regimes,
   withdrawalSchedule,
   DEFAULT_REGIMES,
-} from "./policy.mjs?v=0.7.0";
+} from "./policy.mjs?v=0.7.1";
 
 export const BASE_REGIME = {
   id: "base",
