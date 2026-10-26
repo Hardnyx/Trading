@@ -1,0 +1,92 @@
+{
+  "schema_version": 2,
+  "origin_type": "first-capture-forward-shadow-no-trading",
+  "research_only": true,
+  "issued_at": "2026-10-26T21:55:03.935Z",
+  "issue_ny_date": "2026-10-26",
+  "original_price_as_of": "2026-10-26",
+  "market_collected_at": "2026-10-26T21:53:27.103821+00:00",
+  "maturity_date": "2027-10-26",
+  "eligibility": {
+    "eligible": true,
+    "reason": "Original-close-to-next-session-window",
+    "next_session_start_estimate": "2026-10-27T09:30 America/New_York",
+    "warning": "Weekday calendar is conservative and does not certify exchange holidays."
+  },
+  "market_sha256": "dcc41e7bee9b692d918f76d4ad2a5a4e58459e3025df3296292c725b7277bbea",
+  "volatility_sha256": "ea4e92678521acd2b83217e10b4b16a44923bb10cdd0f9a76530b3af186a50ca",
+  "engine_version": "0.10.0",
+  "model_settings": {
+    "horizon": 1,
+    "seed": 20261024,
+    "volatility_mode": "hybrid",
+    "mandate": {
+      "objective": "growth",
+      "referenceCurrency": "USD",
+      "horizon": 1,
+      "maxDrawdown": 0.25,
+      "maxDrawdownProbability": 0.25,
+      "minimumCash": 0.05,
+      "monthlyWithdrawal": 0,
+      "withdrawals": [],
+      "terminalTarget": 0,
+      "capitalFloor": 0,
+      "maxLiquidityFailure": 0.02,
+      "fxSpot": 1,
+      "fxAnnualChange": 0,
+      "fxVolatility": 0,
+      "fxMarketCorrelation": 0,
+      "fxConfirmed": false,
+      "benchmark": "SPY",
+      "riskAversion": 5,
+      "dividendPolicy": "cash",
+      "dividendWithholding": 0
+    },
+    "capital": 100000,
+    "initial_cost": 42.73173218448971
+  },
+  "model_status": "proposed",
+  "positions": [
+    {
+      "symbol": "IEF",
+      "weight": 0.10000000000000002
+    },
+    {
+      "symbol": "SGOV",
+      "weight": 0.25
+    },
+    {
+      "symbol": "CASH",
+      "weight": 0.04999999999999999
+    },
+    {
+      "symbol": "CMCSA",
+      "weight": 0.2
+    },
+    {
+      "symbol": "AMZN",
+      "weight": 0.05
+    },
+    {
+      "symbol": "NFLX",
+      "weight": 0.10000000000000002
+    },
+    {
+      "symbol": "MU",
+      "weight": 0.15000000000000002
+    },
+    {
+      "symbol": "SHV",
+      "weight": 0.1
+    }
+  ],
+  "forecast": {
+    "expected_return": 0.07330576866747224,
+    "median_return": 0.06061538629330776,
+    "p05": -0.1013754049564179,
+    "p95": 0.2949458421155966,
+    "probability_loss": 0.29033333333333333,
+    "simulated_cvar95": 0.14059138864136567
+  },
+  "note": "This is a sealed prior forecast, not proven predictive skill. It may never be silently altered by newer API data."
+}
