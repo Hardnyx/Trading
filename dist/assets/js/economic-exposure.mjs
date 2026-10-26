@@ -33,6 +33,7 @@ export function actualHoldings(a,asOf){
  return {positions:h.positions,coverage,asOf:h.as_of,source_url:h.source_url||null};
 }
 export function exposureReport(assets,weights,asOf){
+ const knownSectors=new Map(assets.filter(a=>a.type==="stock").map(a=>[a.symbol,a.sector]));
  const sleeves={treasury:0,credit:0,mixedBonds:0,usEquity:0,globalEquity:0,gold:0,unknownEtf:0},sectors={},issuers={},unknown=[];
  for(let i=0;i<assets.length;i++){
   const a=assets[i],w=weights[i]||0;if(w<=1e-8)continue;
@@ -49,14 +50,28 @@ export function exposureReport(assets,weights,asOf){
     issuers[a.symbol]=(issuers[a.symbol]||0)+w;
   }
   if(a.type==="etf"){
+   const sector=sectorETF[a.symbol];
+   // Sector-specific ETFs are entirely assigned to their published mandate.
+   // This applies whether or not an issuer-level holdings feed is present.
+   if(sector)sectors[sector]=(sectors[sector]||0)+w;
    const h=actualHoldings(a,asOf);
    if(h){
-     for(const p of h.positions)issuers[p.symbol]=(issuers[p.symbol]||0)+w*p.weight;
+     let sectorCovered=0;
+     for(const p of h.positions){
+       issuers[p.symbol]=(issuers[p.symbol]||0)+w*p.weight;
+       // Broad-market ETFs: allocate ONLY the issuer weights with a known
+       // stock sector. Missing constituent classifications stay unassigned.
+       if(!sector && knownSectors.has(p.symbol)){
+         const group=knownSectors.get(p.symbol);
+         sectors[group]=(sectors[group]||0)+w*p.weight;
+         sectorCovered+=p.weight;
+       }
+     }
      if(h.coverage<.95)unknown.push(a.symbol+" (cobertura parcial)");
+     if(!sector && sectorCovered+1e-8<h.coverage && k.includes("equity"))
+       unknown.push(a.symbol+" (sectores de holdings parciales)");
    }else if(k==="us-equity"||k==="international-equity"){
      unknown.push(a.symbol+" (cartera no disponible)");
-     const sector=sectorETF[a.symbol];
-     if(sector)sectors[sector]=(sectors[sector]||0)+w;
    }
   }
  }

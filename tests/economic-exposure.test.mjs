@@ -57,6 +57,19 @@ test("Only dated issuer holdings count as issuer overlap, unknown is never silen
  assert.ok(Math.abs(rawCorrelation([[.04,.018],[.018,.09]],0,1)-.3)<1e-8);
 });
 
+test("sector ETFs always use their advertised economic sector, even with known issuer holdings",()=>{
+ const assets=[
+  {symbol:"AAPL",type:"stock",sector:"Tecnología"},
+  {symbol:"XLK",type:"etf",sector:"Tecnología",holdings:{
+     as_of:"2026-10-20",observed_at:"2026-10-20T12:00:00Z",
+     positions:[{symbol:"AAPL",weight:.15},{symbol:"MSFT",weight:.15}]}},
+  {symbol:"CASH",type:"cash"}
+ ];
+ const result=exposureReport(assets,[.20,.25,.55],"2026-10-23");
+ assert.ok(Math.abs(result.sectors.Tecnología-.45)<1e-8);
+ assert.ok(Math.abs(result.issuers.AAPL-.2375)<1e-8);
+});
+
 test("aggregate equity cap prevents SHY reduction from forcing 60% risky stocks",()=>{
  const assets=[
   {symbol:"AAA",type:"stock",sector:"Tecnología"},
