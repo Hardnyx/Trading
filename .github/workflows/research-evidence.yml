@@ -13,6 +13,8 @@ on:
       - 'scripts/build_event_registry.py'
       - 'scripts/portfolio_stability.mjs'
       - 'data/events/verified.json'
+      - 'dist/data/market.json'
+      - 'dist/data/volatility.json'
       - 'tests/test_research_gate.py'
       - 'tests/test_multifactor_research.py'
       - 'tests/test_tail_research.py'
@@ -22,6 +24,9 @@ on:
       - '.github/workflows/research-evidence.yml'
 permissions:
   contents: read
+concurrency:
+  group: research-shadow-market
+  cancel-in-progress: true
 jobs:
   evidence:
     runs-on: ubuntu-latest
