@@ -95,4 +95,22 @@ jobs:
             echo "::error::Public application mixes cached modules"
             exit 1
           fi
+          plain_ready=0
+          for attempt in $(seq 1 12); do
+            if curl -fsSL --max-time 20 -D /tmp/trading-plain-headers "${base}/" -o /tmp/trading-plain-html &&
+              grep -Fq "app.mjs?v=${version}-${short}" /tmp/trading-plain-html; then
+              plain_ready=1
+              break
+            fi
+            echo "Default URL still serves an older HTML version (attempt ${attempt})"
+            grep -iE '^(cache-control|age|etag|last-modified):' /tmp/trading-plain-headers || true
+            sleep 8
+          done
+          if [ "$plain_ready" -ne 1 ]; then
+            echo "::error::Plain root URL is stale even when cache-busted URL is current"
+            grep -oE 'app.mjs\\?v=[^"]+' /tmp/trading-plain-html || true
+            exit 1
+          fi
+          echo "Plain public root verified: ${version}-${short}"
+          grep -iE '^(cache-control|age|etag|last-modified):' /tmp/trading-plain-headers || true
           echo "Public build verified: ${version}-${short}"
