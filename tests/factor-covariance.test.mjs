@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { marketFactorCovariance, conditionalFactorization, factorizeStressedCovariance } from "../dist/assets/js/factor-covariance.mjs";
-import { cholesky } from "../dist/assets/js/risk-math.mjs?v=0.8.2";
+import { cholesky } from "../dist/assets/js/risk-math.mjs?v=0.8.3";
 import { updateEwmaVariance, conditionalRisk } from "../dist/assets/js/conditional-risk.mjs";
 
 function histories() {

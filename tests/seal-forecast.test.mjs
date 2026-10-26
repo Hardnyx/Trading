@@ -53,3 +53,28 @@ test("weekend maturity uses the next observed common session, not a synthetic cl
   market.price_as_of="2027-10-23";
   assert.equal(maturityCheck(origin,market).status,"awaiting_trading_session");
 });
+
+test("cash dividends and taxed reinvestment cannot be scored against adjusted-close total returns",()=>{
+ for(const mandate of [{dividendPolicy:"cash",dividendWithholding:0},
+   {dividendPolicy:"reinvest",dividendWithholding:.3}]) {
+   const origin={schema_version:2,maturity_date:"2027-10-23",
+     positions:[{symbol:"AAA",weight:1}],model_settings:{mandate}};
+   const result=maturityCheck(origin,{price_as_of:"2027-10-25",assets:[]});
+   assert.equal(result.status,"unreconciled_distributions");
+   assert.equal(result.brier_loss_probability,undefined);
+ }
+});
+
+test("a comparable gross reinvestment outcome deducts the original execution cost before scoring",()=>{
+ const origin={schema_version:2,maturity_date:"2027-10-23",
+   original_price_as_of:"2026-10-23",positions:[{symbol:"AAA",weight:1}],
+   model_settings:{mandate:{dividendPolicy:"reinvest",dividendWithholding:0,
+     referenceCurrency:"USD"},capital:10000,initial_cost:100},
+   forecast:{probability_loss:.2,p05:-.02,p95:.02}};
+ const market={price_as_of:"2027-10-25",assets:[{symbol:"AAA",history:[
+   {date:"2026-10-23",adj_close:100},{date:"2027-10-25",adj_close:100.5}]}]};
+ const result=maturityCheck(origin,market);
+ assert.ok(result.realized_buy_and_hold_gross>0);
+ assert.ok(result.realized_after_initial_cost<0);
+ assert.ok(Math.abs(result.brier_loss_probability-.64)<1e-12);
+});

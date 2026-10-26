@@ -1,8 +1,9 @@
 import json
+import gzip
+from pathlib import Path
 import tempfile
 import unittest
-from pathlib import Path
-from scripts.etf_holdings import parse_fund, enrich_holdings
+from scripts.etf_holdings import parse_fund, enrich_holdings, EQUITY_ETFS
 
 class HoldingsTests(unittest.TestCase):
     payload={"ticker":"SPY","holdings_as_of":"2026-10-22",
@@ -80,5 +81,37 @@ class HoldingsTests(unittest.TestCase):
             "2026-10-26T01:00:00Z",lambda *_:b"{}")
         self.assertEqual(result["downloaded"],0)
         self.assertEqual(len(result["errors"]),1)
+
+    def test_expanded_equity_catalog_is_included_and_five_hundred_rows_are_retained(self):
+        self.assertTrue({"VUG","SCHD","XBI","IBB","KWEB","EWT"}<=EQUITY_ETFS)
+        p={**self.payload,"holdings":{f"STK{i}":.2 for i in range(500)}}
+        r=parse_fund(p,"SPY","2026-10-23","2026-10-26T09:00:00Z")
+        self.assertEqual(len(r["positions"]),500)
+        self.assertAlmostEqual(r["covered_weight"],1)
+
+    def test_same_date_revisions_preserve_both_original_provider_responses(self):
+        revised={**self.payload,"holdings":{**self.payload["holdings"],"AAPL":6.7}}
+        assets=[{"symbol":"SPY","type":"etf"}]
+        with tempfile.TemporaryDirectory() as directory:
+            enrich_holdings(assets,{},"2026-10-23","2026-10-25T01:00:00Z",
+                lambda *_:json.dumps(self.payload).encode(),archive_dir=directory)
+            old=assets[0]["holdings"]
+            enrich_holdings(assets,{"SPY":{"holdings":old}},"2026-10-23",
+                "2026-10-26T01:00:00Z",lambda *_:json.dumps(revised).encode(),
+                archive_dir=directory)
+            files=list(Path(directory).rglob("*.json.gz"))
+            self.assertEqual(len(files),2)
+            self.assertNotEqual(old["source_sha256"],assets[0]["holdings"]["source_sha256"])
+            self.assertEqual({json.loads(gzip.decompress(p.read_bytes()))["holdings"]["AAPL"]
+                              for p in files},{7.7,6.7})
+
+    def test_provider_regression_cannot_replace_a_newer_holdings_record(self):
+        old=parse_fund(self.payload,"SPY","2026-10-23","2026-10-25T01:00:00Z")
+        earlier={**self.payload,"holdings_as_of":"2026-06-30"}
+        assets=[{"symbol":"SPY","type":"etf"}]
+        result=enrich_holdings(assets,{"SPY":{"holdings":old}},"2026-10-23",
+            "2026-10-26T01:00:00Z",lambda *_:json.dumps(earlier).encode())
+        self.assertEqual(assets[0]["holdings"],old)
+        self.assertEqual(result["retained"],1)
 
 if __name__=="__main__":unittest.main()

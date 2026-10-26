@@ -1,6 +1,6 @@
 # Estado de validación de Trading
 
-**Fecha del diagnóstico:** 25 de octubre de 2026, con cortes de precios publicados por el repositorio.
+**Fecha del diagnóstico:** 26 de octubre de 2026, con cortes de precios publicados por el repositorio.
 **Clasificación:** investigación activa; no es asesoramiento de inversión ni certificación predictiva.
 
 ## 1. Qué significa «implementado»
@@ -114,3 +114,15 @@ La pantalla de composición ahora dispone de reglas globales, grupo Treasury, in
 **Pendiente:** descarga y conciliación diaria de todas las holdings de emisores, ex-dates/pay-dates exactos, tratamiento fiscal por jurisdicción, curva de tasas completa, validación PIT y calibración predictiva del riesgo de cola. Un tope conserva diversificación por construcción, no prueba superioridad económica.
 
 **Control adicional 0.8.1:** la exposición a renta variable directa y ETF accionarios también se limita a 50% agregado por defecto, para que el tope individual de SHY no transfiera sin más el riesgo hacia acciones con retornos no calibrados. No sustituye una evaluación histórica de objetivos y utilidad.
+
+### Correcciones 0.8.3: exposición completa y conciliación de distribuciones
+
+- Los 77 ETF del catálogo publicado tienen clasificación económica. VGSH, VGIT, VGLT y SHV consumen el presupuesto Treasury; los fondos de estilo, dividendos y países consumen el de renta variable. Los ETF de clasificación desconocida no se autorizan para compras nuevas.
+- El límite inicial de 20% por acción suma exposición directa e indirecta por emisor y agrega clases conocidas. La composición faltante consume capacidad mediante cotas conservadoras por emisor y sector. Las cotas se identifican como tales y no como holdings observadas.
+- La ingesta cubre también el catálogo ampliado de ETF accionarios y admite hasta 5.000 posiciones, en lugar de recortar cada fondo a 300. Conservar una captura no obliga a considerarla vigente: a partir de 120 días se trata como composición desconocida. Una respuesta antigua del proveedor no reemplaza otra más reciente; las revisiones del mismo día se archivan con hashes diferentes.
+- El dividendo del paso usa el precio del mismo paso para conservar la identidad de rendimiento total. La retención también se aplica al reinvertir. La atribución concilia con la valoración sobre los mismos escenarios, costos y política.
+- El diario conserva la política efectivamente simulada. Sin conciliación realizada de distribuciones o impuestos, no calcula Brier ni cobertura usando solo precios ajustados. Los resultados incompletos pueden reevaluarse en un refresco futuro; no se fijan como un desenlace definitivo. Las capturas originales existentes no se reescriben.
+
+Sobre el mismo corte del 23 de octubre, semilla 20261024, USD 100.000, 300 candidatas, 600 escenarios de búsqueda y 3.000 de verificación, la comprobación determinista cambió AMZN de 20% a 15%, sustituyó GOOGL 5% por MU 5% y NVDA 5%, conservando SHY 35%, efectivo 15%, CMCSA 20% y NFLX 5%. El retorno mediano simulado fue 5,70% y CVaR 12,08%, frente a 5,43% y 13,35% en 0.8.1. **La diferencia describe dos resultados de búsqueda bajo supuestos, no una mejora económica demostrada fuera de muestra.**
+
+La cobertura real del proveedor sigue siendo parcial. Fechas de pago confirmadas, fiscalidad por instrumento, curvas completas, sorpresa de noticias, calibración de retornos y validación de colas continúan pendientes de datos y evidencia suficientes.

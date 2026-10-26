@@ -1,6 +1,6 @@
-import { template as t } from "./templates.mjs?v=0.8.2";
-import { pct, fmt, money, dateLabel } from "./format.mjs?v=0.8.2";
-import { finite, sum, normalizeWeights } from "../analytics.mjs?v=0.8.2";
+import { template as t } from "./templates.mjs?v=0.8.3";
+import { pct, fmt, money, dateLabel } from "./format.mjs?v=0.8.3";
+import { finite, sum, normalizeWeights } from "../analytics.mjs?v=0.8.3";
 import {
   DEFAULT_MANDATE,
   DEFAULT_EXECUTION,
@@ -8,15 +8,15 @@ import {
   DEFAULT_REGIMES,
   currentAccount,
   informationDate,
-} from "../policy.mjs?v=0.8.2";
+} from "../policy.mjs?v=0.8.3";
 import {
   fundamentalForecast,
   businessQuality,
   evaluateThesis,
   bondAssumptions,
-} from "../research-model.mjs?v=0.8.2";
-import { factorModel, factorAttribution } from "../factors.mjs?v=0.8.2";
-import { evaluateJournal } from "../journal.mjs?v=0.8.2";
+} from "../research-model.mjs?v=0.8.3";
+import { factorModel, factorAttribution } from "../factors.mjs?v=0.8.3";
+import { evaluateJournal } from "../journal.mjs?v=0.8.3";
 const objectives = {
   growth: "Crecimiento logarítmico",
   preservation: "Preservación · utilidad CRRA",
@@ -827,6 +827,7 @@ export function createDecisionViews({ state = {}, data, asset }) {
         missing: "Sin datos comparables",
         missing_fx: "Falta historia FX",
         unreconciled_flows: "Retiros sin realización conciliada",
+        unreconciled_distributions: "Dividendos o retención sin conciliar",
         scored: "Evaluado",
       };
     return section(

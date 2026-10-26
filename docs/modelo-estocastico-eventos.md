@@ -380,17 +380,48 @@ No hay suficientes pronósticos maduros para afirmar que los retornos fundamenta
 
 ## 15. Política de diversificación e ingresos por distribuciones
 
-La versión 0.8.1 diferencia la exposición económica a deuda Treasury común, sector y emisor. La restricción de parejas con ETF utiliza correlación de rentabilidades **totales observadas**, no solamente residuales tras descontar el mercado. Si no existe cartera subyacente oficial y fechada, se indica cobertura incompleta y nunca se inventan ponderaciones. Un ETF de deuda Treasury y otro del mismo emisor forman parte del mismo presupuesto agregado.
+La versión 0.8.3 diferencia la exposición económica a deuda Treasury común, sector y emisor. La restricción de parejas con ETF utiliza correlación de rentabilidades **totales observadas**, no solamente residuales tras descontar el mercado. Las holdings se conservan con origen y fecha de primera observación, incluidas fuentes secundarias que reproducen al emisor o la SEC. La falta de composición no demuestra diversificación. Los fondos Treasury comparten presupuesto con independencia del gestor que los administra.
 
 Los límites iniciales son 35% por instrumento (excluido efectivo) y 60% por conjunto Treasury, con posibilidad de superar el límite global hasta 50% **solamente** mediante evidencia prospectiva auditada que aún no está disponible. Su racionalidad es prudencial, no una predicción de pesos óptimos.
 
-Los precios ajustados de Yahoo ya integran dividendos: añadir su importe como un retorno adicional contaría dos veces la distribución. El componente de flujos descompone la trayectoria total en un rendimiento ex-dividendo aproximado y un ingreso no reinvertido, con retención paramétrica, según:
+### 15.1 Identidad de precio, distribución y reinversión
+
+Los precios ajustados usados por el modelo representan rendimiento total: añadir dividendos como retorno adicional produciría doble conteo. Sea $G_{i,k}$ el factor acumulado de rendimiento total bruto y $y_i$ el rendimiento efectivo anual supuesto para descomponer distribuciones. En pasos de duración $\Delta t$, se define $d_i=(1+y_i)^{\Delta t}-1$. La proxy de precio por participación y el dividendo bruto por participación inicial son:
 
 ```math
-G_{i,t}^{precio} = \frac{G_{i,t}^{total}}{(1+y_i)^t},
-\qquad
-D_{i,t} \approx V_{i,0}w_iG_{i,t-\Delta t}^{precio}
-[(1+y_i)^{\Delta t}-1](1-\tau).
+P_{i,k}=\frac{G_{i,k}}{(1+d_i)^k},\qquad
+D_{i,k}=d_iP_{i,k},\qquad
+\frac{P_{i,k}+D_{i,k}}{P_{i,k-1}}=
+\frac{G_{i,k}}{G_{i,k-1}}.
 ```
 
-La tasa y_i procede del último año de distribuciones conocidas. La trayectoria de ingreso se aproxima uniformemente por pasos; **no reproduce fechas efectivas de pago ni reinversión de cupones**. La retención supuesta de 0% no constituye recomendación fiscal. La hipótesis de pagos históricos persistentes y los grupos de exposición no reemplazan una validación cuantitativa fuera de muestra.
+La distribución se calcula sobre el precio del paso actual. Usar el precio anterior en esa misma descomposición rompe la identidad cuando cambia el rendimiento total del paso. Con capital neto inicial $V_0$, peso $w_i$ y retención supuesta $\tau$, el patrimonio sin reinversión es:
+
+```math
+V_k^{\mathrm{efectivo}}=
+V_0\sum_iw_iP_{i,k}+
+V_0\sum_iw_i\sum_{j=1}^{k}(1-\tau)D_{i,j}.
+```
+
+Con reinversión, solo la distribución neta compra nuevas participaciones. El valor de la posición y las participaciones acumuladas cumplen:
+
+```math
+q_{i,k}=q_{i,k-1}[1+(1-\tau)d_i],\quad q_{i,0}=1,
+\qquad
+V_k^{\mathrm{reinvertido}}=V_0\sum_iw_iG_{i,k}
+\left[\frac{1+(1-\tau)d_i}{1+d_i}\right]^k.
+```
+
+Con retención cero se recupera exactamente el rendimiento total simulado. Con retención positiva se reduce el valor reinvertido; la reinversión no suministra efectivo para retiros. Valoración, liquidez y atribución utilizan los mismos coeficientes y se contrastan con un registro explícito de participaciones en pruebas deterministas.
+
+La tasa $y_i$ procede del último año de distribuciones conocidas. Es una hipótesis de rendimiento distribuido sobre precio del final de cada paso; **no reproduce fechas efectivas de pago, cupones contractuales ni tasas fiscales por jurisdicción**. El efectivo cobrado no se remunera en esta aproximación. La retención supuesta de 0% no representa una exención. El registro prospectivo conserva la política de dividendos y no puntúa contra precios ajustados los casos con cobro en efectivo o retención sin realización conciliada.
+
+La distinción entre índice de precio y rendimiento total sigue la [metodología matemática de S&P DJI](https://www.spglobal.com/spdji/en/documents/methodologies/methodology-index-math.pdf). La existencia de impuestos aun con reinversión se explica en la [documentación de Vanguard](https://investor.vanguard.com/investor-resources-education/online-trading/reinvest-dividends); no se deduce de ella una tasa aplicable al usuario. Las ecuaciones anteriores son la aproximación propia de Trading.
+
+### 15.2 Exposición observada y cotas de concentración
+
+Las distintas clases reconocidas de un emisor se suman: por ejemplo, GOOG y GOOGL comparten exposición a Alphabet. El límite por acción del mandato se aplica a la suma directa e indirecta. Se distinguen los pesos conocidos de sus cotas conservadoras; no se publican las cotas como composición real.
+
+Si $E_s$ es la exposición conocida al sector $s$ y $U$ la parte de renta variable sin clasificación sectorial, se exige $E_s+U\leq L_s$, además de $U\leq L_s$. Para un emisor $j$, solo se añade la parte no identificada de fondos donde ese emisor no figura entre las posiciones reconocidas. El total no identificado también debe respetar el límite por emisor. Son comprobaciones robustas frente a composición faltante, no probabilidades ni pesos estimados. Una cartera puede resultar conservadora por falta de datos.
+
+Las holdings con antigüedad superior a 120 días no se utilizan como composición vigente. El plazo es un guardarraíl configurable en código, sin validación empírica de optimalidad. La descarga admite hasta 5.000 líneas por fondo y guarda revisiones con hash del original, sin sobrescribir otra respuesta del mismo día. La correlación de precios, el solapamiento conocido entre holdings y el riesgo sistémico total permanecen como medidas distintas.

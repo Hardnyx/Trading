@@ -1,9 +1,9 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { evaluatePaths } from "../dist/assets/js/path-model.mjs?v=0.8.2";
-import { portfolioAttribution } from "../dist/assets/js/attribution.mjs?v=0.8.2";
-import { annualDistributionYield, dividendStep } from "../dist/assets/js/cashflows.mjs?v=0.8.2";
-import { mandate } from "../dist/assets/js/policy.mjs?v=0.8.2";
+import { evaluatePaths } from "../dist/assets/js/path-model.mjs?v=0.8.3";
+import { portfolioAttribution } from "../dist/assets/js/attribution.mjs?v=0.8.3";
+import { annualDistributionYield, dividendStep } from "../dist/assets/js/cashflows.mjs?v=0.8.3";
+import { mandate } from "../dist/assets/js/policy.mjs?v=0.8.3";
 
 function fixture(dividendPolicy="cash",dividendWithholding=0){
  const steps=12,paths=100,dt=1/12;
@@ -42,4 +42,54 @@ test("Assumed withholding reduces cash dividends and scenario total return",()=>
  assert.ok(taxed.expectedGrossDividendCash===free.expectedGrossDividendCash);
  const paid=fixture("cash",.3);
  assert.ok(Math.abs(portfolioAttribution(paid.assets,[.5,.5],paid,0,10000).meanReturn-taxed.meanReturn)<1e-8);
+});
+
+function explicitPath(levels, dividendPolicy="cash", dividendWithholding=0) {
+ const sample=fixture(dividendPolicy,dividendWithholding);
+ sample.steps=levels.length-1;sample.dt=1/sample.steps;
+ sample.gross=sample.assets.map((_,i)=>Float64Array.from(
+   {length:sample.paths*levels.length},(_,k)=>i===0?levels[k%levels.length]:1));
+ sample.fx=new Float64Array(sample.paths*levels.length).fill(1);
+ return sample;
+}
+test("a single distribution conserves total return on rising and falling paths",()=>{
+ for(const total of [.6,.9,1,1.3]) {
+   const dist=dividendStep(1,total,.04,1,1);
+   assert.ok(Math.abs(dist.priceGross+dist.grossCash-total)<1e-12);
+   const r=evaluatePaths([1,0],explicitPath([1,total]),{capital:10000});
+   assert.ok(Math.abs(r.meanReturn-(total-1))<1e-12);
+ }
+});
+test("cash and taxed reinvestment reconcile with an explicit two-step share ledger",()=>{
+ const levels=[1,1.25,.85],d=Math.sqrt(1.04)-1,capital=10000,tax=.3;
+ for(const mode of ["cash","reinvest"]) {
+   const s=explicitPath(levels,mode,tax);
+   let shares=1,cash=0,grossPaid=0,netReinvested=0,withheld=0;
+   for(let t=1;t<levels.length;t++) {
+     const price=levels[t]/(1+d)**t;
+     const gross=shares*price*d;
+     grossPaid+=gross;withheld+=gross*tax;
+     if(mode==="cash")cash+=gross*(1-tax);
+     else {shares+=gross*(1-tax)/price;netReinvested+=gross*(1-tax);}
+   }
+   const wealth=shares*levels.at(-1)/(1+d)**2+cash;
+   const r=evaluatePaths([1,0],s,{capital});
+   assert.ok(Math.abs(r.meanReturn-(wealth-1))<1e-12);
+   assert.ok(Math.abs(r.expectedGrossDistributions-capital*grossPaid)<1e-8);
+   assert.ok(Math.abs(r.expectedDividendWithholding-capital*withheld)<1e-8);
+   assert.ok(Math.abs(r.expectedNetReinvestedDividends-capital*netReinvested)<1e-8);
+   const attribution=portfolioAttribution(s.assets,[1,0],s,0,capital);
+   assert.ok(Math.abs(attribution.meanReturn-r.meanReturn)<1e-12);
+   assert.ok(Math.abs(attribution.cvar95-r.cvar95)<1e-12);
+ }
+});
+test("reinvestment deducts withholding and never supplies cash for a withdrawal",()=>{
+ const free=evaluatePaths([1,0],fixture("reinvest",0),{capital:10000});
+ const taxed=fixture("reinvest",.3);
+ taxed.policy.withdrawals=[{date:"2027-01-23",amount:1}];
+ const r=evaluatePaths([1,0],taxed,{capital:10000});
+ assert.ok(r.meanReturn<free.meanReturn);
+ assert.ok(r.expectedDividendWithholding>0);
+ assert.equal(r.expectedNetDividendCash,0);
+ assert.equal(r.liquidityFailureProbability,1);
 });

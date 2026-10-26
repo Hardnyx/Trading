@@ -3,7 +3,7 @@
  * cases without cashflows. Not a causal factor attribution, portfolio CVaR
  * gradient, or an out-of-sample proof. Same held-out verification scenarios.
  */
-import { annualDistributionYield,dividendStep } from "./cashflows.mjs?v=0.8.2";
+import { distributionFactors } from "./cashflows.mjs?v=0.8.3";
 export function portfolioAttribution(assets, weights, sample, cost=0, capital=100000) {
   if (!Array.isArray(assets) || weights.length !== assets.length ||
       sample.assets.length !== assets.length || !(capital > cost) || cost < 0)
@@ -18,20 +18,18 @@ export function portfolioAttribution(assets, weights, sample, cost=0, capital=10
     return {available:false,reason:"Requiere cartera USD sin retiros y sin conversión FX"};
   const rows=[],terminal=[];
   const afterCosts=1-cost/capital,
-    yields=assets.map(annualDistributionYield),
-    income=policy.dividendPolicy==="cash",
-    tax=policy.dividendWithholding||0;
+    distributions=assets.map(a=>distributionFactors(a,sample.steps,
+      sample.dt??(policy.horizon||1)/sample.steps,policy));
   for(let p=0;p<sample.paths;p++){
     const components=weights.map((w,i)=>{
       const offset=p*(sample.steps+1)+sample.steps;
-      if(!income||!yields[i])return w*afterCosts*(sample.gross[i][offset]-1);
+      const dist=distributions[i];
       let cash=0;
       for(let t=1;t<=sample.steps;t++){
         const k=p*(sample.steps+1)+t;
-        cash+=dividendStep(sample.gross[i][k-1],sample.gross[i][k],
-          yields[i],t,sample.dt,tax).netCash;
+        cash+=sample.gross[i][k]*dist.netCash[t];
       }
-      const price=sample.gross[i][offset]/Math.pow(1+yields[i],sample.steps*sample.dt);
+      const price=sample.gross[i][offset]*dist.marketValue[sample.steps];
       return w*afterCosts*(price+cash-1);
     });
     rows.push(components);

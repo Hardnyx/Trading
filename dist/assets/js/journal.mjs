@@ -1,6 +1,6 @@
-import { finite, mean, normalizeWeights, sum } from "./analytics.mjs?v=0.8.2";
-import { adjustedReturn } from "./factors.mjs?v=0.8.2";
-import { MODEL_VERSION } from "./policy.mjs?v=0.8.2";
+import { finite, mean, normalizeWeights, sum } from "./analytics.mjs?v=0.8.3";
+import { adjustedReturn } from "./factors.mjs?v=0.8.3";
+import { MODEL_VERSION } from "./policy.mjs?v=0.8.3";
 const clone = (value) => JSON.parse(JSON.stringify(value));
 function hash(value) {
   let h = 2166136261;
@@ -47,6 +47,7 @@ export function journalOrigin(
         financials: a.financials,
         analyst_estimates: a.analyst_estimates || null,
         bond_profile: a.bond_profile || null,
+        dividend_per_share: a.dividend_per_share ?? null,
       })),
   };
   const parts = Object.fromEntries(
@@ -117,6 +118,7 @@ export function appendForecast(journal, origin, forecast) {
       covariance: clone(forecast.covariance || []),
       marketLoadings: clone(forecast.settings.marketLoadings || {}),
     },
+    cashflow_policy: clone(forecast.policy || origin.settings?.mandate || null),
     attribution: clone(
       forecast.drifts.map((r) => ({
         symbol: r.symbol,
@@ -137,7 +139,9 @@ export function evaluateJournal(journal, snapshot) {
     if (entry.outcome) return { ...entry, ...entry.outcome, status: "scored" };
     if (entry.target_date > snapshot.price_as_of)
       return { ...entry, status: "immature" };
-    const policy = origin.settings?.mandate;
+    const policy = entry.cashflow_policy || origin.settings?.mandate;
+    if(policy?.dividendPolicy==="cash" || (policy?.dividendWithholding||0)>0)
+      return {...entry,status:"unreconciled_distributions"};
     if (
       (policy?.monthlyWithdrawal || 0) > 0 ||
       (policy?.withdrawals || []).some((r) => r.amount > 0)

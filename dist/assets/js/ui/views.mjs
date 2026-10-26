@@ -4,7 +4,7 @@ import {
   normalizeWeights,
   metrics,
   scenarios,
-} from "../analytics.mjs?v=0.8.2";
+} from "../analytics.mjs?v=0.8.3";
 import {
   sparkline,
   portfolioChart,
@@ -13,7 +13,7 @@ import {
   scatter,
   forecastCone,
   histogram,
-} from "../charts.mjs?v=0.8.2";
+} from "../charts.mjs?v=0.8.3";
 import {
   esc,
   url,
@@ -23,13 +23,13 @@ import {
   compact,
   color,
   dateLabel,
-} from "./format.mjs?v=0.8.2";
-import { template } from "./templates.mjs?v=0.8.2";
-import { DEFAULT_COMPOSITION_RULES } from "../composer.mjs?v=0.8.2";
-import { factorModel } from "../factors.mjs?v=0.8.2";
-import { MODEL_VERSION } from "../policy.mjs?v=0.8.2";
+} from "./format.mjs?v=0.8.3";
+import { template } from "./templates.mjs?v=0.8.3";
+import { DEFAULT_COMPOSITION_RULES } from "../composer.mjs?v=0.8.3";
+import { factorModel } from "../factors.mjs?v=0.8.3";
+import { MODEL_VERSION } from "../policy.mjs?v=0.8.3";
 
-import { createDecisionViews } from "./decision-views.mjs?v=0.8.2";
+import { createDecisionViews } from "./decision-views.mjs?v=0.8.3";
 
 export const NAV = [
   ["portfolio", "Componer cartera", "F1"],
@@ -723,13 +723,13 @@ export function createViews(context) {
   function compositionControls() {
     const rules = { ...DEFAULT_COMPOSITION_RULES, ...state.compositionRules };
     const fields = [
-      ["maxPosition", "MÁX. POR ACCIÓN", 5, 50, 5, 100, "%"],
+      ["maxPosition", "MÁX. EMISOR · ACCIÓN + ETF", 5, 50, 5, 100, "%"],
       ["maxFund", "MÁX. ETF · LÍMITE ESPECÍFICO", 5, 100, 5, 100, "%"],
       ["maxGlobal", "MÁX. GLOBAL POR ACTIVO", 5, 75, 5, 100, "%"],
       ["maxOpportunity", "TOPE POR OPORTUNIDAD VALIDADA", 5, 75, 5, 100, "%"],
       ["maxTreasury", "MÁX. TREASURIES COMBINADOS", 5, 100, 5, 100, "%"],
       ["maxEquity", "MÁX. ACCIONES COMBINADAS", 5, 100, 5, 100, "%"],
-      ["maxSector", "MÁX. SECTOR DIRECTO", 10, 100, 5, 100, "%"],
+      ["maxSector", "MÁX. SECTOR · ACCIÓN + ETF", 10, 100, 5, 100, "%"],
       ["reserveCap", "MÁX. RESERVA SHY", 5, 100, 5, 100, "%"],
       ["maxPositions", "MÁX. POSICIONES", 2, 12, 1, 1, ""],
       ["maxCorrelation", "CORRELACIÓN MÁXIMA", 0.1, 1, 0.05, 1, "ρ"],
@@ -863,7 +863,7 @@ export function createViews(context) {
         const d=p.diagnostics?.economicExposure;
         if(!d)return "Sin desglose económico";
         const s=d.sleeves;
-        return `Treasuries ${pct(s.treasury,1)} · Crédito ${pct(s.credit,1)} · Acciones USA ${pct(s.usEquity,1)} · Oro ${pct(s.gold,1)}`;
+        return `Treasuries ${pct(s.treasury,1)} · Crédito ${pct(s.credit,1)} · Bonos mixtos ${pct(s.mixedBonds,1)} · Acciones USA ${pct(s.usEquity,1)} · Acciones internacionales ${pct(s.globalEquity,1)} · Oro ${pct(s.gold,1)}`;
       })(),
       overlapSummary: (() => {
         const r=p.diagnostics?.etfCorrelations||[];
@@ -871,9 +871,9 @@ export function createViews(context) {
           ? r.slice(0,5).map(x =>
               x.pair+" corr. total "+fmt(x.totalCorrelation,2)+
               (x.residualCorrelation===null?"":", residual "+fmt(x.residualCorrelation,2))+
-              (x.holdingsOverlap?.available
-                ?", holdings compartidos identificados ≥"+pct(x.holdingsOverlap.lowerBound,1)
-                :""))
+              (x.knownHoldingsOverlap==null?", holdings compartidas sin verificar":
+                ", solapamiento conocido "+pct(x.knownHoldingsOverlap,1)+
+                ", exposición compartida "+pct(x.knownSharedPortfolioWeight,1)+" de cartera"))
             .join(" · ")
           : "No hay parejas relevantes con ETF en la propuesta.";
       })(),
@@ -892,15 +892,22 @@ export function createViews(context) {
             : "Sin fuente verificable"
         })
       ).join(""),
+      lookthroughSummary: (()=>{
+        const d=p.diagnostics?.economicExposure;
+        if(!d)return "Sin desglose por emisor";
+        const top=Object.entries(d.issuers).sort((a,b)=>b[1]-a[1]).slice(0,6)
+          .map(([s,w])=>s+" "+pct(w,1)).join(" · ")||"sin acciones";
+        return `Emisores conocidos (directo + ETF): ${top}. Parte sin identificar por emisor ${pct(d.unclassifiedIssuerWeight||0,1)} y por sector ${pct(d.unclassifiedSectorWeight||0,1)} de la cartera. Los topes usan cotas conservadoras para esa parte; no representan pesos observados.`;
+      })(),
       exposureWarning: (() => {
         const d=p.diagnostics?.economicExposure;
         return d?.unknownHoldings?.length
-          ? "Sin holdings verificadas al corte: " + d.unknownHoldings.join(", ") + ". No se asume diversificación de posiciones desconocidas."
+          ? "Holdings incompletas o no utilizables al corte: " + d.unknownHoldings.join(", ") + ". Composiciones de más de 120 días se excluyen del desglose; su parte desconocida limita las compras."
           : "No hay holdings desconocidas entre las posiciones seleccionadas.";
       })(),
       incomeSummary: p.metrics?.dividendPolicy==="cash"
         ? `Dividendos netos estimados a efectivo USD ${fmt(p.metrics.expectedNetDividendCash,0)}; brutos USD ${fmt(p.metrics.expectedGrossDividendCash,0)}; retención supuesta ${pct(p.metrics.dividendWithholding,0)}. Flujo estimado a partir de los últimos 12 meses, no garantizado.`
-        : "Distribuciones reinvertidas dentro de los rendimientos totales; sin ingresos en efectivo separados.",
+        : `Distribuciones netas estimadas reinvertidas USD ${fmt(p.metrics.expectedNetReinvestedDividends||0,0)}; retención estimada USD ${fmt(p.metrics.expectedDividendWithholding||0,0)} (${pct(p.metrics.dividendWithholding||0,0)}). La reinversión no deja efectivo disponible para retiros.`,
       globalLimitNote: `Límite global ${pct(p.rules.maxGlobal,0)} por instrumento; tope de excepción ${pct(p.rules.maxOpportunity,0)} únicamente con validación prospectiva independiente. Treasuries combinados ${pct(p.rules.maxTreasury,0)}. Acciones combinadas ${pct(p.rules.maxEquity,0)}. Excepciones aprobadas: ${(p.diagnostics?.concentrationPolicy?.qualified||[]).join(", ")||"ninguna"}.`,
       concentration: p.diagnostics?.selected?.largestPosition
         ? `${p.diagnostics.selected.largestPosition.symbol} ${pct(p.diagnostics.selected.largestPosition.weight, 1)}`

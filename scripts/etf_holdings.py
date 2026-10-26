@@ -13,16 +13,22 @@ import re
 API="https://tickerinside.com/api/v1/fund/{symbol}.json"
 ATTRIBUTION="TickerInside (https://tickerinside.com/), CC BY 4.0; filings or issuer holdings"
 EQUITY_ETFS=frozenset("""SPY QQQ IWM VTI VXUS VEA VWO EEM EFA EWJ EWZ EWW ECH EPU
- XLK XLC XLY XLP XLF XLE XLV XLI XLU XLRE XLB SMH SOXX VNQ KRE""".split())
+ XLK XLC XLY XLP XLF XLE XLV XLI XLU XLRE XLB SMH SOXX VNQ KRE
+ VTV VUG SCHD QUAL USMV MTUM RSP DIA VIG DGRO SPLV
+ INDA MCHI FXI EWG EWU EWC EWA EWT XBI IBB KWEB""".split())
 VALID_TICKER=re.compile(r"^[A-Z0-9][A-Z0-9.\-]{0,13}$")
 DATE=re.compile(r"^\d{4}-\d\d-\d\d$")
 
-def parse_fund(raw, ticker, price_cut, observed_at, depth=300):
+def parse_fund(raw, ticker, price_cut, observed_at, depth=5000):
     if not isinstance(raw,dict) or raw.get("ticker")!=ticker:
         raise ValueError("ETF identifier mismatch")
     date=raw.get("holdings_as_of")
     if not isinstance(date,str) or not DATE.fullmatch(date) or date>price_cut:
         raise ValueError("Missing holdings date or holdings date after price cut")
+    dt.date.fromisoformat(date)
+    observation=dt.datetime.fromisoformat(observed_at.replace("Z","+00:00"))
+    if observation.tzinfo is None:
+        raise ValueError("Holdings observation requires a timezone")
     if raw.get("source_layer") not in ("issuer","sec_nport"):
         raise ValueError("Unverifiable issuer / SEC source")
     holdings=raw.get("holdings")
@@ -50,6 +56,7 @@ def parse_fund(raw, ticker, price_cut, observed_at, depth=300):
     return {"as_of":date,"observed_at":observed_at,
             "positions":positions,"positions_reported":len(weights),
             "covered_weight":round(sum(p["weight"] for p in positions),9),
+            "depth_limit":depth,"positions_truncated":max(0,len(weights)-len(positions)),
             "all_equity_weight":round(total,9),
             "unmatched_non_numeric":non_numeric,
             "excluded_short_weight":round(negative_exposure,9),
@@ -81,16 +88,17 @@ def enrich_holdings(assets, old_assets, price_cut, observed_at, fetch,
             original=fetch(url,f"etf-current-{symbol.lower()}.json")
             if len(original)>3_000_000:raise ValueError("Response exceeds ETF size limit")
             result=parse_fund(json.loads(original),symbol,price_cut,observed_at)
-            digest=hashlib.sha256(original).hexdigest()
-            result["source_sha256"]=digest
+            result["source_sha256"]=hashlib.sha256(original).hexdigest()
+            if old and old["as_of"]>result["as_of"]:
+                raise ValueError("Provider holdings regressed; retained newer dated record")
             if (old and old.get("as_of")==result["as_of"] and
                 old.get("positions")==result["positions"] and
                 old.get("source_layer")==result["source_layer"]):
                 result["observed_at"]=old["observed_at"]
             if archive_dir is not None:
-                # Same report-date may be corrected later; never erase the
-                # earlier original or silently make it appear unrevised.
-                dest=Path(archive_dir)/result["as_of"]/(symbol+"-"+digest[:16]+".json.gz")
+                # A provider can revise the same holdings date. Preserve every
+                # original response, without overwriting the earlier version.
+                dest=Path(archive_dir)/result["as_of"]/(symbol+"-"+result["source_sha256"][:16]+".json.gz")
                 if not dest.exists():
                     dest.parent.mkdir(parents=True,exist_ok=True)
                     with dest.open("xb") as f:f.write(gzip.compress(original,mtime=0))

@@ -5,21 +5,21 @@ import {
   quantile,
   sum,
   normalizeWeights,
-} from "./analytics.mjs?v=0.8.2";
-import { seededRandom, normalGenerator, poisson } from "./random.mjs?v=0.8.2";
-import { ewmaCovariance, cholesky } from "./risk-math.mjs?v=0.8.2";
-import { buildReturnAnchors, sampleDrifts, bondScenarioAnnualReturn } from "./return-model.mjs?v=0.8.2";
-import { annualDistributionYield, dividendStep } from "./cashflows.mjs?v=0.8.2";
-import { assetAt } from "./research-model.mjs?v=0.8.2";
-import { factorModel } from "./factors.mjs?v=0.8.2";
-import { conditionalRisk, updateGjrVariance, updateEwmaVariance } from "./conditional-risk.mjs?v=0.8.2";
-import { marketFactorCovariance, conditionalFactorization } from "./factor-covariance.mjs?v=0.8.2";
+} from "./analytics.mjs?v=0.8.3";
+import { seededRandom, normalGenerator, poisson } from "./random.mjs?v=0.8.3";
+import { ewmaCovariance, cholesky } from "./risk-math.mjs?v=0.8.3";
+import { buildReturnAnchors, sampleDrifts, bondScenarioAnnualReturn } from "./return-model.mjs?v=0.8.3";
+import { distributionFactors } from "./cashflows.mjs?v=0.8.3";
+import { assetAt } from "./research-model.mjs?v=0.8.3";
+import { factorModel } from "./factors.mjs?v=0.8.3";
+import { conditionalRisk, updateGjrVariance, updateEwmaVariance } from "./conditional-risk.mjs?v=0.8.3";
+import { marketFactorCovariance, conditionalFactorization } from "./factor-covariance.mjs?v=0.8.3";
 import {
   mandate,
   regimes,
   withdrawalSchedule,
   DEFAULT_REGIMES,
-} from "./policy.mjs?v=0.8.2";
+} from "./policy.mjs?v=0.8.3";
 
 export const BASE_REGIME = {
   id: "base",
@@ -382,10 +382,10 @@ export function evaluatePaths(weights, sample, options = {}) {
     unfinishedRecoveries = 0;
   const selected = weights.map((w, i) => ({ w, i })).filter((r) => r.w > 0),
     gamma = policy.riskAversion,
-    dividendYields=assets.map(annualDistributionYield),
+    distributions=assets.map(a=>distributionFactors(a,steps,dt,policy)),
     cashDividends=policy.dividendPolicy==="cash",
     withholding=policy.dividendWithholding || 0;
-  let distributionGrossSum=0, distributionNetSum=0;
+  let distributionGrossSum=0, distributionNetSum=0, reinvestedSum=0, withheldSum=0;
   for (let p = 0; p < paths; p++) {
     let previous = initial,
       cashWithdrawn = 0,
@@ -398,7 +398,9 @@ export function evaluatePaths(weights, sample, options = {}) {
       run = 0,
       everUnder = false,
       dividendsGross=0,
-      dividendsNet=0;
+      dividendsNet=0,
+      reinvested=0,
+      withheld=0;
     const path = options.details && p < 12 ? [nav * 100] : null;
     if (observations) observations[0].push(nav * 100);
     for (let t = 1; t <= steps; t++) {
@@ -406,12 +408,12 @@ export function evaluatePaths(weights, sample, options = {}) {
       const cashGross = cashIndex >= 0 ? gross[cashIndex][offset] : 1;
       let total = 0;
       for(const {w,i} of selected) {
-        const dist=cashDividends
-          ? dividendStep(gross[i][offset-1],gross[i][offset],dividendYields[i],t,dt,withholding)
-          : {priceGross:gross[i][offset],grossCash:0,netCash:0};
-        total+=w*dist.priceGross*initial;
-        dividendsGross+=w*dist.grossCash*initial;
-        dividendsNet+=w*dist.netCash*initial;
+        const dist=distributions[i],value=w*gross[i][offset]*initial;
+        total+=value*dist.marketValue[t];
+        dividendsGross+=value*dist.grossDistribution[t];
+        dividendsNet+=value*dist.netCash[t];
+        reinvested+=value*dist.netReinvested[t];
+        withheld+=value*dist.withheld[t];
       }
       total += dividendsNet-cashWithdrawn;
       const priorFX = fx[offset - 1],
@@ -441,6 +443,8 @@ export function evaluatePaths(weights, sample, options = {}) {
     }
     distributionGrossSum+=dividendsGross;
     distributionNetSum+=dividendsNet;
+    reinvestedSum+=reinvested;
+    withheldSum+=withheld;
     const remaining = previous * fx[p * (steps + 1) + steps],
       ratio = nav;
     returns.push(ratio - 1);
@@ -486,7 +490,11 @@ export function evaluatePaths(weights, sample, options = {}) {
     certaintyEquivalent,
     dividendPolicy:policy.dividendPolicy,
     dividendWithholding:withholding,
-    expectedGrossDividendCash:distributionGrossSum/paths,
+    expectedGrossDistributions:distributionGrossSum/paths,
+    expectedNetDistributions:(distributionNetSum+reinvestedSum)/paths,
+    expectedDividendWithholding:withheldSum/paths,
+    expectedNetReinvestedDividends:reinvestedSum/paths,
+    expectedGrossDividendCash:cashDividends?distributionGrossSum/paths:0,
     expectedNetDividendCash:distributionNetSum/paths,
     expectedLogGrowth: mean(
       returns.map((r) => Math.log(Math.max(1e-5, 1 + r))),

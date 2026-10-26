@@ -4,15 +4,15 @@ import {
   mean,
   quantile,
   normalizeWeights,
-} from "./analytics.mjs?v=0.8.2";
-import { seededRandom } from "./random.mjs?v=0.8.2";
-import { portfolioAttribution } from "./attribution.mjs?v=0.8.2";
+} from "./analytics.mjs?v=0.8.3";
+import { seededRandom } from "./random.mjs?v=0.8.3";
+import { portfolioAttribution } from "./attribution.mjs?v=0.8.3";
 import {
   preparePaths,
   generatePaths,
   evaluatePaths,
   marginalRisk,
-} from "./path-model.mjs?v=0.8.2";
+} from "./path-model.mjs?v=0.8.3";
 import {
   withCashAsset,
   mandate,
@@ -21,12 +21,12 @@ import {
   tradePlan,
   withdrawalSchedule,
   MODEL_VERSION,
-} from "./policy.mjs?v=0.8.2";
-import { buildReturnAnchors, bondScenarioAnnualReturn } from "./return-model.mjs?v=0.8.2";
-import { assetAt, fundamentalForecast, bondAssumptions } from "./research-model.mjs?v=0.8.2";
-import { selectCompositionUniverse } from "./universe.mjs?v=0.8.2";
-import { factorizeStressedCovariance } from "./factor-covariance.mjs?v=0.8.2";
-import { economicClass, exposureReport, rawCorrelation, qualifiedOpportunity, knownFundOverlap } from "./economic-exposure.mjs?v=0.8.2";
+} from "./policy.mjs?v=0.8.3";
+import { buildReturnAnchors, bondScenarioAnnualReturn } from "./return-model.mjs?v=0.8.3";
+import { assetAt, fundamentalForecast, bondAssumptions } from "./research-model.mjs?v=0.8.3";
+import { selectCompositionUniverse } from "./universe.mjs?v=0.8.3";
+import { factorizeStressedCovariance } from "./factor-covariance.mjs?v=0.8.3";
+import { economicClass, exposureReport, rawCorrelation, qualifiedOpportunity, holdingsOverlap, knownFundOverlap } from "./economic-exposure.mjs?v=0.8.3";
 
 export const DEFAULT_COMPOSITION_RULES = {
   maxPosition: 0.2,
@@ -130,6 +130,8 @@ export function prepareComposition(
         0.04 * historicalVolatility(asset);
     }
     if (!reason && asset.type === "etf") {
+      if(economicClass(asset)==="unclassified-etf")
+        reason="ETF sin clasificación económica verificada: revisar su mandato antes de nuevas compras.";
       const own = settings.assetAssumptions?.[asset.symbol];
       const hasExplicitReturn = finite(own?.expectedReturn) &&
         finite(own?.uncertainty) && own.uncertainty > 0 && own.uncertainty <= 1;
@@ -139,9 +141,9 @@ export function prepareComposition(
           .filter((row) => row.date <= info)
           .map((row) => [row.id, row.value])),
       });
-      if (!isBondPriced && !hasExplicitReturn)
+      if (!reason && !isBondPriced && !hasExplicitReturn)
         reason = "ETF sin retorno esperado fundamentado: no se permite compra nueva con el supuesto genérico del 6 %. Introduce una expectativa y una incertidumbre explícitas.";
-      else {
+      else if(!reason) {
         const bond = bondAssumptions(asset, {
           ...settings, asOf, informationAsOf: info,
           yieldCurve: Object.fromEntries((snapshot.macro || [])
@@ -329,14 +331,17 @@ export function validWeights(w,x){
   }
  }
  const exposure=exposureReport(x.assets,w,x.asOf,x.informationAsOf,x.securitySectors);
+ if(exposure.sleeves.unknownEtf>1e-8)return false;
  if(exposure.sleeves.treasury>x.rules.maxTreasury+1e-8)return false;
  if(exposure.sleeves.usEquity+exposure.sleeves.globalEquity>x.rules.maxEquity+1e-8)return false;
- if(Object.values(exposure.sectors).some(v=>v>x.rules.maxSector+1e-8))return false;
- for(const [issuer,weight] of Object.entries(exposure.issuers)){
+ if(exposure.unclassifiedSectorWeight>x.rules.maxSector+1e-8 ||
+    Object.values(exposure.sectorUpperBounds).some(v=>v>x.rules.maxSector+1e-8))return false;
+ if(exposure.unclassifiedIssuerWeight>Math.min(x.rules.maxPosition,x.rules.maxGlobal)+1e-8)return false;
+ for(const [issuer,weight] of Object.entries(exposure.issuerUpperBounds)){
    const stock=x.assets.find(a=>a.symbol===issuer && a.type==="stock");
    const exception=stock && qualifiedOpportunity(
      stock,x.opportunityEvidence?.[issuer],x.asOf);
-   if(weight>(exception?x.rules.maxOpportunity:x.rules.maxGlobal)+1e-8)
+   if(weight>Math.min(x.rules.maxPosition,exception?x.rules.maxOpportunity:x.rules.maxGlobal)+1e-8)
      return false;
  }
  return true;
@@ -772,18 +777,23 @@ export function composePortfolio(
          (a.type!=="etf"&&b.type!=="etf"))return [];
       const total=rawCorrelation(x.covariance,i,j);
       const residual=x.residualCorrelation?.[i]?.[j];
+      const overlap=holdingsOverlap(a,b,x.asOf,x.informationAsOf);
       return [{
         pair:a.symbol+"/"+b.symbol,
         totalCorrelation:total,
         residualCorrelation:Number.isFinite(residual)?residual:null,
-        overlappingWeight:best.weights[i]*best.weights[j],
+        positionPairWeight:best.weights[i]*best.weights[j],
         holdingsOverlap:a.type==="etf"&&b.type==="etf"
           ? knownFundOverlap(a,b,x.asOf,x.informationAsOf):null,
+        knownHoldingsOverlap:overlap?.knownOverlap??null,
+        knownSharedPortfolioWeight:overlap?overlap.shared.reduce((s,p)=>s+
+          Math.min(best.weights[i]*p.leftWeight,best.weights[j]*p.rightWeight),0):null,
+        holdingsCoverage:overlap?[overlap.leftCoverage,overlap.rightCoverage]:null,
         warning:total>.8?"Dependencia total elevada":"Dependencia observada",
       }];
     });
-  }).sort((a,b)=>b.overlappingWeight*Math.abs(b.totalCorrelation)-
-                   a.overlappingWeight*Math.abs(a.totalCorrelation)).slice(0,12) : [];
+  }).sort((a,b)=>b.positionPairWeight*Math.abs(b.totalCorrelation)-
+                   a.positionPairWeight*Math.abs(a.totalCorrelation)).slice(0,12) : [];
   const riskDiagnostics = (row) => {
     if (!row) return null;
     const limits = [
@@ -840,7 +850,7 @@ export function composePortfolio(
       asOf: x.conditional.asOf,
       additionalMertonJumps: !x.conditional.dynamic && x.options.model==="merton",
     },
-    note: "El límite de correlación se aplica a los residuos tras SPY alcista/bajista y sector, salvo falta de historia; CVaR y shocks conservan riesgo sistémico. Las correlaciones residuales NO son dependencias causales.",
+    note: "Pares con ETF: correlación total; acciones: residual tras SPY alcista/bajista y sector, con respaldo total si falta historia. Holdings compartidas y correlación son medidas distintas. CVaR conserva el riesgo sistémico; los residuos no prueban causalidad.",
   };
   const {
     baseline: _baseline,
@@ -1054,9 +1064,12 @@ export function composePortfolio(
         financials: a.financials,
         analyst_estimates: a.analyst_estimates || null,
         bond_profile: a.bond_profile || null,
+        holdings: a.holdings || null,
+        dividend_per_share: a.dividend_per_share ?? null,
         assumptions: { ...a.assumptions, ...overrides[a.symbol] },
       })),
       covariance: x.covariance,
+      securitySectors: x.securitySectors,
       residualCorrelation: x.residualCorrelation,
       dependence: x.dependence,
       anchors: x.anchors,

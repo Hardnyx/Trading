@@ -1,9 +1,9 @@
 import { chromium } from "playwright";
 import { spawn } from "node:child_process";
 import { readFileSync, mkdirSync } from "node:fs";
-import { composePortfolio } from "../dist/assets/js/composer.mjs?v=0.8.2";
-import { referenceRequest } from "../dist/assets/js/reference-preset.mjs?v=0.8.2";
-import { exposureReport } from "../dist/assets/js/economic-exposure.mjs?v=0.8.2";
+import { composePortfolio } from "../dist/assets/js/composer.mjs?v=0.8.3";
+import { referenceRequest } from "../dist/assets/js/reference-preset.mjs?v=0.8.3";
+import { exposureReport } from "../dist/assets/js/economic-exposure.mjs?v=0.8.3";
 
 const market=JSON.parse(readFileSync("dist/data/market.json","utf8"));
 const volatility=JSON.parse(readFileSync("dist/data/volatility.json","utf8"));
@@ -14,13 +14,19 @@ const expected=composePortfolio(snapshot,settings,overrides,rules,
 if(expected.status!=="proposed")throw Error("La referencia no produjo una cartera");
 const economicWeights=new Map(expected.positions.map(p=>[p.symbol,p.weight]));
 const economic=exposureReport(expected.model_inputs.assets,
-  expected.model_inputs.assets.map(a=>economicWeights.get(a.symbol)||0),expected.as_of);
+  expected.model_inputs.assets.map(a=>economicWeights.get(a.symbol)||0),expected.as_of,
+  expected.information_as_of,expected.model_inputs.securitySectors);
 if(economic.sleeves.usEquity+economic.sleeves.globalEquity > expected.rules.maxEquity+1e-8)
   throw Error("Equity sleeve exceeded the global risk budget");
 if(economic.sleeves.treasury>expected.rules.maxTreasury+1e-8)
   throw Error("Treasury ETF sleeves were not aggregated");
 if(expected.positions.some(p=>p.symbol==="SHY"&&p.weight>expected.rules.maxGlobal+1e-8))
   throw Error("SHY bypassed the global position cap");
+if(Object.values(economic.issuerUpperBounds).some(w=>
+  w>Math.min(expected.rules.maxPosition,expected.rules.maxGlobal)+1e-8) ||
+  economic.unclassifiedIssuerWeight>expected.rules.maxPosition+1e-8 ||
+  Object.values(economic.sectorUpperBounds).some(w=>w>expected.rules.maxSector+1e-8))
+  throw Error("Look-through bounds exceeded issuer or sector limits");
 const expectedWeights=Object.fromEntries(expected.positions.map(p=>
   [p.symbol,Math.round(p.weight*1000)/10]));
 
@@ -40,12 +46,12 @@ try {
   const issues=[];
   page.on("pageerror",e=>issues.push(e.message));
   page.on("console",e=>{if(e.type()==="error")issues.push(e.text())});
-  await page.goto("http://127.0.0.1:8813/?build=0.8.2#portfolio",
+  await page.goto("http://127.0.0.1:8813/?build=0.8.3#portfolio",
     {waitUntil:"networkidle",timeout:60000});
   const button=page.locator('[data-action="compose-reference"]');
   await button.waitFor({state:"visible",timeout:45000});
   const actualFooter=await page.locator(".footer-right").innerText();
-  if(!actualFooter.includes("v0.8.2") || actualFooter.includes("v0.6.0"))
+  if(!actualFooter.includes("v0.8.3") || actualFooter.includes("v0.6.0"))
     throw Error("La etiqueta de versión del pie de página no corresponde al motor: "+
       actualFooter);
 
@@ -54,7 +60,7 @@ try {
   await page.evaluate(()=>{
     const key="trading-workspace-v1";
     const stored=JSON.parse(localStorage.getItem(key)||"{}");
-    stored.workspaceVersion="0.8.2";
+    stored.workspaceVersion="0.8.3";
     stored.positions=[{symbol:"NVDA",weight:1}];
     stored.settings={...stored.settings,seed:20261025,volatilityMode:"ewma"};
     stored.compositionRules={...stored.compositionRules,reserveCap:0.1,
@@ -99,11 +105,12 @@ try {
       technicalOpen:methods?.open,
       hasGlobalCap:panel.textContent?.includes("Límite global"),
       cashDividendSummary:panel.textContent?.includes("Dividendos netos"),
+      issuerSummary:panel.textContent?.includes("Emisores conocidos (directo + ETF)"),
     };
   });
   if(layout.sourcePadding<8 || layout.contributionsPadding<8 ||
      layout.briefPadding<8 || layout.technicalOpen===true ||
-     !layout.hasGlobalCap || !layout.cashDividendSummary)
+     !layout.hasGlobalCap || !layout.cashDividendSummary || !layout.issuerSummary)
     throw Error("La composición perdió espacios o faltan controles de concentración/ingresos: "+JSON.stringify(layout));
 
   // The ETF look-through table must remain tucked inside the technical panel,
@@ -148,8 +155,8 @@ try {
      baselineStorage.compositionRules.reserveCap!==0.1 ||
      baselineStorage.account.positions[0].symbol!=="NVDA")
     throw Error("La prueba no restauró realmente la sesión personalizada");
-  if(!report.includes("MOTOR 0.8.2") && !report.includes("Motor 0.8.2"))
-    throw Error("El informe no identifica el motor 0.8.2");
+  if(!report.includes("MOTOR 0.8.3") && !report.includes("Motor 0.8.3"))
+    throw Error("El informe no identifica el motor 0.8.3");
   if(issues.length)throw Error("Errores del navegador: "+issues.join("; "));
   console.log(JSON.stringify({
     browserParity:"PASS",

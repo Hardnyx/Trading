@@ -1,7 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { economicClass, exposureReport, actualHoldings, rawCorrelation, qualifiedOpportunity, knownFundOverlap } from "../dist/assets/js/economic-exposure.mjs?v=0.8.2";
-import { validWeights, DEFAULT_COMPOSITION_RULES } from "../dist/assets/js/composer.mjs?v=0.8.2";
+import { economicClass, exposureReport, actualHoldings, rawCorrelation, qualifiedOpportunity, holdingsOverlap, knownFundOverlap } from "../dist/assets/js/economic-exposure.mjs?v=0.8.3";
+import { readFileSync } from "node:fs";
+import { validWeights, DEFAULT_COMPOSITION_RULES } from "../dist/assets/js/composer.mjs?v=0.8.3";
 
 test("Treasury funds aggregate despite having different tickers",()=>{
  const assets=[
@@ -114,4 +115,71 @@ test("aggregate equity cap prevents SHY reduction from forcing 60% risky stocks"
  assert.equal(validWeights([.20,.20,.20,.35,.05],context),false);
  assert.equal(validWeights([.20,.15,.15,.35,.15],context),true);
  assert.ok(Math.abs(exposureReport(assets,[.20,.20,.20,.35,.05],"2026-10-23").sleeves.usEquity-.60)<1e-10);
+});
+
+function constraintContext(assets,rules={}) {
+ return {assets,asOf:"2026-10-23",informationAsOf:"2026-10-26",
+   buyAllowed:assets.map(()=>true),requiredCash:0,
+   covariance:assets.map((_,i)=>assets.map((_,j)=>i===j?.04:0)),
+   rules:{...DEFAULT_COMPOSITION_RULES,...rules}};
+}
+const holdings=positions=>({as_of:"2026-10-22",observed_at:"2026-10-23T01:00:00Z",positions});
+test("every published ETF has an economic group, including the expanded catalog",()=>{
+ const snapshot=JSON.parse(readFileSync(new URL("../dist/data/market.json",import.meta.url)));
+ assert.deepEqual(snapshot.assets.filter(a=>a.type==="etf" &&
+   economicClass(a)==="unclassified-etf").map(a=>a.symbol),[]);
+ const assets=[{symbol:"VGSH",type:"etf"},{symbol:"VGIT",type:"etf"},
+   {symbol:"CASH",type:"cash"}];
+ assert.equal(validWeights([.35,.35,.3],constraintContext(assets)),false);
+ const equity=[{symbol:"VUG",type:"etf"},{symbol:"SCHD",type:"etf"},
+   {symbol:"CASH",type:"cash"}];
+ assert.equal(validWeights([.3,.3,.4],constraintContext(equity)),false);
+});
+test("direct and ETF share classes share the same issuer limit",()=>{
+ const assets=[{symbol:"GOOGL",type:"stock",sector:"Comunicación"},
+   {symbol:"QQQ",type:"etf",holdings:holdings([{symbol:"GOOG",weight:.15},
+     {symbol:"GOOGL",weight:.15},{symbol:"OTHER",weight:.7}])},
+   {symbol:"CASH",type:"cash"}];
+ const context=constraintContext(assets,{maxSector:1,maxPosition:.2});
+ const e=exposureReport(assets,[.15,.2,.65],context.asOf,context.informationAsOf);
+ assert.ok(Math.abs(e.issuers.GOOGL-.21)<1e-12);
+ assert.equal(validWeights([.15,.2,.65],context),false);
+ assert.equal(validWeights([.10,.1,.8],context),true);
+});
+test("unidentified ETF tails consume concentration capacity instead of becoming free diversification",()=>{
+ const assets=[{symbol:"AAA",type:"stock",sector:"Tecnología"},
+   {symbol:"SPY",type:"etf"},{symbol:"CASH",type:"cash"}];
+ const x=constraintContext(assets,{maxSector:1});
+ assert.equal(validWeights([.15,.1,.75],x),false);
+ assert.equal(validWeights([.10,.1,.8],x),true);
+ const e=exposureReport(assets,[.15,.1,.75],x.asOf,x.informationAsOf);
+ assert.ok(Math.abs(e.issuerUpperBounds.AAA-.25)<1e-12);
+ assert.equal(e.issuers.AAA,.15);
+ assert.equal(e.unclassifiedIssuerWeight,.1);
+});
+test("unknown sector classifications and stale holdings cannot bypass a sector budget",()=>{
+ const assets=[{symbol:"AAA",type:"stock",sector:"Tecnología"},
+   {symbol:"SPY",type:"etf",holdings:holdings([
+     {symbol:"BBB",weight:.5},{symbol:"CCC",weight:.5}])},
+   {symbol:"CASH",type:"cash"}];
+ const x=constraintContext(assets,{maxSector:.25,maxPosition:.4});
+ assert.equal(validWeights([.15,.2,.65],x),false);
+ x.securitySectors={BBB:"Salud",CCC:"Industrial"};
+ assert.equal(validWeights([.15,.2,.65],x),true);
+ assets[1].holdings.as_of="2026-01-01";
+ assert.equal(actualHoldings(assets[1],x.asOf,x.informationAsOf),null);
+ assert.equal(validWeights([.15,.2,.65],x),false);
+ assets[1].holdings.as_of="2026-02-31";
+ assert.equal(actualHoldings(assets[1],x.asOf,x.informationAsOf),null);
+});
+test("holdings overlap is observed shared issuer weight, distinct from correlation",()=>{
+ const a={symbol:"SPY",type:"etf",holdings:holdings([
+   {symbol:"AAPL",weight:.1},{symbol:"GOOG",weight:.1},{symbol:"AAA",weight:.8}])};
+ const b={symbol:"QQQ",type:"etf",holdings:holdings([
+   {symbol:"AAPL",weight:.2},{symbol:"GOOGL",weight:.2},{symbol:"BBB",weight:.6}])};
+ const r=holdingsOverlap(a,b,"2026-10-23");
+ assert.ok(Math.abs(r.knownOverlap-.2)<1e-12);
+ assert.equal(r.shared.length,2);
+ delete b.holdings;
+ assert.equal(holdingsOverlap(a,b,"2026-10-23"),null);
 });

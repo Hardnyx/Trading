@@ -5,9 +5,9 @@
 import { readFileSync, existsSync, mkdirSync, writeFileSync, readdirSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { resolve, join, dirname } from "node:path";
-import { composePortfolio } from "../dist/assets/js/composer.mjs?v=0.8.2";
-import { referenceRequest } from "../dist/assets/js/reference-preset.mjs?v=0.8.2";
-import { adjustedReturn } from "../dist/assets/js/factors.mjs?v=0.8.2";
+import { composePortfolio } from "../dist/assets/js/composer.mjs?v=0.8.3";
+import { referenceRequest } from "../dist/assets/js/reference-preset.mjs?v=0.8.3";
+import { adjustedReturn } from "../dist/assets/js/factors.mjs?v=0.8.3";
 
 export function nextSessionStart(cutDate){
   if(!/^\d{4}-\d{2}-\d{2}$/.test(cutDate))throw Error("Invalid market cut");
@@ -56,7 +56,7 @@ export function buildSealedOrigin(snapshot, volatility, marketBytes, volatilityB
   const maturity=new Date(snapshot.price_as_of+"T12:00:00Z");
   maturity.setUTCFullYear(maturity.getUTCFullYear()+1);
   return {
-    schema_version:1,
+    schema_version:2,
     origin_type:"first-capture-forward-shadow-no-trading",
     research_only:true,
     issued_at:now,
@@ -69,7 +69,10 @@ export function buildSealedOrigin(snapshot, volatility, marketBytes, volatilityB
     volatility_sha256:hash(volatilityBytes),
     engine_version:model.model_version,
     model_settings:{horizon:1,seed:preset.settings.seed,
-                    volatility_mode:preset.settings.volatilityMode},
+                    volatility_mode:preset.settings.volatilityMode,
+                    mandate:preset.settings.mandate,
+                    capital:preset.settings.capital,
+                    initial_cost:model.trade_plan?.total??null},
     model_status:model.status,
     positions:model.positions||[],
     forecast:model.metrics ? {
@@ -86,6 +89,16 @@ export function maturityCheck(origin,market){
   if(market.price_as_of<origin.maturity_date)return {status:"immature"};
   const relevant=(origin.positions||[]).filter(p=>p.weight>0&&p.symbol!=="CASH");
   if(!relevant.length)return {status:"mature_without_risky_positions",realized:0};
+  const policy=origin.model_settings?.mandate;
+  if(policy?.dividendPolicy==="cash" || (policy?.dividendWithholding||0)>0)
+    return {status:"unreconciled_distributions",
+      warning:"Price-adjusted total returns do not reconcile cash distributions or withholding. No probability score assigned."};
+  if(origin.schema_version===2 && !policy)
+    return {status:"missing_cashflow_policy"};
+  if(policy && ((policy.monthlyWithdrawal||0)>0 ||
+     (policy.withdrawals||[]).some(r=>r.amount>0) ||
+     (policy.referenceCurrency && policy.referenceCurrency!=="USD")))
+    return {status:"unreconciled_flows_or_fx"};
   const assets=new Map(market.assets.map(a=>[a.symbol,a]));
   // A 12-month calendar maturity may fall on a Saturday, Sunday or holiday.
   // Select the FIRST observed common trading session on/after maturity.
@@ -105,16 +118,22 @@ export function maturityCheck(origin,market){
     if(!Number.isFinite(ret))return {status:"missing_historical_price",symbol:row.symbol};
     sum+=row.weight*ret;
   }
+  const cost=origin.model_settings?.initial_cost,
+    capital=origin.model_settings?.capital;
+  const comparable=policy?.dividendPolicy==="reinvest" &&
+    Number.isFinite(cost) && cost>=0 && capital>cost;
+  const net=comparable?(1+sum)*(1-cost/capital)-1:null;
   return {
     status:"eligible_outcome_approximation",
     actual_maturity_session:common,
     realized_buy_and_hold_gross:sum,
-    // Ignore transaction costs here until an exact historic execution
-    // archive is available; never call this net portfolio utility.
-    brier_loss_probability:origin.forecast
-      ? (origin.forecast.probability_loss-Number(sum<0))**2:null,
-    covered_90_percent_interval:origin.forecast
-      ? sum>=origin.forecast.p05&&sum<=origin.forecast.p95:null,
+    realized_after_initial_cost:net,
+    // Score only the matching reinvestment convention and the cost sealed
+    // at issuance. Old records lacking that policy stay gross diagnostics.
+    brier_loss_probability:origin.forecast && comparable
+      ? (origin.forecast.probability_loss-Number(net<0))**2:null,
+    covered_90_percent_interval:origin.forecast && comparable
+      ? net>=origin.forecast.p05&&net<=origin.forecast.p95:null,
     warning:"Ex-post adjusted close and cash flows approximated; this does not establish net trading skill, delisted membership or original vintages.",
   };
 }
@@ -139,7 +158,10 @@ function main(){
       if(existsSync(path))continue;
       const record=JSON.parse(readFileSync(join(base,name),"utf8"));
       const result=maturityCheck(record,market);
-      if(["immature","awaiting_trading_session"].includes(result.status))continue;
+      if(!["eligible_outcome_approximation","mature_without_risky_positions"].includes(result.status)){
+        console.log("Pending outcome",name,result.status);
+        continue;
+      }
       writeFileSync(path,JSON.stringify({
         scored_at:new Date().toISOString(),
         origin_file:name,

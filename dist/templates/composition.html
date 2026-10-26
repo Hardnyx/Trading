@@ -55,6 +55,8 @@
           Treasury. El tope de oportunidad requiere evidencia prospectiva
           revisada. Dividendos distribuidos se extraen del rendimiento total
           ajustado y la retención es configurable (0% no implica exención tributaria).
+          La retención también se descuenta al reinvertir. El flujo se aproxima
+          de forma uniforme; no sustituye fechas de pago confirmadas.
         </p>
       </details>
     </template>
@@ -139,6 +141,7 @@
           <summary>SUPUESTOS, COMPARACIONES Y VALIDACIÓN · VER DETALLES</summary>
           <p><strong>CORRELACIONES OBSERVADAS · 500 SESIONES:</strong> {{overlapSummary}}.</p>
           <p>{{exposureWarning}}</p>
+          <p>{{lookthroughSummary}}</p>
           <div class="table-wrap">
             <table class="composition-etf-holdings">
               <thead><tr>

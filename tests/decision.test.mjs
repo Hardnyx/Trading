@@ -5,38 +5,38 @@ import {
   currentAccount,
   tradePlan,
   withCashAsset,
-} from "../dist/assets/js/policy.mjs?v=0.8.2";
+} from "../dist/assets/js/policy.mjs?v=0.8.3";
 import {
   fundamentalForecast,
   consensusAt,
   evaluateThesis,
-} from "../dist/assets/js/research-model.mjs?v=0.8.2";
+} from "../dist/assets/js/research-model.mjs?v=0.8.3";
 import {
   valuation,
   correlation,
   mean,
-} from "../dist/assets/js/analytics.mjs?v=0.8.2";
-import { sampleDrifts, bondScenarioAnnualReturn } from "../dist/assets/js/return-model.mjs?v=0.8.2";
+} from "../dist/assets/js/analytics.mjs?v=0.8.3";
+import { sampleDrifts, bondScenarioAnnualReturn } from "../dist/assets/js/return-model.mjs?v=0.8.3";
 import {
   seededRandom,
   normalGenerator,
-} from "../dist/assets/js/random.mjs?v=0.8.2";
+} from "../dist/assets/js/random.mjs?v=0.8.3";
 import {
   generatePaths,
   evaluatePaths,
   BASE_REGIME,
   jumpParameters,
-} from "../dist/assets/js/path-model.mjs?v=0.8.2";
+} from "../dist/assets/js/path-model.mjs?v=0.8.3";
 import {
   journalOrigin,
   appendForecast,
   evaluateJournal,
   freezeMaturedOutcomes,
-} from "../dist/assets/js/journal.mjs?v=0.8.2";
+} from "../dist/assets/js/journal.mjs?v=0.8.3";
 import {
   reviewPortfolio,
   registerPortfolio,
-} from "../dist/assets/js/monitor.mjs?v=0.8.2";
+} from "../dist/assets/js/monitor.mjs?v=0.8.3";
 
 const near = (a, b, tol = 1e-8) =>
   assert.ok(Math.abs(a - b) < tol, `${a} != ${b}`);
@@ -511,6 +511,22 @@ test("mature forecasts with unverified withdrawal realizations are not assigned 
   const result = evaluateJournal(journal, s);
   assert.equal(result.count, 0);
   assert.equal(result.rows[0].status, "unreconciled_flows");
+});
+test("local journal keeps the simulated dividend policy and refuses mismatched total-return scores",()=>{
+ for(const policy of [{dividendPolicy:"cash",dividendWithholding:0},
+   {dividendPolicy:"reinvest",dividendWithholding:.3}]) {
+   const s=snapshot(),origin=journalOrigin(s,[{symbol:"AAA",weight:1}],{},{},{},
+     "2026-10-24T01:00:00Z");
+   const prediction={horizonYears:.001,meanReturn:0,medianReturn:0,
+     p05:-.1,p95:.1,lossProbability:.5,settings:{model:"gbm",seed:1},
+     drifts:[],policy};
+   const journal=appendForecast([],origin,prediction);
+   assert.deepEqual(journal[0].cashflow_policy,policy);
+   s.price_as_of="2026-11-01";
+   const result=evaluateJournal(journal,s);
+   assert.equal(result.count,0);
+   assert.equal(result.rows[0].status,"unreconciled_distributions");
+ }
 });
 test("a nonzero FX-market correlation requires an observed market factor", () => {
   const x = inputs([{ symbol: "AAA", type: "stock" }], [anchor(0)], {

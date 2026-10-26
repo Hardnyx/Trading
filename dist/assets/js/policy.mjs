@@ -1,6 +1,6 @@
-import { finite, normalizeWeights, sum } from "./analytics.mjs?v=0.8.2";
+import { finite, normalizeWeights, sum } from "./analytics.mjs?v=0.8.3";
 
-export const MODEL_VERSION = "0.8.2";
+export const MODEL_VERSION = "0.8.3";
 export function informationDate(snapshot) {
   const parts = Object.fromEntries(
     new Intl.DateTimeFormat("en-US", {

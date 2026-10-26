@@ -1,6 +1,6 @@
 import { DEFAULT_MANDATE, DEFAULT_EXECUTION, DEFAULT_REGIMES,
-  informationDate } from "./policy.mjs?v=0.8.2";
-import { DEFAULT_COMPOSITION_RULES } from "./composer.mjs?v=0.8.2";
+  informationDate } from "./policy.mjs?v=0.8.3";
+import { DEFAULT_COMPOSITION_RULES } from "./composer.mjs?v=0.8.3";
 
 // Canonical comparison: no account, holdings, localStorage or user overrides.
 // Used by the actual web worker AND continuous integration.
