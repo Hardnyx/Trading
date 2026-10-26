@@ -14,8 +14,8 @@ permissions:
   contents: read
 jobs:
   browser:
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -24,11 +24,17 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Install browser engine
-        run: |
-          npm install --no-save playwright@1.56.0
-          npx playwright install --with-deps chromium
+      - name: Install browser driver
+        timeout-minutes: 3
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+        run: npm install --no-save --ignore-scripts --fetch-retries=1 --fetch-timeout=60000 playwright@1.64.1
+      - name: Verify runner Chrome
+        run: google-chrome --version
       - name: Compare rendered portfolio with canonical engine
+        timeout-minutes: 4
+        env:
+          PLAYWRIGHT_CHANNEL: chrome
         run: node scripts/test_browser_parity.mjs
       - name: Save browser screenshot
         if: always()

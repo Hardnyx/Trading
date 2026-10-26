@@ -40,7 +40,8 @@ try {
       if(r.ok)break;}catch{}
     await sleep(100);
   }
-  browser=await chromium.launch({headless:true});
+  browser=await chromium.launch({headless:true,
+    ...(process.env.PLAYWRIGHT_CHANNEL?{channel:process.env.PLAYWRIGHT_CHANNEL}:{})});
   const context=await browser.newContext({viewport:{width:1460,height:1080},locale:"es-PE"});
   const page=await context.newPage();
   const issues=[];
@@ -165,6 +166,9 @@ try {
   if(issues.length)throw Error("Errores del navegador: "+issues.join("; "));
   console.log(JSON.stringify({
     browserParity:"PASS",
+    browserVersion:browser.version(),
+    browserChannel:process.env.PLAYWRIGHT_CHANNEL||"bundled-chromium",
+    calendarRows,expectedDividendRows,
     expected:expectedWeights,
     rendered:result,
     model:expected.model_version,
