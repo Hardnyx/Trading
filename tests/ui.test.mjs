@@ -60,7 +60,7 @@ test("footer version is rendered from the actual engine, never hardcoded", () =>
     asset: () => null,
   });
   const html = views.shell("<h1>Revisión</h1>");
-  assert.match(html, new RegExp('v' + MODEL_VERSION.replaceAll('.', '\\\\.') + '\\\\s'));
+  assert.ok(html.includes("v" + MODEL_VERSION + " &nbsp;"), "Footer must show actual model version");
   assert.ok(html.includes("MULTIACTIVO"));
   assert.ok(!html.includes("v0.6.0"));
   assert.ok(!html.includes("{{modelVersion}}"));
