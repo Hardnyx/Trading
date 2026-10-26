@@ -5,9 +5,7 @@ on:
     branches: [main]
     paths:
       - 'scripts/test_browser_parity.mjs'
-      - 'dist/assets/js/app.mjs'
-      - 'dist/assets/js/reference-preset.mjs'
-      - 'dist/assets/js/ui/views.mjs'
+      - 'dist/assets/js/**'
       - 'dist/templates/portfolio.html'
       - 'dist/templates/composition.html'
       - 'dist/templates/layout.html'
