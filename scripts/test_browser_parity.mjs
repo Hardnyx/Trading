@@ -76,6 +76,26 @@ try {
     row.symbol, Number(row.weight.replace("%","").replace(",",".").trim())]));
   const source=await page.locator(".composition-source").innerText();
   const report=await page.locator(".composition-report").innerText();
+  const layout=await page.locator(".composition-report").evaluate(panel=>{
+    const source=panel.querySelector(":scope > .composition-source");
+    const contributions=panel.querySelector(".composition-contributions");
+    const brief=panel.querySelector(".composition-brief");
+    const methods=panel.querySelector("details.composition-method");
+    const style=e=>e?getComputedStyle(e):null;
+    return {
+      sourcePadding:Number.parseFloat(style(source)?.paddingLeft||"0"),
+      contributionsPadding:Number.parseFloat(style(contributions)?.paddingLeft||"0"),
+      briefPadding:Number.parseFloat(style(brief)?.paddingLeft||"0"),
+      technicalOpen:methods?.open,
+      hasGlobalCap:panel.textContent?.includes("Límite global"),
+      cashDividendSummary:panel.textContent?.includes("Dividendos netos"),
+    };
+  });
+  if(layout.sourcePadding<8 || layout.contributionsPadding<8 ||
+     layout.briefPadding<8 || layout.technicalOpen===true ||
+     !layout.hasGlobalCap || !layout.cashDividendSummary)
+    throw Error("La composición perdió espacios o faltan controles de concentración/ingresos: "+JSON.stringify(layout));
+
   mkdirSync("out",{recursive:true});
   await page.screenshot({path:"out/browser-parity.png",fullPage:true});
   if(!source.includes("CONFIGURACIÓN BASE"))
