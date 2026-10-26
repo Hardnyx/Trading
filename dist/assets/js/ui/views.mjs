@@ -803,10 +803,10 @@ export function createViews(context) {
         `Error Monte Carlo ±${pct(1.96 * p.metrics.lossProbabilitySE)}`,
       ],
       [
-        "CVAR 95% · HORIZONTE",
+        "CVAR 95% · SIMULADO",
         pct(p.metrics.cvar95),
         "negative",
-        `Límite ${pct(p.rules.cvarBudget, 0)}`,
+        `Límite ${pct(p.rules.cvarBudget, 0)} · Colas conjuntas gaussianas sin validación externa`,
       ],
       [
         "ANÁLISIS EX ANTE",
