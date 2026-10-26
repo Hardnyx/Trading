@@ -1,0 +1,2219 @@
+{
+  "symbol": "AGG",
+  "currency": "USD",
+  "source_url": "https://www.ishares.com/us/products/239458/ishares-core-us-aggregate-bond-etf",
+  "source_layer": "issuer",
+  "observed_at": "2026-10-26T22:35:21.973586+00:00",
+  "source_sha256": "6769cd6f21020e251b8d03614d313b0a0f60171a64bfe685062b3ca7ac5b69fd",
+  "records": [
+    {
+      "ex_date": "2003-11-03",
+      "record_date": "2003-11-05",
+      "pay_date": "2003-11-12",
+      "amount_per_share": 0.3586,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2003-12-01",
+      "record_date": "2003-12-03",
+      "pay_date": "2003-12-10",
+      "amount_per_share": 0.2718,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2003-12-31",
+      "record_date": "2004-01-05",
+      "pay_date": "2004-01-12",
+      "amount_per_share": 0.2909,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2004-02-02",
+      "record_date": "2004-02-04",
+      "pay_date": "2004-02-06",
+      "amount_per_share": 0.277719,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2004-03-01",
+      "record_date": "2004-03-03",
+      "pay_date": "2004-03-05",
+      "amount_per_share": 0.246182,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2004-04-01",
+      "record_date": "2004-04-05",
+      "pay_date": "2004-04-07",
+      "amount_per_share": 0.25959,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2004-05-03",
+      "record_date": "2004-05-05",
+      "pay_date": "2004-05-07",
+      "amount_per_share": 0.269941,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2004-06-01",
+      "record_date": "2004-06-03",
+      "pay_date": "2004-06-07",
+      "amount_per_share": 0.316551,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2004-07-01",
+      "record_date": "2004-07-06",
+      "pay_date": "2004-07-08",
+      "amount_per_share": 0.317375,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2004-08-02",
+      "record_date": "2004-08-04",
+      "pay_date": "2004-08-06",
+      "amount_per_share": 0.322295,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2004-09-01",
+      "record_date": "2004-09-03",
+      "pay_date": "2004-09-08",
+      "amount_per_share": 0.318137,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2004-10-01",
+      "record_date": "2004-10-05",
+      "pay_date": "2004-10-07",
+      "amount_per_share": 0.317128,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2004-11-01",
+      "record_date": "2004-11-03",
+      "pay_date": "2004-11-05",
+      "amount_per_share": 0.27901,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2004-12-01",
+      "record_date": "2004-12-03",
+      "pay_date": "2004-12-07",
+      "amount_per_share": 0.307797,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2004-12-31",
+      "record_date": "2005-01-04",
+      "pay_date": "2005-01-06",
+      "amount_per_share": 0.304032,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2005-02-01",
+      "record_date": "2005-02-03",
+      "pay_date": "2005-02-07",
+      "amount_per_share": 0.309406,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2005-03-01",
+      "record_date": "2005-03-03",
+      "pay_date": "2005-03-07",
+      "amount_per_share": 0.287418,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2005-04-01",
+      "record_date": "2005-04-05",
+      "pay_date": "2005-04-07",
+      "amount_per_share": 0.343473,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2005-05-02",
+      "record_date": "2005-05-04",
+      "pay_date": "2005-05-06",
+      "amount_per_share": 0.333633,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2005-06-01",
+      "record_date": "2005-06-03",
+      "pay_date": "2005-06-07",
+      "amount_per_share": 0.347899,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2005-07-01",
+      "record_date": "2005-07-06",
+      "pay_date": "2005-07-08",
+      "amount_per_share": 0.332881,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2005-08-01",
+      "record_date": "2005-08-03",
+      "pay_date": "2005-08-05",
+      "amount_per_share": 0.331035,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2005-09-01",
+      "record_date": "2005-09-06",
+      "pay_date": "2005-09-08",
+      "amount_per_share": 0.340223,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2005-10-03",
+      "record_date": "2005-10-05",
+      "pay_date": "2005-10-07",
+      "amount_per_share": 0.336529,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2005-11-01",
+      "record_date": "2005-11-03",
+      "pay_date": "2005-11-07",
+      "amount_per_share": 0.363955,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2005-12-01",
+      "record_date": "2005-12-05",
+      "pay_date": "2005-12-07",
+      "amount_per_share": 0.37866,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2005-12-28",
+      "record_date": "2005-12-30",
+      "pay_date": "2006-01-06",
+      "amount_per_share": 0.383771,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2006-02-01",
+      "record_date": "2006-02-03",
+      "pay_date": "2006-02-07",
+      "amount_per_share": 0.370708,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2006-03-01",
+      "record_date": "2006-03-03",
+      "pay_date": "2006-03-07",
+      "amount_per_share": 0.372912,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2006-04-03",
+      "record_date": "2006-04-05",
+      "pay_date": "2006-04-07",
+      "amount_per_share": 0.382825,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2006-05-01",
+      "record_date": "2006-05-03",
+      "pay_date": "2006-05-05",
+      "amount_per_share": 0.374656,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2006-06-01",
+      "record_date": "2006-06-05",
+      "pay_date": "2006-06-07",
+      "amount_per_share": 0.382781,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2006-07-03",
+      "record_date": "2006-07-06",
+      "pay_date": "2006-07-10",
+      "amount_per_share": 0.387708,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2006-08-01",
+      "record_date": "2006-08-03",
+      "pay_date": "2006-08-07",
+      "amount_per_share": 0.408757,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2006-09-01",
+      "record_date": "2006-09-06",
+      "pay_date": "2006-09-08",
+      "amount_per_share": 0.393378,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2006-10-02",
+      "record_date": "2006-10-04",
+      "pay_date": "2006-10-06",
+      "amount_per_share": 0.41424,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2006-11-01",
+      "record_date": "2006-11-03",
+      "pay_date": "2006-11-07",
+      "amount_per_share": 0.421902,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2006-12-01",
+      "record_date": "2006-12-05",
+      "pay_date": "2006-12-07",
+      "amount_per_share": 0.398084,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2006-12-27",
+      "record_date": "2006-12-29",
+      "pay_date": "2007-01-05",
+      "amount_per_share": 0.368532,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2007-02-01",
+      "record_date": "2007-02-05",
+      "pay_date": "2007-02-07",
+      "amount_per_share": 0.393365,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2007-03-01",
+      "record_date": "2007-03-05",
+      "pay_date": "2007-03-07",
+      "amount_per_share": 0.393854,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2007-04-02",
+      "record_date": "2007-04-04",
+      "pay_date": "2007-04-09",
+      "amount_per_share": 0.389336,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2007-05-01",
+      "record_date": "2007-05-03",
+      "pay_date": "2007-05-07",
+      "amount_per_share": 0.382248,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2007-06-01",
+      "record_date": "2007-06-05",
+      "pay_date": "2007-06-07",
+      "amount_per_share": 0.428108,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2007-07-02",
+      "record_date": "2007-07-05",
+      "pay_date": "2007-07-09",
+      "amount_per_share": 0.420578,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2007-08-01",
+      "record_date": "2007-08-03",
+      "pay_date": "2007-08-07",
+      "amount_per_share": 0.431144,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2007-09-04",
+      "record_date": "2007-09-06",
+      "pay_date": "2007-09-10",
+      "amount_per_share": 0.429252,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2007-10-01",
+      "record_date": "2007-10-03",
+      "pay_date": "2007-10-05",
+      "amount_per_share": 0.414227,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2007-11-01",
+      "record_date": "2007-11-05",
+      "pay_date": "2007-11-07",
+      "amount_per_share": 0.417433,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2007-12-03",
+      "record_date": "2007-12-05",
+      "pay_date": "2007-12-07",
+      "amount_per_share": 0.406545,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2007-12-27",
+      "record_date": "2007-12-31",
+      "pay_date": "2008-01-03",
+      "amount_per_share": 0.408675,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2008-02-01",
+      "record_date": "2008-02-05",
+      "pay_date": "2008-02-07",
+      "amount_per_share": 0.414705,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2008-03-03",
+      "record_date": "2008-03-05",
+      "pay_date": "2008-03-07",
+      "amount_per_share": 0.382706,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2008-04-01",
+      "record_date": "2008-04-03",
+      "pay_date": "2008-04-07",
+      "amount_per_share": 0.415072,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2008-05-01",
+      "record_date": "2008-05-05",
+      "pay_date": "2008-05-07",
+      "amount_per_share": 0.326376,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2008-06-02",
+      "record_date": "2008-06-04",
+      "pay_date": "2008-06-06",
+      "amount_per_share": 0.394238,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2008-07-01",
+      "record_date": "2008-07-03",
+      "pay_date": "2008-07-08",
+      "amount_per_share": 0.383599,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2008-08-01",
+      "record_date": "2008-08-05",
+      "pay_date": "2008-08-07",
+      "amount_per_share": 0.402361,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2008-09-02",
+      "record_date": "2008-09-04",
+      "pay_date": "2008-09-08",
+      "amount_per_share": 0.393784,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2008-10-01",
+      "record_date": "2008-10-03",
+      "pay_date": "2008-10-07",
+      "amount_per_share": 0.39,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2008-11-03",
+      "record_date": "2008-11-05",
+      "pay_date": "2008-11-07",
+      "amount_per_share": 0.4,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2008-12-01",
+      "record_date": "2008-12-03",
+      "pay_date": "2008-12-05",
+      "amount_per_share": 0.4025,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2008-12-29",
+      "record_date": "2008-12-31",
+      "pay_date": "2009-01-02",
+      "amount_per_share": 0.376068,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2009-02-02",
+      "record_date": "2009-02-04",
+      "pay_date": "2009-02-06",
+      "amount_per_share": 0.365791,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2009-03-02",
+      "record_date": "2009-03-04",
+      "pay_date": "2009-03-06",
+      "amount_per_share": 0.327,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2009-04-01",
+      "record_date": "2009-04-03",
+      "pay_date": "2009-04-07",
+      "amount_per_share": 0.350977,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2009-05-01",
+      "record_date": "2009-05-05",
+      "pay_date": "2009-05-07",
+      "amount_per_share": 0.329387,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2009-06-01",
+      "record_date": "2009-06-03",
+      "pay_date": "2009-06-05",
+      "amount_per_share": 0.308282,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2009-07-01",
+      "record_date": "2009-07-06",
+      "pay_date": "2009-07-08",
+      "amount_per_share": 0.342364,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2009-08-03",
+      "record_date": "2009-08-05",
+      "pay_date": "2009-08-07",
+      "amount_per_share": 0.334316,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2009-09-01",
+      "record_date": "2009-09-03",
+      "pay_date": "2009-09-08",
+      "amount_per_share": 0.332111,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2009-10-01",
+      "record_date": "2009-10-05",
+      "pay_date": "2009-10-07",
+      "amount_per_share": 0.34195,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2009-11-02",
+      "record_date": "2009-11-04",
+      "pay_date": "2009-11-06",
+      "amount_per_share": 0.32373,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2009-12-01",
+      "record_date": "2009-12-03",
+      "pay_date": "2009-12-07",
+      "amount_per_share": 0.35261,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2009-12-29",
+      "record_date": "2009-12-31",
+      "pay_date": "2010-01-05",
+      "amount_per_share": 0.301642,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2010-02-01",
+      "record_date": "2010-02-03",
+      "pay_date": "2010-02-05",
+      "amount_per_share": 0.32713,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2010-03-01",
+      "record_date": "2010-03-03",
+      "pay_date": "2010-03-05",
+      "amount_per_share": 0.323022,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2010-04-01",
+      "record_date": "2010-04-06",
+      "pay_date": "2010-04-08",
+      "amount_per_share": 0.32103,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2010-05-03",
+      "record_date": "2010-05-05",
+      "pay_date": "2010-05-07",
+      "amount_per_share": 0.311557,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2010-06-01",
+      "record_date": "2010-06-03",
+      "pay_date": "2010-06-07",
+      "amount_per_share": 0.323604,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2010-07-01",
+      "record_date": "2010-07-06",
+      "pay_date": "2010-07-08",
+      "amount_per_share": 0.314451,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2010-08-02",
+      "record_date": "2010-08-04",
+      "pay_date": "2010-08-06",
+      "amount_per_share": 0.29351,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2010-09-01",
+      "record_date": "2010-09-03",
+      "pay_date": "2010-09-08",
+      "amount_per_share": 0.298481,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2010-10-01",
+      "record_date": "2010-10-05",
+      "pay_date": "2010-10-07",
+      "amount_per_share": 0.264504,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2010-11-01",
+      "record_date": "2010-11-03",
+      "pay_date": "2010-11-05",
+      "amount_per_share": 0.275561,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2010-12-01",
+      "record_date": "2010-12-03",
+      "pay_date": "2010-12-07",
+      "amount_per_share": 0.552859,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2010-12-28",
+      "record_date": "2010-12-30",
+      "pay_date": "2011-01-04",
+      "amount_per_share": 0.343921,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2011-02-01",
+      "record_date": "2011-02-03",
+      "pay_date": "2011-02-07",
+      "amount_per_share": 0.316147,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2011-03-01",
+      "record_date": "2011-03-03",
+      "pay_date": "2011-03-07",
+      "amount_per_share": 0.28497,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2011-04-01",
+      "record_date": "2011-04-05",
+      "pay_date": "2011-04-07",
+      "amount_per_share": 0.313326,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2011-05-02",
+      "record_date": "2011-05-04",
+      "pay_date": "2011-05-06",
+      "amount_per_share": 0.316093,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2011-06-01",
+      "record_date": "2011-06-03",
+      "pay_date": "2011-06-07",
+      "amount_per_share": 0.312709,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2011-07-01",
+      "record_date": "2011-07-06",
+      "pay_date": "2011-07-08",
+      "amount_per_share": 0.303546,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2011-08-01",
+      "record_date": "2011-08-03",
+      "pay_date": "2011-08-05",
+      "amount_per_share": 0.299977,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2011-09-01",
+      "record_date": "2011-09-06",
+      "pay_date": "2011-09-08",
+      "amount_per_share": 0.23209,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2011-10-03",
+      "record_date": "2011-10-05",
+      "pay_date": "2011-10-07",
+      "amount_per_share": 0.219407,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2011-11-01",
+      "record_date": "2011-11-03",
+      "pay_date": "2011-11-07",
+      "amount_per_share": 0.286568,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2011-12-01",
+      "record_date": "2011-12-05",
+      "pay_date": "2011-12-07",
+      "amount_per_share": 0.578108,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2011-12-27",
+      "record_date": "2011-12-29",
+      "pay_date": "2012-01-04",
+      "amount_per_share": 0.027711,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2012-02-01",
+      "record_date": "2012-02-03",
+      "pay_date": "2012-02-07",
+      "amount_per_share": 0.274958,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2012-03-01",
+      "record_date": "2012-03-05",
+      "pay_date": "2012-03-07",
+      "amount_per_share": 0.276639,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2012-04-02",
+      "record_date": "2012-04-04",
+      "pay_date": "2012-04-09",
+      "amount_per_share": 0.243229,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2012-05-01",
+      "record_date": "2012-05-03",
+      "pay_date": "2012-05-07",
+      "amount_per_share": 0.230413,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2012-06-01",
+      "record_date": "2012-06-05",
+      "pay_date": "2012-06-07",
+      "amount_per_share": 0.238374,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2012-07-02",
+      "record_date": "2012-07-05",
+      "pay_date": "2012-07-09",
+      "amount_per_share": 0.223237,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2012-08-01",
+      "record_date": "2012-08-03",
+      "pay_date": "2012-08-07",
+      "amount_per_share": 0.220091,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2012-09-04",
+      "record_date": "2012-09-06",
+      "pay_date": "2012-09-10",
+      "amount_per_share": 0.218538,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2012-10-01",
+      "record_date": "2012-10-03",
+      "pay_date": "2012-10-05",
+      "amount_per_share": 0.206952,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2012-11-01",
+      "record_date": "2012-11-05",
+      "pay_date": "2012-11-07",
+      "amount_per_share": 0.242621,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2012-12-03",
+      "record_date": "2012-12-05",
+      "pay_date": "2012-12-07",
+      "amount_per_share": 0.666458,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2012-12-26",
+      "record_date": "2012-12-28",
+      "pay_date": "2013-01-02",
+      "amount_per_share": 0.230276,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2013-02-01",
+      "record_date": "2013-02-05",
+      "pay_date": "2013-02-07",
+      "amount_per_share": 0.211452,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2013-03-01",
+      "record_date": "2013-03-05",
+      "pay_date": "2013-03-07",
+      "amount_per_share": 0.209487,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2013-04-01",
+      "record_date": "2013-04-03",
+      "pay_date": "2013-04-05",
+      "amount_per_share": 0.260307,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2013-05-01",
+      "record_date": "2013-05-03",
+      "pay_date": "2013-05-07",
+      "amount_per_share": 0.201559,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2013-06-03",
+      "record_date": "2013-06-05",
+      "pay_date": "2013-06-07",
+      "amount_per_share": 0.195217,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2013-07-01",
+      "record_date": "2013-07-03",
+      "pay_date": "2013-07-08",
+      "amount_per_share": 0.197576,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2013-08-01",
+      "record_date": "2013-08-05",
+      "pay_date": "2013-08-07",
+      "amount_per_share": 0.204552,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2013-09-03",
+      "record_date": "2013-09-05",
+      "pay_date": "2013-09-09",
+      "amount_per_share": 0.198158,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2013-10-01",
+      "record_date": "2013-10-03",
+      "pay_date": "2013-10-07",
+      "amount_per_share": 0.190762,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2013-11-01",
+      "record_date": "2013-11-05",
+      "pay_date": "2013-11-07",
+      "amount_per_share": 0.190203,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2013-12-02",
+      "record_date": "2013-12-04",
+      "pay_date": "2013-12-06",
+      "amount_per_share": 0.202583,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2013-12-26",
+      "record_date": "2013-12-30",
+      "pay_date": "2014-01-02",
+      "amount_per_share": 0.210241,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2014-02-03",
+      "record_date": "2014-02-05",
+      "pay_date": "2014-02-07",
+      "amount_per_share": 0.205696,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2014-03-03",
+      "record_date": "2014-03-05",
+      "pay_date": "2014-03-07",
+      "amount_per_share": 0.200028,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2014-04-01",
+      "record_date": "2014-04-03",
+      "pay_date": "2014-04-07",
+      "amount_per_share": 0.20492,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2014-05-01",
+      "record_date": "2014-05-05",
+      "pay_date": "2014-05-07",
+      "amount_per_share": 0.198353,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2014-06-02",
+      "record_date": "2014-06-04",
+      "pay_date": "2014-06-06",
+      "amount_per_share": 0.207042,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2014-07-01",
+      "record_date": "2014-07-03",
+      "pay_date": "2014-07-08",
+      "amount_per_share": 0.195572,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2014-08-01",
+      "record_date": "2014-08-05",
+      "pay_date": "2014-08-07",
+      "amount_per_share": 0.200017,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2014-09-02",
+      "record_date": "2014-09-04",
+      "pay_date": "2014-09-08",
+      "amount_per_share": 0.194652,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2014-10-01",
+      "record_date": "2014-10-03",
+      "pay_date": "2014-10-07",
+      "amount_per_share": 0.189007,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2014-11-03",
+      "record_date": "2014-11-05",
+      "pay_date": "2014-11-07",
+      "amount_per_share": 0.191961,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2014-12-01",
+      "record_date": "2014-12-03",
+      "pay_date": "2014-12-05",
+      "amount_per_share": 0.28202,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2014-12-24",
+      "record_date": "2014-12-29",
+      "pay_date": "2014-12-31",
+      "amount_per_share": 0.369346,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2015-02-02",
+      "record_date": "2015-02-04",
+      "pay_date": "2015-02-06",
+      "amount_per_share": 0.176132,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2015-03-02",
+      "record_date": "2015-03-04",
+      "pay_date": "2015-03-06",
+      "amount_per_share": 0.18567,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2015-04-01",
+      "record_date": "2015-04-06",
+      "pay_date": "2015-04-08",
+      "amount_per_share": 0.210734,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2015-05-01",
+      "record_date": "2015-05-05",
+      "pay_date": "2015-05-07",
+      "amount_per_share": 0.206062,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2015-06-01",
+      "record_date": "2015-06-03",
+      "pay_date": "2015-06-05",
+      "amount_per_share": 0.206341,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2015-07-01",
+      "record_date": "2015-07-06",
+      "pay_date": "2015-07-08",
+      "amount_per_share": 0.216427,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2015-08-03",
+      "record_date": "2015-08-05",
+      "pay_date": "2015-08-07",
+      "amount_per_share": 0.212854,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2015-09-01",
+      "record_date": "2015-09-03",
+      "pay_date": "2015-09-08",
+      "amount_per_share": 0.22239,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2015-10-01",
+      "record_date": "2015-10-05",
+      "pay_date": "2015-10-07",
+      "amount_per_share": 0.205066,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2015-11-02",
+      "record_date": "2015-11-04",
+      "pay_date": "2015-11-06",
+      "amount_per_share": 0.21461,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2015-12-01",
+      "record_date": "2015-12-03",
+      "pay_date": "2015-12-07",
+      "amount_per_share": 0.369876,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2015-12-24",
+      "record_date": "2015-12-29",
+      "pay_date": "2015-12-31",
+      "amount_per_share": 0.22234,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2016-02-01",
+      "record_date": "2016-02-03",
+      "pay_date": "2016-02-05",
+      "amount_per_share": 0.228012,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2016-03-01",
+      "record_date": "2016-03-03",
+      "pay_date": "2016-03-07",
+      "amount_per_share": 0.220516,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2016-04-01",
+      "record_date": "2016-04-05",
+      "pay_date": "2016-04-07",
+      "amount_per_share": 0.221533,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2016-05-02",
+      "record_date": "2016-05-04",
+      "pay_date": "2016-05-06",
+      "amount_per_share": 0.205191,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2016-06-01",
+      "record_date": "2016-06-03",
+      "pay_date": "2016-06-07",
+      "amount_per_share": 0.218163,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2016-07-01",
+      "record_date": "2016-07-06",
+      "pay_date": "2016-07-08",
+      "amount_per_share": 0.212476,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2016-08-01",
+      "record_date": "2016-08-03",
+      "pay_date": "2016-08-05",
+      "amount_per_share": 0.206697,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2016-09-01",
+      "record_date": "2016-09-06",
+      "pay_date": "2016-09-08",
+      "amount_per_share": 0.207574,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2016-10-03",
+      "record_date": "2016-10-05",
+      "pay_date": "2016-10-07",
+      "amount_per_share": 0.20315,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2016-11-01",
+      "record_date": "2016-11-03",
+      "pay_date": "2016-11-07",
+      "amount_per_share": 0.20976,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2016-12-01",
+      "record_date": "2016-12-05",
+      "pay_date": "2016-12-07",
+      "amount_per_share": 0.203914,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2016-12-22",
+      "record_date": "2016-12-27",
+      "pay_date": "2016-12-29",
+      "amount_per_share": 0.248665,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2017-02-01",
+      "record_date": "2017-02-03",
+      "pay_date": "2017-02-07",
+      "amount_per_share": 0.21805,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2017-03-01",
+      "record_date": "2017-03-03",
+      "pay_date": "2017-03-07",
+      "amount_per_share": 0.220281,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2017-04-03",
+      "record_date": "2017-04-05",
+      "pay_date": "2017-04-07",
+      "amount_per_share": 0.222398,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2017-05-01",
+      "record_date": "2017-05-03",
+      "pay_date": "2017-05-05",
+      "amount_per_share": 0.23914,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2017-06-01",
+      "record_date": "2017-06-05",
+      "pay_date": "2017-06-07",
+      "amount_per_share": 0.230151,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2017-07-03",
+      "record_date": "2017-07-06",
+      "pay_date": "2017-07-10",
+      "amount_per_share": 0.225168,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2017-08-01",
+      "record_date": "2017-08-03",
+      "pay_date": "2017-08-07",
+      "amount_per_share": 0.229845,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2017-09-01",
+      "record_date": "2017-09-06",
+      "pay_date": "2017-09-08",
+      "amount_per_share": 0.229744,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2017-10-02",
+      "record_date": "2017-10-03",
+      "pay_date": "2017-10-06",
+      "amount_per_share": 0.227283,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2017-11-01",
+      "record_date": "2017-11-02",
+      "pay_date": "2017-11-07",
+      "amount_per_share": 0.227998,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2017-12-01",
+      "record_date": "2017-12-04",
+      "pay_date": "2017-12-07",
+      "amount_per_share": 0.230877,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2017-12-21",
+      "record_date": "2017-12-22",
+      "pay_date": "2017-12-28",
+      "amount_per_share": 0.036408,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2018-02-01",
+      "record_date": "2018-02-02",
+      "pay_date": "2018-02-07",
+      "amount_per_share": 0.24183,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2018-03-01",
+      "record_date": "2018-03-02",
+      "pay_date": "2018-03-07",
+      "amount_per_share": 0.235056,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2018-04-02",
+      "record_date": "2018-04-03",
+      "pay_date": "2018-04-06",
+      "amount_per_share": 0.243364,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2018-05-01",
+      "record_date": "2018-05-02",
+      "pay_date": "2018-05-07",
+      "amount_per_share": 0.240064,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2018-06-01",
+      "record_date": "2018-06-04",
+      "pay_date": "2018-06-07",
+      "amount_per_share": 0.249277,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2018-07-02",
+      "record_date": "2018-07-03",
+      "pay_date": "2018-07-09",
+      "amount_per_share": 0.229163,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2018-08-01",
+      "record_date": "2018-08-02",
+      "pay_date": "2018-08-07",
+      "amount_per_share": 0.251277,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2018-09-04",
+      "record_date": "2018-09-05",
+      "pay_date": "2018-09-10",
+      "amount_per_share": 0.232424,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2018-10-01",
+      "record_date": "2018-10-02",
+      "pay_date": "2018-10-05",
+      "amount_per_share": 0.251565,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2018-11-01",
+      "record_date": "2018-11-02",
+      "pay_date": "2018-11-07",
+      "amount_per_share": 0.25634,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2018-12-03",
+      "record_date": "2018-12-04",
+      "pay_date": "2018-12-07",
+      "amount_per_share": 0.251388,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2018-12-18",
+      "record_date": "2018-12-19",
+      "pay_date": "2018-12-24",
+      "amount_per_share": 0.209595,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2019-02-01",
+      "record_date": "2019-02-04",
+      "pay_date": "2019-02-07",
+      "amount_per_share": 0.268343,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2019-03-01",
+      "record_date": "2019-03-04",
+      "pay_date": "2019-03-07",
+      "amount_per_share": 0.266835,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2019-04-01",
+      "record_date": "2019-04-02",
+      "pay_date": "2019-04-05",
+      "amount_per_share": 0.261925,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2019-05-01",
+      "record_date": "2019-05-02",
+      "pay_date": "2019-05-07",
+      "amount_per_share": 0.260316,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2019-06-03",
+      "record_date": "2019-06-04",
+      "pay_date": "2019-06-07",
+      "amount_per_share": 0.260135,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2019-07-01",
+      "record_date": "2019-07-02",
+      "pay_date": "2019-07-08",
+      "amount_per_share": 0.251962,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2019-08-01",
+      "record_date": "2019-08-02",
+      "pay_date": "2019-08-07",
+      "amount_per_share": 0.260423,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2019-09-03",
+      "record_date": "2019-09-04",
+      "pay_date": "2019-09-09",
+      "amount_per_share": 0.263347,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2019-10-01",
+      "record_date": "2019-10-02",
+      "pay_date": "2019-10-07",
+      "amount_per_share": 0.25528,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2019-11-01",
+      "record_date": "2019-11-04",
+      "pay_date": "2019-11-07",
+      "amount_per_share": 0.251365,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2019-12-02",
+      "record_date": "2019-12-03",
+      "pay_date": "2019-12-06",
+      "amount_per_share": 0.245702,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2019-12-19",
+      "record_date": "2019-12-20",
+      "pay_date": "2019-12-26",
+      "amount_per_share": 0.190502,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2020-02-03",
+      "record_date": "2020-02-04",
+      "pay_date": "2020-02-07",
+      "amount_per_share": 0.243425,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2020-03-02",
+      "record_date": "2020-03-03",
+      "pay_date": "2020-03-06",
+      "amount_per_share": 0.239027,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2020-04-01",
+      "record_date": "2020-04-02",
+      "pay_date": "2020-04-07",
+      "amount_per_share": 0.24868,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2020-05-01",
+      "record_date": "2020-05-04",
+      "pay_date": "2020-05-07",
+      "amount_per_share": 0.236297,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2020-06-01",
+      "record_date": "2020-06-02",
+      "pay_date": "2020-06-05",
+      "amount_per_share": 0.213602,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2020-07-01",
+      "record_date": "2020-07-02",
+      "pay_date": "2020-07-08",
+      "amount_per_share": 0.222865,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2020-08-03",
+      "record_date": "2020-08-04",
+      "pay_date": "2020-08-07",
+      "amount_per_share": 0.207367,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2020-09-01",
+      "record_date": "2020-09-02",
+      "pay_date": "2020-09-08",
+      "amount_per_share": 0.195222,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2020-10-01",
+      "record_date": "2020-10-02",
+      "pay_date": "2020-10-07",
+      "amount_per_share": 0.201694,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2020-11-02",
+      "record_date": "2020-11-03",
+      "pay_date": "2020-11-06",
+      "amount_per_share": 0.192064,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2020-12-01",
+      "record_date": "2020-12-02",
+      "pay_date": "2020-12-07",
+      "amount_per_share": 0.205967,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2020-12-17",
+      "record_date": "2020-12-18",
+      "pay_date": "2020-12-23",
+      "amount_per_share": 0.125266,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2021-02-01",
+      "record_date": "2021-02-02",
+      "pay_date": "2021-02-05",
+      "amount_per_share": 0.191959,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2021-03-01",
+      "record_date": "2021-03-02",
+      "pay_date": "2021-03-05",
+      "amount_per_share": 0.189702,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2021-04-01",
+      "record_date": "2021-04-05",
+      "pay_date": "2021-04-08",
+      "amount_per_share": 0.172203,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2021-05-03",
+      "record_date": "2021-05-04",
+      "pay_date": "2021-05-07",
+      "amount_per_share": 0.172575,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2021-06-01",
+      "record_date": "2021-06-02",
+      "pay_date": "2021-06-07",
+      "amount_per_share": 0.166882,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2021-07-01",
+      "record_date": "2021-07-02",
+      "pay_date": "2021-07-08",
+      "amount_per_share": 0.155512,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2021-08-02",
+      "record_date": "2021-08-03",
+      "pay_date": "2021-08-06",
+      "amount_per_share": 0.166643,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2021-09-01",
+      "record_date": "2021-09-02",
+      "pay_date": "2021-09-08",
+      "amount_per_share": 0.167395,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2021-10-01",
+      "record_date": "2021-10-04",
+      "pay_date": "2021-10-07",
+      "amount_per_share": 0.179691,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2021-11-01",
+      "record_date": "2021-11-02",
+      "pay_date": "2021-11-05",
+      "amount_per_share": 0.179542,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2021-12-01",
+      "record_date": "2021-12-02",
+      "pay_date": "2021-12-07",
+      "amount_per_share": 0.161785,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2021-12-16",
+      "record_date": "2021-12-17",
+      "pay_date": "2021-12-22",
+      "amount_per_share": 0.116542,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2022-02-01",
+      "record_date": "2022-02-02",
+      "pay_date": "2022-02-07",
+      "amount_per_share": 0.161482,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2022-03-01",
+      "record_date": "2022-03-02",
+      "pay_date": "2022-03-07",
+      "amount_per_share": 0.160622,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2022-04-01",
+      "record_date": "2022-04-04",
+      "pay_date": "2022-04-07",
+      "amount_per_share": 0.159848,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2022-05-02",
+      "record_date": "2022-05-03",
+      "pay_date": "2022-05-06",
+      "amount_per_share": 0.181332,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2022-06-01",
+      "record_date": "2022-06-02",
+      "pay_date": "2022-06-07",
+      "amount_per_share": 0.186101,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2022-07-01",
+      "record_date": "2022-07-05",
+      "pay_date": "2022-07-08",
+      "amount_per_share": 0.185649,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2022-08-01",
+      "record_date": "2022-08-02",
+      "pay_date": "2022-08-05",
+      "amount_per_share": 0.200463,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2022-09-01",
+      "record_date": "2022-09-02",
+      "pay_date": "2022-09-08",
+      "amount_per_share": 0.204483,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2022-10-03",
+      "record_date": "2022-10-04",
+      "pay_date": "2022-10-07",
+      "amount_per_share": 0.210609,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2022-11-01",
+      "record_date": "2022-11-02",
+      "pay_date": "2022-11-07",
+      "amount_per_share": 0.216055,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2022-12-01",
+      "record_date": "2022-12-02",
+      "pay_date": "2022-12-07",
+      "amount_per_share": 0.226212,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2022-12-15",
+      "record_date": "2022-12-16",
+      "pay_date": "2022-12-21",
+      "amount_per_share": 0.225819,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2023-02-01",
+      "record_date": "2023-02-02",
+      "pay_date": "2023-02-07",
+      "amount_per_share": 0.245333,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2023-03-01",
+      "record_date": "2023-03-02",
+      "pay_date": "2023-03-07",
+      "amount_per_share": 0.233768,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2023-04-03",
+      "record_date": "2023-04-04",
+      "pay_date": "2023-04-07",
+      "amount_per_share": 0.251756,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2023-05-01",
+      "record_date": "2023-05-02",
+      "pay_date": "2023-05-05",
+      "amount_per_share": 0.249306,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2023-06-01",
+      "record_date": "2023-06-02",
+      "pay_date": "2023-06-07",
+      "amount_per_share": 0.257741,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2023-07-03",
+      "record_date": "2023-07-05",
+      "pay_date": "2023-07-10",
+      "amount_per_share": 0.254739,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2023-08-01",
+      "record_date": "2023-08-02",
+      "pay_date": "2023-08-07",
+      "amount_per_share": 0.264609,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2023-09-01",
+      "record_date": "2023-09-05",
+      "pay_date": "2023-09-08",
+      "amount_per_share": 0.260446,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2023-10-02",
+      "record_date": "2023-10-03",
+      "pay_date": "2023-10-06",
+      "amount_per_share": 0.257304,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2023-11-01",
+      "record_date": "2023-11-02",
+      "pay_date": "2023-11-07",
+      "amount_per_share": 0.276585,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2023-12-01",
+      "record_date": "2023-12-04",
+      "pay_date": "2023-12-07",
+      "amount_per_share": 0.273635,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2023-12-14",
+      "record_date": "2023-12-15",
+      "pay_date": "2023-12-20",
+      "amount_per_share": 0.282345,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2024-02-01",
+      "record_date": "2024-02-02",
+      "pay_date": "2024-02-07",
+      "amount_per_share": 0.293291,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2024-03-01",
+      "record_date": "2024-03-04",
+      "pay_date": "2024-03-07",
+      "amount_per_share": 0.286202,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2024-04-01",
+      "record_date": "2024-04-02",
+      "pay_date": "2024-04-05",
+      "amount_per_share": 0.290239,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2024-05-01",
+      "record_date": "2024-05-02",
+      "pay_date": "2024-05-07",
+      "amount_per_share": 0.294781,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2024-06-03",
+      "record_date": "2024-06-03",
+      "pay_date": "2024-06-07",
+      "amount_per_share": 0.301803,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2024-07-01",
+      "record_date": "2024-07-01",
+      "pay_date": "2024-07-05",
+      "amount_per_share": 0.300883,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2024-08-01",
+      "record_date": "2024-08-01",
+      "pay_date": "2024-08-06",
+      "amount_per_share": 0.30375,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2024-09-03",
+      "record_date": "2024-09-03",
+      "pay_date": "2024-09-06",
+      "amount_per_share": 0.311936,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2024-10-01",
+      "record_date": "2024-10-01",
+      "pay_date": "2024-10-04",
+      "amount_per_share": 0.307328,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2024-11-01",
+      "record_date": "2024-11-01",
+      "pay_date": "2024-11-06",
+      "amount_per_share": 0.310262,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2024-12-02",
+      "record_date": "2024-12-02",
+      "pay_date": "2024-12-05",
+      "amount_per_share": 0.311533,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2024-12-18",
+      "record_date": "2024-12-18",
+      "pay_date": "2024-12-23",
+      "amount_per_share": 0.316274,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2025-02-03",
+      "record_date": "2025-02-03",
+      "pay_date": "2025-02-06",
+      "amount_per_share": 0.322301,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2025-03-03",
+      "record_date": "2025-03-03",
+      "pay_date": "2025-03-06",
+      "amount_per_share": 0.304188,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2025-04-01",
+      "record_date": "2025-04-01",
+      "pay_date": "2025-04-04",
+      "amount_per_share": 0.325202,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2025-05-01",
+      "record_date": "2025-05-01",
+      "pay_date": "2025-05-06",
+      "amount_per_share": 0.321226,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2025-06-02",
+      "record_date": "2025-06-02",
+      "pay_date": "2025-06-05",
+      "amount_per_share": 0.322969,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2025-07-01",
+      "record_date": "2025-07-01",
+      "pay_date": "2025-07-07",
+      "amount_per_share": 0.319459,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2025-08-01",
+      "record_date": "2025-08-01",
+      "pay_date": "2025-08-06",
+      "amount_per_share": 0.330212,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2025-09-02",
+      "record_date": "2025-09-02",
+      "pay_date": "2025-09-05",
+      "amount_per_share": 0.326891,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2025-10-01",
+      "record_date": "2025-10-01",
+      "pay_date": "2025-10-06",
+      "amount_per_share": 0.325227,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2025-11-03",
+      "record_date": "2025-11-03",
+      "pay_date": "2025-11-06",
+      "amount_per_share": 0.326955,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2025-12-01",
+      "record_date": "2025-12-01",
+      "pay_date": "2025-12-04",
+      "amount_per_share": 0.326375,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2025-12-19",
+      "record_date": "2025-12-19",
+      "pay_date": "2025-12-24",
+      "amount_per_share": 0.334012,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2026-02-02",
+      "record_date": "2026-02-02",
+      "pay_date": "2026-02-05",
+      "amount_per_share": 0.324655,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2026-03-02",
+      "record_date": "2026-03-02",
+      "pay_date": "2026-03-05",
+      "amount_per_share": 0.316377,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2026-04-01",
+      "record_date": "2026-04-01",
+      "pay_date": "2026-04-07",
+      "amount_per_share": 0.336719,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2026-05-01",
+      "record_date": "2026-05-01",
+      "pay_date": "2026-05-06",
+      "amount_per_share": 0.329934,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2026-06-01",
+      "record_date": "2026-06-01",
+      "pay_date": "2026-06-04",
+      "amount_per_share": 0.33149,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2026-07-01",
+      "record_date": "2026-07-01",
+      "pay_date": "2026-07-07",
+      "amount_per_share": 0.330688,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2026-08-03",
+      "record_date": "2026-08-03",
+      "pay_date": "2026-08-06",
+      "amount_per_share": 0.337568,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2026-09-01",
+      "record_date": "2026-09-01",
+      "pay_date": "2026-09-04",
+      "amount_per_share": 0.337062,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    },
+    {
+      "ex_date": "2026-10-01",
+      "record_date": "2026-10-01",
+      "pay_date": "2026-10-06",
+      "amount_per_share": 0.334142,
+      "currency": "USD",
+      "observed_at": "2026-10-26T18:46:41.397243+00:00"
+    }
+  ],
+  "basis": "issuer-reported-per-share"
+}
