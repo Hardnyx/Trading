@@ -87,6 +87,34 @@
       <div class="notice">{{message}}</div>
     </template>
 
+    <template id="robustness-running">
+      <section class="panel robustness-report" aria-live="polite">
+        <div class="panel-header"><h2 class="panel-title">COMPARACIÓN ROBUSTA</h2></div>
+        <p class="robustness-summary">{{progress}} · Las posiciones se conservan durante el cálculo.</p>
+        <button class="button ghost" data-action="cancel-robustness">Cancelar comparación</button>
+      </section>
+    </template>
+    <template id="robustness-report">
+      <section class="panel robustness-report">
+        <div class="panel-header"><h2 class="panel-title">COMPARACIÓN ROBUSTA · EXPERIMENTAL</h2><span class="panel-meta">CORTE {{asOf}} · {{months}} MESES</span></div>
+        <div class="robustness-summary"><strong>{{decision}}</strong><p>Comparador: {{source}}. {{candidates}} carteras examinadas; {{finalists}} finalistas verificadas con otra semilla.</p><p>{{incumbentNotice}}</p></div>
+        <div class="robustness-weights"><h3>PESOS CANDIDATOS</h3>{{{weights}}}</div>
+        <div class="table-wrap"><table class="robustness-scenarios"><thead><tr>
+          <th>HIPÓTESIS</th><th>MEDIANA · MANTENER</th><th>MEDIANA · CANDIDATA</th><th>CVaR 95%</th><th>PROB. PÉRDIDA</th><th>MEJORA EQUIVALENTE</th><th>LÍMITE INFERIOR MC</th>
+        </tr></thead><tbody>{{{scenarios}}}</tbody></table></div>
+        <div class="robustness-summary"><p>Costos de transición: {{cost}}. Mejora mínima exigida en cada modelo: {{threshold}}. El límite inferior ajusta el error de simulación por la cantidad de comparaciones.</p><p>Sin historial suficiente o método compatible para el estrés de margen: {{missingMargins}}. No se sustituyeron esos datos por un BPA inventado.</p><p>La búsqueda es finita. Las cifras dependen de los supuestos y no acreditan capacidad predictiva. El estrés de margen no es una normalización contable del BPA. No se ejecutan operaciones.</p>{{{copy}}}</div>
+      </section>
+    </template>
+    <template id="robustness-weight">
+      <span><b>{{symbol}}</b> {{weight}}</span>
+    </template>
+    <template id="robustness-scenario">
+      <tr><td>{{name}}</td><td>{{currentMedian}}</td><td>{{median}}</td><td>{{cvar}}</td><td>{{probability}}</td><td>{{gain}}</td><td>{{lower}}</td></tr>
+    </template>
+    <template id="robustness-copy">
+      <button class="button ghost" data-action="use-robust-weights">Usar pesos para simular</button>
+    </template>
+
     <template id="composition-report">
       <section class="panel composition-report">
         <div class="panel-header">

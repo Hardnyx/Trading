@@ -1,5 +1,5 @@
-import { finite, metrics, valuation, scenarios } from "./analytics.mjs?v=0.9.0";
-import { DEFAULT_RESEARCH } from "./policy.mjs?v=0.9.0";
+import { finite, metrics, valuation, scenarios } from "./analytics.mjs?v=0.10.0";
+import { DEFAULT_RESEARCH } from "./policy.mjs?v=0.10.0";
 
 const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
 const years = (a, b) =>

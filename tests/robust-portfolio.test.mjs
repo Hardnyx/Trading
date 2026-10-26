@@ -61,3 +61,40 @@ test('combined variant preserves asset order, risk state and reported market fac
  close(r.assets[0].financials.eps.value,4);
  close(r.anchors[0].forecast.assumptions.multiple,10);
 });
+
+test('variants retain user growth and valuation overrides and never raise a lower assigned confidence',()=>{
+ const a=cyclical(),x={assets:[a],asOf:'2026-10-23',informationAsOf:'2026-10-26',riskFree:.04,
+  valuationOverrides:{CYCLE:{multiple:6,growth:.13,horizon:2}},
+  options:{asOf:'2026-10-23',informationAsOf:'2026-10-26',research:{CYCLE:{confidence:.1}},
+    assetAssumptions:{VTI:{expectedReturn:-.02,uncertainty:.1}}}};
+ const r=variantInputs(x,{id:'stress',noRerating:true,confidence:.3,equityPremium:0});
+ close(r.anchors[0].forecast.assumptions.multiple,6);
+ close(r.anchors[0].forecast.assumptions.growth,.13);
+ assert.equal(r.anchors[0].forecast.assumptions.horizon,2);
+ assert.equal(r.options.research.CYCLE.confidence,.1);
+ assert.equal(r.options.assetAssumptions.VTI.expectedReturn,-.02);
+});
+
+test('shared browser comparison preserves its inputs and reports the same fixed universe in every model',async()=>{
+ const {readFileSync}=await import('node:fs');
+ const {compareRobustPortfolio}=await import('../dist/assets/js/robust-composer.mjs?v=0.10.0');
+ const {referenceRequest}=await import('../dist/assets/js/reference-preset.mjs?v=0.10.0');
+ const market=JSON.parse(readFileSync(new URL('../dist/data/market.json',import.meta.url)));
+ market.volatility=JSON.parse(readFileSync(new URL('../dist/data/volatility.json',import.meta.url)));
+ const p=referenceRequest(market),before=JSON.stringify(p);
+ const phases=[];
+ const r=compareRobustPortfolio(market,p.settings,p.overrides,p.rules,{config:{candidateCount:1,
+  searchPaths:100,verificationPaths:100,localRounds:1,localStarts:1,finalists:1},
+  onProgress:(phase)=>phases.push(phase)});
+ assert.equal(JSON.stringify(p),before);
+ assert.equal(r.scenarios.length,5);
+ for(const s of r.scenarios)assert.deepEqual(s.anchors.map(a=>a.symbol),r.universe);
+ assert.equal(r.current.id,'current-account');
+ assert.equal(r.current.positions[0].symbol,'CASH');
+ assert.equal(r.current.verification.original.medianReturn,0);
+ assert.equal(phases.filter(p=>p==='Verificación semanal').length,5);
+ assert.ok(r.candidate.positions.reduce((s,p)=>s+p.weight,0)>.999999);
+ assert.equal(r.experimental,true);
+ assert.throws(()=>compareRobustPortfolio(market,{...p.settings,mandate:{...p.settings.mandate,
+  monthlyWithdrawal:100}},p.overrides,p.rules),/sin retiros/);
+});

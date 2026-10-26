@@ -157,3 +157,10 @@ La cartera mostrada (SHY 35%, efectivo 15%, CMCSA 20%, AMZN 15%, MU/NFLX/NVDA 5%
 Se incorpora [optimización bajo incertidumbre de valoración](optimizacion-robusta.md): cinco modelos económicos alternativos, universo fijo, números aleatorios comunes, búsqueda por asignaciones e intercambios locales, minimización del arrepentimiento y verificación semanal con semilla independiente. La mejora frente a mantener exige un margen superior al costo mínimo y al error Monte Carlo aproximado ajustado por la familia de comparaciones.
 
 El procedimiento vive en investigación; no altera las anclas de producción. Distingue un estrés proporcional del BPA de una normalización contable, y la admisibilidad por topes de una demostración de superioridad económica. El workflow conserva una referencia sintética; las cuentas locales y sus informes están excluidos de Git. Ninguna salida constituye un óptimo global ni una validación prospectiva madura.
+
+
+### Página 0.10.0: comparación robusta de la sesión
+
+El botón **Comparar robustez** ejecuta el núcleo compartido en un Web Worker y muestra pesos candidatos, cinco escenarios, referencia al mantener, costos y límite inferior de mejora. El usuario conserva el control de la cartera: el cálculo no aplica pesos; una acción separada los copia para simular. El resultado caduca cuando cambian sus entradas o el corte y puede cancelarse durante su ejecución. El soporte actual se limita a crecimiento en USD sin flujos, suelo ni meta de capital; un mandato incompatible recibe una explicación explícita.
+
+Los perfiles Treasury oficiales se amplían a IEF, IEI, SGOV y SHV mediante la página del emisor ya contrastada por ticker, producto y moneda. Se preservan fuente, hash, fecha y última captura válida cuando falla la actualización. Esta ampliación no acredita la calibración de sus retornos ni sustituye modelos propios de crédito o inflación.

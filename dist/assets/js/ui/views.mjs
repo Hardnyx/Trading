@@ -4,7 +4,7 @@ import {
   normalizeWeights,
   metrics,
   scenarios,
-} from "../analytics.mjs?v=0.9.0";
+} from "../analytics.mjs?v=0.10.0";
 import {
   sparkline,
   portfolioChart,
@@ -13,7 +13,7 @@ import {
   scatter,
   forecastCone,
   histogram,
-} from "../charts.mjs?v=0.9.0";
+} from "../charts.mjs?v=0.10.0";
 import {
   esc,
   url,
@@ -23,13 +23,13 @@ import {
   compact,
   color,
   dateLabel,
-} from "./format.mjs?v=0.9.0";
-import { template } from "./templates.mjs?v=0.9.0";
-import { DEFAULT_COMPOSITION_RULES } from "../composer.mjs?v=0.9.0";
-import { factorModel } from "../factors.mjs?v=0.9.0";
-import { MODEL_VERSION } from "../policy.mjs?v=0.9.0";
+} from "./format.mjs?v=0.10.0";
+import { template } from "./templates.mjs?v=0.10.0";
+import { DEFAULT_COMPOSITION_RULES } from "../composer.mjs?v=0.10.0";
+import { factorModel } from "../factors.mjs?v=0.10.0";
+import { MODEL_VERSION } from "../policy.mjs?v=0.10.0";
 
-import { createDecisionViews } from "./decision-views.mjs?v=0.9.0";
+import { createDecisionViews } from "./decision-views.mjs?v=0.10.0";
 
 export function compositionValuationEvidence(signal) {
   if(!signal.filed)return "";
@@ -37,6 +37,32 @@ export function compositionValuationEvidence(signal) {
   if(!v)return "Supuestos sin guardar en esta propuesta: vuelve a proponer cartera.";
   const a=v.assumptions;
   return `Supuestos: ${v.source} · crecimiento ${pct(a.growth)} · P/E de salida ${fmt(a.multiple,1)} · valoración a ${fmt(a.horizon,0)} años · confianza asignada ${pct(v.confidence)}. Sin calibración predictiva.`;
+}
+
+export function robustnessView(report,{busy=false,error=null,progress='',fresh=true}={}){
+ if(busy)return template('robustness-running',{progress:progress||'Preparando escenarios'});
+ if(error)return template('composition-notice',{message:'Comparación robusta: '+error});
+ if(!report)return '';
+ if(!fresh)return template('composition-notice',{message:'Comparación robusta desactualizada: cambió la cartera, el corte o algún supuesto. Pulsa Comparar robustez.'});
+ const labels={original:'Supuestos de sesión',no_rerating:'Sin expansión de múltiplos',margin_stress:'Estrés de margen operativo',combined:'Margen y múltiplos',low_conviction:'Menor confianza y prima de mercado'};
+ const c=report.candidate,good=report.decision==='candidate_survives_assumed_models';
+ return template('robustness-report',{
+  decision:good?'VENTAJA CONDICIONAL EN LOS CINCO MODELOS':'SIN EVIDENCIA SUFICIENTE PARA REBALANCEAR',
+  source:report.account_source,asOf:dateLabel(report.as_of),months:fmt(report.horizon*12,0),
+  candidates:report.candidate_count,finalists:report.verified_candidates,
+  incumbentNotice:report.current?.structuralFeasible?'La referencia cumple los límites de construcción.':'La referencia excede algún límite de construcción; eso no demuestra por sí solo que rebalancear mejore el resultado.',
+  weights:(c?.positions||[]).map(p=>template('robustness-weight',{symbol:p.symbol,weight:pct(p.weight,1)})).join(''),
+  scenarios:report.scenarios.map(s=>{
+   const m=c?.verification[s.id],base=report.current?.verification[s.id],paired=c?.pairedMonteCarlo[s.id];
+   return template('robustness-scenario',{name:labels[s.id]||s.id,
+    currentMedian:pct(base?.medianReturn),median:pct(m?.medianReturn),cvar:pct(m?.cvar95),
+    probability:pct(m?.lossProbability),gain:money(report.paired_certainty_equivalent_gain_dollars?.[s.id],0),
+    lower:money(paired?.lower_ce_gain_dollars,0)});
+  }).join(''),
+  threshold:money(report.required_gain_dollars,0),cost:money(c?.cost,0),
+  missingMargins:report.scenarios.find(s=>s.id==='margin_stress')?.earnings_stresses.filter(r=>!r.available).map(r=>r.symbol).join(', ')||'ninguno',
+  copy:c?template('robustness-copy'):''
+ });
 }
 
 export const NAV = [
@@ -635,13 +661,14 @@ export function createViews(context) {
         "Composición de cartera",
         "Pesos por activo y capital de simulación.",
         template("portfolio-actions", {
-          composeDisabled: state.compositionBusy ? "disabled" : "",
-          referenceDisabled: state.compositionBusy ? "disabled" : "",
+          composeDisabled: state.compositionBusy || state.robustnessBusy ? "disabled" : "",
+          referenceDisabled: state.compositionBusy || state.robustnessBusy ? "disabled" : "",
+          robustLabel: state.robustnessBusy ? "Comparando…" : "Comparar robustez",
           applyDisabled: state.proposal?.status === "proposed" &&
             state.proposal.model_version === MODEL_VERSION &&
             state.proposal.as_of === data.price_as_of &&
             state.proposal.snapshot_generated_at === data.generated_at &&
-            !state.proposal.modified ? "" : "disabled",
+            !state.proposal.modified && (context.proposalFresh?.()??true) ? "" : "disabled",
           composeLabel: state.compositionBusy
             ? "Evaluando…"
             : "Proponer cartera",
@@ -654,6 +681,11 @@ export function createViews(context) {
       ) +
       compositionControls() +
       compositionReport() +
+      robustnessView(state.robustness,{
+        busy:state.robustnessBusy,error:state.robustnessError,progress:state.robustnessProgress,
+        fresh:state.robustness?.model_version===MODEL_VERSION&&state.robustness?.as_of===data.price_as_of&&
+          state.robustness?.snapshot_generated_at===data.generated_at&&(context.robustnessFresh?.()??true),
+      }) +
       template("portfolio-layout", {
         value1:
           state.positions.length && Math.abs(total - 1) > 0.0001
@@ -798,7 +830,7 @@ export function createViews(context) {
     if (!p) return "";
     if (p.model_version !== MODEL_VERSION ||
         p.as_of !== data.price_as_of ||
-        p.snapshot_generated_at !== data.generated_at)
+        p.snapshot_generated_at !== data.generated_at || (context.proposalFresh && !context.proposalFresh()))
       return template("composition-notice", {
         message: "Propuesta desactualizada: versión del motor o corte de datos distinto. Pulsa Proponer cartera.",
       });

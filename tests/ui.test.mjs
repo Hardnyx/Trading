@@ -4,22 +4,22 @@ import { readFile } from "node:fs/promises";
 import {
   createTemplateRenderer,
   loadTemplates,
-} from "../dist/assets/js/ui/templates.mjs?v=0.9.0";
-import { createViews, NAV } from "../dist/assets/js/ui/views.mjs?v=0.9.0";
+} from "../dist/assets/js/ui/templates.mjs?v=0.10.0";
+import { createViews, NAV } from "../dist/assets/js/ui/views.mjs?v=0.10.0";
 import {
   valuation,
   portfolioAnalysis,
   metrics,
-} from "../dist/assets/js/analytics.mjs?v=0.9.0";
+} from "../dist/assets/js/analytics.mjs?v=0.10.0";
 import {
   simulateForecast,
   validateRiskBands,
-} from "../dist/assets/js/forecast.mjs?v=0.9.0";
+} from "../dist/assets/js/forecast.mjs?v=0.10.0";
 import {
   registerPortfolio,
   reviewPortfolio,
   DEFAULT_RULES,
-} from "../dist/assets/js/monitor.mjs?v=0.9.0";
+} from "../dist/assets/js/monitor.mjs?v=0.10.0";
 
 test("external templates escape untrusted text and attributes without interpreting inserted placeholders", () => {
   const render = createTemplateRenderer([
@@ -43,7 +43,7 @@ test("template configuration rejects missing bindings and duplicate template nam
   assert.throws(() => render("missing"), /no disponible/);
 });
 
-import { MODEL_VERSION } from "../dist/assets/js/policy.mjs?v=0.9.0";
+import { MODEL_VERSION } from "../dist/assets/js/policy.mjs?v=0.10.0";
 
 await loadTemplates(async (url) => ({
   ok: true,
@@ -255,7 +255,7 @@ for (const populated of [false, true])
   });
 
 test("composition distinguishes published EPS from the effective valuation assumptions", async () => {
-  const { compositionValuationEvidence } = await import("../dist/assets/js/ui/views.mjs?v=0.9.0");
+  const { compositionValuationEvidence } = await import("../dist/assets/js/ui/views.mjs?v=0.10.0");
   const text = compositionValuationEvidence({filed:"2026-10-22",valuationEvidence:{
     source:"BPA y múltiplo propios",assumptions:{growth:.04,multiple:16,horizon:3},
     confidence:.514285714,prior:.06,
@@ -267,4 +267,23 @@ test("composition distinguishes published EPS from the effective valuation assum
   assert.match(text,/Sin calibración predictiva/);
   assert.match(compositionValuationEvidence({filed:"2026-10-22"}),/vuelve a proponer/);
   assert.equal(compositionValuationEvidence({symbol:"SHY"}),"");
+});
+
+test('robustness panel exposes conditional results, current comparison and stale-input protection', async()=>{
+ const {robustnessView}=await import('../dist/assets/js/ui/views.mjs?v=0.10.0');
+ const metric={medianReturn:.03,cvar95:.1,lossProbability:.3};
+ const report={as_of:'2026-10-23',horizon:1,account_source:'Cuenta <propia>',candidate_count:500,
+  verified_candidates:12,decision:'no_robust_rebalance_evidence',current:{structuralFeasible:false,verification:{original:metric}},
+  candidate:{positions:[{symbol:'AAA',weight:.2},{symbol:'CASH',weight:.8}],cost:10,
+   verification:{original:metric},pairedMonteCarlo:{original:{lower_ce_gain_dollars:-54}}},
+  scenarios:[{id:'original'}],paired_certainty_equivalent_gain_dollars:{original:383},required_gain_dollars:100};
+ const html=robustnessView(report);
+ assert.match(html,/SIN EVIDENCIA SUFICIENTE/);
+ assert.match(html,/MEDIANA · MANTENER/);
+ assert.match(html,/Usar pesos para simular/);
+ assert.ok(html.includes('Cuenta &lt;propia&gt;'));
+ const stale=robustnessView(report,{fresh:false});
+ assert.match(stale,/desactualizada/);assert.ok(!stale.includes('use-robust-weights'));
+ const running=robustnessView(report,{busy:true,progress:'Verificando'});
+ assert.match(running,/cancel-robustness/);assert.ok(!running.includes('use-robust-weights'));
 });

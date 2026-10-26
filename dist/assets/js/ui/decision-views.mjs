@@ -1,6 +1,6 @@
-import { template as t } from "./templates.mjs?v=0.9.0";
-import { pct, fmt, money, dateLabel } from "./format.mjs?v=0.9.0";
-import { finite, sum, normalizeWeights } from "../analytics.mjs?v=0.9.0";
+import { template as t } from "./templates.mjs?v=0.10.0";
+import { pct, fmt, money, dateLabel } from "./format.mjs?v=0.10.0";
+import { finite, sum, normalizeWeights } from "../analytics.mjs?v=0.10.0";
 import {
   DEFAULT_MANDATE,
   DEFAULT_EXECUTION,
@@ -8,15 +8,15 @@ import {
   DEFAULT_REGIMES,
   currentAccount,
   informationDate,
-} from "../policy.mjs?v=0.9.0";
+} from "../policy.mjs?v=0.10.0";
 import {
   fundamentalForecast,
   businessQuality,
   evaluateThesis,
   bondAssumptions,
-} from "../research-model.mjs?v=0.9.0";
-import { factorModel, factorAttribution } from "../factors.mjs?v=0.9.0";
-import { evaluateJournal } from "../journal.mjs?v=0.9.0";
+} from "../research-model.mjs?v=0.10.0";
+import { factorModel, factorAttribution } from "../factors.mjs?v=0.10.0";
+import { evaluateJournal } from "../journal.mjs?v=0.10.0";
 const objectives = {
   growth: "Crecimiento logarítmico",
   preservation: "Preservación · utilidad CRRA",

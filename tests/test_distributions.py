@@ -83,6 +83,25 @@ class DistributionFacts(unittest.TestCase):
             self.assertEqual(restored[0]["issuer_distributions"], history)
             self.assertEqual(len(failed["errors"]), 2)
 
+    def test_verified_treasury_history_supplies_a_dated_profile_and_retains_it_on_failure(self):
+        from tests.test_bond_profiles import BondProfiles
+        page = issuer_page(symbol="IEF") + BondProfiles().html()
+        def fetch(url, key):
+            if key.endswith('.pdf'):
+                raise ValueError('calendar unavailable')
+            return page.encode()
+        assets = [{"symbol": "IEF", "type": "etf"}]
+        result = enrich_distributions(assets, {}, "2026-10-23", "2026-10-26T20:00:00Z", fetch)
+        self.assertEqual(result['profiles'], 1)
+        profile = assets[0]['bond_profile']
+        self.assertEqual(profile['date'], '2026-10-22')
+        self.assertEqual(profile['source_sha256'], assets[0]['issuer_distributions']['source_sha256'])
+        restored = [{"symbol": "IEF", "type": "etf"}]
+        def failing(url, key):
+            raise ValueError('unavailable')
+        enrich_distributions(restored, {'IEF': assets[0]}, '2026-10-23', '2026-10-27T20:00:00Z', failing)
+        self.assertEqual(restored[0]['bond_profile'], profile)
+
     def test_bad_payment_order_and_changed_column_labels_are_rejected(self):
         with self.assertRaises(ValueError):
             parse_issuer_history(issuer_page(pay=20261030),"SHY","2026-10-26T20:00:00Z")

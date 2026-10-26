@@ -1,6 +1,6 @@
 # Optimización bajo incertidumbre de valoración
 
-Estado: investigación experimental. Este procedimiento no modifica los pesos ni las anclas del motor público.
+Estado: comparación experimental disponible en la página desde la versión 0.10.0. El cálculo no modifica posiciones ni ejecuta operaciones. La propuesta básica y el contraste de robustez permanecen identificados por separado.
 
 El problema observado es que maximizar utilidad dentro de una valoración con P/E de salida alto puede concentrar una cartera en una revalorización que todavía no tiene evidencia prospectiva suficiente. Se añade una comparación que conserva el universo, los precios, la covarianza, los regímenes y los números aleatorios, y varía las hipótesis económicas.
 
@@ -30,6 +30,18 @@ El informe distingue la admisibilidad de construcción y la mejora económica. P
 
 No se afirma optimalidad global. La lista de activos, el número de candidatas, la malla de cinco puntos y los modelos alternativos son limitaciones explícitas. La repetición con otras semillas o universos debe conservarse como diagnóstico, sin seleccionar retrospectivamente solo la ejecución más favorable.
 
+## Usar en la página
+
+En **Componer cartera**, pulsa **Comparar robustez**. Se usan el mandato, los límites, los costos, los escenarios macro y las hipótesis editadas en la sesión. Si ingresaste cantidades de una cuenta, ese es el comparador; en su defecto se usa la composición registrada. Sin ambos, una cartera de trabajo que suma 100% se valora a precios del corte y se identifica expresamente como referencia teórica. Si no hay posiciones, se compara con el capital inicial en efectivo.
+
+La tabla presenta la mediana al mantener, la mediana candidata, CVaR, probabilidad de pérdida y mejora equivalente con límite inferior Monte Carlo en los cinco modelos. La comparación es compatible actualmente con crecimiento en USD sin retiros, suelo ni meta de capital; otros mandatos conservan sus datos y reciben una explicación de la limitación, sin reinterpretarlos.
+
+El avance se muestra durante el cálculo y puede cancelarse. Cambiar capital, posiciones, cuenta, mandato o hipótesis invalida el resultado. **Usar pesos para simular** requiere una acción explícita y copia la candidata a la cartera de trabajo, junto con el capital y el costo de transición utilizados en la comparación. No registra operaciones de broker. Las cantidades de la cuenta se conservan.
+
+Para fondos sin perfil de renta fija o retorno fundamentado, deben introducirse retorno esperado e incertidumbre en Research; el navegador no asigna automáticamente las primas de los ejemplos de investigación. La ingesta añade perfiles oficiales de Treasury para IEF, IEI, SGOV y SHV, además de SHY y TLT. Crédito e inflación no se habilitan por reutilizar ese modelo sin sus propios supuestos.
+
+El núcleo del cálculo es compartido por el navegador y el script. La página usa un presupuesto menor para cálculo interactivo; los presupuestos y semillas quedan registrados en cada resultado. Las hipótesis de crecimiento y múltiplos editadas se conservan; la variante de menor confianza no aumenta una confianza ya más baja.
+
 ## Ejecutar con una cuenta local
 
 ```bash
@@ -40,7 +52,7 @@ La entrada es un JSON con `account.enabled`, `account.cash` y `account.positions
 
 El comando escribe `out/portfolio-robustness.json` y el perfil de renta fija usado en `out/robustness-bond-inputs.json`. `out/` está excluida de Git. El informe conserva hash del mercado, semilla, universo, modelos, estreses, anclas, referencias, costos, límites y resultados de verificación. Las cuentas se valoran al corte guardado; no se presentan como precios ejecutables del día.
 
-El workflow **Portfolio robustness research** usa exclusivamente una cuenta sintética de USD 100.000, conserva la evidencia como artefacto y no publica nuevas señales en la aplicación. No consume cuentas ni posiciones personales.
+El workflow **Portfolio robustness research** usa exclusivamente una cuenta sintética de USD 100.000, conserva la evidencia como artefacto y no reemplaza por sí mismo las propuestas básicas de la aplicación. No consume cuentas ni posiciones personales.
 
 ## Interpretación de la salida
 

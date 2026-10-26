@@ -8,9 +8,9 @@ from pathlib import Path
 import re
 
 if __package__:
-    from .bond_profiles import ISSUER_URLS, _Components
+    from .bond_profiles import ISSUER_URLS, _Components, parse_profile
 else:
-    from bond_profiles import ISSUER_URLS, _Components
+    from bond_profiles import ISSUER_URLS, _Components, parse_profile
 
 SCHEDULE_URL = "https://www.ishares.com/us/literature/shareholder-letters/isharesandblackrocketfsdistributionschedule.pdf"
 UTC = dt.timezone.utc
@@ -158,6 +158,7 @@ def enrich_distributions(assets, old_assets, cutoff, observed_at, fetch, archive
     received_at = clock or (lambda: observed_at)
     errors = []
     histories = 0
+    profiles = 0
     requested = sum(a.get("type") == "etf" and a["symbol"] in DISTRIBUTION_URLS for a in assets)
     calendar = None
     try:
@@ -189,6 +190,11 @@ def enrich_distributions(assets, old_assets, cutoff, observed_at, fetch, archive
         previous = old.get("issuer_distributions")
         if previous:
             asset["issuer_distributions"] = previous
+        prior_profile = old.get("bond_profile")
+        if (symbol in {"SHY", "TLT", "IEF", "IEI", "SGOV", "SHV"} and prior_profile
+                and prior_profile.get("date", "9999") <= cutoff
+                and prior_profile.get("observed_at", "9999") <= observed_at):
+            asset["bond_profile"] = prior_profile
         try:
             html = fetch(DISTRIBUTION_URLS[symbol], f"issuer-{symbol}.html").decode("utf-8")
             result = parse_issuer_history(html, symbol, received_at(), previous)
@@ -199,7 +205,17 @@ def enrich_distributions(assets, old_assets, cutoff, observed_at, fetch, archive
                     dest.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n")
             asset["issuer_distributions"] = result
             histories += 1
+            # Treasury carry/duration only. Credit and inflation-linked funds
+            # still need their own return model before enabling new purchases.
+            if symbol in {"SHY", "TLT", "IEF", "IEI", "SGOV", "SHV"}:
+                try:
+                    asset["bond_profile"] = parse_profile(html, symbol, cutoff, received_at(),
+                        source_url=DISTRIBUTION_URLS[symbol])
+                    asset["bond_profile"]["source_sha256"] = result["source_sha256"]
+                    profiles += 1
+                except Exception as exc:
+                    errors.append(symbol + " profile: " + str(exc)[:160])
         except Exception as exc:
             errors.append(symbol + ": " + str(exc)[:160])
     return {"calendar_funds": len(calendar["symbols"]) if calendar else 0,
-            "histories": histories, "requested_histories": requested, "errors": errors}
+            "histories": histories, "profiles": profiles, "requested_histories": requested, "errors": errors}

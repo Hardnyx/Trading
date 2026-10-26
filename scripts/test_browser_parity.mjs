@@ -1,9 +1,9 @@
 import { chromium } from "playwright";
 import { spawn } from "node:child_process";
 import { readFileSync, mkdirSync } from "node:fs";
-import { composePortfolio } from "../dist/assets/js/composer.mjs?v=0.9.0";
-import { referenceRequest } from "../dist/assets/js/reference-preset.mjs?v=0.9.0";
-import { exposureReport } from "../dist/assets/js/economic-exposure.mjs?v=0.9.0";
+import { composePortfolio } from "../dist/assets/js/composer.mjs?v=0.10.0";
+import { referenceRequest } from "../dist/assets/js/reference-preset.mjs?v=0.10.0";
+import { exposureReport } from "../dist/assets/js/economic-exposure.mjs?v=0.10.0";
 
 const market=JSON.parse(readFileSync("dist/data/market.json","utf8"));
 const volatility=JSON.parse(readFileSync("dist/data/volatility.json","utf8"));
@@ -47,12 +47,12 @@ try {
   const issues=[];
   page.on("pageerror",e=>issues.push(e.message));
   page.on("console",e=>{if(e.type()==="error")issues.push(e.text())});
-  await page.goto("http://127.0.0.1:8813/?build=0.9.0#portfolio",
+  await page.goto("http://127.0.0.1:8813/?build=0.10.0#portfolio",
     {waitUntil:"networkidle",timeout:60000});
   const button=page.locator('[data-action="compose-reference"]');
   await button.waitFor({state:"visible",timeout:45000});
   const actualFooter=await page.locator(".footer-right").innerText();
-  if(!actualFooter.includes("v0.9.0") || actualFooter.includes("v0.6.0"))
+  if(!actualFooter.includes("v0.10.0") || actualFooter.includes("v0.6.0"))
     throw Error("La etiqueta de versión del pie de página no corresponde al motor: "+
       actualFooter);
 
@@ -61,7 +61,7 @@ try {
   await page.evaluate(()=>{
     const key="trading-workspace-v1";
     const stored=JSON.parse(localStorage.getItem(key)||"{}");
-    stored.workspaceVersion="0.9.0";
+    stored.workspaceVersion="0.10.0";
     stored.positions=[{symbol:"NVDA",weight:1}];
     stored.settings={...stored.settings,seed:20261025,volatilityMode:"ewma"};
     stored.compositionRules={...stored.compositionRules,reserveCap:0.1,
@@ -168,8 +168,31 @@ try {
      baselineStorage.compositionRules.reserveCap!==0.1 ||
      baselineStorage.account.positions[0].symbol!=="NVDA")
     throw Error("La prueba no restauró realmente la sesión personalizada");
-  if(!report.includes("MOTOR 0.9.0") && !report.includes("Motor 0.9.0"))
-    throw Error("El informe no identifica el motor 0.9.0");
+  if(!report.includes("MOTOR 0.10.0") && !report.includes("Motor 0.10.0"))
+    throw Error("El informe no identifica el motor 0.10.0");
+  // The real worker must compare the preserved session and keep all account
+  // quantities, settings and working weights unchanged.
+  await page.locator('[data-action="compare-robustness"]').click();
+  await page.locator('.robustness-scenarios').waitFor({state:'visible',timeout:240000});
+  const robust=await page.evaluate(()=>JSON.parse(localStorage.getItem('trading-workspace-v1')).robustness);
+  if(robust.scenarios.length!==5||robust.snapshot_generated_at!==
+      JSON.parse(localStorage.getItem('trading-workspace-v1')).proposal.snapshot_generated_at)
+    throw Error('Robustness report lost its scenario set or input vintage');
+  const robustText=await page.locator('.robustness-report').innerText();
+  if(!robustText.includes('EXPERIMENTAL')||!robustText.includes('MEDIANA · MANTENER')||
+     !robustText.includes('LÍMITE INFERIOR MC'))throw Error('Missing robust comparison evidence');
+  const retained=await page.evaluate(()=>{
+    const s=JSON.parse(localStorage.getItem('trading-workspace-v1'));
+    return {positions:s.positions||[],baseline:s.baseline||null,account:s.account||null,
+      settings:s.settings||null,compositionRules:s.compositionRules||null,
+      macroRegimes:s.macroRegimes||null,mandate:s.mandate||null};
+  });
+  if(JSON.stringify(retained)!==JSON.stringify(baselineStorage))throw Error('Robustness comparison altered the session');
+  await page.screenshot({path:'out/browser-robustness.png',fullPage:true});
+  await page.locator('#capital-input').fill('120000');
+  await page.locator('#capital-input').dispatchEvent('change');
+  await page.getByText('Comparación robusta desactualizada:',{exact:false}).waitFor({state:'visible',timeout:15000});
+  if(await page.locator('[data-action="use-robust-weights"]').count())throw Error('Stale robust weights remain applicable');
   if(issues.length)throw Error("Errores del navegador: "+issues.join("; "));
   console.log(JSON.stringify({
     browserParity:"PASS",

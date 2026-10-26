@@ -863,7 +863,7 @@ def main():
             clock=lambda:dt.datetime.now(UTC).isoformat())
         providers.append({"id":"distributions", "name":"iShares · distribuciones",
             "status":"ok" if not distributions["errors"] else "partial" if distributions["calendar_funds"] or distributions["histories"] else "error",
-            "detail":f'{distributions["calendar_funds"]} calendarios mensuales; {distributions["histories"]}/{distributions["requested_histories"]} historiales con importes y pagos',
+            "detail":f'{distributions["calendar_funds"]} calendarios mensuales; {distributions["histories"]}/{distributions["requested_histories"]} historiales con importes y pagos; {distributions["profiles"]} perfiles Treasury',
             "checked_at":dt.datetime.now(UTC).isoformat()})
         errors.extend("Distribuciones: "+message for message in distributions["errors"])
     snapshot["methodology"]["distributions"] = "Fechas previstas y cantidades declaradas separadas. El importe futuro no declarado es una hipótesis. El índice de ex-dates de Yahoo no confirma una fecha de pago."

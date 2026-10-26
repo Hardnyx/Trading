@@ -9,18 +9,18 @@ import {
   alignReturns,
   returnStats,
   validateSnapshot,
-} from "./analytics.mjs?v=0.9.0";
+} from "./analytics.mjs?v=0.10.0";
 import {
   registerPortfolio,
   reviewPortfolio,
   DEFAULT_RULES,
-} from "./monitor.mjs?v=0.9.0";
+} from "./monitor.mjs?v=0.10.0";
 
-import { fmt, pct, money, dateLabel } from "./ui/format.mjs?v=0.9.0";
-import { createViews, NAV } from "./ui/views.mjs?v=0.9.0";
-import { loadTemplates } from "./ui/templates.mjs?v=0.9.0";
-import { applyVisualValues, showStartupError } from "./ui/dom.mjs?v=0.9.0";
-import { DEFAULT_COMPOSITION_RULES } from "./composer.mjs?v=0.9.0";
+import { fmt, pct, money, dateLabel } from "./ui/format.mjs?v=0.10.0";
+import { createViews, NAV } from "./ui/views.mjs?v=0.10.0";
+import { loadTemplates } from "./ui/templates.mjs?v=0.10.0";
+import { applyVisualValues, showStartupError } from "./ui/dom.mjs?v=0.10.0";
+import { DEFAULT_COMPOSITION_RULES } from "./composer.mjs?v=0.10.0";
 
 import {
   DEFAULT_MANDATE,
@@ -33,22 +33,22 @@ import {
   currentAccount,
   informationDate,
   MODEL_VERSION,
-} from "./policy.mjs?v=0.9.0";
-import { validateResearch } from "./research-model.mjs?v=0.9.0";
+} from "./policy.mjs?v=0.10.0";
+import { validateResearch } from "./research-model.mjs?v=0.10.0";
 import {
   journalOrigin,
   appendForecast,
   freezeMaturedOutcomes,
-} from "./journal.mjs?v=0.9.0";
+} from "./journal.mjs?v=0.10.0";
 
-import { openJournal, saveJournal } from "./journal-store.mjs?v=0.9.0";
+import { openJournal, saveJournal } from "./journal-store.mjs?v=0.10.0";
 
 let journalDBReady = false,
   storageErrorShown = false;
 
 const $ = (s, root = document) => root.querySelector(s);
 
-import { referenceRequest, REFERENCE_ID } from "./reference-preset.mjs?v=0.9.0";
+import { referenceRequest, REFERENCE_ID } from "./reference-preset.mjs?v=0.10.0";
 
 let saved = {};
 try {
@@ -72,6 +72,11 @@ const state = {
   validation: null,
   busy: false,
   forecastError: null,
+  robustness: null,
+  robustSimulation: null,
+  robustnessBusy: false,
+  robustnessError: null,
+  robustnessProgress: null,
   compositionBusy: false,
   compositionError: null,
   compositionRules: { ...DEFAULT_COMPOSITION_RULES },
@@ -104,6 +109,10 @@ state.forecast = null;
 state.validation = null;
 state.busy = false;
 state.forecastError = null;
+state.robustnessBusy = false;
+state.robustnessError = null;
+state.robustnessProgress = null;
+if(state.robustness?.model_version!==MODEL_VERSION)state.robustness=null;
 state.compositionBusy = false;
 state.compositionError = null;
 state.compositionRules = {
@@ -158,6 +167,8 @@ function views() {
     assetStats,
     monitoring,
     filteredAssets,
+    proposalFresh: () => state.proposal?.signature === proposalSignature(),
+    robustnessFresh: () => state.robustness?.signature === proposalSignature(),
   });
 }
 function renderTable(assets) {
@@ -192,6 +203,8 @@ function persist() {
         acknowledged: state.acknowledged,
         rules: state.rules,
         proposal: state.proposal,
+        robustness: state.robustness,
+        robustSimulation: state.robustSimulation,
         compositionRules: state.compositionRules,
         mandate: state.mandate,
         execution: state.execution,
@@ -355,7 +368,9 @@ function calculationOptions(forComposition = false) {
       ? { account: state.account, baseline: state.baseline }
       : {
           initialCost:
-            state.proposal?.status === "proposed" && !state.proposal.modified
+            state.robustSimulation?.key===robustPreviewKey()
+              ? state.robustSimulation.cost
+              : state.proposal?.status === "proposed" && !state.proposal.modified
               ? state.proposal.trade_plan?.total || 0
               : 0,
         }),
@@ -389,7 +404,7 @@ function runForecast() {
       state.research,
     );
     worker ||= new Worker(
-      new URL("./forecast-worker.mjs?v=0.9.0", import.meta.url),
+      new URL("./forecast-worker.mjs?v=0.10.0", import.meta.url),
       {
         type: "module",
       },
@@ -433,6 +448,8 @@ function proposalSignature() {
     modelVersion: MODEL_VERSION,
     asOf: data?.price_as_of,
     snapshot: data?.generated_at,
+    capital: state.capital,
+    baseline: state.baseline,
     positions: [...state.positions].sort((a, b) =>
       a.symbol.localeCompare(b.symbol),
     ),
@@ -449,7 +466,7 @@ function proposalSignature() {
 }
 
 function runComposition(reference = false) {
-  if (!data || state.compositionBusy) return;
+  if (!data || state.compositionBusy || state.robustnessBusy) return;
   const id = ++compositionJob,
     signature = proposalSignature();
   const request = reference
@@ -463,7 +480,7 @@ function runComposition(reference = false) {
   state.compositionError = null;
   try {
     compositionWorker ||= new Worker(
-      new URL("./composer-worker.mjs?v=0.9.0", import.meta.url),
+      new URL("./composer-worker.mjs?v=0.10.0", import.meta.url),
       { type: "module" },
     );
     compositionWorker.onmessage = (event) => {
@@ -511,6 +528,49 @@ function runComposition(reference = false) {
     state.compositionError = error.message;
   }
   render();
+}
+
+let robustWorker=null,robustJob=0;
+function robustPreviewKey(){
+ return JSON.stringify({model:MODEL_VERSION,snapshot:data?.generated_at,positions:state.positions,capital:state.capital,execution:state.execution,
+  account:state.account,baseline:state.baseline});
+}
+function runRobustness(){
+ if(!data||state.robustnessBusy||state.compositionBusy)return;
+ const signature=proposalSignature(),id=++robustJob;
+ const settings=calculationOptions(true);
+ let comparisonLabel=null;
+ if(!settings.account?.enabled&&!settings.baseline?.positions?.length&&state.positions.some(p=>p.weight>0)){
+  if(Math.abs(sum(state.positions.map(p=>p.weight))-1)>1e-7){
+   state.robustnessError='Los pesos de la cartera de trabajo deben sumar 100% para comparar.';render();return;
+  }
+  settings.account={enabled:true,cash:0,positions:[]};
+  for(const p of state.positions){
+   if(p.symbol==='CASH')settings.account.cash=state.capital*p.weight;
+   else settings.account.positions.push({symbol:p.symbol,quantity:state.capital*p.weight/asset(p.symbol).price});
+  }
+  comparisonLabel='Cartera de trabajo a precios del corte; sin conciliación con broker';
+ }
+ state.robustnessBusy=true;state.robustnessError=null;state.robustnessProgress='Preparando comparación';render();
+ try{
+  robustWorker??=new Worker(new URL('./robust-worker.mjs?v=0.10.0',import.meta.url),{type:'module'});
+  robustWorker.onmessage=({data:message})=>{
+   if(message.id!==robustJob)return;
+   if(proposalSignature()!==signature){
+    robustWorker.terminate();robustWorker=null;state.robustnessBusy=false;
+    state.robustnessError='La sesión cambió durante el cálculo. Vuelve a comparar con los valores actuales.';render();return;
+   }
+   if(message.progress){state.robustnessProgress=message.progress.phase+' · '+message.progress.detail;render();return;}
+   state.robustnessBusy=false;state.robustnessProgress=null;
+   if(message.error)state.robustnessError=message.error;
+   else {state.robustness={...message.report,signature};persist();}
+   render();
+  };
+  robustWorker.onerror=()=>{state.robustnessBusy=false;state.robustnessError='No se pudo terminar la comparación. Puedes volver a intentarlo.';
+   robustWorker?.terminate();robustWorker=null;render();};
+  robustWorker.postMessage({id,snapshot:data,settings,overrides:state.overrides,rules:state.compositionRules,
+   comparisonLabel,proposal:state.proposal?.snapshot_generated_at===data.generated_at?state.proposal:null});
+ }catch(error){state.robustnessBusy=false;state.robustnessError=error.message;render();}
 }
 
 function changePositions() {
@@ -873,6 +933,21 @@ document.addEventListener("click", async (event) => {
     runComposition();
     return;
   }
+  if(action==='compare-robustness'){runRobustness();return;}
+  if(action==='cancel-robustness'){
+   robustWorker?.terminate();robustWorker=null;++robustJob;state.robustnessBusy=false;state.robustnessProgress=null;render();return;
+  }
+  if(action==='use-robust-weights'){
+   const r=state.robustness;
+   if(!r?.candidate||r.signature!==proposalSignature()||r.snapshot_generated_at!==data.generated_at){
+    toast('La comparación cambió o está desactualizada. Vuelve a calcularla.');return;
+   }
+   state.positions=r.candidate.positions.map(p=>({...p}));
+   state.capital=r.capital;
+   state.robustSimulation={key:robustPreviewKey(),cost:r.candidate.cost};
+   if(state.proposal)state.proposal.modified=true;
+   changePositions();toast('Pesos candidatos copiados para simular. No se registraron operaciones.');return;
+  }
   if (action === "compose-reference") {
     runComposition(true);
     return;
@@ -882,7 +957,7 @@ document.addEventListener("click", async (event) => {
         state.proposal.model_version !== MODEL_VERSION ||
         state.proposal.as_of !== data.price_as_of ||
         state.proposal.snapshot_generated_at !== data.generated_at ||
-        state.proposal.modified) {
+        state.proposal.modified || state.proposal.signature !== proposalSignature()) {
       toast("Esta propuesta ya no está vigente. Vuelve a calcularla.");
       return;
     }

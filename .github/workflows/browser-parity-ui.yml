@@ -15,7 +15,7 @@ permissions:
 jobs:
   browser:
     runs-on: ubuntu-24.04
-    timeout-minutes: 10
+    timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -32,7 +32,7 @@ jobs:
       - name: Verify runner Chrome
         run: google-chrome --version
       - name: Compare rendered portfolio with canonical engine
-        timeout-minutes: 4
+        timeout-minutes: 8
         env:
           PLAYWRIGHT_CHANNEL: chrome
         run: node scripts/test_browser_parity.mjs
@@ -41,5 +41,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: browser-composition
-          path: out/browser-parity.png
+          path: |
+            out/browser-parity.png
+            out/browser-robustness.png
           retention-days: 14
