@@ -88,6 +88,7 @@ def extract_filing_facts(raw, filing, cik, cutoff):
         if transform:
             transform_prefix, _, transform_name = transform.partition(':')
             if transform_name != 'num-dot-decimal' or namespaces.get(transform_prefix) not in {
+                'http://www.xbrl.org/inlineXBRL/transformation/2022-02-16',
                 'http://www.xbrl.org/inlineXBRL/transformation/2020-02-12',
                 'http://www.xbrl.org/inlineXBRL/transformation/2015-02-26',
             }:

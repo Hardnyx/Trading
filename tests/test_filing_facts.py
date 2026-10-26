@@ -58,6 +58,13 @@ class OriginalFilingFacts(unittest.TestCase):
         self.assertEqual(len(eps['components']), 3)
         self.assertEqual(eps['components'][1]['source_kind'], 'original_inline_xbrl')
 
+    def test_accepts_standard_2022_dot_decimal_transformation(self):
+        raw = document(fact('3.25', extra='format="ixt:num-dot-decimal"')).replace(
+            b'<html ', b'<html xmlns:ixt="http://www.xbrl.org/inlineXBRL/transformation/2022-02-16" ')
+        self.assertEqual(self.extract(raw)['EarningsPerShareDiluted']['units']['USD/shares'][0]['val'], 3.25)
+        raw = raw.replace(b'http://www.xbrl.org/inlineXBRL/transformation/2022-02-16', b'http://example.com/custom')
+        self.assertEqual(self.extract(raw), {})
+
     def test_blocks_entity_declarations(self):
         with self.assertRaises(ValueError):
             self.extract(b'<!DOCTYPE x><x/>')
