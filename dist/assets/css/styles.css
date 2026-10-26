@@ -3172,3 +3172,10 @@ tbody tr:hover {
   color: var(--muted, #aaa);
 }
 .composition-valuation-evidence:empty { display: none; }
+.composition-report > .table-wrap > table th:last-child,
+.composition-report > .table-wrap > table td:last-child {
+  min-width: 250px;
+  max-width: 640px;
+  white-space: normal;
+  text-align: left;
+}
