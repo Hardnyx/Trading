@@ -99,6 +99,24 @@
       <tr><td>{{symbol}}</td><td>{{period}}</td><td>{{method}}</td><td>{{filed}}</td><td>{{observed}}</td><td>{{latest}}</td><td>{{status}}</td><td><a href="{{sourceUrl}}" target="_blank" rel="noopener noreferrer">SEC</a></td></tr>
     </template>
 
+    <template id="price-monitor">
+      <details class="panel price-monitor" {{{open}}}>
+        <summary>MONITOR DE PRECIOS · {{available}} / {{total}} CON HISTORIA SUFICIENTE · CORTE {{asOf}}</summary>
+        <p>Cierres de Yahoo para todo el catálogo; el compositor analiza un subconjunto por separado. {{priceOnly}} acciones tienen BPA ausente o no conciliado y pueden observarse aquí sin habilitar nuevas compras fundamentales.</p>
+        <label for="price-monitor-filter">MOSTRAR</label>
+        <select id="price-monitor-filter"><option value="all" {{{allSelected}}}>Todo el catálogo</option><option value="price_only" {{{priceSelected}}}>Acciones sin BPA conciliado</option><option value="held" {{{heldSelected}}}>Posiciones de mi cuenta o cartera</option><option value="events" {{{eventsSelected}}}>Rupturas y cruces observados</option></select>
+        <div class="table-wrap"><table><thead><tr><th>ACTIVO</th><th>CIERRE</th><th>FECHA</th><th>COBERTURA</th><th>TENDENCIA</th><th>OBSERVACIÓN</th><th>RETORNO 126 SES.</th><th>DIST. MA200</th><th>CAÍDA DESDE MÁX. 252</th><th>VOL. 63 ANUAL</th><th>VOL. 21 / 63</th></tr></thead><tbody>{{{rows}}}</tbody></table></div>
+        <p>Medias, retornos, máximos y cruces calculados con cierres ajustados por el proveedor por splits y distribuciones; describen rendimiento total histórico, no niveles de órdenes sobre el precio sin ajustar. Volatilidad de retornos logarítmicos, anualizada con 252 sesiones. MA50/MA200: medias de 50/200 cierres; rupturas frente a las 63 sesiones previas, excluyendo la actual.</p>
+        <p>Una ruptura o cruce permite revisar una posible entrada o salida; no demuestra rentabilidad futura. Este monitor no suministra retornos esperados al optimizador, no ejecuta operaciones ni tiene validación como estrategia. Datos al cierre, sin cotizaciones intradía.</p>
+      </details>
+    </template>
+    <template id="price-monitor-row">
+      <tr><td><button class="text-button" data-detail="{{symbol}}">{{symbol}}</button><small>{{held}}</small></td><td>{{price}}</td><td>{{date}}<small>{{observed}}</small></td><td>{{coverage}}</td><td>{{trend}}</td><td>{{event}}</td><td>{{momentum}}</td><td>{{distance}}</td><td>{{drawdown}}</td><td>{{volatility}}</td><td>{{ratio}}</td></tr>
+    </template>
+    <template id="price-monitor-empty">
+      <tr><td colspan="11">Sin activos para este filtro.</td></tr>
+    </template>
+
     <template id="robustness-running">
       <section class="panel robustness-report" aria-live="polite">
         <div class="panel-header"><h2 class="panel-title">COMPARACIÓN ROBUSTA</h2></div>

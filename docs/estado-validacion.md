@@ -95,6 +95,14 @@ Los resultados son **aditivos para la muestra simulada y sus supuestos específi
 
 La guarda de vigencia compara el período del último 10-Q/10-K/20-F con el BPA y filtra documentos posteriores al corte. Un 8-K o una enmienda no acreditan un período nuevo. Para capturas antiguas sin `report_date`, una presentación posterior exige verificación conservadora. La ausencia de informe posterior detectado no certifica cobertura completa. El reloj de descarga no se usa para rejuvenecer la fecha económica del dato; una captura conservada tras fallo se identifica explícitamente.
 
+### Monitor de precios 0.12.0
+
+Se separan tres capas: precios observados para todo el catálogo (176 instrumentos más efectivo en el corte revisado), anclas económicas con cobertura fundamental/renta fija y composición restringida a una muestra de hasta 40. El monitor no reduce el catálogo a la muestra del optimizador. Permite filtrar acciones con BPA pendiente, posiciones de cuenta/cartera y rupturas/cruces observados. Las cuentas existentes no se borran por falta de BPA.
+
+Indicadores descriptivos: MA50/MA200 de cierres ajustados, retorno de 126 sesiones, ruptura frente a las 63 previas excluyendo el cierre actual, caída desde máximo de 252 y volatilidad logarítmica anualizada de 63 sesiones con razón 21/63. Se requieren al menos 252 observaciones válidas, orden estricto y cierre común vigente. No se usa retorno histórico como ancla esperada, no se interpreta BPA ausente como venta y no se habilitan compras nuevas por una ruptura. Las distancias son sobre el índice ajustado por distribuciones, no precios de órdenes.
+
+Yahoo sigue siendo un endpoint público no oficial para cierres ajustados; se conserva fecha económica y primera captura disponible del resultado descargado. La colección evita la barra diaria incompleta de la sesión en curso. [HISTORIALCOTIZACIONES](https://support.microsoft.com/es-es/excel/functions/stockhistory-function) ofrece históricos y generalmente actualiza tras completar la sesión, no sustituye el estado contable ni una fuente intradía. Un adaptador Excel puede ser una alternativa local, no un requisito del sitio público. **Pendiente:** validar reglas técnicas y su utilidad incremental con costos fuera de muestra antes de darles capacidad de decisión.
+
 ## 7. Cómo ejecutar la investigación
 
 ```bash

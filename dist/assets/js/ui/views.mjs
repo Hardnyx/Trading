@@ -4,7 +4,7 @@ import {
   normalizeWeights,
   metrics,
   scenarios,
-} from "../analytics.mjs?v=0.11.0";
+} from "../analytics.mjs?v=0.12.0";
 import {
   sparkline,
   portfolioChart,
@@ -13,7 +13,7 @@ import {
   scatter,
   forecastCone,
   histogram,
-} from "../charts.mjs?v=0.11.0";
+} from "../charts.mjs?v=0.12.0";
 import {
   esc,
   url,
@@ -23,14 +23,15 @@ import {
   compact,
   color,
   dateLabel,
-} from "./format.mjs?v=0.11.0";
-import { template } from "./templates.mjs?v=0.11.0";
-import { DEFAULT_COMPOSITION_RULES } from "../composer.mjs?v=0.11.0";
-import { factorModel } from "../factors.mjs?v=0.11.0";
-import { MODEL_VERSION } from "../policy.mjs?v=0.11.0";
-import { financialFreshness } from '../financial-freshness.mjs?v=0.11.0';
+} from "./format.mjs?v=0.12.0";
+import { template } from "./templates.mjs?v=0.12.0";
+import { DEFAULT_COMPOSITION_RULES } from "../composer.mjs?v=0.12.0";
+import { factorModel } from "../factors.mjs?v=0.12.0";
+import { MODEL_VERSION } from "../policy.mjs?v=0.12.0";
+import { financialFreshness } from '../financial-freshness.mjs?v=0.12.0';
+import { priceMonitor } from '../price-monitor.mjs?v=0.12.0';
 
-import { createDecisionViews } from "./decision-views.mjs?v=0.11.0";
+import { createDecisionViews } from "./decision-views.mjs?v=0.12.0";
 
 export function compositionValuationEvidence(signal) {
   if(!signal.filed)return "";
@@ -55,6 +56,23 @@ export function financialCoverageView(data){
     status:f.reason+(f.refreshStatus==='retained_after_failure'?' · Se conservó la captura previa por fallo de actualización':''),
     sourceUrl:url(f.latestReport?.url||a.financials?.source_url||'https://www.sec.gov/edgar/search/')
    })).join('')
+ });
+}
+
+export function priceMonitorView(data,positions=[],filter='all',open=false){
+ const m=priceMonitor(data,positions,filter);
+ return template('price-monitor',{
+  total:m.total,available:m.available,priceOnly:m.priceOnly,asOf:dateLabel(m.asOf),open:open?'open':'',
+  allSelected:filter==='all'?'selected':'',priceSelected:filter==='price_only'?'selected':'',
+  heldSelected:filter==='held'?'selected':'',eventsSelected:filter==='events'?'selected':'',
+  rows:m.rows.map(r=>template('price-monitor-row',{
+   symbol:r.symbol,held:r.held?'En cartera':'',price:money(r.price),date:dateLabel(r.priceDate),
+   observed:r.observedAt?'Captura '+r.observedAt.replace('T',' ').slice(0,19)+' UTC':'Captura no registrada',
+   coverage:r.coverage,trend:r.available?r.trend:r.reason,event:r.available?r.event:'Sin evaluación',
+   momentum:pct(r.momentum126,1,true),distance:pct(r.distance200,1,true),
+   drawdown:pct(r.drawdown252,1),volatility:pct(r.volatility63,1),
+   ratio:finite(r.volatilityRatio)?fmt(r.volatilityRatio,2)+'×':'—'
+  })).join('')||template('price-monitor-empty')
  });
 }
 
@@ -723,6 +741,8 @@ export function createViews(context) {
       ) +
       compositionControls() +
       financialCoverageView(data) +
+      priceMonitorView(data,state.account?.enabled?state.account.positions:state.positions,
+        state.priceMonitorFilter||'all',state.priceMonitorOpen||false) +
       compositionReport() +
       robustnessView(state.robustness,{
         busy:state.robustnessBusy,error:state.robustnessError,progress:state.robustnessProgress,

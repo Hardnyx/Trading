@@ -382,6 +382,7 @@ def prices(symbol, cutoff):
               if x.get("denominator", 0) > 0 and dt.datetime.fromtimestamp(x["date"], UTC).date().isoformat() <= cutoff]
     index = price_distribution_index(response, rows, symbol, dt.datetime.now(UTC).isoformat())
     return {"splits": splits, "history": rows, "price": rows[-1]["close"], "price_date": rows[-1]["date"],
+            "price_observed_at": index["observed_at"],
             "distribution_index": index,
             "change": rows[-1]["close"] / rows[-2]["close"] - 1,
             "dividend_per_share": round(dividend_sum, 6), "currency": response["meta"].get("currency", "USD"),
@@ -557,7 +558,7 @@ def build_asset(spec, cutoff, previous):
         rows = [row for row in old["history"] if row["date"] <= cutoff]
         if len(rows) < 2:
             return None, [f"{symbol}: precios anteriores al corte no disponibles ({error_label(exc)})"]
-        asset.update({k: old.get(k) for k in ["history", "price", "price_date", "change", "dividend_per_share", "currency", "source_url", "distribution_index", "splits"]})
+        asset.update({k: old.get(k) for k in ["history", "price", "price_date", "price_observed_at", "change", "dividend_per_share", "currency", "source_url", "distribution_index", "splits"]})
         asset.update(history=rows, price=rows[-1]["close"], price_date=rows[-1]["date"], change=rows[-1]["close"] / rows[-2]["close"] - 1)
         if old.get("price_date", "9999") > cutoff:
             asset["dividend_per_share"] = None

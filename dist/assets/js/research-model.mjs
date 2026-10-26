@@ -1,6 +1,6 @@
-import { finite, metrics, valuation, scenarios } from "./analytics.mjs?v=0.11.0";
-import { DEFAULT_RESEARCH } from "./policy.mjs?v=0.11.0";
-import { financialFreshness } from './financial-freshness.mjs?v=0.11.0';
+import { finite, metrics, valuation, scenarios } from "./analytics.mjs?v=0.12.0";
+import { DEFAULT_RESEARCH } from "./policy.mjs?v=0.12.0";
+import { financialFreshness } from './financial-freshness.mjs?v=0.12.0';
 
 const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
 const years = (a, b) =>
