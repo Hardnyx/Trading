@@ -26,10 +26,14 @@ import { buildReturnAnchors, bondScenarioAnnualReturn } from "./return-model.mjs
 import { assetAt, fundamentalForecast, bondAssumptions } from "./research-model.mjs?v=0.8.0";
 import { selectCompositionUniverse } from "./universe.mjs?v=0.8.0";
 import { factorizeStressedCovariance } from "./factor-covariance.mjs?v=0.8.0";
+import { economicClass, exposureReport, rawCorrelation, qualifiedOpportunity } from "./economic-exposure.mjs?v=0.8.0";
 
 export const DEFAULT_COMPOSITION_RULES = {
   maxPosition: 0.2,
   maxFund: 0.8,
+  maxGlobal: 0.35,
+  maxOpportunity: 0.5,
+  maxTreasury: 0.6,
   maxSector: 0.35,
   maxCorrelation: 0.95,
   cvarBudget: 0.2,
@@ -41,6 +45,9 @@ function validateRules(rules) {
   for (const key of [
     "maxPosition",
     "maxFund",
+    "maxGlobal",
+    "maxOpportunity",
+    "maxTreasury",
     "maxSector",
     "maxCorrelation",
     "cvarBudget",
@@ -221,6 +228,7 @@ export function prepareComposition(
   return {
     ...paths,
     rules: limits,
+    opportunityEvidence: settings.opportunityEvidence || {},
     policy,
     costs,
     current,
@@ -297,44 +305,28 @@ function corr(inputs, i, j) {
     ? c[i][j] / Math.sqrt(c[i][i] * c[j][j])
     : 0;
 }
-function validWeights(w, x) {
-  if (
-    Math.abs(sum(w) - 1) > 1e-7 ||
-    w.filter((v) => v > 1e-8).length > x.rules.maxPositions
-  )
-    return false;
-  const sectors = new Map();
-  for (let i = 0; i < w.length; i++) {
-    const a = x.assets[i],
-      cap =
-        a.type === "cash"
-          ? 1
-          : a.symbol === "SHY"
-            ? x.rules.reserveCap
-            : a.type === "stock"
-              ? x.rules.maxPosition
-              : x.rules.maxFund;
-    if (
-      !finite(w[i]) ||
-      w[i] < -1e-8 ||
-      w[i] > cap + 1e-8 ||
-      (w[i] > 1e-8 && !x.buyAllowed[i])
-    )
-      return false;
-    if (a.type === "cash" && w[i] < x.requiredCash - 1e-8) return false;
-    if (a.type === "stock")
-      sectors.set(a.sector, (sectors.get(a.sector) || 0) + w[i]);
-    if (w[i] > 0.01)
-      for (let j = 0; j < i; j++)
-        if (
-          w[j] > 0.01 &&
-          a.type !== "cash" &&
-          x.assets[j].type !== "cash" &&
-          corr(x, i, j) > x.rules.maxCorrelation + 1e-8
-        )
-          return false;
+export function validWeights(w,x){
+ if(Math.abs(sum(w)-1)>1e-7 || w.filter(v=>v>1e-8).length>x.rules.maxPositions)return false;
+ for(let i=0;i<w.length;i++){
+  const a=x.assets[i];
+  const legacy=a.type==="cash"?1:a.type==="stock"?x.rules.maxPosition:a.symbol==="SHY"?x.rules.reserveCap:x.rules.maxFund;
+  const exception=qualifiedOpportunity(a,x.opportunityEvidence?.[a.symbol],x.asOf);
+  const global=a.type==="cash"?1:(exception?x.rules.maxOpportunity:x.rules.maxGlobal);
+  if(!finite(w[i])||w[i]<-1e-8||w[i]>Math.min(legacy,global)+1e-8||
+     (w[i]>1e-8&&!x.buyAllowed[i]))return false;
+  if(a.type==="cash"&&w[i]<x.requiredCash-1e-8)return false;
+  if(w[i]>.01)for(let j=0;j<i;j++){
+   if(w[j]<=.01||a.type==="cash"||x.assets[j].type==="cash")continue;
+   const etfPair=a.type==="etf"||x.assets[j].type==="etf";
+   const overlap=etfPair?rawCorrelation(x.covariance,i,j):corr(x,i,j);
+   if(overlap>x.rules.maxCorrelation+1e-8)return false;
   }
-  return [...sectors.values()].every((v) => v <= x.rules.maxSector + 1e-8);
+ }
+ const exposure=exposureReport(x.assets,w,x.asOf);
+ if(exposure.sleeves.treasury>x.rules.maxTreasury+1e-8)return false;
+ if(Object.values(exposure.sectors).some(v=>v>x.rules.maxSector+1e-8))return false;
+ if(Object.values(exposure.issuers).some(v=>v>x.rules.maxGlobal+1e-8))return false;
+ return true;
 }
 function passes(metrics, x) {
   return (
@@ -383,7 +375,7 @@ function reserveTilts(x) {
   if (cash < 0) return [];
   const minimum = Math.min(1, Math.ceil(x.requiredCash * 20 - 1e-9) / 20);
   const useBond = bond >= 0 && x.buyAllowed[bond],
-    baseBond = useBond ? Math.min(x.rules.reserveCap, 1 - minimum) : 0;
+    baseBond = useBond ? Math.min(x.rules.reserveCap,x.rules.maxGlobal,x.rules.maxTreasury,1-minimum) : 0;
   const result = [];
   for (let i = 0; i < x.assets.length; i++) {
     if (i === cash || (useBond && i === bond) || !x.buyAllowed[i]) continue;
@@ -572,7 +564,7 @@ export function composePortfolio(
     const minCash = Math.min(1, Math.ceil(x.requiredCash * 20 - 1e-9) / 20);
     reserve[cash] = 1;
     if (shortBond >= 0) {
-      reserve[shortBond] = Math.min(x.rules.reserveCap, 1 - minCash);
+      reserve[shortBond] = Math.min(x.rules.reserveCap,x.rules.maxGlobal,x.rules.maxTreasury,1-minCash);
       reserve[cash] -= reserve[shortBond];
     }
     equityTilt.splice(0, equityTilt.length, ...reserve);
