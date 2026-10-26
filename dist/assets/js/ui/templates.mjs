@@ -70,7 +70,7 @@ export function loadTemplates(fetcher = globalThis.fetch) {
   loading ||= Promise.all(
     files.map(async (file) => {
       const response = await fetcher(
-        new URL(`../../../templates/${file}.html?v=0.8.0`, import.meta.url),
+        new URL(`../../../templates/${file}.html?v=0.8.1`, import.meta.url),
         { cache: "no-store" },
       );
       if (!response.ok)
