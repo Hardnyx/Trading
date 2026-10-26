@@ -140,6 +140,11 @@ function main(){
     return;
   }
   const now=new Date().toISOString();
+  const gate=prospectiveEligibility(market,now);
+  if(!gate.eligible && args.has("--skip-ineligible")){
+    console.log("No prospective seal:",gate.reason);
+    return;
+  }
   const origin=buildSealedOrigin(market,volatility,marketFile,volatilityFile,now);
   if(origin.model_status==="no_feasible")
     throw Error("Cannot seal a probability forecast without feasible model");
