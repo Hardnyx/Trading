@@ -87,17 +87,27 @@ export function maturityCheck(origin,market){
   const relevant=(origin.positions||[]).filter(p=>p.weight>0&&p.symbol!=="CASH");
   if(!relevant.length)return {status:"mature_without_risky_positions",realized:0};
   const assets=new Map(market.assets.map(a=>[a.symbol,a]));
+  // A 12-month calendar maturity may fall on a Saturday, Sunday or holiday.
+  // Select the FIRST observed common trading session on/after maturity.
+  const first=assets.get(relevant[0].symbol);
+  if(!first)return {status:"missing_delisted_or_unavailable_asset",
+                     symbol:relevant[0].symbol};
+  const common=(first.history||[]).map(row=>row.date)
+    .filter(day=>day>=origin.maturity_date&&day<=market.price_as_of)
+    .find(day=>relevant.every(p=>(assets.get(p.symbol)?.history||[])
+      .some(row=>row.date===day)));
+  if(!common)return {status:"awaiting_trading_session"};
   let sum=0;
   for(const row of relevant){
     const asset=assets.get(row.symbol);
     if(!asset)return {status:"missing_delisted_or_unavailable_asset",symbol:row.symbol};
-    const ret=adjustedReturn(asset,origin.original_price_as_of,
-                             origin.maturity_date);
+    const ret=adjustedReturn(asset,origin.original_price_as_of,common);
     if(!Number.isFinite(ret))return {status:"missing_historical_price",symbol:row.symbol};
     sum+=row.weight*ret;
   }
   return {
     status:"eligible_outcome_approximation",
+    actual_maturity_session:common,
     realized_buy_and_hold_gross:sum,
     // Ignore transaction costs here until an exact historic execution
     // archive is available; never call this net portfolio utility.
@@ -129,7 +139,7 @@ function main(){
       if(existsSync(path))continue;
       const record=JSON.parse(readFileSync(join(base,name),"utf8"));
       const result=maturityCheck(record,market);
-      if(result.status==="immature")continue;
+      if(["immature","awaiting_trading_session"].includes(result.status))continue;
       writeFileSync(path,JSON.stringify({
         scored_at:new Date().toISOString(),
         origin_file:name,
