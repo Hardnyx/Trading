@@ -125,6 +125,48 @@ test("lower-SHY alternatives are searched independently and respect their own ca
   }
 });
 
+test("SHY frontiers are nested, monotone, and include the final proposal whenever feasible", () => {
+  for (const seed of [125, 765, 2026]) {
+    const proposal = composePortfolio(snapshot(),
+      { model:"gbm", seed, horizon:1 }, {}, {},
+      { candidates:75, paths:160, finalPaths:320 });
+    assert.equal(proposal.status, "proposed");
+    const caps = proposal.diagnostics.concentrationAudit.comparedCaps;
+    const actualShy = proposal.positions.find(p=>p.symbol==="SHY")?.weight ?? 0;
+    for (let i=0;i<caps.length;i++) {
+      const row = caps[i];
+      assert.equal(row.feasible, true);
+      assert.ok(row.verifiedPoolSize>0);
+      assert.ok(actualShy>row.cap+1e-8 ||
+        Math.abs(row.certaintyGapVsSelected)<1e-6,
+        "The chosen feasible portfolio must be included under each matching cap");
+      if (i) {
+        assert.ok(caps[i-1].score<=row.score+1e-10,
+          "Nested SHY caps cannot have declining maximized utility");
+        assert.ok(caps[i-1].certaintyEquivalent<=row.certaintyEquivalent+1e-6);
+      }
+      assert.ok(row.certaintyGapVsSelected>=-1e-6);
+    }
+  }
+});
+
+test("concentration diagnostics cannot relax the mandate's original SHY limit", () => {
+  const result = composePortfolio(snapshot(),
+    {model:"gbm",seed:405,horizon:1},{},
+    {reserveCap:.5},{candidates:65,paths:160,finalPaths:320});
+  const caps=result.diagnostics.concentrationAudit.comparedCaps;
+  assert.deepEqual(caps.map(row=>row.cap),[.25,.5]);
+  assert.ok(caps.every(row=>row.positions.every(p=>
+    p.symbol!=="SHY" || p.weight<=.5+1e-8)));
+  assert.ok((result.positions||[]).every(p=>
+    p.symbol!=="SHY"||p.weight<=.5+1e-8));
+  if(result.status==="proposed") {
+    const selected=result.positions.find(p=>p.symbol==="SHY")?.weight||0;
+    if(selected<=.5+1e-8)
+      assert.ok(Math.abs(caps.at(-1).certaintyGapVsSelected)<1e-6);
+  }
+});
+
 test("conservative cash baseline is verified under all SHY concentration limits", () => {
   const r=composePortfolio(snapshot(), {model:"gbm",seed:131,horizon:1},
     {},{}, {candidates:85,paths:160,finalPaths:300});
