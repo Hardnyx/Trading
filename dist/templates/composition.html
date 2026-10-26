@@ -94,7 +94,13 @@
             </tbody>
           </table>
         </div>
-        <div class="composition-method">
+        <div class="composition-brief">
+          <p><strong>EXPOSICIÓN PRINCIPAL:</strong> {{concentration}} · Restricciones próximas: {{nearLimits}}.</p>
+          <p>{{shyExplanation}}</p>
+          <p><strong>RIESGO TODAVÍA NO VALIDADO:</strong> {{stochasticTail}}.</p>
+        </div>
+        <details class="composition-method">
+          <summary>SUPUESTOS, COMPARACIONES Y VALIDACIÓN · VER DETALLES</summary>
           <p>
             Universo: {{published}} instrumentos publicados,
             {{eligible}} analizables (incluido efectivo sintético),
@@ -125,9 +131,7 @@
             {{nearLimits}}. ETF con retornos por defecto no calibrados en
             la muestra: {{assumedETFCount}}.
           </p>
-          <p>
-            <strong>Diagnóstico de SHY:</strong> {{shyExplanation}}
-          </p>
+
           <p>
             <strong>Sensibilidad a menor concentración (sin imponer compra):</strong>
             {{shyCapAlternatives}}.
@@ -153,7 +157,7 @@
             límites al registrar o exportar. La comprobación histórica no
             interviene en la selección.
           </p>
-        </div>
+        </details>
       </section>
     </template>
 

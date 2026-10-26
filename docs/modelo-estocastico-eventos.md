@@ -337,10 +337,28 @@ Se introdujo un benchmark de SPY reservado **solo para investigación** cuando e
 
 Para activos de renta fija se distingue carry anual del efecto de precio de un desplazamiento de tasas. La variación de precio se aproxima mediante duración modificada y convexidad proxy:
 
-[
-P_{T}/P_{0}approx 1-DDelta y + 	frac12 D(D+1)(Delta y)^2.
-]
+
+```math
+\frac{P_T}{P_0} \approx 1 - D_{\mathrm{mod}}\,\Delta y
++ \frac{1}{2}\,C_{\mathrm{proxy}}\,(\Delta y)^2,
+\qquad C_{\mathrm{proxy}} = D_{\mathrm{mod}}(D_{\mathrm{mod}}+1).
+```
 
 La rentabilidad anualizada de escenario se calcula con el carry observado neto de gastos, multiplicado por esa aproximación de precio. Los escenarios de rates se aplican una sola vez a cada trayectoria. Ello no modela una curva de rendimiento completa, reinversión de cupones ni opciones del bono; son pendientes de calibración, no funcionalidades terminadas.
 
 **Advertencia vigente:** las colas conjuntas de Monte Carlo siguen siendo gaussianas, las hipótesis macro no son probabilidades empíricas verificadas y solo un subconjunto de 40 activos se optimiza por corrida. Los cálculos de GJR-t todavía no constituyen identificación semántica de noticias o un GARCH-X productivo. La previsión fundamental de retorno, costes de transacción, primas de riesgo y selección entre 93+ activos necesitan validación prospectiva/point-in-time antes de promover decisiones reales.
+
+
+### Auditoría adicional: fronteras de SHY
+
+En la versión 0.7.2 subsistía una inconsistencia: una cartera descubierta bajo un límite de 75 % podía seleccionarse con 50 % en SHY sin incluirse en la frontera de 50 %. El resultado mostraba una brecha de utilidad inexistente.
+
+Ahora se reconcilian los finalistas verificados de las búsquedas global y condicionadas contra **cada conjunto anidado**, con los mismos escenarios y supuestos:
+
+```math
+\widehat V_{25}\leq\widehat V_{50}\leq\widehat V_{75}\leq\widehat V_{\mathrm{mandato}}.
+```
+
+Esta desigualdad se refiere a los máximos *entre candidatas efectivamente verificadas*, no a óptimos globales. La propuesta final entra en toda frontera cuyo tope cumpla, y su brecha es cero en esa frontera. El tope diagnóstico nunca amplía el mandato original. Las invariantes tienen pruebas automatizadas con diferentes semillas y restricciones.
+
+**Límites pendientes:** la selección solo simula un subconjunto del universo, las hipótesis de retorno no están calibradas exhaustivamente con datos *point-in-time* y GARCH-X y colas multivariantes siguen siendo investigación, no características validadas.

@@ -873,7 +873,7 @@ export function createViews(context) {
       })(),
       shyCapAlternatives: (p.diagnostics?.concentrationAudit?.comparedCaps||[])
         .map(r => r.feasible
-          ? `SHY ≤${pct(r.cap,0)}: retorno medio ${pct(r.meanReturn,1)}, CVaR ${pct(r.cvar95,1)}, coste de equivalente cierto vs propuesta USD ${fmt(r.certaintyGapVsSelected,0)} (de ${r.compared} candidatas comparadas)`
+          ? `SHY ≤${pct(r.cap,0)}: retorno medio ${pct(r.meanReturn,1)}, CVaR ${pct(r.cvar95,1)}, brecha de equivalente cierto vs propuesta USD ${fmt(r.certaintyGapVsSelected,0)} (de ${r.compared} candidatas comparadas)`
           : `SHY ≤${pct(r.cap,0)}: ninguna candidata verificada de las exploradas`)
         .join(" | "),
       shortlistNote: p.selection?.preselectionMethod || "selección no identificada",
