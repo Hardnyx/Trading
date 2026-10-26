@@ -37,7 +37,7 @@ export function exposureReport(assets,weights,asOf,informationAsOf=asOf,universe
   ...Object.entries(universeSectors),
   ...assets.filter(a=>a.type==="stock").map(a=>[a.symbol,a.sector]),
  ]);
- const sleeves={treasury:0,credit:0,mixedBonds:0,usEquity:0,globalEquity:0,gold:0,unknownEtf:0},sectors={},issuers={},unknown=[];
+ const sleeves={treasury:0,credit:0,mixedBonds:0,usEquity:0,globalEquity:0,gold:0,unknownEtf:0},sectors={},issuers={},unknown=[],funds=[];
  for(let i=0;i<assets.length;i++){
   const a=assets[i],w=weights[i]||0;if(w<=1e-8)continue;
   const k=economicClass(a);
@@ -58,6 +58,17 @@ export function exposureReport(assets,weights,asOf,informationAsOf=asOf,universe
    // This applies whether or not an issuer-level holdings feed is present.
    if(sector)sectors[sector]=(sectors[sector]||0)+w;
    const h=actualHoldings(a,asOf,informationAsOf);
+   funds.push({
+     symbol:a.symbol,weight:w,economicGroup:k,
+     holdingsAsOf:h?.asOf||null,
+     firstObservedAt:h? a.holdings.observed_at:null,
+     coveredWeight:h?.coverage??null,
+     reportedCount:a.holdings?.positions_reported??null,
+     topHoldings:h?.positions.slice(0,8)||[],
+     sourceLayer:a.holdings?.source_layer||null,
+     sourceUrl:h?.source_url||null,
+     status:h?"fechadas y parcialmente reconocidas":"composición interna no validada",
+   });
    if(h){
      let sectorCovered=0;
      for(const p of h.positions){
@@ -78,7 +89,7 @@ export function exposureReport(assets,weights,asOf,informationAsOf=asOf,universe
    }
   }
  }
- return {sleeves,sectors,issuers,unknownHoldings:unknown,
+ return {sleeves,sectors,issuers,funds,unknownHoldings:unknown,
    note:"Carteras subyacentes solo cuando el emisor proporcionó posiciones fechadas. La categoría Treasury proviene del mandato del ETF; no supone correlaciones perfectas ni inventa ponderaciones."};
 }
 export function rawCorrelation(cov,i,j){

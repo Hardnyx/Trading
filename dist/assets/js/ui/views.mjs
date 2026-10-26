@@ -874,6 +874,19 @@ export function createViews(context) {
             .join(" · ")
           : "No hay parejas relevantes con ETF en la propuesta.";
       })(),
+      etfHoldingsRows:(p.diagnostics?.economicExposure?.funds||[]).map(f=>
+        template("composition-etf-holding",{
+          symbol:f.symbol,weight:pct(f.weight),
+          group:f.economicGroup,
+          date:f.holdingsAsOf ? dateLabel(f.holdingsAsOf):"No observado",
+          observed:f.firstObservedAt ? dateLabel(f.firstObservedAt):"—",
+          coverage:f.coveredWeight===null?"—":pct(f.coveredWeight,1),
+          positions:f.topHoldings.map(h=>h.symbol+" "+pct(h.weight,2)).join(" · ")||
+            "Sin datos válidos de composición al corte",
+          url:url(f.sourceUrl||""),
+          source:f.sourceLayer||"Sin fuente"
+        })
+      ).join(""),
       exposureWarning: (() => {
         const d=p.diagnostics?.economicExposure;
         return d?.unknownHoldings?.length

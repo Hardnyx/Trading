@@ -139,6 +139,16 @@
           <summary>SUPUESTOS, COMPARACIONES Y VALIDACIÓN · VER DETALLES</summary>
           <p><strong>CORRELACIONES OBSERVADAS · 500 SESIONES:</strong> {{overlapSummary}}.</p>
           <p>{{exposureWarning}}</p>
+          <div class="table-wrap">
+            <table class="composition-etf-holdings">
+              <thead><tr>
+                <th>ETF</th><th>PESO</th><th>GRUPO</th>
+                <th>FECHA CARTERA</th><th>PRIMERA CAPTURA</th>
+                <th>COBERTURA FECHADA</th><th>PRINCIPALES POSICIONES</th><th>FUENTE</th>
+              </tr></thead>
+              <tbody>{{{etfHoldingsRows}}}</tbody>
+            </table>
+          </div>
           <p>
             Universo: {{published}} instrumentos publicados,
             {{eligible}} analizables (incluido efectivo sintético),
@@ -197,6 +207,15 @@
           </p>
         </details>
       </section>
+    </template>
+
+    <template id="composition-etf-holding">
+      <tr>
+        <td>{{symbol}}</td><td>{{weight}}</td><td>{{group}}</td>
+        <td>{{date}}</td><td>{{observed}}</td><td>{{coverage}}</td>
+        <td>{{positions}}</td>
+        <td><a href="{{url}}" target="_blank" rel="noopener noreferrer">{{source}}</a></td>
+      </tr>
     </template>
 
     <template id="composition-metric">
