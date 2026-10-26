@@ -235,7 +235,7 @@ export function generatePaths(inputs, paths, seed, stepsPerYear = 52) {
           ? 0
           : bond
             ? (Math.log1p(bondScenarioAnnualReturn(bond, regime.rateShift, H)) -
-                Math.log1p(bond.carry))
+                Math.log1p(finite(bond.carry) ? bond.carry : 0))
             : assets[i].symbol === "GLD"
               ? -regime.rateShift * 0.5
               : Math.log(
