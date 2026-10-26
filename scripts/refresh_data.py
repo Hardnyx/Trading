@@ -863,13 +863,13 @@ def main():
             clock=lambda:dt.datetime.now(UTC).isoformat())
         providers.append({"id":"distributions", "name":"iShares · distribuciones",
             "status":"ok" if not distributions["errors"] else "partial" if distributions["calendar_funds"] or distributions["histories"] else "error",
-            "detail":f'{distributions["calendar_funds"]} calendarios mensuales; {distributions["histories"]}/2 historiales con importes y pagos',
+            "detail":f'{distributions["calendar_funds"]} calendarios mensuales; {distributions["histories"]}/{distributions["requested_histories"]} historiales con importes y pagos',
             "checked_at":dt.datetime.now(UTC).isoformat()})
         errors.extend("Distribuciones: "+message for message in distributions["errors"])
     snapshot["methodology"]["distributions"] = "Fechas previstas y cantidades declaradas separadas. El importe futuro no declarado es una hipótesis. El índice de ex-dates de Yahoo no confirma una fecha de pago."
     snapshot["sources"].append({"name":"iShares · calendario de distribuciones",
         "kind":"Documento del emisor", "url":"https://www.ishares.com/us/literature/shareholder-letters/isharesandblackrocketfsdistributionschedule.pdf",
-        "data":"Calendario mensual publicado; historial de importes y fechas de pago para SHY/TLT"})
+        "data":"Calendario mensual publicado; importes y fechas de pago oficiales para ETF iShares con ticker y moneda comprobados"})
     snapshot["generated_at"] = dt.datetime.now(UTC).isoformat()
     archived = archive_observation(snapshot)
     write_snapshot(snapshot)

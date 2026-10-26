@@ -14,6 +14,21 @@ else:
 
 SCHEDULE_URL = "https://www.ishares.com/us/literature/shareholder-letters/isharesandblackrocketfsdistributionschedule.pdf"
 UTC = dt.timezone.utc
+# Distribution support is independent of the smaller set of calibrated bond
+# profiles. Adding a payment source does not promote duration/yield estimates.
+DISTRIBUTION_URLS = {
+    **ISSUER_URLS,
+    "AGG": "https://www.ishares.com/us/products/239458/ishares-core-us-aggregate-bond-etf",
+    "IEF": "https://www.ishares.com/us/products/239456/ishares-7-10-year-treasury-bond-etf",
+    "IEI": "https://www.ishares.com/us/products/239455/ishares-3-7-year-treasury-bond-etf",
+    "SGOV": "https://www.ishares.com/us/products/314116/ishares-0-3-month-treasury-bond-etf",
+    "SHV": "https://www.ishares.com/us/products/239466/ishares-01-year-treasury-bond-etf",
+    "TIP": "https://www.ishares.com/us/products/239467/ishares-tips-bond-etf",
+    "LQD": "https://www.ishares.com/us/products/239566/ishares-iboxx-investment-grade-corporate-bond-etf",
+    "HYG": "https://www.ishares.com/us/products/239565/ishares-iboxx-high-yield-corporate-bond-etf",
+    "EMB": "https://www.ishares.com/us/products/239572/ishares-jp-morgan-usd-emerging-markets-bond-etf",
+    "IGSB": "https://www.ishares.com/us/products/239451/ishares-1-5-year-investment-grade-corporate-bond-etf",
+}
 
 
 def _date(value):
@@ -23,6 +38,11 @@ def _date(value):
 def parse_issuer_history(html, symbol, observed_at, previous=None):
     parser = _Components()
     parser.feed(html)
+    identities = [c for c in parser.components if "ticker" in c and "currencyCode" in c]
+    product_id = DISTRIBUTION_URLS[symbol].split("/products/")[1].split("/")[0]
+    if not identities or any(c.get("ticker") != symbol or c.get("currencyCode") != "USD" or
+                             str(c.get("productId")) != product_id for c in identities):
+        raise ValueError("Issuer fund identity or currency mismatch")
     tables = [c["distributionTableData"] for c in parser.components
               if isinstance(c.get("distributionTableData"), list)]
     if len(tables) != 1:
@@ -36,7 +56,8 @@ def parse_issuer_history(html, symbol, observed_at, previous=None):
     count = len(columns["exDate"].get("value", []))
     if not count or any(len(columns[k].get("value", [])) != count for k in labels):
         raise ValueError("Incomplete issuer distribution columns")
-    old = {r["ex_date"]: r for r in (previous or {}).get("records", [])}
+    old = {r["ex_date"]: r for r in (previous or {}).get("records", [])
+           if isinstance(r.get("observed_at"), str) and r["observed_at"] <= observed_at}
     rows = []
     seen = set()
     for i in range(count):
@@ -54,7 +75,8 @@ def parse_issuer_history(html, symbol, observed_at, previous=None):
             row["observed_at"] = prior["observed_at"]
         rows.append(row)
     rows.sort(key=lambda r: r["ex_date"])
-    return {"source_url": ISSUER_URLS[symbol], "source_layer": "issuer",
+    return {"symbol": symbol, "currency": "USD",
+            "source_url": DISTRIBUTION_URLS[symbol], "source_layer": "issuer",
             "observed_at": observed_at, "source_sha256": hashlib.sha256(html.encode()).hexdigest(),
             "records": rows, "basis": "issuer-reported-per-share"}
 
@@ -136,6 +158,7 @@ def enrich_distributions(assets, old_assets, cutoff, observed_at, fetch, archive
     received_at = clock or (lambda: observed_at)
     errors = []
     histories = 0
+    requested = sum(a.get("type") == "etf" and a["symbol"] in DISTRIBUTION_URLS for a in assets)
     calendar = None
     try:
         raw = fetch(SCHEDULE_URL, "ishares-distribution-calendar.pdf")
@@ -161,16 +184,22 @@ def enrich_distributions(assets, old_assets, cutoff, observed_at, fetch, archive
             asset["distribution_calendar"] = prior
         if calendar and symbol in calendar["symbols"]:
             asset["distribution_calendar"] = {k: v for k, v in calendar.items() if k != "symbols"}
-        if symbol not in ISSUER_URLS:
+        if asset.get("type") != "etf" or symbol not in DISTRIBUTION_URLS:
             continue
         previous = old.get("issuer_distributions")
         if previous:
             asset["issuer_distributions"] = previous
         try:
-            html = fetch(ISSUER_URLS[symbol], f"issuer-{symbol}.html").decode("utf-8")
-            asset["issuer_distributions"] = parse_issuer_history(html, symbol, received_at(), previous)
+            html = fetch(DISTRIBUTION_URLS[symbol], f"issuer-{symbol}.html").decode("utf-8")
+            result = parse_issuer_history(html, symbol, received_at(), previous)
+            if archive_dir:
+                dest = Path(archive_dir).parent / "histories" / symbol / (result["source_sha256"] + ".json")
+                if not dest.exists():
+                    dest.parent.mkdir(parents=True, exist_ok=True)
+                    dest.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n")
+            asset["issuer_distributions"] = result
             histories += 1
         except Exception as exc:
             errors.append(symbol + ": " + str(exc)[:160])
     return {"calendar_funds": len(calendar["symbols"]) if calendar else 0,
-            "histories": histories, "errors": errors}
+            "histories": histories, "requested_histories": requested, "errors": errors}

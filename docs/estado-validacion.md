@@ -141,3 +141,13 @@ Las pruebas incluyen un retiro antes y después de un pago dentro del mismo inte
 El contraste contable posterior sobre los 12 eventos de SHY del 23 de octubre de 2025 al 23 de octubre de 2026 detectó importes de Yahoo observados a tres decimales frente a seis del emisor. La conciliación admite esa rejilla únicamente para la fuente de Yahoo y cuando el importe oficial redondea al dato observado; conserva el importe preciso del emisor y registra los emparejamientos por redondeo. No aplica una tolerancia porcentual arbitraria ni acredita capacidad predictiva.
 
 **Sigue pendiente:** ampliar fuentes de pagos declarados a todas las acciones y ETF, fiscalidad por instrumento y jurisdicción, conciliación con el broker, curvas completas y evidencia prospectiva suficiente sobre retornos, colas y noticias. La publicación de un calendario no resuelve esos puntos.
+
+### Ampliación de pagos oficiales y explicación de anclas (26 de octubre)
+
+La ingesta de historiales oficiales se amplía de SHY/TLT a doce ETF: SHY, TLT, AGG, IEF, IEI, SGOV, SHV, TIP, LQD, HYG, EMB e IGSB. Se contrastaron las doce páginas reales con el parser. Cada página debe identificar el ticker, el producto y USD antes de aceptar su tabla. Los historiales normalizados se archivan por fondo y hash de la fuente, sin sobrescribir una captura anterior. Un fallo conserva el historial previo y deja el refresco como parcial. Esta cobertura de pagos no incorpora automáticamente nuevos perfiles de duración ni autoriza compras de ETF sin una expectativa de retorno fundamentada.
+
+La composición distingue ahora el BPA publicado de los supuestos efectivos de crecimiento, P/E de salida, horizonte de valoración y confianza asignada. Una propuesta antigua sin ese desglose solicita recalcularla. Los supuestos de valoración no se presentan como consenso ni como parámetros calibrados.
+
+En el corte de precios del 23 de octubre, CMCSA utiliza crecimiento del BPA de 4%, P/E de salida 16 y valoración a tres años. El modelo de valoración produce 38,92% anual; la mezcla con un prior de 6% y confianza asignada de 51,43% reduce el ancla a 22,93%. Esto explica su prioridad bajo esos supuestos; no prueba que el múltiplo sea alcanzable ni que la rentabilidad se materialice en los doce meses simulados. El margen normalizado, por sí solo, tampoco modifica la base de BPA del modo de valoración propio.
+
+La cartera mostrada (SHY 35%, efectivo 15%, CMCSA 20%, AMZN 15%, MU/NFLX/NVDA 5% cada una) alcanza los topes de SHY, CMCSA y renta variable agregada. Las correcciones contables y la ampliación de fuentes no se usan para forzar una cartera distinta. Continúan pendientes calibración de supuestos, normalización de beneficios cíclicos y evidencia prospectiva madura.

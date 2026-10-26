@@ -128,6 +128,13 @@ try {
     };
   });
   const expectedFunds=expected.diagnostics?.economicExposure?.funds?.length||0;
+  const stockAssumptions=await page.locator('.composition-report > .table-wrap .composition-valuation-evidence')
+    .allTextContents();
+  if(stockAssumptions.filter(t=>t.includes('Supuestos:')).length!==
+      expected.signals.filter(s=>s.filed&&s.valuationEvidence).length ||
+     stockAssumptions.some(t=>t.includes('Supuestos:')&&
+       (!t.includes('P/E de salida')||!t.includes('Sin calibración predictiva'))))
+    throw Error('La composición oculta los supuestos de valoración');
   if(lookthrough.rows!==expectedFunds || lookthrough.parentOverflows ||
      !lookthrough.sourceLinks)
     throw Error("ETF holdings report geometry or provenance failed: "+

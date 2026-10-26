@@ -31,6 +31,14 @@ import { MODEL_VERSION } from "../policy.mjs?v=0.9.0";
 
 import { createDecisionViews } from "./decision-views.mjs?v=0.9.0";
 
+export function compositionValuationEvidence(signal) {
+  if(!signal.filed)return "";
+  const v=signal.valuationEvidence;
+  if(!v)return "Supuestos sin guardar en esta propuesta: vuelve a proponer cartera.";
+  const a=v.assumptions;
+  return `Supuestos: ${v.source} · crecimiento ${pct(a.growth)} · P/E de salida ${fmt(a.multiple,1)} · valoración a ${fmt(a.horizon,0)} años · confianza asignada ${pct(v.confidence)}. Sin calibración predictiva.`;
+}
+
 export const NAV = [
   ["portfolio", "Componer cartera", "F1"],
   ["overview", "Seguimiento", "F2"],
@@ -847,6 +855,7 @@ export function createViews(context) {
             low: pct(s.adverseAnchor),
             anchor: pct(s.anchor),
             high: pct(s.favorableAnchor),
+            valuationEvidence: compositionValuationEvidence(s),
             source: s.filed
               ? `BPA ${money(s.eps)} · publicado ${dateLabel(s.filed)}`
               : s.source,

@@ -253,3 +253,18 @@ for (const populated of [false, true])
     }
     assert.ok(metrics(asset("MSFT")).eps > 0);
   });
+
+test("composition distinguishes published EPS from the effective valuation assumptions", async () => {
+  const { compositionValuationEvidence } = await import("../dist/assets/js/ui/views.mjs?v=0.9.0");
+  const text = compositionValuationEvidence({filed:"2026-10-22",valuationEvidence:{
+    source:"BPA y múltiplo propios",assumptions:{growth:.04,multiple:16,horizon:3},
+    confidence:.514285714,prior:.06,
+  }});
+  assert.match(text,/Supuestos:/);
+  assert.match(text,/16[,.]0/);
+  assert.match(text,/valoración a 3 años/);
+  assert.match(text,/confianza asignada/);
+  assert.match(text,/Sin calibración predictiva/);
+  assert.match(compositionValuationEvidence({filed:"2026-10-22"}),/vuelve a proponer/);
+  assert.equal(compositionValuationEvidence({symbol:"SHY"}),"");
+});

@@ -3162,3 +3162,13 @@ tbody tr:hover {
  .composition-report .composition-brief { padding: 11px 10px; }
  .composition-report details.composition-method { padding: 0 10px 11px; }
 }
+
+.composition-valuation-evidence {
+  display: block;
+  max-width: 640px;
+  margin-top: 4px;
+  white-space: normal;
+  line-height: 1.5;
+  color: var(--muted, #aaa);
+}
+.composition-valuation-evidence:empty { display: none; }
