@@ -425,3 +425,33 @@ Las distintas clases reconocidas de un emisor se suman: por ejemplo, GOOG y GOOG
 Si $E_s$ es la exposición conocida al sector $s$ y $U$ la parte de renta variable sin clasificación sectorial, se exige $E_s+U\leq L_s$, además de $U\leq L_s$. Para un emisor $j$, solo se añade la parte no identificada de fondos donde ese emisor no figura entre las posiciones reconocidas. El total no identificado también debe respetar el límite por emisor. Son comprobaciones robustas frente a composición faltante, no probabilidades ni pesos estimados. Una cartera puede resultar conservadora por falta de datos.
 
 Las holdings con antigüedad superior a 120 días no se utilizan como composición vigente. El plazo es un guardarraíl configurable en código, sin validación empírica de optimalidad. La descarga admite hasta 5.000 líneas por fondo y guarda revisiones con hash del original, sin sobrescribir otra respuesta del mismo día. La correlación de precios, el solapamiento conocido entre holdings y el riesgo sistémico total permanecen como medidas distintas.
+
+## 16. Fechas de distribución, derechos de cobro y conciliación
+
+La extensión distingue tres datos: un calendario publicado de fechas previstas, un importe por participación declarado y una distribución efectivamente conciliable. Una fecha prevista no confirma un importe. Cada captura conserva fuente, hash y primera observación; una publicación antigua descargada hoy no se convierte en información conocida entonces.
+
+La referencia teórica empieza en el corte de precios. No recibe derechos cuyo exdividendo ya ocurrió antes de ese corte; los derechos anteriores de una cuenta existente requieren su historial de operaciones y abonos.
+
+Para el calendario mensual de renta fija iShares se utiliza el [documento oficial del emisor](https://www.ishares.com/us/literature/shareholder-letters/isharesandblackrocketfsdistributionschedule.pdf). Las filas de posible distribución por motivos fiscales se excluyen del pronóstico de importes mientras no exista declaración. Si el calendario no cubre todo el horizonte, el sistema mantiene y rotula la aproximación uniforme; no extrapola fechas oficiales.
+
+En la fecha exdividendo se reconoce el derecho al cobro, separado del efectivo. Con precio anterior a la distribución $P^-$, importe por participación $d$, participaciones $q$ y retención supuesta $\tau$:
+
+```math
+P^+=P^- - d,\qquad
+A^+=A^-+qd(1-\tau),\qquad
+W=qP+A+C.
+```
+
+$A$ es la cuenta por cobrar y $C$ el efectivo disponible. Antes de impuestos, la caída de precio y el derecho al cobro se compensan. El derecho no financia un retiro anterior al pago. En la fecha de pago se convierte en efectivo o se reinvierte según el mandato:
+
+```math
+\text{Cobro: }\quad C^+=C^-+a,\quad A^+=A^- - a;
+\qquad
+\text{Reinversión: }\quad q^+=q^-+a/P_{\mathrm{pago}},\quad A^+=A^- - a.
+```
+
+La trayectoria de rendimiento total continúa siendo la misma entrada estocástica. Se descompone en precio y distribuciones sin añadir un segundo retorno. Entre puntos de simulación se interpola logarítmicamente para valorar eventos fechados; esto no reconstruye precios intradía. La comprobación de liquidez respeta el orden real de pagos y retiros incluso cuando caen dentro del mismo intervalo semanal. Una distribución declarada que exceda el precio simulado no crea capital: el pago se limita al valor disponible y se identifica la incidencia.
+
+Para importes todavía desconocidos se mantiene el rendimiento distribuido del último año como hipótesis; sus fechas pueden estar documentadas sin que el importe lo esté. El retraso de pago y la reinversión al pago pueden producir un resultado distinto de un índice que reinvierte en la fecha exdividendo. No se interpreta esa diferencia como alfa.
+
+La conciliación realizada exige una ventana completa de eventos exdividendo, importes contrastables, fechas de pago y precios de la misma base. Los splits y ventanas incompletas bloquean la comparación hasta resolver su base. La retención sigue siendo una hipótesis configurada, no un impuesto individual comprobado. Un resultado bajo estas convenciones no concilia operaciones ni abonos reales del broker.

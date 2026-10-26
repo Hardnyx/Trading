@@ -4,7 +4,7 @@ import {
   normalizeWeights,
   metrics,
   scenarios,
-} from "../analytics.mjs?v=0.8.3";
+} from "../analytics.mjs?v=0.9.0";
 import {
   sparkline,
   portfolioChart,
@@ -13,7 +13,7 @@ import {
   scatter,
   forecastCone,
   histogram,
-} from "../charts.mjs?v=0.8.3";
+} from "../charts.mjs?v=0.9.0";
 import {
   esc,
   url,
@@ -23,13 +23,13 @@ import {
   compact,
   color,
   dateLabel,
-} from "./format.mjs?v=0.8.3";
-import { template } from "./templates.mjs?v=0.8.3";
-import { DEFAULT_COMPOSITION_RULES } from "../composer.mjs?v=0.8.3";
-import { factorModel } from "../factors.mjs?v=0.8.3";
-import { MODEL_VERSION } from "../policy.mjs?v=0.8.3";
+} from "./format.mjs?v=0.9.0";
+import { template } from "./templates.mjs?v=0.9.0";
+import { DEFAULT_COMPOSITION_RULES } from "../composer.mjs?v=0.9.0";
+import { factorModel } from "../factors.mjs?v=0.9.0";
+import { MODEL_VERSION } from "../policy.mjs?v=0.9.0";
 
-import { createDecisionViews } from "./decision-views.mjs?v=0.8.3";
+import { createDecisionViews } from "./decision-views.mjs?v=0.9.0";
 
 export const NAV = [
   ["portfolio", "Componer cartera", "F1"],
@@ -906,8 +906,20 @@ export function createViews(context) {
           : "No hay exposición accionaria con holdings desconocidas entre las posiciones seleccionadas.";
       })(),
       incomeSummary: p.metrics?.dividendPolicy==="cash"
-        ? `Dividendos netos estimados a efectivo USD ${fmt(p.metrics.expectedNetDividendCash,0)}; brutos USD ${fmt(p.metrics.expectedGrossDividendCash,0)}; retención supuesta ${pct(p.metrics.dividendWithholding,0)}. Flujo estimado a partir de los últimos 12 meses, no garantizado.`
+        ? `Dividendos netos estimados disponibles en efectivo USD ${fmt(p.metrics.expectedNetDividendCash,0)}; brutos cobrados USD ${fmt(p.metrics.expectedGrossDividendCash,0)}; pendientes de pago al final USD ${fmt(p.metrics.expectedDividendReceivable||0,0)}. Retención supuesta ${pct(p.metrics.dividendWithholding,0)}. Importes futuros no declarados estimados desde los últimos 12 meses.`
         : `Distribuciones netas estimadas reinvertidas USD ${fmt(p.metrics.expectedNetReinvestedDividends||0,0)}; retención estimada USD ${fmt(p.metrics.expectedDividendWithholding||0,0)} (${pct(p.metrics.dividendWithholding||0,0)}). La reinversión no deja efectivo disponible para retiros.`,
+      dividendCalendarSummary:(()=>{
+        const rows=p.metrics?.dividendTiming||[],dated=rows.filter(r=>r.mode==="issuer-calendar");
+        const capped=rows.reduce((n,r)=>n+(r.cappedEvents||0),0);
+        return `Fechas previstas del emisor: ${dated.map(r=>r.symbol).join(", ")||"sin calendario completo al corte"}. Los demás flujos conservan la aproximación uniforme. La fecha prevista no confirma el importe ni el abono del broker.`+
+          (capped?` ${capped} eventos de distribución se limitaron al valor simulado disponible; revisar impago.`:"");
+      })(),
+      dividendCalendarRows:(p.metrics?.dividendTiming||[]).filter(r=>r.mode==="issuer-calendar")
+        .flatMap(r=>r.events.slice(0,6).map(e=>template("composition-dividend-row",{
+          symbol:r.symbol,exDate:dateLabel(e.ex_date),payDate:dateLabel(e.pay_date),
+          amount:e.amount_per_share===null?"Importe supuesto":money(e.amount_per_share),
+          sourceUrl:url(r.source_url),
+        }))).join(""),
       globalLimitNote: `Límite global ${pct(p.rules.maxGlobal,0)} por instrumento; tope de excepción ${pct(p.rules.maxOpportunity,0)} únicamente con validación prospectiva independiente. Treasuries combinados ${pct(p.rules.maxTreasury,0)}. Acciones combinadas ${pct(p.rules.maxEquity,0)}. Excepciones aprobadas: ${(p.diagnostics?.concentrationPolicy?.qualified||[]).join(", ")||"ninguna"}.`,
       concentration: p.diagnostics?.selected?.largestPosition
         ? `${p.diagnostics.selected.largestPosition.symbol} ${pct(p.diagnostics.selected.largestPosition.weight, 1)}`

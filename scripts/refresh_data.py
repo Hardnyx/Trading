@@ -26,10 +26,12 @@ if __package__:
     from .data_providers import FRED_SERIES, ProviderError, analyst_estimates, fred_series, fred_csv_series, retained_estimates
     from .universe import AUTO_CIK, expanded_universe
     from .etf_holdings import enrich_holdings
+    from .distributions import price_distribution_index, enrich_distributions
 else:
     from data_providers import FRED_SERIES, ProviderError, analyst_estimates, fred_series, fred_csv_series, retained_estimates
     from universe import AUTO_CIK, expanded_universe
     from etf_holdings import enrich_holdings
+    from distributions import price_distribution_index, enrich_distributions
 
 ROOT = Path(__file__).resolve().parents[1]
 CACHE = ROOT / ".cache"
@@ -375,7 +377,9 @@ def prices(symbol, cutoff):
                "ratio": x["numerator"] / x["denominator"]}
               for x in response.get("events", {}).get("splits", {}).values()
               if x.get("denominator", 0) > 0 and dt.datetime.fromtimestamp(x["date"], UTC).date().isoformat() <= cutoff]
+    index = price_distribution_index(response, rows, symbol, dt.datetime.now(UTC).isoformat())
     return {"splits": splits, "history": rows, "price": rows[-1]["close"], "price_date": rows[-1]["date"],
+            "distribution_index": index,
             "change": rows[-1]["close"] / rows[-2]["close"] - 1,
             "dividend_per_share": round(dividend_sum, 6), "currency": response["meta"].get("currency", "USD"),
             "source_url": f"https://finance.yahoo.com/quote/{symbol}/history/"}
@@ -550,7 +554,7 @@ def build_asset(spec, cutoff, previous):
         rows = [row for row in old["history"] if row["date"] <= cutoff]
         if len(rows) < 2:
             return None, [f"{symbol}: precios anteriores al corte no disponibles ({error_label(exc)})"]
-        asset.update({k: old.get(k) for k in ["history", "price", "price_date", "change", "dividend_per_share", "currency", "source_url"]})
+        asset.update({k: old.get(k) for k in ["history", "price", "price_date", "change", "dividend_per_share", "currency", "source_url", "distribution_index", "splits"]})
         asset.update(history=rows, price=rows[-1]["close"], price_date=rows[-1]["date"], change=rows[-1]["close"] / rows[-2]["close"] - 1)
         if old.get("price_date", "9999") > cutoff:
             asset["dividend_per_share"] = None
@@ -852,6 +856,21 @@ def main():
         "Solo datos descargados en la captura original. Portafolios ETF históricos "
         "no reproducidos con datos actuales. Fuente secundaria, cobertura parcial."
     )
+    if current_request:
+        distributions = enrich_distributions(assets, old_assets, args.as_of, dt.datetime.now(UTC).isoformat(),
+            lambda url, key: download(url, key, max_age=3600),
+            archive_dir=ROOT / "data" / "distributions" / "calendars",
+            clock=lambda:dt.datetime.now(UTC).isoformat())
+        providers.append({"id":"distributions", "name":"iShares · distribuciones",
+            "status":"ok" if not distributions["errors"] else "partial" if distributions["calendar_funds"] or distributions["histories"] else "error",
+            "detail":f'{distributions["calendar_funds"]} calendarios mensuales; {distributions["histories"]}/2 historiales con importes y pagos',
+            "checked_at":dt.datetime.now(UTC).isoformat()})
+        errors.extend("Distribuciones: "+message for message in distributions["errors"])
+    snapshot["methodology"]["distributions"] = "Fechas previstas y cantidades declaradas separadas. El importe futuro no declarado es una hipótesis. El índice de ex-dates de Yahoo no confirma una fecha de pago."
+    snapshot["sources"].append({"name":"iShares · calendario de distribuciones",
+        "kind":"Documento del emisor", "url":"https://www.ishares.com/us/literature/shareholder-letters/isharesandblackrocketfsdistributionschedule.pdf",
+        "data":"Calendario mensual publicado; historial de importes y fechas de pago para SHY/TLT"})
+    snapshot["generated_at"] = dt.datetime.now(UTC).isoformat()
     archived = archive_observation(snapshot)
     write_snapshot(snapshot)
     print(f"Captura conservada: {archived.relative_to(ROOT)}", flush=True)

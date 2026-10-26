@@ -126,3 +126,16 @@ La pantalla de composición ahora dispone de reglas globales, grupo Treasury, in
 Sobre el mismo corte del 23 de octubre, semilla 20261024, USD 100.000, 300 candidatas, 600 escenarios de búsqueda y 3.000 de verificación, la comprobación determinista cambió AMZN de 20% a 15%, sustituyó GOOGL 5% por MU 5% y NVDA 5%, conservando SHY 35%, efectivo 15%, CMCSA 20% y NFLX 5%. El retorno mediano simulado fue 5,70% y CVaR 12,08%, frente a 5,43% y 13,35% en 0.8.1. **La diferencia describe dos resultados de búsqueda bajo supuestos, no una mejora económica demostrada fuera de muestra.**
 
 La cobertura real del proveedor sigue siendo parcial. Fechas de pago confirmadas, fiscalidad por instrumento, curvas completas, sorpresa de noticias, calibración de retornos y validación de colas continúan pendientes de datos y evidencia suficientes.
+
+
+### Distribuciones con fecha y derecho de cobro (0.9.0)
+
+- Ingesta del calendario mensual oficial iShares con comprobación de pertenencia al grupo, publicación, alineación de fechas y primera observación. Las fuentes originales se identifican por SHA-256; el repositorio conserva los hechos normalizados.
+- Historial del emisor para SHY/TLT con importe por participación, fecha exdividendo, registro y pago. El índice de eventos exdividendo de Yahoo se conserva para todo el universo con su ventana de cobertura. No suministra por sí solo fechas de pago.
+- Simulación con cuentas por cobrar, efectivo disponible y reinversión al pago. Las retiradas y pagos se ordenan por fecha dentro de un mismo paso semanal. La valoración entre pasos sigue siendo interpolada; no es una simulación intradía.
+- Si el calendario no cubre todo el horizonte o no era conocido al corte, se utiliza y etiqueta la aproximación uniforme. Los importes no declarados son supuestos derivados del rendimiento distribuido histórico, no obligaciones contractuales futuras.
+- Conciliación realizada bajo la retención supuesta y la reinversión al cierre del mandato. Se exige contraste de eventos, cantidades y precios. Un split sin resolver o una ventana incompleta mantiene el resultado pendiente. No se confunde esta convención con operaciones, retenciones o abonos reales del broker.
+
+Las pruebas incluyen un retiro antes y después de un pago dentro del mismo intervalo de simulación, una cuenta por cobrar al vencimiento, reinversión con retención, fechas no conocidas al origen y preservación del pronóstico original. La prueba de identidad contable no demuestra calibración predictiva.
+
+**Sigue pendiente:** ampliar fuentes de pagos declarados a todas las acciones y ETF, fiscalidad por instrumento y jurisdicción, conciliación con el broker, curvas completas y evidencia prospectiva suficiente sobre retornos, colas y noticias. La publicación de un calendario no resuelve esos puntos.

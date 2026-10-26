@@ -1,6 +1,7 @@
-import { finite, mean, normalizeWeights, sum } from "./analytics.mjs?v=0.8.3";
-import { adjustedReturn } from "./factors.mjs?v=0.8.3";
-import { MODEL_VERSION } from "./policy.mjs?v=0.8.3";
+import { finite, mean, normalizeWeights, sum } from "./analytics.mjs?v=0.9.0";
+import { adjustedReturn } from "./factors.mjs?v=0.9.0";
+import { MODEL_VERSION } from "./policy.mjs?v=0.9.0";
+import { reconcilePortfolioDistributions } from "./distribution-ledger.mjs?v=0.9.0";
 const clone = (value) => JSON.parse(JSON.stringify(value));
 function hash(value) {
   let h = 2166136261;
@@ -48,6 +49,9 @@ export function journalOrigin(
         analyst_estimates: a.analyst_estimates || null,
         bond_profile: a.bond_profile || null,
         dividend_per_share: a.dividend_per_share ?? null,
+        distribution_calendar: a.distribution_calendar || null,
+        issuer_distributions: Array.isArray(a.issuer_distributions?.records) ? {...a.issuer_distributions,
+          records:a.issuer_distributions.records.filter(r=>r.ex_date>snapshot.price_as_of)} : null,
       })),
   };
   const parts = Object.fromEntries(
@@ -140,16 +144,13 @@ export function evaluateJournal(journal, snapshot) {
     if (entry.target_date > snapshot.price_as_of)
       return { ...entry, status: "immature" };
     const policy = entry.cashflow_policy || origin.settings?.mandate;
-    if(policy?.dividendPolicy==="cash" || (policy?.dividendWithholding||0)>0)
-      return {...entry,status:"unreconciled_distributions"};
     if (
       (policy?.monthlyWithdrawal || 0) > 0 ||
       (policy?.withdrawals || []).some((r) => r.amount > 0)
     )
       return { ...entry, status: "unreconciled_flows" };
     if (
-      origin.settings?.mandate?.referenceCurrency &&
-      origin.settings.mandate.referenceCurrency !== "USD"
+      policy?.referenceCurrency && policy.referenceCurrency !== "USD"
     )
       return { ...entry, status: "missing_fx" };
     const selected = origin.positions.map((p) => lookup.get(p.symbol));
@@ -162,7 +163,13 @@ export function evaluateJournal(journal, snapshot) {
     const maturity = dates.find((d) =>
       selected.every((a) => a.history.some((r) => r.date === d)),
     );
-    const grossReturn = maturity
+    const needsLedger=policy?.dividendPolicy==="cash" || (policy?.dividendWithholding||0)>0;
+    const reconciliation=needsLedger && maturity
+      ? reconcilePortfolioDistributions(snapshot.assets,origin.positions,origin.price_as_of,maturity,policy)
+      : null;
+    if(needsLedger && maturity && !reconciliation.available)
+      return {...entry,status:"unreconciled_distributions",reconciliation_reason:reconciliation.reason};
+    const grossReturn = reconciliation?.available ? reconciliation.return : maturity
       ? sum(
           origin.positions.map((p, i) => {
             const r = adjustedReturn(selected[i], origin.price_as_of, maturity);
@@ -188,6 +195,7 @@ export function evaluateJournal(journal, snapshot) {
       covered:
         realized >= entry.prediction.p05 && realized <= entry.prediction.p95,
       brier: (entry.prediction.lossProbability - loss) ** 2,
+      distribution_reconciliation:reconciliation?.available?reconciliation:null,
     };
   });
   const scored = rows.filter((r) => r.status === "scored");
@@ -199,7 +207,7 @@ export function evaluateJournal(journal, snapshot) {
     coverage: scored.length
       ? scored.filter((r) => r.covered).length / scored.length
       : null,
-    note: "Sólo orígenes prospectivos vencidos; retornos ajustados de la referencia sin retiros ni operaciones. Ventanas solapadas no son observaciones independientes. Falta de datos se conserva como no evaluable.",
+    note: "Sólo orígenes prospectivos vencidos, sin retiros ni operaciones posteriores. Los dividendos conciliados usan fechas e importes del emisor, cierre de reinversión y retención supuesta del modelo; no son rendimiento del broker. Ventanas solapadas no son observaciones independientes. Falta de datos se conserva como no evaluable.",
   };
 }
 
@@ -221,6 +229,7 @@ export function freezeMaturedOutcomes(journal, snapshot) {
             error: r.error,
             covered: r.covered,
             brier: r.brier,
+            distribution_reconciliation:r.distribution_reconciliation||null,
             observed_at: snapshot.generated_at,
           },
         }

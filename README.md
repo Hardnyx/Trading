@@ -2,7 +2,7 @@
 
 Research, composición y seguimiento de una cartera personal de acciones y ETFs de Estados Unidos.
 
-**Motor 0.8.3.** Límites agregados para todo el catálogo ETF; exposición directa e indirecta por emisor con cotas para la parte desconocida; dividendos conciliados con precio y retención también al reinvertir. El modelo continúa siendo experimental. Véanse [las comprobaciones y pendientes](docs/estado-validacion.md#correcciones-083-exposición-completa-y-conciliación-de-distribuciones).
+**Motor 0.9.0.** Calendario de distribuciones del emisor, cuentas por cobrar separadas de efectivo y reinversión al pago. Continúan los topes por exposición directa e indirecta y la distinción entre datos observados y supuestos. El modelo sigue siendo experimental. Véanse [las comprobaciones y pendientes](docs/estado-validacion.md).
 
 [Abrir aplicación](https://hardnyx.github.io/Trading/)
 
@@ -80,7 +80,7 @@ python scripts/refresh_data.py
 python scripts/refresh_data.py --as-of 2026-10-24
 ```
 
-Biblioteca estándar Python. Respuestas en `.cache/`, límites de consultas SEC, escritura atómica. Se conserva el último dato válido y se informa la incidencia si una fuente falla. `market.json.gz` es una copia gzip determinista de `market.json` que la web intenta cargar primero; si el navegador no admite descompresión o falta el archivo, utiliza el JSON ordinario. La fecha de corte común utiliza la fecha de cierre más frecuente (la más reciente si empatan), sin retroceder todo el universo por un único activo atrasado. **Refresh market data** corre diariamente a las **18:30 de Lima** (23:30 UTC) y publica el nuevo corte en GitHub Pages. La web consulta el archivo publicado cada cinco minutos mientras está visible y hay una referencia registrada.
+El colector usa la biblioteca estándar de Python y `pypdf` para leer el calendario del emisor (`python -m pip install -r requirements-research.txt`). Respuestas en `.cache/`, límites de consultas SEC, escritura atómica. Se conserva el último dato válido y se informa la incidencia si una fuente falla. `market.json.gz` es una copia gzip determinista de `market.json` que la web intenta cargar primero; si el navegador no admite descompresión o falta el archivo, utiliza el JSON ordinario. La fecha de corte común utiliza la fecha de cierre más frecuente (la más reciente si empatan), sin retroceder todo el universo por un único activo atrasado. **Refresh market data** corre diariamente a las **18:30 de Lima** (23:30 UTC) y publica el nuevo corte en GitHub Pages. La web consulta el archivo publicado cada cinco minutos mientras está visible y hay una referencia registrada.
 
 | Fuente                          | Datos                                                                                            | Acceso                                        |
 | ------------------------------- | ------------------------------------------------------------------------------------------------ | --------------------------------------------- |
@@ -168,3 +168,12 @@ La pantalla de composición ahora dispone de reglas globales, grupo Treasury, in
 **Holdings de ETF (en curso):** el refresco automático ya consulta la API pública actual de TickerInside para ETF de renta variable. TickerInside reproduce archivos de emisores y SEC N-PORT, indica el origen y distribuye su *snapshot* actual con licencia [CC BY 4.0](https://tickerinside.com/legal/). Trading guarda el original comprimido solo cuando cambia la fecha del fondo, además de las primeras fechas de observación y la cobertura conocida. Es una **fuente secundaria**, no una confirmación de vigencia diaria del ETF. Véase [API y contrato de datos](https://tickerinside.com/api/). La desagregación todavía es parcial; los valores y clases no reconocidos no se inventan. La descarga de los ETF sin cobertura, ex-dates/pay-dates exactos, impuestos por jurisdicción, curva completa, PIT y validación de colas siguen pendientes. Un tope conserva diversificación por construcción, no prueba superioridad económica.
 
 **Límite agregado de renta variable:** se añadió un máximo inicial de **50%** en acciones directas y ETF de renta variable combinados. Evita que un máximo de 35% en SHY desplace el exceso automáticamente hacia acciones individuales con primas fundamentales todavía no validadas. Es configurable, no un óptimo econométrico.
+
+
+### Calendario y conciliación de distribuciones (0.9.0)
+
+El refresco incorpora el calendario mensual publicado por iShares para los fondos cuya pertenencia al grupo se verifica en el documento. Para SHY y TLT también descarga el historial de importes y fechas de pago desde la ficha del emisor. El calendario se conserva con hash y primera observación; no se convierte una fecha prevista en una declaración de importe. Las distribuciones condicionales de fin de año se excluyen mientras no exista importe declarado.
+
+La simulación reconoce un derecho al cobro en la fecha exdividendo y lo convierte en efectivo o nuevas participaciones al pago. Un retiro anterior no puede usar ese derecho como liquidez. Los importes futuros sin declaración siguen estimándose desde los últimos doce meses; entre puntos de simulación se interpola el precio, sin reconstrucción intradía. Si falta un calendario completo conocido al corte, se conserva la aproximación uniforme y se indica en pantalla.
+
+El registro puede conciliar resultados vencidos solo con una ventana completa de eventos exdividendo y sus importes, pagos y precios contrastados. Las discrepancias, ventanas incompletas y splits pendientes dejan la evaluación sin puntuar. La retención y la reinversión al cierre siguen siendo convenciones del modelo, no una liquidación fiscal ni rendimiento conciliado del broker. No se modifican previsiones anteriores para hacerlas coincidir con datos posteriores.

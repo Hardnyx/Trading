@@ -1,6 +1,6 @@
-import { template as t } from "./templates.mjs?v=0.8.3";
-import { pct, fmt, money, dateLabel } from "./format.mjs?v=0.8.3";
-import { finite, sum, normalizeWeights } from "../analytics.mjs?v=0.8.3";
+import { template as t } from "./templates.mjs?v=0.9.0";
+import { pct, fmt, money, dateLabel } from "./format.mjs?v=0.9.0";
+import { finite, sum, normalizeWeights } from "../analytics.mjs?v=0.9.0";
 import {
   DEFAULT_MANDATE,
   DEFAULT_EXECUTION,
@@ -8,15 +8,15 @@ import {
   DEFAULT_REGIMES,
   currentAccount,
   informationDate,
-} from "../policy.mjs?v=0.8.3";
+} from "../policy.mjs?v=0.9.0";
 import {
   fundamentalForecast,
   businessQuality,
   evaluateThesis,
   bondAssumptions,
-} from "../research-model.mjs?v=0.8.3";
-import { factorModel, factorAttribution } from "../factors.mjs?v=0.8.3";
-import { evaluateJournal } from "../journal.mjs?v=0.8.3";
+} from "../research-model.mjs?v=0.9.0";
+import { factorModel, factorAttribution } from "../factors.mjs?v=0.9.0";
+import { evaluateJournal } from "../journal.mjs?v=0.9.0";
 const objectives = {
   growth: "Crecimiento logarítmico",
   preservation: "Preservación · utilidad CRRA",
@@ -816,7 +816,7 @@ export function createDecisionViews({ state = {}, data, asset }) {
             )
           : "") +
         t("decision-actions"),
-      `Cuenta: ${p.account_source || "capital inicial"}. Alternativas con los mismos escenarios, objetivos, costos y límites; sectores sólo de acciones directas. La segunda simulación semanal comprueba la propuesta. ${(p.notes || []).join(" ")}`,
+      `Cuenta: ${p.account_source || "capital inicial"}. Alternativas con los mismos escenarios, objetivos, costos y límites; exposición directa e indirecta por sector y emisor. La segunda simulación semanal comprueba la propuesta. ${(p.notes || []).join(" ")}`,
     );
   }
   function journalPanel() {

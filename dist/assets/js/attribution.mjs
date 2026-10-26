@@ -3,7 +3,7 @@
  * cases without cashflows. Not a causal factor attribution, portfolio CVaR
  * gradient, or an out-of-sample proof. Same held-out verification scenarios.
  */
-import { distributionFactors } from "./cashflows.mjs?v=0.8.3";
+import { distributionAccounting,distributionTerminalValue } from "./distribution-ledger.mjs?v=0.9.0";
 export function portfolioAttribution(assets, weights, sample, cost=0, capital=100000) {
   if (!Array.isArray(assets) || weights.length !== assets.length ||
       sample.assets.length !== assets.length || !(capital > cost) || cost < 0)
@@ -18,19 +18,10 @@ export function portfolioAttribution(assets, weights, sample, cost=0, capital=10
     return {available:false,reason:"Requiere cartera USD sin retiros y sin conversión FX"};
   const rows=[],terminal=[];
   const afterCosts=1-cost/capital,
-    distributions=assets.map(a=>distributionFactors(a,sample.steps,
-      sample.dt??(policy.horizon||1)/sample.steps,policy));
+    distributions=distributionAccounting(sample);
   for(let p=0;p<sample.paths;p++){
     const components=weights.map((w,i)=>{
-      const offset=p*(sample.steps+1)+sample.steps;
-      const dist=distributions[i];
-      let cash=0;
-      for(let t=1;t<=sample.steps;t++){
-        const k=p*(sample.steps+1)+t;
-        cash+=sample.gross[i][k]*dist.netCash[t];
-      }
-      const price=sample.gross[i][offset]*dist.marketValue[sample.steps];
-      return w*afterCosts*(price+cash-1);
+      return w*afterCosts*(distributionTerminalValue(distributions[i],sample,i,p)-1);
     });
     rows.push(components);
     terminal.push(components.reduce((a,b)=>a+b,0)-cost/capital);

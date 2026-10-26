@@ -5,21 +5,21 @@ import {
   quantile,
   sum,
   normalizeWeights,
-} from "./analytics.mjs?v=0.8.3";
-import { seededRandom, normalGenerator, poisson } from "./random.mjs?v=0.8.3";
-import { ewmaCovariance, cholesky } from "./risk-math.mjs?v=0.8.3";
-import { buildReturnAnchors, sampleDrifts, bondScenarioAnnualReturn } from "./return-model.mjs?v=0.8.3";
-import { distributionFactors } from "./cashflows.mjs?v=0.8.3";
-import { assetAt } from "./research-model.mjs?v=0.8.3";
-import { factorModel } from "./factors.mjs?v=0.8.3";
-import { conditionalRisk, updateGjrVariance, updateEwmaVariance } from "./conditional-risk.mjs?v=0.8.3";
-import { marketFactorCovariance, conditionalFactorization } from "./factor-covariance.mjs?v=0.8.3";
+} from "./analytics.mjs?v=0.9.0";
+import { seededRandom, normalGenerator, poisson } from "./random.mjs?v=0.9.0";
+import { ewmaCovariance, cholesky } from "./risk-math.mjs?v=0.9.0";
+import { buildReturnAnchors, sampleDrifts, bondScenarioAnnualReturn } from "./return-model.mjs?v=0.9.0";
+import { distributionAccounting } from "./distribution-ledger.mjs?v=0.9.0";
+import { assetAt } from "./research-model.mjs?v=0.9.0";
+import { factorModel } from "./factors.mjs?v=0.9.0";
+import { conditionalRisk, updateGjrVariance, updateEwmaVariance } from "./conditional-risk.mjs?v=0.9.0";
+import { marketFactorCovariance, conditionalFactorization } from "./factor-covariance.mjs?v=0.9.0";
 import {
   mandate,
   regimes,
   withdrawalSchedule,
   DEFAULT_REGIMES,
-} from "./policy.mjs?v=0.8.3";
+} from "./policy.mjs?v=0.9.0";
 
 export const BASE_REGIME = {
   id: "base",
@@ -346,6 +346,7 @@ export function generatePaths(inputs, paths, seed, stepsPerYear = 52) {
     seed,
     policy,
     asOf: options.asOf || assets[0].price_date,
+    informationAsOf: options.informationAsOf || options.asOf || assets[0].price_date,
     scenarioCounts,
   };
 }
@@ -361,10 +362,9 @@ export function evaluatePaths(weights, sample, options = {}) {
       (a) => a.type === "cash" || a.symbol === "CASH",
     );
   const schedule = withdrawalSchedule(policy, sample.asOf),
-    flows = Array(steps + 1).fill(0);
+    flows = Array.from({length:steps+1},()=>[]);
   for (const row of schedule)
-    flows[Math.min(steps, Math.max(1, Math.ceil(row.year / dt - 1e-8)))] +=
-      row.amount;
+    flows[Math.min(steps, Math.max(1, Math.ceil(row.year / dt - 1e-8)))].push(row);
   const returns = [],
     terminalWealth = [],
     drawdowns = [],
@@ -382,10 +382,11 @@ export function evaluatePaths(weights, sample, options = {}) {
     unfinishedRecoveries = 0;
   const selected = weights.map((w, i) => ({ w, i })).filter((r) => r.w > 0),
     gamma = policy.riskAversion,
-    distributions=assets.map(a=>distributionFactors(a,steps,dt,policy)),
+    distributions=distributionAccounting(sample),
     cashDividends=policy.dividendPolicy==="cash",
     withholding=policy.dividendWithholding || 0;
-  let distributionGrossSum=0, distributionNetSum=0, reinvestedSum=0, withheldSum=0;
+  let distributionGrossSum=0, distributionNetSum=0, reinvestedSum=0, withheldSum=0,
+    receivableSum=0, paidGrossSum=0;
   for (let p = 0; p < paths; p++) {
     let previous = initial,
       cashWithdrawn = 0,
@@ -401,21 +402,31 @@ export function evaluatePaths(weights, sample, options = {}) {
       dividendsNet=0,
       reinvested=0,
       withheld=0;
+    const uniformCash=new Float64Array(assets.length);
     const path = options.details && p < 12 ? [nav * 100] : null;
     if (observations) observations[0].push(nav * 100);
     for (let t = 1; t <= steps; t++) {
       const offset = p * (steps + 1) + t;
       const cashGross = cashIndex >= 0 ? gross[cashIndex][offset] : 1;
-      let total = 0;
+      let total = 0,paidCash=0,uniformPrior=0,uniformStep=0;
       for(const {w,i} of selected) {
-        const dist=distributions[i],value=w*gross[i][offset]*initial;
-        total+=value*dist.marketValue[t];
-        dividendsGross+=value*dist.grossDistribution[t];
-        dividendsNet+=value*dist.netCash[t];
-        reinvested+=value*dist.netReinvested[t];
-        withheld+=value*dist.withheld[t];
+        const view=distributions[i];
+        if(view.dated){
+          total+=w*(view.values[offset]+view.cash[offset])*initial;
+          paidCash+=w*view.cash[offset]*initial;
+        }else{
+          const dist=view.factors,value=w*gross[i][offset]*initial;
+          const net=value*dist.netCash[t];
+          uniformPrior+=uniformCash[i];uniformStep+=net;uniformCash[i]+=net;
+          total+=value*dist.marketValue[t]+uniformCash[i];
+          paidCash+=uniformCash[i];
+          dividendsGross+=value*dist.grossDistribution[t];
+          reinvested+=value*dist.netReinvested[t];
+          withheld+=value*dist.withheld[t];
+        }
       }
-      total += dividendsNet-cashWithdrawn;
+      dividendsNet=paidCash;
+      total-=cashWithdrawn;
       const priorFX = fx[offset - 1],
         currentFX = fx[offset];
       nav *=
@@ -430,17 +441,34 @@ export function evaluatePaths(weights, sample, options = {}) {
         everUnder = true;
       } else run = 0;
       if (total * currentFX < policy.capitalFloor) floorBroken = true;
-      const withdrawal = flows[t] / currentFX,
-        cash =
-          (cashIndex >= 0 ? weights[cashIndex] * cashGross * initial : 0) +
-          dividendsNet - cashWithdrawn;
-      if (cash + 1e-8 < withdrawal || total + 1e-8 < withdrawal) failed = true;
-      cashWithdrawn += withdrawal;
-      previous = Math.max(0, total - withdrawal);
+      let withdrawal=0;
+      for(const row of flows[t]){
+        const u=Math.max(0,Math.min(steps,row.year/dt)),lo=Math.floor(u),hi=Math.min(steps,lo+1);
+        const base=p*(steps+1),loFX=fx[base+lo],hiFX=fx[base+hi];
+        const withdrawalFX=Math.exp(Math.log(loFX)+(Math.log(hiFX)-Math.log(loFX))*(u-lo));
+        const due=row.amount/withdrawalFX;
+        const fraction=Math.max(0,Math.min(1,(row.year-(t-1)*dt)/dt));
+        const datedCash=selected.reduce((s,{w,i})=>s+(distributions[i].dated
+          ?w*initial*distributions[i].cashAt(p,row.year):0),0);
+        const cash=(cashIndex>=0?weights[cashIndex]*cashGross*initial:0)+
+          uniformPrior+uniformStep*fraction+datedCash-cashWithdrawn;
+        if(cash+1e-8<due || total-withdrawal+1e-8<due)failed=true;
+        cashWithdrawn+=due;withdrawal+=due;
+      }
+      previous = Math.max(0, total-withdrawal);
       if (previous * currentFX < policy.capitalFloor) floorBroken = true;
       if (observations) observations[t].push(nav * 100);
       if (path) path.push(nav * 100);
     }
+    let receivable=0,paidGross=cashDividends?dividendsGross:0;
+    for(const {w,i} of selected){
+      const view=distributions[i];if(!view.dated)continue;
+      dividendsGross+=w*initial*view.grossIncome[p];
+      withheld+=w*initial*view.tax[p];reinvested+=w*initial*view.reinvested[p];
+      receivable+=w*initial*view.receivables[p*(steps+1)+steps];
+      if(cashDividends)paidGross+=w*initial*view.paidGross[p];
+    }
+    receivableSum+=receivable;paidGrossSum+=paidGross;
     distributionGrossSum+=dividendsGross;
     distributionNetSum+=dividendsNet;
     reinvestedSum+=reinvested;
@@ -491,10 +519,19 @@ export function evaluatePaths(weights, sample, options = {}) {
     dividendPolicy:policy.dividendPolicy,
     dividendWithholding:withholding,
     expectedGrossDistributions:distributionGrossSum/paths,
-    expectedNetDistributions:(distributionNetSum+reinvestedSum)/paths,
+    expectedNetDistributions:(distributionGrossSum-withheldSum)/paths,
     expectedDividendWithholding:withheldSum/paths,
     expectedNetReinvestedDividends:reinvestedSum/paths,
-    expectedGrossDividendCash:cashDividends?distributionGrossSum/paths:0,
+    expectedGrossDividendCash:paidGrossSum/paths,
+    expectedDividendReceivable:receivableSum/paths,
+    dividendTiming:selected.filter(({i})=>assets[i].type!=="cash").map(({i})=>({
+      symbol:assets[i].symbol,mode:distributions[i].dated?"issuer-calendar":"uniform-estimate",
+      source_url:distributions[i].calendar?.source_url||null,
+      calendarObservedAt:distributions[i].calendar?.observed_at||null,
+      events:distributions[i].calendar?.events.map(r=>({ex_date:r.ex_date,pay_date:r.pay_date,
+        amount_per_share:r.amount_per_share,amount_basis:r.amount_basis}))||[],
+      cappedEvents:distributions[i].capped||0,
+    })),
     expectedNetDividendCash:distributionNetSum/paths,
     expectedLogGrowth: mean(
       returns.map((r) => Math.log(Math.max(1e-5, 1 + r))),

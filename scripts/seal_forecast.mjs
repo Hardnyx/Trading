@@ -5,9 +5,10 @@
 import { readFileSync, existsSync, mkdirSync, writeFileSync, readdirSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { resolve, join, dirname } from "node:path";
-import { composePortfolio } from "../dist/assets/js/composer.mjs?v=0.8.3";
-import { referenceRequest } from "../dist/assets/js/reference-preset.mjs?v=0.8.3";
-import { adjustedReturn } from "../dist/assets/js/factors.mjs?v=0.8.3";
+import { composePortfolio } from "../dist/assets/js/composer.mjs?v=0.9.0";
+import { referenceRequest } from "../dist/assets/js/reference-preset.mjs?v=0.9.0";
+import { adjustedReturn } from "../dist/assets/js/factors.mjs?v=0.9.0";
+import { reconcilePortfolioDistributions } from "../dist/assets/js/distribution-ledger.mjs?v=0.9.0";
 
 export function nextSessionStart(cutDate){
   if(!/^\d{4}-\d{2}-\d{2}$/.test(cutDate))throw Error("Invalid market cut");
@@ -90,9 +91,12 @@ export function maturityCheck(origin,market){
   const relevant=(origin.positions||[]).filter(p=>p.weight>0&&p.symbol!=="CASH");
   if(!relevant.length)return {status:"mature_without_risky_positions",realized:0};
   const policy=origin.model_settings?.mandate;
-  if(policy?.dividendPolicy==="cash" || (policy?.dividendWithholding||0)>0)
+  const needsLedger=policy?.dividendPolicy==="cash" || (policy?.dividendWithholding||0)>0;
+  // Fail closed before selecting a maturity session if there is no dividend
+  // ledger at all. Ex-post adjusted prices alone cannot supply payment dates.
+  if(needsLedger && relevant.some(p=>!market.assets.find(a=>a.symbol===p.symbol)?.distribution_index))
     return {status:"unreconciled_distributions",
-      warning:"Price-adjusted total returns do not reconcile cash distributions or withholding. No probability score assigned."};
+      warning:"Missing distribution event index; no probability score assigned."};
   if(origin.schema_version===2 && !policy)
     return {status:"missing_cashflow_policy"};
   if(policy && ((policy.monthlyWithdrawal||0)>0 ||
@@ -110,6 +114,11 @@ export function maturityCheck(origin,market){
     .find(day=>relevant.every(p=>(assets.get(p.symbol)?.history||[])
       .some(row=>row.date===day)));
   if(!common)return {status:"awaiting_trading_session"};
+  const reconciliation=needsLedger
+    ? reconcilePortfolioDistributions(market.assets,origin.positions,origin.original_price_as_of,common,policy)
+    : null;
+  if(needsLedger && !reconciliation.available)
+    return {status:"unreconciled_distributions",warning:reconciliation.reason};
   let sum=0;
   for(const row of relevant){
     const asset=assets.get(row.symbol);
@@ -120,13 +129,16 @@ export function maturityCheck(origin,market){
   }
   const cost=origin.model_settings?.initial_cost,
     capital=origin.model_settings?.capital;
-  const comparable=policy?.dividendPolicy==="reinvest" &&
+  const modeledReturn=reconciliation?.available?reconciliation.return:sum;
+  const comparable=(reconciliation?.available || policy?.dividendPolicy==="reinvest") &&
     Number.isFinite(cost) && cost>=0 && capital>cost;
-  const net=comparable?(1+sum)*(1-cost/capital)-1:null;
+  const net=comparable?(1+modeledReturn)*(1-cost/capital)-1:null;
   return {
     status:"eligible_outcome_approximation",
     actual_maturity_session:common,
     realized_buy_and_hold_gross:sum,
+    realized_under_model_conventions:modeledReturn,
+    distribution_reconciliation:reconciliation?.available?reconciliation:null,
     realized_after_initial_cost:net,
     // Score only the matching reinvestment convention and the cost sealed
     // at issuance. Old records lacking that policy stay gross diagnostics.

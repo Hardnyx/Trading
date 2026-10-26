@@ -142,6 +142,13 @@
           <p><strong>CORRELACIONES OBSERVADAS · 500 SESIONES:</strong> {{overlapSummary}}.</p>
           <p>{{exposureWarning}}</p>
           <p>{{lookthroughSummary}}</p>
+          <p>{{dividendCalendarSummary}}</p>
+          <div class="table-wrap">
+            <table class="composition-dividend-calendar">
+              <thead><tr><th>ACTIVO</th><th>EXDIVIDENDO</th><th>PAGO PREVISTO</th><th>POR PARTICIPACIÓN</th><th>FUENTE</th></tr></thead>
+              <tbody>{{{dividendCalendarRows}}}</tbody>
+            </table>
+          </div>
           <div class="table-wrap">
             <table class="composition-etf-holdings">
               <thead><tr>
@@ -250,6 +257,10 @@
         <td>{{high}}</td>
         <td>{{source}}</td>
       </tr>
+    </template>
+    <template id="composition-dividend-row">
+      <tr><td>{{symbol}}</td><td>{{exDate}}</td><td>{{payDate}}</td><td>{{amount}}</td>
+        <td><a href="{{sourceUrl}}" target="_blank" rel="noopener noreferrer">Calendario del emisor</a></td></tr>
     </template>
   </body>
 </html>

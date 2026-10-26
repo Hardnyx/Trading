@@ -1,9 +1,9 @@
 import { chromium } from "playwright";
 import { spawn } from "node:child_process";
 import { readFileSync, mkdirSync } from "node:fs";
-import { composePortfolio } from "../dist/assets/js/composer.mjs?v=0.8.3";
-import { referenceRequest } from "../dist/assets/js/reference-preset.mjs?v=0.8.3";
-import { exposureReport } from "../dist/assets/js/economic-exposure.mjs?v=0.8.3";
+import { composePortfolio } from "../dist/assets/js/composer.mjs?v=0.9.0";
+import { referenceRequest } from "../dist/assets/js/reference-preset.mjs?v=0.9.0";
+import { exposureReport } from "../dist/assets/js/economic-exposure.mjs?v=0.9.0";
 
 const market=JSON.parse(readFileSync("dist/data/market.json","utf8"));
 const volatility=JSON.parse(readFileSync("dist/data/volatility.json","utf8"));
@@ -46,12 +46,12 @@ try {
   const issues=[];
   page.on("pageerror",e=>issues.push(e.message));
   page.on("console",e=>{if(e.type()==="error")issues.push(e.text())});
-  await page.goto("http://127.0.0.1:8813/?build=0.8.3#portfolio",
+  await page.goto("http://127.0.0.1:8813/?build=0.9.0#portfolio",
     {waitUntil:"networkidle",timeout:60000});
   const button=page.locator('[data-action="compose-reference"]');
   await button.waitFor({state:"visible",timeout:45000});
   const actualFooter=await page.locator(".footer-right").innerText();
-  if(!actualFooter.includes("v0.8.3") || actualFooter.includes("v0.6.0"))
+  if(!actualFooter.includes("v0.9.0") || actualFooter.includes("v0.6.0"))
     throw Error("La etiqueta de versión del pie de página no corresponde al motor: "+
       actualFooter);
 
@@ -60,7 +60,7 @@ try {
   await page.evaluate(()=>{
     const key="trading-workspace-v1";
     const stored=JSON.parse(localStorage.getItem(key)||"{}");
-    stored.workspaceVersion="0.8.3";
+    stored.workspaceVersion="0.9.0";
     stored.positions=[{symbol:"NVDA",weight:1}];
     stored.settings={...stored.settings,seed:20261025,volatilityMode:"ewma"};
     stored.compositionRules={...stored.compositionRules,reserveCap:0.1,
@@ -131,6 +131,11 @@ try {
      !lookthrough.sourceLinks)
     throw Error("ETF holdings report geometry or provenance failed: "+
       JSON.stringify({lookthrough,expectedFunds}));
+  const expectedDividendRows=(expected.metrics?.dividendTiming||[])
+    .filter(r=>r.mode==="issuer-calendar").reduce((n,r)=>n+Math.min(6,r.events.length),0);
+  const calendarRows=await page.locator('.composition-dividend-calendar tbody tr').count();
+  if(calendarRows!==expectedDividendRows)
+    throw Error("Calendario de dividendos distinto entre motor y pantalla");
   mkdirSync("out",{recursive:true});
   await page.screenshot({path:"out/browser-parity.png",fullPage:true});
   if(!source.includes("CONFIGURACIÓN BASE"))
@@ -155,8 +160,8 @@ try {
      baselineStorage.compositionRules.reserveCap!==0.1 ||
      baselineStorage.account.positions[0].symbol!=="NVDA")
     throw Error("La prueba no restauró realmente la sesión personalizada");
-  if(!report.includes("MOTOR 0.8.3") && !report.includes("Motor 0.8.3"))
-    throw Error("El informe no identifica el motor 0.8.3");
+  if(!report.includes("MOTOR 0.9.0") && !report.includes("Motor 0.9.0"))
+    throw Error("El informe no identifica el motor 0.9.0");
   if(issues.length)throw Error("Errores del navegador: "+issues.join("; "));
   console.log(JSON.stringify({
     browserParity:"PASS",
