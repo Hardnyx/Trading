@@ -5,9 +5,9 @@
 import { readFileSync, existsSync, mkdirSync, writeFileSync, readdirSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { resolve, join, dirname } from "node:path";
-import { composePortfolio } from "../dist/assets/js/composer.mjs?v=0.7.2";
-import { referenceRequest } from "../dist/assets/js/reference-preset.mjs?v=0.7.2";
-import { adjustedReturn } from "../dist/assets/js/factors.mjs?v=0.7.2";
+import { composePortfolio } from "../dist/assets/js/composer.mjs?v=0.8.0";
+import { referenceRequest } from "../dist/assets/js/reference-preset.mjs?v=0.8.0";
+import { adjustedReturn } from "../dist/assets/js/factors.mjs?v=0.8.0";
 
 export function nextSessionStart(cutDate){
   if(!/^\d{4}-\d{2}-\d{2}$/.test(cutDate))throw Error("Invalid market cut");
