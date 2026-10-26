@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { economicClass, exposureReport, actualHoldings, rawCorrelation, qualifiedOpportunity, knownFundOverlap } from "../dist/assets/js/economic-exposure.mjs?v=0.8.1";
-import { validWeights, DEFAULT_COMPOSITION_RULES } from "../dist/assets/js/composer.mjs?v=0.8.1";
+import { economicClass, exposureReport, actualHoldings, rawCorrelation, qualifiedOpportunity, knownFundOverlap } from "../dist/assets/js/economic-exposure.mjs?v=0.8.2";
+import { validWeights, DEFAULT_COMPOSITION_RULES } from "../dist/assets/js/composer.mjs?v=0.8.2";
 
 test("Treasury funds aggregate despite having different tickers",()=>{
  const assets=[
