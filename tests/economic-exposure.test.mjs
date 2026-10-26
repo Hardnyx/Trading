@@ -72,5 +72,5 @@ test("aggregate equity cap prevents SHY reduction from forcing 60% risky stocks"
  };
  assert.equal(validWeights([.20,.20,.20,.35,.05],context),false);
  assert.equal(validWeights([.20,.15,.15,.35,.15],context),true);
- assert.equal(exposureReport(assets,[.20,.20,.20,.35,.05],"2026-10-23").sleeves.usEquity,.60);
+ assert.ok(Math.abs(exposureReport(assets,[.20,.20,.20,.35,.05],"2026-10-23").sleeves.usEquity-.60)<1e-10);
 });
