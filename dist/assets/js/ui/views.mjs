@@ -903,7 +903,7 @@ export function createViews(context) {
         const d=p.diagnostics?.economicExposure;
         return d?.unknownHoldings?.length
           ? "Holdings incompletas o no utilizables al corte: " + d.unknownHoldings.join(", ") + ". Composiciones de más de 120 días se excluyen del desglose; su parte desconocida limita las compras."
-          : "No hay holdings desconocidas entre las posiciones seleccionadas.";
+          : "No hay exposición accionaria con holdings desconocidas entre las posiciones seleccionadas.";
       })(),
       incomeSummary: p.metrics?.dividendPolicy==="cash"
         ? `Dividendos netos estimados a efectivo USD ${fmt(p.metrics.expectedNetDividendCash,0)}; brutos USD ${fmt(p.metrics.expectedGrossDividendCash,0)}; retención supuesta ${pct(p.metrics.dividendWithholding,0)}. Flujo estimado a partir de los últimos 12 meses, no garantizado.`
@@ -955,7 +955,7 @@ export function createViews(context) {
       seed: p.settings.seed,
       maxCorr: fmt(p.rules.maxCorrelation, 2),
       dependenceMethod: p.diagnostics?.dependence?.available
-        ? "residual SPY bull/bear + sector"
+        ? "correlación total en pares con ETF; residual SPY bull/bear + sector entre acciones"
         : "total (historia insuficiente)",
       dependenceObservations: p.diagnostics?.dependence?.observations ?? 0,
       volatilityUsed: p.diagnostics?.volatility?.mode || "EWMA",

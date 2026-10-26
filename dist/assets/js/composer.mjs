@@ -245,7 +245,7 @@ export function prepareComposition(
     excluded,
     buyAllowed: sampled.assets.map((asset) => permissionBySymbol.get(asset.symbol)),
     selection: {
-      published: raw.assets.length,
+      published: raw.assets.filter(a=>a.type!=="cash"&&a.symbol!=="CASH").length,
       eligible: eligible.length,
       simulated: sampled.assets.length,
       forcedResearchCandidates: forcedResearch,
@@ -313,14 +313,17 @@ function corr(inputs, i, j) {
     ? c[i][j] / Math.sqrt(c[i][i] * c[j][j])
     : 0;
 }
+function positionLimit(a,x){
+ const legacy=a.type==="cash"?1:a.type==="stock"?x.rules.maxPosition:a.symbol==="SHY"?x.rules.reserveCap:x.rules.maxFund;
+ const exception=qualifiedOpportunity(a,x.opportunityEvidence?.[a.symbol],x.asOf);
+ const global=a.type==="cash"?1:(exception?x.rules.maxOpportunity:x.rules.maxGlobal);
+ return Math.min(legacy,global);
+}
 export function validWeights(w,x){
  if(Math.abs(sum(w)-1)>1e-7 || w.filter(v=>v>1e-8).length>x.rules.maxPositions)return false;
  for(let i=0;i<w.length;i++){
   const a=x.assets[i];
-  const legacy=a.type==="cash"?1:a.type==="stock"?x.rules.maxPosition:a.symbol==="SHY"?x.rules.reserveCap:x.rules.maxFund;
-  const exception=qualifiedOpportunity(a,x.opportunityEvidence?.[a.symbol],x.asOf);
-  const global=a.type==="cash"?1:(exception?x.rules.maxOpportunity:x.rules.maxGlobal);
-  if(!finite(w[i])||w[i]<-1e-8||w[i]>Math.min(legacy,global)+1e-8||
+  if(!finite(w[i])||w[i]<-1e-8||w[i]>positionLimit(a,x)+1e-8||
      (w[i]>1e-8&&!x.buyAllowed[i]))return false;
   if(a.type==="cash"&&w[i]<x.requiredCash-1e-8)return false;
   if(w[i]>.01)for(let j=0;j<i;j++){
@@ -796,11 +799,20 @@ export function composePortfolio(
                    a.positionPairWeight*Math.abs(a.totalCorrelation)).slice(0,12) : [];
   const riskDiagnostics = (row) => {
     if (!row) return null;
+    const economic=exposureReport(x.assets,row.weights,x.asOf,x.informationAsOf,x.securitySectors);
     const limits = [
       ["CVaR 95", row.metrics.cvar95, x.rules.cvarBudget],
       ["Prob. pérdida", row.metrics.lossProbability, x.rules.maxLossProbability],
       ["Prob. drawdown", row.metrics.drawdownProbability, x.policy.maxDrawdownProbability],
       ["Riesgo liquidez", row.metrics.liquidityFailureProbability, x.policy.maxLiquidityFailure],
+      ["Treasuries combinados",economic.sleeves.treasury,x.rules.maxTreasury],
+      ["Acciones combinadas",economic.sleeves.usEquity+economic.sleeves.globalEquity,x.rules.maxEquity],
+      ...x.assets.flatMap((a,i)=>a.type!=="cash"&&row.weights[i]>1e-8
+        ? [["Tope "+a.symbol,row.weights[i],positionLimit(a,x)]]:[]),
+      ...Object.entries(economic.sectorUpperBounds).map(([s,w])=>
+        ["Sector "+s+" (cota)",w,x.rules.maxSector]),
+      ["Emisores no identificados (cota)",economic.unclassifiedIssuerWeight,
+        Math.min(x.rules.maxPosition,x.rules.maxGlobal)],
     ];
     const nearby = limits.filter(([, used, limit]) => limit > 0 && used >= limit * 0.9)
       .map(([name, used, limit]) => ({
