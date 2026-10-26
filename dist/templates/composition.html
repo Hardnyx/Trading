@@ -23,6 +23,21 @@
             </select>
           </div>
           <div class="field">
+            <label for="composition-dividend-policy">DIVIDENDOS · FLUJO DE CAJA</label>
+            <select id="composition-dividend-policy" data-setting="dividendPolicy">
+              <option value="cash" {{{dividendsCashSelected}}}>Cobrar en efectivo</option>
+              <option value="reinvest" {{{dividendsReinvestSelected}}}>Reinvertir (rendimiento total)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="composition-dividend-tax">RETENCIÓN SUPUESTA EN DIVIDENDOS</label>
+            <div class="input-unit">
+              <input id="composition-dividend-tax" type="number" min="0" max="100" step="1"
+                value="{{dividendWithholdingValue}}" data-setting="dividendWithholding"
+                data-scale="100"><span>%</span>
+            </div>
+          </div>
+          <div class="field">
             <label for="composition-horizon">HORIZONTE</label
             ><select
               id="composition-horizon"
@@ -36,8 +51,10 @@
         <p>
           Solo posiciones largas. Pesos en pasos de 5 puntos, sin
           apalancamiento; con costos iniciales y efectivo para retiros. SHY
-          tiene su propio límite. La media futura parte de valoración, no del
-          retorno histórico.
+          tiene su propio límite además del global por activo y del conjunto
+          Treasury. El tope de oportunidad requiere evidencia prospectiva
+          revisada. Dividendos distribuidos se extraen del rendimiento total
+          ajustado y la retención es configurable (0% no implica exención tributaria).
         </p>
       </details>
     </template>

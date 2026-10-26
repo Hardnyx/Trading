@@ -1206,6 +1206,14 @@ document.addEventListener("change", async (event) => {
     }
     state.settings[key] = value;
     if (key === "horizon") state.mandate.horizon = value;
+    if(key === "dividendPolicy" || key === "dividendWithholding"){
+      const next={...state.mandate,[key]:value};
+      try { mandate(next); }
+      catch(error){ toast(error.message); render(); return; }
+      state.mandate=next;
+    }
+    if(state.proposal)state.proposal.modified=true;
+    persist();
     state.forecast = null;
     runForecast();
   }

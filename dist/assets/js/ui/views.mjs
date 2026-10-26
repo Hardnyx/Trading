@@ -741,6 +741,9 @@ export function createViews(context) {
       volatilityHybridSelected: !["ewma", "legacy"].includes(state.settings.volatilityMode) ? "selected" : "",
       volatilityEWMASelected: state.settings.volatilityMode === "ewma" ? "selected" : "",
       volatilityLegacySelected: state.settings.volatilityMode === "legacy" ? "selected" : "",
+      dividendsCashSelected:state.mandate.dividendPolicy === "cash" ? "selected" : "",
+      dividendsReinvestSelected:state.mandate.dividendPolicy === "reinvest" ? "selected" : "",
+      dividendWithholdingValue:fmt(100*(state.mandate.dividendWithholding||0),0),
       fields: fields
         .map(([key, label, min, max, step, scale, unit]) =>
           template("composition-field", {
