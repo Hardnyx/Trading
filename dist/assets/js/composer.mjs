@@ -583,7 +583,8 @@ export function composePortfolio(
   const references = Object.fromEntries([
     ["cash", allCash],
     ["reserve", shortBond >= 0 ? reserve : null],
-    ["equity20", equity >= 0 && x.buyAllowed[equity] ? equityTilt : null],
+    ["equity20", equity >= 0 &&
+      benchmarkInputs.buyAllowed[equity] ? equityTilt : null],
   ].map(([name, w]) => {
     const comparator = name === "equity20" ? benchmarkInputs : x;
     if (!w || !validWeights(w, comparator)) return [name, null];
