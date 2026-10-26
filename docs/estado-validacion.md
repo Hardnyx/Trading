@@ -109,6 +109,8 @@ El catálogo curado pasa a 260 instrumentos previstos: 160 empresas y 100 ETF. S
 
 Los nuevos estados financieros siguen las mismas reglas de fechas, BPA comparable y advertencias de informes posteriores. No se relajan para conseguir más candidatas. Los ETF sin clasificación, holdings o ancla económica suficiente permanecen en observación y no reciben permiso automático de compra. Los supuestos sectoriales son hipótesis editables, no consenso.
 
+Los 23 ETF nuevos tienen grupo económico: 17 USA, 3 internacionales ex-USA y 3 globales (VT, ACWI, URTH). Los globales pueden incluir Estados Unidos y no se presentan como una cartera exclusivamente extranjera. Sin holdings comprobadas no se inventan pesos geográficos ni por emisor; la exposición desconocida sigue consumiendo capacidad de concentración y los topes de renta variable agregada permanecen vigentes.
+
 En Límites de la propuesta se habilitan muestras máximas de 20, 40, 60 u 80 activos. Cuarenta sigue siendo el presupuesto predeterminado. Cuenta, comparadores y diversificación se retienen con los mismos controles; el presupuesto se guarda en la propuesta y cambiarlo invalida el resultado. Mayor tamaño aumenta memoria y tiempo; no prueba convergencia ni optimalidad global. La selección sigue dependiendo del conjunto elegible y las hipótesis. El registro shadow y la comprobación de estabilidad siguen siendo necesarios.
 
 ## 7. Cómo ejecutar la investigación

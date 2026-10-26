@@ -971,7 +971,7 @@ export function createViews(context) {
         const d=p.diagnostics?.economicExposure;
         if(!d)return "Sin desglose económico";
         const s=d.sleeves;
-        return `Treasuries ${pct(s.treasury,1)} · Crédito ${pct(s.credit,1)} · Bonos mixtos ${pct(s.mixedBonds,1)} · Acciones USA ${pct(s.usEquity,1)} · Acciones internacionales ${pct(s.globalEquity,1)} · Oro ${pct(s.gold,1)}`;
+        return `Treasuries ${pct(s.treasury,1)} · Crédito ${pct(s.credit,1)} · Bonos mixtos ${pct(s.mixedBonds,1)} · Acciones USA ${pct(s.usEquity,1)} · Acciones globales / internacionales ${pct(s.globalEquity,1)} · Oro ${pct(s.gold,1)}`;
       })(),
       overlapSummary: (() => {
         const r=p.diagnostics?.etfCorrelations||[];

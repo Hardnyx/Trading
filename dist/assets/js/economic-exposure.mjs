@@ -5,6 +5,9 @@ const MIXED=new Set(["AGG","BND","BNDX"]);
 const GOLD=new Set(["GLD","IAU"]);
 const INTL=new Set(["VXUS","VEA","VWO","EFA","EEM","EWJ","EWZ","EWW","ECH","EPU","INDA","MCHI","FXI","EWG","EWU","EWC","EWA","EWT","KWEB"]);
 const US=new Set(["SPY","VTI","QQQ","IWM","XLK","XLC","XLY","XLP","XLF","XLE","XLV","XLI","XLU","XLRE","XLB","SMH","SOXX","VNQ","KRE","VTV","VUG","SCHD","QUAL","USMV","MTUM","RSP","DIA","VIG","DGRO","SPLV","XBI","IBB"]);
+const WORLD=new Set(['VT','ACWI','URTH']);
+for(const symbol of ['ACWX','SPDW','SPEM'])INTL.add(symbol);
+for(const symbol of ['SCHB','ITOT','SCHX','VV','VO','VB','IJR','IJH','IWB','IWF','IWD','VBR','VOE','VOT','VBK','SPSM','SPTM'])US.add(symbol);
 const sectorETF={XLK:"Tecnología",XLC:"Comunicación",XLY:"Consumo discrecional",XLP:"Consumo básico",XLF:"Financiero",XLE:"Energía",XLV:"Salud",XLI:"Industrial",XLU:"Servicios públicos",XLRE:"Inmobiliario",XLB:"Materiales",SMH:"Tecnología",SOXX:"Tecnología",VNQ:"Inmobiliario",KRE:"Financiero",XBI:"Salud",IBB:"Salud"};
 export const HOLDINGS_MAX_AGE_DAYS=120;
 // Listed share classes remain distinct instruments but share issuer risk.
@@ -23,6 +26,7 @@ export function economicClass(a){
  if(s==="MUB")return "municipal-bond";
  if(GOLD.has(s))return "gold";
  if(s==="SLV")return "silver";
+ if(WORLD.has(s))return 'global-equity';
  if(INTL.has(s))return "international-equity";
  if(US.has(s))return "us-equity";
  return a.type==="etf"?"unclassified-etf":"other";
@@ -63,7 +67,7 @@ export function exposureReport(assets,weights,asOf,informationAsOf=asOf,universe
   if(k==="mixed-bond")sleeves.mixedBonds+=w;
   if(k==="municipal-bond")sleeves.municipalBonds+=w;
   if(k==="us-equity"||k==="direct-equity")sleeves.usEquity+=w;
-  if(k==="international-equity")sleeves.globalEquity+=w;
+  if(k==="international-equity"||k==='global-equity')sleeves.globalEquity+=w;
   if(k==="gold")sleeves.gold+=w;
   if(k==="silver")sleeves.silver+=w;
   if(k==="unclassified-etf"){sleeves.unknownEtf+=w;unknown.push(a.symbol);}
@@ -78,7 +82,7 @@ export function exposureReport(assets,weights,asOf,informationAsOf=asOf,universe
    // This applies whether or not an issuer-level holdings feed is present.
    if(sector)sectors[sector]=(sectors[sector]||0)+w;
    const h=actualHoldings(a,asOf,informationAsOf);
-   const equity=k==="us-equity"||k==="international-equity";
+   const equity=k==="us-equity"||k==="international-equity"||k==='global-equity';
    const missing=Math.max(0,1-(h?.coverage||0));
    if(equity)unknownIssuerBlocks.push({weight:w*missing,
      known:new Set((h?.positions||[]).map(p=>issuerKey(p.symbol)))});
@@ -111,7 +115,7 @@ export function exposureReport(assets,weights,asOf,informationAsOf=asOf,universe
      if(h.coverage<1-1e-6)unknown.push(a.symbol+" (cobertura parcial)");
      if(!sector && sectorCovered+1e-8<h.coverage && k.includes("equity"))
        unknown.push(a.symbol+" (sectores de holdings parciales)");
-   }else if(k==="us-equity"||k==="international-equity"){
+   }else if(equity){
      if(!sector)unclassifiedSectorWeight+=w;
      unknown.push(a.symbol+" (cartera no disponible)");
    }

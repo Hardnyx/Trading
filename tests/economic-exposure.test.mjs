@@ -135,6 +135,17 @@ test("every published ETF has an economic group, including the expanded catalog"
    {symbol:"CASH",type:"cash"}];
  assert.equal(validWeights([.3,.3,.4],constraintContext(equity)),false);
 });
+
+test('world ETFs include US markets without pretending to know geographical or issuer weights',()=>{
+ for(const symbol of ['VT','ACWI','URTH'])assert.equal(economicClass({symbol,type:'etf'}),'global-equity');
+ for(const symbol of ['ACWX','SPDW','SPEM'])assert.equal(economicClass({symbol,type:'etf'}),'international-equity');
+ for(const symbol of ['SCHB','ITOT','SCHX','VV','VO','VB','IJR','IJH','IWB','IWF','IWD','VBR','VOE','VOT','VBK','SPSM','SPTM'])
+  assert.equal(economicClass({symbol,type:'etf'}),'us-equity');
+ const report=exposureReport([{symbol:'VT',type:'etf'}],[1],'2026-10-26');
+ assert.equal(report.sleeves.globalEquity,1);
+ assert.equal(report.unclassifiedIssuerWeight,1);
+ assert.deepEqual(report.issuers,{});
+});
 test("direct and ETF share classes share the same issuer limit",()=>{
  const assets=[{symbol:"GOOGL",type:"stock",sector:"Comunicación"},
    {symbol:"QQQ",type:"etf",holdings:holdings([{symbol:"GOOG",weight:.15},
