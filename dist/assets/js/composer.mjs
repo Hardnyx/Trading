@@ -6,6 +6,7 @@ import {
   normalizeWeights,
 } from "./analytics.mjs?v=0.7.2";
 import { seededRandom } from "./random.mjs?v=0.7.2";
+import { portfolioAttribution } from "./attribution.mjs?v=0.7.2";
 import {
   preparePaths,
   generatePaths,
@@ -768,8 +769,12 @@ export function composePortfolio(
       ).map((a) => a.symbol),
     };
   };
+  const attribution = best ? portfolioAttribution(
+    x.assets, best.weights, verification,
+    best.plan.total, x.current.capital) : {available:false};
   const diagnostics = {
     selected: riskDiagnostics(best),
+    attribution,
     references,
     concentrationAudit,
     dependence: x.dependence,

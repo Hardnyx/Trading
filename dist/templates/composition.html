@@ -94,6 +94,21 @@
             </tbody>
           </table>
         </div>
+        <div class="composition-contributions">
+          <h3>APORTES DE LA CARTERA SIMULADA</h3>
+          <div class="table-wrap">
+            <table>
+              <thead><tr>
+                <th>ACTIVO</th><th>PESO</th>
+                <th>APORTE A RETORNO MEDIO</th>
+                <th>APORTE A PÉRDIDA EN PEOR 5%</th>
+                <th>PORCIÓN DE VARIANZA</th>
+              </tr></thead>
+              <tbody>{{{attributionRows}}}</tbody>
+            </table>
+          </div>
+          <p class="composition-source">{{attributionNotice}}</p>
+        </div>
         <div class="composition-brief">
           <p>Motor {{engineVersion}} · Corte {{asOf}} · {{simulated}} activos simulados · {{verificationPaths}} escenarios de verificación.</p>
           <p><strong>EXPOSICIÓN PRINCIPAL:</strong> {{concentration}} · Restricciones próximas: {{nearLimits}}.</p>
@@ -167,6 +182,15 @@
         <label>{{label}}</label><strong class="{{tone}}">{{value}}</strong
         ><small>{{detail}}</small>
       </div>
+    </template>
+
+    <template id="composition-contribution">
+      <tr>
+        <td>{{symbol}}</td><td>{{weight}}</td>
+        <td>{{returnContribution}}</td>
+        <td>{{leftTailContribution}}</td>
+        <td>{{varianceContribution}}</td>
+      </tr>
     </template>
 
     <template id="composition-signal">

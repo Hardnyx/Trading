@@ -855,6 +855,20 @@ export function createViews(context) {
       concentration: p.diagnostics?.selected?.largestPosition
         ? `${p.diagnostics.selected.largestPosition.symbol} ${pct(p.diagnostics.selected.largestPosition.weight, 1)}`
         : "No determinada",
+      attributionRows: p.diagnostics?.attribution?.available
+        ? p.diagnostics.attribution.contributions.map(c =>
+          template("composition-contribution", {
+            symbol:c.symbol,weight:pct(c.weight,1),
+            returnContribution:pct(c.expectedReturnContribution,2),
+            leftTailContribution:pct(c.leftTailLossContribution,2),
+            varianceContribution:pct(p.signals.find(s=>s.symbol===c.symbol)?.risk?.fraction,1),
+          })).join("")
+        : "",
+      attributionNotice: p.diagnostics?.attribution?.available
+        ? "Aportes condicionados a los mismos escenarios de verificación. Los costes se contabilizan aparte: " +
+          pct(p.diagnostics.attribution.costLoss,2) +
+          ". Un aporte negativo en la cola puede representar cobertura, no riesgo nulo."
+        : (p.diagnostics?.attribution?.reason || "No se calculó una atribución compatible."),
       nearLimits: p.diagnostics?.selected?.nearLimits?.length
         ? p.diagnostics.selected.nearLimits.map((r) =>
             `${r.name} ${pct(r.observed, 1)} / ${pct(r.limit, 1)}`
