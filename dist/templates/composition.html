@@ -102,6 +102,7 @@
         <div class="table-wrap"><table class="robustness-scenarios"><thead><tr>
           <th>HIPÓTESIS</th><th>MEDIANA · MANTENER</th><th>MEDIANA · CANDIDATA</th><th>CVaR 95%</th><th>PROB. PÉRDIDA</th><th>MEJORA EQUIVALENTE</th><th>LÍMITE INFERIOR MC</th>
         </tr></thead><tbody>{{{scenarios}}}</tbody></table></div>
+        {{{transition}}}
         <div class="robustness-summary"><p>Costos de transición: {{cost}}. Mejora mínima exigida en cada modelo: {{threshold}}. El límite inferior ajusta el error de simulación por la cantidad de comparaciones.</p><p>Sin historial suficiente o método compatible para el estrés de margen: {{missingMargins}}. No se sustituyeron esos datos por un BPA inventado.</p><p>La búsqueda es finita. Las cifras dependen de los supuestos y no acreditan capacidad predictiva. El estrés de margen no es una normalización contable del BPA. No se ejecutan operaciones.</p>{{{copy}}}</div>
       </section>
     </template>
@@ -113,6 +114,25 @@
     </template>
     <template id="robustness-copy">
       <button class="button ghost" data-action="use-robust-weights">Usar pesos para simular</button>
+    </template>
+
+    <template id="robustness-transition">
+      <details class="robustness-transition composition-method">
+        <summary>CAMBIOS FRENTE A LA REFERENCIA Y EFECTIVO</summary>
+        <p>{{notice}}</p>
+        <div class="table-wrap"><table><thead><tr>
+          <th>ACTIVO</th><th>CAMBIO</th><th>PESO ACTUAL</th><th>PESO CANDIDATO</th>
+          <th>VALOR ACTUAL</th><th>VALOR CANDIDATO</th><th>DIFERENCIA USD</th>
+          <th>CANTIDAD EST.</th><th>PRECIO DEL CORTE</th><th>COSTO EST.</th>
+        </tr></thead><tbody>{{{rows}}}</tbody></table></div>
+        <p>Efectivo inicial {{initialCash}} + ventas {{sells}} − compras {{buys}} − costos {{total}} = efectivo final {{endingCash}}. Conciliación verificada antes de redondear.</p>
+        <p>Rotación (suma de cambios absolutos / 2): {{turnover}}. Comisiones {{commission}} · spread {{spread}} · deslizamiento {{slippage}} · impuesto supuesto {{tax}} (tasa configurada {{taxRate}}).</p>
+        <p>Los pesos candidatos se aplican al capital después de costos. Cantidades fraccionarias indicativas con precios del corte; no incluyen redondeo a lotes, ejecución real ni precios en vivo. La tasa fiscal configurada no acredita el impuesto aplicable.</p>
+      </details>
+    </template>
+    <template id="robustness-transition-row">
+      <tr><td>{{symbol}}</td><td>{{action}}<small>{{note}}</small></td><td>{{from}}</td><td>{{to}}</td>
+        <td>{{currentValue}}</td><td>{{targetValue}}</td><td>{{change}}</td><td>{{quantity}}</td><td>{{price}}</td><td>{{cost}}</td></tr>
     </template>
 
     <template id="composition-report">

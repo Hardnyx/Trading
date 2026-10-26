@@ -287,3 +287,19 @@ test('robustness panel exposes conditional results, current comparison and stale
  const running=robustnessView(report,{busy:true,progress:'Verificando'});
  assert.match(running,/cancel-robustness/);assert.ok(!running.includes('use-robust-weights'));
 });
+
+test('robust transition explains hypothetical trades, reconciles cash and blocks incomplete tax evidence',async()=>{
+ const {robustTransitionView}=await import('../dist/assets/js/ui/views.mjs?v=0.10.0');
+ const {robustTransition}=await import('../dist/assets/js/robust-transition.mjs?v=0.10.0');
+ const plan=robustTransition([{symbol:'A<',price:100},{symbol:'CASH',price:1}],
+  [{symbol:'CASH',weight:1}],[{symbol:'A<',weight:.5},{symbol:'CASH',weight:.5}],10000,{commissionFixed:5});
+ const html=robustTransitionView(plan,false);
+ assert.match(html,/Solo comparación hipotética/);
+ assert.match(html,/Abrir/);assert.match(html,/A&lt;/);
+ assert.match(html,/Conciliación verificada/);
+ assert.match(html,/CANTIDAD EST\./);
+ assert.ok(!html.includes('undefined'));
+ assert.match(robustTransitionView(plan,true),/ventaja condicional/);
+ const incomplete=robustTransitionView({...plan,reconciled:false},true);
+ assert.match(incomplete,/costos incompletos/);assert.ok(!incomplete.includes('<table'));
+});

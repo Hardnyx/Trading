@@ -60,8 +60,31 @@ export function robustnessView(report,{busy=false,error=null,progress='',fresh=t
     lower:money(paired?.lower_ce_gain_dollars,0)});
   }).join(''),
   threshold:money(report.required_gain_dollars,0),cost:money(c?.cost,0),
+  transition:robustTransitionView(c?.transition,good),
   missingMargins:report.scenarios.find(s=>s.id==='margin_stress')?.earnings_stresses.filter(r=>!r.available).map(r=>r.symbol).join(', ')||'ninguno',
   copy:c?template('robustness-copy'):''
+ });
+}
+
+export function robustTransitionView(plan,supported=false){
+ if(!plan)return template('composition-notice',{message:'Vuelve a comparar robustez para obtener el detalle de transición y efectivo.'});
+ if(!plan.reconciled)return template('composition-notice',{message:'La transición no concilia el efectivo o tiene costos incompletos. Revisa los supuestos antes de simular.'});
+ const actions={reserve:'Reserva',hold:'Mantener',exit:'Cerrar',reduce:'Reducir',open:'Abrir',increase:'Aumentar'};
+ const signedMoney=v=>(v>1e-7?'+':'')+money(v,2);
+ return template('robustness-transition',{
+  notice:supported?'Transición de la candidata con ventaja condicional. Revisa precios y condiciones antes de decidir.':
+   'Solo comparación hipotética: la evidencia no respalda ejecutar este rebalanceo. Mantener es la referencia.',
+  rows:plan.positions.map(r=>template('robustness-transition-row',{
+   symbol:r.symbol,action:actions[r.action]||'Revisar',from:pct(r.from,1),to:pct(r.to,1),
+   currentValue:money(r.currentValue,2),targetValue:money(r.targetValue,2),change:signedMoney(r.change),
+   quantity:r.symbol==='CASH'?'—':fmt(r.quantity,4),price:r.symbol==='CASH'?'—':money(r.price,2),
+   cost:money(r.cost,2),note:r.small?'Inferior al mínimo configurado':''
+  })).join(''),
+  initialCash:money(plan.initialCash,2),sells:money(plan.sells,2),buys:money(plan.buys,2),
+  total:money(plan.total,2),endingCash:money(plan.endingCash,2),turnover:pct(plan.turnover,1),
+  commission:money(plan.costBreakdown.commission,2),spread:money(plan.costBreakdown.spread,2),
+  slippage:money(plan.costBreakdown.slippage,2),tax:money(plan.costBreakdown.tax,2),
+  taxRate:pct(plan.assumptions.capitalGainsTax,1)
  });
 }
 

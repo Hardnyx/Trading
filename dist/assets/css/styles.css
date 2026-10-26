@@ -3181,6 +3181,10 @@ tbody tr:hover {
 }
 
 .robustness-report { margin-bottom: 16px; }
+.robustness-transition { margin: 12px; padding-top: 12px; border-top: 1px solid var(--line); }
+.robustness-transition > summary { cursor: pointer; font: 11px var(--mono); padding: 0 0 12px; }
+.robustness-transition .table-wrap { max-width: 100%; overflow-x: auto; }
+.robustness-transition table { min-width: 1000px; }
 .robustness-summary { padding: 12px; line-height: 1.6; }
 .robustness-summary p { margin: 6px 0; }
 .robustness-weights { padding: 0 12px 12px; display: flex; flex-wrap: wrap; gap: 10px 20px; }

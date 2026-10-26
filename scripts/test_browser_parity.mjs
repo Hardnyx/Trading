@@ -181,6 +181,18 @@ try {
   const robustText=await page.locator('.robustness-report').innerText();
   if(!robustText.includes('EXPERIMENTAL')||!robustText.includes('MEDIANA · MANTENER')||
      !robustText.includes('LÍMITE INFERIOR MC'))throw Error('Missing robust comparison evidence');
+  if(!robust.candidate?.transition?.reconciled ||
+     Math.abs(robust.candidate.transition.total-robust.candidate.cost)>1e-6)
+    throw Error('Transition costs or cash do not reconcile with the evaluated candidate');
+  await page.locator('.robustness-transition > summary').click();
+  const transition=await page.locator('.robustness-transition').innerText();
+  if(!transition.includes('Conciliación verificada') || !transition.includes('CANTIDAD EST.'))
+    throw Error('The transition hides quantities or cash reconciliation');
+  const transitionLayout=await page.locator('.robustness-report').evaluate(panel=>
+    ({overflows:panel.scrollWidth>panel.clientWidth+3,
+      rows:panel.querySelectorAll('.robustness-transition tbody tr').length}));
+  if(transitionLayout.overflows || transitionLayout.rows!==robust.candidate.transition.positions.length)
+    throw Error('Transition layout or positions are incomplete');
   const retained=await page.evaluate(()=>{
     const s=JSON.parse(localStorage.getItem('trading-workspace-v1'));
     return {positions:s.positions||[],baseline:s.baseline||null,account:s.account||null,

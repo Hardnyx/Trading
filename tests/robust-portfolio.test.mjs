@@ -95,6 +95,8 @@ test('shared browser comparison preserves its inputs and reports the same fixed 
  assert.equal(phases.filter(p=>p==='Verificación semanal').length,5);
  assert.ok(r.candidate.positions.reduce((s,p)=>s+p.weight,0)>.999999);
  assert.equal(r.experimental,true);
+ assert.equal(r.candidate.transition.reconciled,true);
+ close(r.candidate.cost,r.candidate.transition.total);
  assert.throws(()=>compareRobustPortfolio(market,{...p.settings,mandate:{...p.settings.mandate,
   monthlyWithdrawal:100}},p.overrides,p.rules),/sin retiros/);
 });

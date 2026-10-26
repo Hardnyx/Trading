@@ -5,6 +5,7 @@ import {tradePlan,MODEL_VERSION} from "./policy.mjs?v=0.10.0";
 import {bondAssumptions} from "./research-model.mjs?v=0.10.0";
 import {seededRandom} from "./random.mjs?v=0.10.0";
 import {MODEL_VARIANTS,variantInputs,minimaxRegret,pairedUtilityEvidence} from "./robust-core.mjs?v=0.10.0";
+import {robustTransition} from './robust-transition.mjs?v=0.10.0';
 
 export function compareRobustPortfolio(snapshot,settings={},overrides={},rules={},options={}){
  const config={candidateCount:300,searchPaths:200,verificationPaths:1000,finalists:6,
@@ -151,7 +152,8 @@ const robustImprovement=best&&ids.every(id=>best.pairedMonteCarlo[id].lower_ce_g
    horizon:x.options.horizon,capital:x.current.capital,config,universe:x.assets.map(a=>a.symbol),account_source:options.comparisonLabel||x.current.source,
    candidate_count:rows.length,screen_feasible:screened.ranking.length,verified_candidates:final.length,
    verification_feasible:ranked.ranking.length,rules:x.rules,
-   candidate:best?{...best,weights:undefined,screen:undefined}:null,
+   candidate:best?{...best,weights:undefined,screen:undefined,
+    transition:robustTransition(x.assets,x.current.positions,best.positions,x.current.capital,x.costs)}:null,
    current:{...incumbent,weights:undefined,screen:undefined},
    scenarios:inputs.map((v,i)=>({id:ids[i],description:MODEL_VARIANTS[i].description,
      earnings_stresses:v.stressEvidence,anchors:v.anchors.map(a=>({symbol:a.symbol,annual:a.annual,low:a.low,high:a.high}))})),

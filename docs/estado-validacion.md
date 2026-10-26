@@ -164,3 +164,7 @@ El procedimiento vive en investigación; no altera las anclas de producción. Di
 El botón **Comparar robustez** ejecuta el núcleo compartido en un Web Worker y muestra pesos candidatos, cinco escenarios, referencia al mantener, costos y límite inferior de mejora. El usuario conserva el control de la cartera: el cálculo no aplica pesos; una acción separada los copia para simular. El resultado caduca cuando cambian sus entradas o el corte y puede cancelarse durante su ejecución. El soporte actual se limita a crecimiento en USD sin flujos, suelo ni meta de capital; un mandato incompatible recibe una explicación explícita.
 
 Los perfiles Treasury oficiales se amplían a IEF, IEI, SGOV y SHV mediante la página del emisor ya contrastada por ticker, producto y moneda. Se preservan fuente, hash, fecha y última captura válida cuando falla la actualización. Esta ampliación no acredita la calibración de sus retornos ni sustituye modelos propios de crédito o inflación.
+
+### Transición de la candidata y conciliación de efectivo
+
+La comparación robusta incorpora un panel desplegable de cambios por instrumento, cantidades fraccionarias a precios del corte y costos desagregados. Los montos se calculan sobre capital neto de costos y se verifica la igualdad de efectivo inicial, ventas, compras, costos y reserva final. Cuando no existe ventaja robusta, se muestra como comparación hipotética. Esto cubre la explicación operativa de la candidata; siguen pendientes señales por invalidación de tesis, lotes enteros, precios ejecutables y conciliación real con broker.
