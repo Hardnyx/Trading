@@ -12,10 +12,11 @@ export function bondScenarioAnnualReturn(bond, yieldShift = 0, horizon = 1) {
   if (!bond || !(horizon > 0) || !finite(yieldShift))
     throw new Error("Escenario de bono inválido");
   const d = bond.duration;
+  const carry = finite(bond.carry) ? bond.carry : 0;
   const convexityProxy = d * (d + 1);
   const priceMultiplier = Math.max(0.01,
     1 - d * yieldShift + 0.5 * convexityProxy * yieldShift ** 2);
-  return Math.expm1(Math.log1p(bond.carry) +
+  return Math.expm1(Math.log1p(carry) +
     Math.log(priceMultiplier) / horizon);
 }
 
