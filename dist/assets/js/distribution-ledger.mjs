@@ -159,12 +159,25 @@ export function reconcileDistributionReturn(asset,start,end,policy={}){
        Math.abs((b.adj_close/a.adj_close)/(final/initial)-1)>1e-5)
       return {available:false,reason:"El ajuste de precios revela distribuciones o eventos sin conciliar"};
   }
+  // Yahoo currently reports this index on a three-decimal grid. Accept only
+  // amounts that round onto the observed grid, retaining the issuer amount.
+  const decimalPlaces=value=>{
+    const [mantissa,exponent="0"]=String(value).toLowerCase().split("e");
+    return Math.max(0,(mantissa.split(".")[1]||"").length-Number(exponent));
+  };
+  const indexPrecision=Math.max(0,...index.records.map(r=>decimalPlaces(r.amount_per_share)));
+  const roundedYahooIndex=/^https:\/\/finance\.yahoo\.com\/quote\/[^/]+\/history\/$/.test(index.source_url||"") &&
+    indexPrecision===3;
+  const amountMatches=(issuerAmount,indexAmount)=>Math.abs(issuerAmount-indexAmount)<=1e-6 ||
+    (roundedYahooIndex && Math.abs(Math.round(issuerAmount*1000)/1000-indexAmount)<=1e-12);
   const records=[];
+  let roundedIndexMatches=0;
   for(const r of expected){
     const match=actual.find(a=>a.ex_date===r.ex_date && a.currency==="USD" &&
       validDay(a.pay_date) && a.pay_date>=a.ex_date &&
-      Math.abs(a.amount_per_share-r.amount_per_share)<=Math.max(1e-6,r.amount_per_share*.0001));
+      amountMatches(a.amount_per_share,r.amount_per_share));
     if(!match)return {available:false,reason:"La distribución del emisor no concilia con la serie de precios"};
+    if(Math.abs(match.amount_per_share-r.amount_per_share)>1e-6)roundedIndexMatches++;
     records.push(match);
   }
   const actions=records.flatMap((r,i)=>[
@@ -190,7 +203,9 @@ export function reconcileDistributionReturn(asset,start,end,policy={}){
   return {available:true,return:(shares*final+cash+pending)/initial-1,
     basis:"issuer-pay-date-close-with-model-tax-assumption",cash:cash/initial,
     receivable:pending/initial,grossDistributions:gross/initial,assumedWithholding:withheld/initial,
-    events:records.length,source_url:issuer?.source_url||index.source_url,
+    events:records.length,rounded_index_matches:roundedIndexMatches,
+    rounding_basis:roundedIndexMatches?"Observed Yahoo index grid: 3 decimals; issuer amounts used without rounding":null,
+    source_url:issuer?.source_url||index.source_url,
     source_sha256:issuer?.source_sha256||null};
 }
 

@@ -138,4 +138,6 @@ La cobertura real del proveedor sigue siendo parcial. Fechas de pago confirmadas
 
 Las pruebas incluyen un retiro antes y después de un pago dentro del mismo intervalo de simulación, una cuenta por cobrar al vencimiento, reinversión con retención, fechas no conocidas al origen y preservación del pronóstico original. La prueba de identidad contable no demuestra calibración predictiva.
 
+El contraste contable posterior sobre los 12 eventos de SHY del 23 de octubre de 2025 al 23 de octubre de 2026 detectó importes de Yahoo observados a tres decimales frente a seis del emisor. La conciliación admite esa rejilla únicamente para la fuente de Yahoo y cuando el importe oficial redondea al dato observado; conserva el importe preciso del emisor y registra los emparejamientos por redondeo. No aplica una tolerancia porcentual arbitraria ni acredita capacidad predictiva.
+
 **Sigue pendiente:** ampliar fuentes de pagos declarados a todas las acciones y ETF, fiscalidad por instrumento y jurisdicción, conciliación con el broker, curvas completas y evidencia prospectiva suficiente sobre retornos, colas y noticias. La publicación de un calendario no resuelve esos puntos.

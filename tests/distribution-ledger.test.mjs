@@ -144,3 +144,23 @@ test("local forecast outcomes freeze the reconciled cash evidence without rewrit
  assert.equal(saved[0].outcome.distribution_reconciliation.evidence[0].events,1);
  assert.equal(JSON.stringify(origin),frozen);
 });
+
+test("observed Yahoo rounding reconciles with the precise issuer amount and rejects unexplained differences",()=>{
+ const a=realizedAsset();
+ a.distribution_index.source_url="https://finance.yahoo.com/quote/SHY/history/";
+ a.distribution_index.records[0].amount_per_share=.263;
+ a.issuer_distributions.records[0].amount_per_share=.262737;
+ const result=reconcileDistributionReturn(a,"2026-10-23","2026-12-01",{dividendPolicy:"cash"});
+ assert.equal(result.available,true);
+ assert.equal(result.rounded_index_matches,1);
+ assert.ok(Math.abs(result.cash-.262737/100)<1e-12);
+ assert.ok(Math.abs(result.return-((99+.262737)/100-1))<1e-12);
+ a.issuer_distributions.records[0].amount_per_share=.2621;
+ assert.equal(reconcileDistributionReturn(a,"2026-10-23","2026-12-01",{dividendPolicy:"cash"}).available,false);
+ a.issuer_distributions.records[0].amount_per_share=.262737;
+ a.distribution_index.source_url="https://other.example/history/";
+ assert.equal(reconcileDistributionReturn(a,"2026-10-23","2026-12-01",{dividendPolicy:"cash"}).available,false);
+ a.distribution_index.source_url="https://finance.yahoo.com/quote/SHY/history/";
+ a.distribution_index.records[0].amount_per_share=.26301;
+ assert.equal(reconcileDistributionReturn(a,"2026-10-23","2026-12-01",{dividendPolicy:"cash"}).available,false);
+});
