@@ -324,6 +324,8 @@ def financials(cik, cutoff):
         result["history"].append(observed)
     result["source_url"] = f"https://www.sec.gov/edgar/browse/?CIK={cik}&owner=exclude"
     result["entity"] = body.get("entityName")
+    result["observed_at"] = dt.datetime.fromtimestamp((CACHE / f"sec-{cik}.json").stat().st_mtime, UTC).isoformat() if (CACHE / f"sec-{cik}.json").exists() else None
+    result["refresh_status"] = "available"
     return result
 
 
@@ -340,6 +342,7 @@ def filings(cik, cutoff):
         primary = recent["primaryDocument"][i]
         accepted = (recent.get("acceptanceDateTime") or [""] * len(recent["form"]))[i]
         output.append({"form": form, "filing_date": day, "accepted_at": accepted,
+                       "report_date": (recent.get("reportDate") or [""] * len(recent["form"]))[i],
                        "accession": accession, "description": (recent.get("primaryDocDescription") or recent["form"])[i],
                        "url": f"https://www.sec.gov/Archives/edgar/data/{cik}/{accession.replace('-', '')}/{primary}"})
         if len(output) == 10:
@@ -569,6 +572,8 @@ def build_asset(spec, cutoff, previous):
                                    else None for key, value in old.items()}
             if isinstance(asset["financials"].get("history"),list):
                 asset["financials"]["history"] = [r for r in asset["financials"]["history"] if r.get("filed","9999") <= cutoff and r.get("period_end","9999") <= cutoff]
+            asset["financials"]["observed_at"] = old.get("observed_at")
+            asset["financials"]["refresh_status"] = "retained_after_failure"
             errors.append(f"{symbol}: SEC no actualizada ({error_label(exc)})")
         try:
             asset["filings"] = filings(cik, cutoff)

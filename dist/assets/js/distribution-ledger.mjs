@@ -1,4 +1,4 @@
-import { annualDistributionYield, distributionFactors } from "./cashflows.mjs?v=0.10.0";
+import { annualDistributionYield, distributionFactors } from "./cashflows.mjs?v=0.11.0";
 
 const DAY=86400000, YEAR=365.25*DAY, cache=new WeakMap();
 export const yearFraction=(start,end)=>(Date.parse(end+"T12:00:00Z")-Date.parse(start+"T12:00:00Z"))/YEAR;

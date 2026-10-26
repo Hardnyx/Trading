@@ -6,8 +6,8 @@ import {
   terminalScenarios,
   evaluateWeights,
   DEFAULT_COMPOSITION_RULES,
-} from "../dist/assets/js/composer.mjs?v=0.10.0";
-import { triangularQuantile } from "../dist/assets/js/return-model.mjs?v=0.10.0";
+} from "../dist/assets/js/composer.mjs?v=0.11.0";
+import { triangularQuantile } from "../dist/assets/js/return-model.mjs?v=0.11.0";
 
 function snapshot() {
   const asOf = "2026-10-23";

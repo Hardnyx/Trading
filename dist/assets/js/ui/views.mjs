@@ -4,7 +4,7 @@ import {
   normalizeWeights,
   metrics,
   scenarios,
-} from "../analytics.mjs?v=0.10.0";
+} from "../analytics.mjs?v=0.11.0";
 import {
   sparkline,
   portfolioChart,
@@ -13,7 +13,7 @@ import {
   scatter,
   forecastCone,
   histogram,
-} from "../charts.mjs?v=0.10.0";
+} from "../charts.mjs?v=0.11.0";
 import {
   esc,
   url,
@@ -23,13 +23,14 @@ import {
   compact,
   color,
   dateLabel,
-} from "./format.mjs?v=0.10.0";
-import { template } from "./templates.mjs?v=0.10.0";
-import { DEFAULT_COMPOSITION_RULES } from "../composer.mjs?v=0.10.0";
-import { factorModel } from "../factors.mjs?v=0.10.0";
-import { MODEL_VERSION } from "../policy.mjs?v=0.10.0";
+} from "./format.mjs?v=0.11.0";
+import { template } from "./templates.mjs?v=0.11.0";
+import { DEFAULT_COMPOSITION_RULES } from "../composer.mjs?v=0.11.0";
+import { factorModel } from "../factors.mjs?v=0.11.0";
+import { MODEL_VERSION } from "../policy.mjs?v=0.11.0";
+import { financialFreshness } from '../financial-freshness.mjs?v=0.11.0';
 
-import { createDecisionViews } from "./decision-views.mjs?v=0.10.0";
+import { createDecisionViews } from "./decision-views.mjs?v=0.11.0";
 
 export function compositionValuationEvidence(signal) {
   if(!signal.filed)return "";
@@ -37,6 +38,24 @@ export function compositionValuationEvidence(signal) {
   if(!v)return "Supuestos sin guardar en esta propuesta: vuelve a proponer cartera.";
   const a=v.assumptions;
   return `Supuestos: ${v.source} · crecimiento ${pct(a.growth)} · P/E de salida ${fmt(a.multiple,1)} · valoración a ${fmt(a.horizon,0)} años · confianza asignada ${pct(v.confidence)}. Sin calibración predictiva.`;
+}
+
+export function financialCoverageView(data){
+ const asOf=(data.generated_at||data.price_as_of).slice(0,10);
+ const rows=data.assets.filter(a=>a.type==='stock').map(a=>({a,f:financialFreshness(a,asOf)}));
+ const gaps=rows.filter(r=>r.f.status==='newer_report').length;
+ const missing=rows.filter(r=>r.f.status==='missing').length;
+ return template('financial-coverage',{
+  gaps,missing,total:rows.length,
+  rows:rows.sort((x,y)=>Number(y.f.blocked)-Number(x.f.blocked)||x.a.symbol.localeCompare(y.a.symbol))
+   .map(({a,f})=>template('financial-coverage-row',{
+    symbol:a.symbol,period:dateLabel(f.period),filed:dateLabel(f.filed),method:f.method||'—',
+    observed:f.observedAt?f.observedAt.replace('T',' ').slice(0,19)+' UTC':'No registrada',
+    latest:f.latestReport?f.latestReport.form+' · '+dateLabel(f.latestReport.filing_date):'Sin documento registrado',
+    status:f.reason+(f.refreshStatus==='retained_after_failure'?' · Se conservó la captura previa por fallo de actualización':''),
+    sourceUrl:url(f.latestReport?.url||a.financials?.source_url||'https://www.sec.gov/edgar/search/')
+   })).join('')
+ });
 }
 
 export function robustnessView(report,{busy=false,error=null,progress='',fresh=true}={}){
@@ -703,6 +722,7 @@ export function createViews(context) {
         }),
       ) +
       compositionControls() +
+      financialCoverageView(data) +
       compositionReport() +
       robustnessView(state.robustness,{
         busy:state.robustnessBusy,error:state.robustnessError,progress:state.robustnessProgress,
@@ -912,8 +932,8 @@ export function createViews(context) {
             high: pct(s.favorableAnchor),
             valuationEvidence: compositionValuationEvidence(s),
             source: s.filed
-              ? `BPA ${money(s.eps)} · publicado ${dateLabel(s.filed)}`
-              : s.source,
+              ? `BPA ${money(s.eps)} · ${s.financialMethod||'método no registrado'} hasta ${dateLabel(s.financialPeriod)} · presentado ${dateLabel(s.filed)} · captura XBRL ${s.financialObservedAt?dateLabel(s.financialObservedAt.slice(0,10)):'no registrada'}`
+              : s.source+(s.bondDate?' · perfil al '+dateLabel(s.bondDate):''),
           }),
         )
         .join(""),

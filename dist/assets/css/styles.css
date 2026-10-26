@@ -3181,6 +3181,11 @@ tbody tr:hover {
 }
 
 .robustness-report { margin-bottom: 16px; }
+.financial-coverage { margin-bottom: 12px; padding: 12px; }
+.financial-coverage > summary { cursor: pointer; font: 11px var(--mono); }
+.financial-coverage > p { margin: 12px 0; line-height: 1.5; }
+.financial-coverage .table-wrap { overflow-x: auto; max-height: 400px; }
+.financial-coverage table { min-width: 1100px; }
 .robustness-transition { margin: 12px; padding-top: 12px; border-top: 1px solid var(--line); }
 .robustness-transition > summary { cursor: pointer; font: 11px var(--mono); padding: 0 0 12px; }
 .robustness-transition .table-wrap { max-width: 100%; overflow-x: auto; }

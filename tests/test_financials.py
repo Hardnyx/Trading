@@ -6,6 +6,20 @@ from scripts import refresh_data as module
 
 
 class FinancialPeriods(unittest.TestCase):
+    def test_submission_keeps_reporting_period_separate_from_filing_date(self):
+        body = {"filings": {"recent": {"form": ["10-Q"], "filingDate": ["2026-10-23"],
+            "reportDate": ["2026-09-30"], "accessionNumber": ["0000000001-26-000001"],
+            "primaryDocument": ["quarter.htm"], "acceptanceDateTime": ["2026-10-23T12:00:00Z"]}}}
+        original = module.download
+        try:
+            module.download = lambda *args, **kwargs: json.dumps(body).encode()
+            row = module.filings(1, "2026-10-26")[0]
+            self.assertEqual(row["report_date"], "2026-09-30")
+            self.assertEqual(row["filing_date"], "2026-10-23")
+            self.assertEqual(module.filings(1, "2026-10-22"), [])
+        finally:
+            module.download = original
+
     def test_ttm_annual_plus_ytd_minus_prior_ytd(self):
         facts = {"Revenue": {"units": {"USD": [
             {"start": "2025-01-01", "end": "2025-12-31", "filed": "2026-02-01", "val": 100},

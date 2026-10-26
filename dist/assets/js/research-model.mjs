@@ -1,5 +1,6 @@
-import { finite, metrics, valuation, scenarios } from "./analytics.mjs?v=0.10.0";
-import { DEFAULT_RESEARCH } from "./policy.mjs?v=0.10.0";
+import { finite, metrics, valuation, scenarios } from "./analytics.mjs?v=0.11.0";
+import { DEFAULT_RESEARCH } from "./policy.mjs?v=0.11.0";
+import { financialFreshness } from './financial-freshness.mjs?v=0.11.0';
 
 const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
 const years = (a, b) =>
@@ -329,6 +330,8 @@ export function fundamentalForecast(
     horizon = a.horizon,
     base = metrics(asset).eps,
     warnings = [];
+  const freshness=financialFreshness(original,asOf);
+  if(freshness.status==='newer_report')return {valid:false,error:freshness.reason,quality,thesis,freshness};
   if (!finite(horizon) || horizon < 1 || horizon > 10)
     return {
       valid: false,

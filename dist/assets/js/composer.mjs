@@ -4,15 +4,15 @@ import {
   mean,
   quantile,
   normalizeWeights,
-} from "./analytics.mjs?v=0.10.0";
-import { seededRandom } from "./random.mjs?v=0.10.0";
-import { portfolioAttribution } from "./attribution.mjs?v=0.10.0";
+} from "./analytics.mjs?v=0.11.0";
+import { seededRandom } from "./random.mjs?v=0.11.0";
+import { portfolioAttribution } from "./attribution.mjs?v=0.11.0";
 import {
   preparePaths,
   generatePaths,
   evaluatePaths,
   marginalRisk,
-} from "./path-model.mjs?v=0.10.0";
+} from "./path-model.mjs?v=0.11.0";
 import {
   withCashAsset,
   mandate,
@@ -21,12 +21,12 @@ import {
   tradePlan,
   withdrawalSchedule,
   MODEL_VERSION,
-} from "./policy.mjs?v=0.10.0";
-import { buildReturnAnchors, bondScenarioAnnualReturn } from "./return-model.mjs?v=0.10.0";
-import { assetAt, fundamentalForecast, bondAssumptions } from "./research-model.mjs?v=0.10.0";
-import { selectCompositionUniverse } from "./universe.mjs?v=0.10.0";
-import { factorizeStressedCovariance } from "./factor-covariance.mjs?v=0.10.0";
-import { economicClass, exposureReport, rawCorrelation, qualifiedOpportunity, holdingsOverlap, knownFundOverlap } from "./economic-exposure.mjs?v=0.10.0";
+} from "./policy.mjs?v=0.11.0";
+import { buildReturnAnchors, bondScenarioAnnualReturn } from "./return-model.mjs?v=0.11.0";
+import { assetAt, fundamentalForecast, bondAssumptions } from "./research-model.mjs?v=0.11.0";
+import { selectCompositionUniverse } from "./universe.mjs?v=0.11.0";
+import { factorizeStressedCovariance } from "./factor-covariance.mjs?v=0.11.0";
+import { economicClass, exposureReport, rawCorrelation, qualifiedOpportunity, holdingsOverlap, knownFundOverlap } from "./economic-exposure.mjs?v=0.11.0";
 
 export const DEFAULT_COMPOSITION_RULES = {
   maxPosition: 0.2,
@@ -957,6 +957,10 @@ export function composePortfolio(
       price_date: a.price_date,
       eps: a.financials?.eps?.value ?? null,
       filed: a.financials?.eps?.filed ?? null,
+      financialPeriod: a.financials?.eps?.period_end ?? null,
+      financialMethod: a.financials?.eps?.method ?? null,
+      financialObservedAt: a.financials?.observed_at ?? null,
+      bondDate: anchor.bond?.date ?? a.bond_profile?.date ?? null,
       anchor: anchor.annual,
       adverseAnchor: anchor.bond
         ? Math.min(...x.regimes.map(r =>

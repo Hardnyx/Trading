@@ -83,6 +83,18 @@ Los resultados son **aditivos para la muestra simulada y sus supuestos específi
 
 **Regla invariable:** no se habilitarán nuevas distribuciones, shocks, priors ni reglas de compra solamente por complejidad matemática. Deben aportar evidencia incremental y resultados reproducibles con información conocida al corte.
 
+### Prioridades consolidadas de los hilos del proyecto (26 de octubre)
+
+1. **Vigencia de fundamentales (0.11.0):** panel por empresa, período BPA, fecha de presentación, captura XBRL y vínculo al informe; bloqueo de nuevas propuestas cuando existe informe posterior no conciliado. En la captura revisada había 13 candidatos a rezago y 4 empresas sin BPA utilizable de 100. La API companyfacts consultada para KO, NEE y C no contenía BPA estándar del informe reciente. La descarga por sí sola no resuelve esa cobertura. **Pendiente:** extraer y conciliar hechos del documento original, conservar contexto/unidad/escala y rechazar resultados no comparables. No se ha implementado ese extractor alternativo ni se declara actualizado el BPA faltante.
+2. **Retornos:** normalización contable de beneficios extraordinarios/cíclicos, consenso privado integrado y calibración de crecimiento, múltiplos e incertidumbre con vintages originales. El estrés de margen ya implementado no sustituye esta tarea.
+3. **Universo y riesgo:** ampliar la simulación más allá de 40 instrumentos, verificar convergencia, completar holdings, GJR residual, dependencia dinámica y colas multivariantes fuera de muestra.
+4. **Operativa:** el detalle de transición y alertas está implementado; faltan política integrada de salida/reentrada, deshacer cambios de composición, lotes enteros y conciliación de operaciones con broker.
+5. **Datos adicionales:** ampliar pagos oficiales, fiscalidad por instrumento y jurisdicción, curva completa/rolldown y sorpresas informativas conocidas antes del evento para GARCH-X.
+6. **Bloomberg externo:** el extractor Excel/Python pedido no consta en este repositorio ni en el workspace auditado. Falta implementación/prueba autorizada en un equipo con Bloomberg, almacenamiento raw/normalizado, caché y control de consumo. Sus datos no se deben publicar en Pages.
+7. **Validación económica:** el registro prospectivo y las pruebas de software existen; falta maduración suficiente y comparación neta contra SPY, SHY, efectivo y cartera pasiva. No puede completarse anticipando resultados futuros.
+
+La guarda de vigencia compara el período del último 10-Q/10-K/20-F con el BPA y filtra documentos posteriores al corte. Un 8-K o una enmienda no acreditan un período nuevo. Para capturas antiguas sin `report_date`, una presentación posterior exige verificación conservadora. La ausencia de informe posterior detectado no certifica cobertura completa. El reloj de descarga no se usa para rejuvenecer la fecha económica del dato; una captura conservada tras fallo se identifica explícitamente.
+
 ## 7. Cómo ejecutar la investigación
 
 ```bash

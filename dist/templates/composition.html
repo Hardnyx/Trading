@@ -87,6 +87,18 @@
       <div class="notice">{{message}}</div>
     </template>
 
+    <template id="financial-coverage">
+      <details class="panel financial-coverage">
+        <summary>VIGENCIA DE FUNDAMENTALES · {{gaps}} CON INFORME POSTERIOR · {{missing}} SIN BPA · {{total}} EMPRESAS</summary>
+        <p>Período contable, presentación y captura son fechas diferentes. Una descarga reciente no convierte el BPA antiguo en actual. Las empresas con informe posterior sin conciliar se excluyen de nuevas propuestas; sus posiciones existentes se conservan para revisión.</p>
+        <div class="table-wrap"><table><thead><tr><th>ACTIVO</th><th>PERÍODO BPA</th><th>MÉTODO</th><th>PRESENTADO</th><th>CAPTURA XBRL</th><th>ÚLTIMO INFORME</th><th>COBERTURA</th><th>FUENTE</th></tr></thead><tbody>{{{rows}}}</tbody></table></div>
+        <p>La captura se muestra en UTC. Sin informe posterior detectado no garantiza que todas las fuentes estén completas. Los 8-K y las enmiendas no se interpretan automáticamente como un nuevo período de BPA.</p>
+      </details>
+    </template>
+    <template id="financial-coverage-row">
+      <tr><td>{{symbol}}</td><td>{{period}}</td><td>{{method}}</td><td>{{filed}}</td><td>{{observed}}</td><td>{{latest}}</td><td>{{status}}</td><td><a href="{{sourceUrl}}" target="_blank" rel="noopener noreferrer">SEC</a></td></tr>
+    </template>
+
     <template id="robustness-running">
       <section class="panel robustness-report" aria-live="polite">
         <div class="panel-header"><h2 class="panel-title">COMPARACIÓN ROBUSTA</h2></div>
