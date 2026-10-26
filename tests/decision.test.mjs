@@ -298,7 +298,7 @@ test("bond rate scenarios use duration instead of the equity jump", () => {
     x = inputs(assets, [a]);
   x.regimes = [{ ...BASE_REGIME, rateShift: 0.01, rateJumpBps: 100 }];
   const sample = generatePaths(x, 100, 4, 12);
-  near(sample.gross[0][sample.steps], 1.04 * Math.exp(-0.02));
+  near(sample.gross[0][sample.steps], 1.04 * (1 - 2 * .01 + .5 * 2 * 3 * .01**2));
   const j = jumpParameters(assets[0], a, x.options, x.regimes[0]);
   near(j.mean, -0.02);
 });
