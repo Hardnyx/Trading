@@ -752,6 +752,24 @@ export function composePortfolio(
     note: "Fronteras anidadas sobre la misma muestra acumulativa de finalistas verificados; la cartera seleccionada se incorpora a cada tope que cumple. Ninguna frontera afirma optimalidad global. SHY puede prevalecer con mejor utilidad ajustada por riesgo.",
   };
   const exposure = best ? exposureReport(x.assets,best.weights,x.asOf) : null;
+  const etfCorrelations = best ? x.assets.flatMap((a,i)=>{
+    if(!(best.weights[i]>.001))return [];
+    return x.assets.slice(i+1).flatMap((b,k)=>{
+      const j=i+k+1;
+      if(!(best.weights[j]>.001) ||
+         (a.type!=="etf"&&b.type!=="etf"))return [];
+      const total=rawCorrelation(x.covariance,i,j);
+      const residual=x.residualCorrelation?.[i]?.[j];
+      return [{
+        pair:a.symbol+"/"+b.symbol,
+        totalCorrelation:total,
+        residualCorrelation:Number.isFinite(residual)?residual:null,
+        overlappingWeight:best.weights[i]*best.weights[j],
+        warning:total>.8?"Dependencia total elevada":"Dependencia observada",
+      }];
+    });
+  }).sort((a,b)=>b.overlappingWeight*Math.abs(b.totalCorrelation)-
+                   a.overlappingWeight*Math.abs(a.totalCorrelation)).slice(0,12) : [];
   const riskDiagnostics = (row) => {
     if (!row) return null;
     const limits = [
@@ -779,6 +797,7 @@ export function composePortfolio(
     selected: riskDiagnostics(best),
     attribution,
     economicExposure: exposure,
+    etfCorrelations,
     concentrationPolicy: {
       global:x.rules.maxGlobal,
       opportunity:x.rules.maxOpportunity,

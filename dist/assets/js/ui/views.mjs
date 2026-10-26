@@ -864,6 +864,15 @@ export function createViews(context) {
         const s=d.sleeves;
         return `Treasuries ${pct(s.treasury,1)} · Crédito ${pct(s.credit,1)} · Acciones USA ${pct(s.usEquity,1)} · Oro ${pct(s.gold,1)}`;
       })(),
+      overlapSummary: (() => {
+        const r=p.diagnostics?.etfCorrelations||[];
+        return r.length
+          ? r.slice(0,5).map(x =>
+              x.pair+" corr. total "+fmt(x.totalCorrelation,2)+
+              (x.residualCorrelation===null?"":", residual "+fmt(x.residualCorrelation,2)))
+            .join(" · ")
+          : "No hay parejas relevantes con ETF en la propuesta.";
+      })(),
       exposureWarning: (() => {
         const d=p.diagnostics?.economicExposure;
         return d?.unknownHoldings?.length
