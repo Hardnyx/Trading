@@ -16,7 +16,7 @@ import {
   correlation,
   mean,
 } from "../dist/assets/js/analytics.mjs?v=0.7.1";
-import { sampleDrifts } from "../dist/assets/js/return-model.mjs?v=0.7.1";
+import { sampleDrifts, bondScenarioAnnualReturn } from "../dist/assets/js/return-model.mjs?v=0.7.1";
 import {
   seededRandom,
   normalGenerator,
@@ -292,6 +292,16 @@ test("asset-specific jump compensation preserves each conditional mean and cash 
     0,
   );
 });
+test("bond rates change total return through duration and convexity, not fixed yield",()=>{
+  const shy={carry:.045,duration:1.8};
+  near(bondScenarioAnnualReturn(shy,0,1),.045);
+  assert.ok(bondScenarioAnnualReturn(shy,.015,1)<shy.carry);
+  assert.ok(bondScenarioAnnualReturn(shy,-.015,1)>shy.carry);
+  near(1+bondScenarioAnnualReturn(shy,.015,1),
+    (1+shy.carry)*(1-1.8*.015+.5*1.8*2.8*.015**2));
+  assert.throws(()=>bondScenarioAnnualReturn(shy,NaN,1),/inválido/);
+});
+
 test("bond rate scenarios use duration instead of the equity jump", () => {
   const assets = [{ symbol: "SHY", type: "etf" }],
     a = { ...anchor(0.04), bond: { duration: 2 } },
