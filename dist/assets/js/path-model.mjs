@@ -8,7 +8,7 @@ import {
 } from "./analytics.mjs?v=0.7.1";
 import { seededRandom, normalGenerator, poisson } from "./random.mjs?v=0.7.1";
 import { ewmaCovariance, cholesky } from "./risk-math.mjs?v=0.7.1";
-import { buildReturnAnchors, sampleDrifts } from "./return-model.mjs?v=0.7.1";
+import { buildReturnAnchors, sampleDrifts, bondScenarioAnnualReturn } from "./return-model.mjs?v=0.7.1";
 import { assetAt } from "./research-model.mjs?v=0.7.1";
 import { factorModel } from "./factors.mjs?v=0.7.1";
 import { conditionalRisk, updateGjrVariance, updateEwmaVariance } from "./conditional-risk.mjs?v=0.7.1";
@@ -234,7 +234,8 @@ export function generatePaths(inputs, paths, seed, stepsPerYear = 52) {
         assets[i].type === "cash"
           ? 0
           : bond
-            ? (-bond.duration * regime.rateShift) / H
+            ? (Math.log1p(bondScenarioAnnualReturn(bond, regime.rateShift, H)) -
+                Math.log1p(bond.carry))
             : assets[i].symbol === "GLD"
               ? -regime.rateShift * 0.5
               : Math.log(

@@ -863,8 +863,8 @@ export function createViews(context) {
       referenceSummary: [["cash", "Efectivo"], ["reserve", "SHY/efectivo"],
         ["equity20", "Índice 20%"]].map(([id, label]) => {
           const r = p.diagnostics?.references?.[id];
-          return r ? `${label}: ${r.feasible ? "factible" : "no factible"} · rendimiento medio ${pct(r.meanReturn, 1)} · CVaR ${pct(r.cvar95, 1)}`
-            : `${label}: no comparable`;
+          return r ? `${label}${r.researchOnly ? " (hipótesis, no comprable)" : ""}: ${r.feasible ? "factible" : "no factible"} · rendimiento medio ${pct(r.meanReturn, 1)} · CVaR ${pct(r.cvar95, 1)}${r.assumption ? " · " + r.assumption : ""}`
+            : `${label}: no comparable (falta historia o no satisface restricciones)`;
         }).join(" | "),
       shyExplanation: (() => {
         const a=p.diagnostics?.concentrationAudit;

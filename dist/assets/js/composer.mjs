@@ -21,7 +21,7 @@ import {
   withdrawalSchedule,
   MODEL_VERSION,
 } from "./policy.mjs?v=0.7.1";
-import { buildReturnAnchors } from "./return-model.mjs?v=0.7.1";
+import { buildReturnAnchors, bondScenarioAnnualReturn } from "./return-model.mjs?v=0.7.1";
 import { assetAt, fundamentalForecast, bondAssumptions } from "./research-model.mjs?v=0.7.1";
 import { selectCompositionUniverse } from "./universe.mjs?v=0.7.1";
 import { factorizeStressedCovariance } from "./factor-covariance.mjs?v=0.7.1";
@@ -84,6 +84,7 @@ export function prepareComposition(
     excluded = [],
     buyAllowed = [],
     forwardPriority = {};
+  let benchmarkOnlyProxy = false;
   const historicalVolatility = (asset) => {
     const rows = (asset.history || []).slice(-127);
     let squared = 0, observations = 0;
@@ -143,14 +144,19 @@ export function prepareComposition(
           0.04 * historicalVolatility(asset);
       }
     }
-    if (reason) excluded.push({ symbol: asset.symbol, reason });
-    if (!reason || existing.has(asset.symbol)) {
+    const benchmarkProxy = !!reason &&
+      asset.symbol === policy.benchmark && asset.type === "etf" &&
+      reason.startsWith("ETF sin retorno esperado fundamentado");
+    if (benchmarkProxy) benchmarkOnlyProxy = true;
+    if (reason && !benchmarkProxy)
+      excluded.push({ symbol: asset.symbol, reason });
+    if (!reason || existing.has(asset.symbol) || benchmarkProxy) {
       if (asset.history.length < 21)
         throw new Error(
           `Falta historia para valorar la posición actual ${asset.symbol}.`,
         );
       eligible.push(asset);
-      buyAllowed.push(!reason);
+      buyAllowed.push(!reason); // SPY proxy is available for comparison, NOT trade.
     }
   }
   for (const row of current.positions)
@@ -171,8 +177,20 @@ export function prepareComposition(
       .filter((r) => r.date <= info)
       .map((r) => [r.id, r.value]),
   );
+  const proxyRate = finite(yieldCurve.DGS3MO) ? yieldCurve.DGS3MO / 100 : 0;
+  const proxyAssetAssumptions = benchmarkOnlyProxy
+    ? {
+        ...(settings.assetAssumptions || {}),
+        [policy.benchmark]: {
+          expectedReturn: proxyRate + 0.035,
+          uncertainty: 0.15,
+          benchmarkOnlyProxy: true,
+        },
+      }
+    : settings.assetAssumptions;
   const options = {
     ...settings,
+    assetAssumptions: proxyAssetAssumptions,
     horizon: policy.horizon,
     driftMode: "fundamental",
     uncertainFundamentals: true,
@@ -201,6 +219,10 @@ export function prepareComposition(
       published: raw.assets.length,
       eligible: eligible.length,
       simulated: sampled.assets.length,
+      benchmarkOnlyProxy: benchmarkOnlyProxy ? policy.benchmark : null,
+      benchmarkProxyAssumption: benchmarkOnlyProxy
+        ? "Solo comparación: tasa corta al corte + prima hipotética de 3,5 pp; banda ±15 pp, NO estimación validada ni compra autorizada"
+        : null,
       outsideSample: sampled.omitted,
       preselectionMethod: sampled.method,
       outsideWithHigherPriority: sampled.omitted
@@ -550,13 +572,22 @@ export function composePortfolio(
       equityTilt[equity] += targetEquity;
     }
   }
+  // A passive index is a comparison, not an instruction to buy without a
+  // calibrated ex-ante return. Temporarily allow only that evaluation.
+  const benchmarkComparison = x.selection.benchmarkOnlyProxy === x.policy.benchmark;
+  const benchmarkInputs = benchmarkComparison ? {
+    ...x,
+    buyAllowed: x.buyAllowed.map((allowed, i) =>
+      allowed || x.assets[i].symbol === x.policy.benchmark),
+  } : x;
   const references = Object.fromEntries([
     ["cash", allCash],
     ["reserve", shortBond >= 0 ? reserve : null],
     ["equity20", equity >= 0 && x.buyAllowed[equity] ? equityTilt : null],
   ].map(([name, w]) => {
-    if (!w || !validWeights(w, x)) return [name, null];
-    const check = assess(w, x, verification);
+    const comparator = name === "equity20" ? benchmarkInputs : x;
+    if (!w || !validWeights(w, comparator)) return [name, null];
+    const check = assess(w, comparator, verification);
     return [name, {
       positions: check.positions,
       feasible: check.feasible,
@@ -564,6 +595,9 @@ export function composePortfolio(
       cvar95: check.metrics.cvar95,
       lossProbability: check.metrics.lossProbability,
       certaintyEquivalent: check.metrics.certaintyEquivalent,
+      researchOnly: name === "equity20" && benchmarkComparison,
+      assumption: name === "equity20" && benchmarkComparison
+        ? x.selection.benchmarkProxyAssumption : null,
     }];
   }));
   // Independently search lower-SHY alternatives on the SAME training and
@@ -808,8 +842,14 @@ export function composePortfolio(
       eps: a.financials?.eps?.value ?? null,
       filed: a.financials?.eps?.filed ?? null,
       anchor: anchor.annual,
-      adverseAnchor: anchor.low,
-      favorableAnchor: anchor.high,
+      adverseAnchor: anchor.bond
+        ? Math.min(...x.regimes.map(r =>
+            bondScenarioAnnualReturn(anchor.bond, r.rateShift, x.options.horizon)))
+        : anchor.low,
+      favorableAnchor: anchor.bond
+        ? Math.max(...x.regimes.map(r =>
+            bondScenarioAnnualReturn(anchor.bond, r.rateShift, x.options.horizon)))
+        : anchor.high,
       confidence: anchor.confidence,
       source: anchor.source,
       risk: risks[i],

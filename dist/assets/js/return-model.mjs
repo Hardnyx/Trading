@@ -2,6 +2,23 @@ import { finite } from "./analytics.mjs?v=0.7.1";
 import { fundamentalForecast, bondAssumptions } from "./research-model.mjs?v=0.7.1";
 import { normalCDF, normalGenerator } from "./random.mjs?v=0.7.1";
 
+/**
+ * Annualized scenario return for a bond ETF under a parallel yield change.
+ * First-order duration + a transparent zero-coupon convexity proxy.
+ * This is an approximate TOTAL return, not a guaranteed carry or full curve
+ * / reinvestment model. Rate shift is added ONCE in the stochastic paths.
+ */
+export function bondScenarioAnnualReturn(bond, yieldShift = 0, horizon = 1) {
+  if (!bond || !(horizon > 0) || !finite(yieldShift))
+    throw new Error("Escenario de bono inválido");
+  const d = bond.duration;
+  const convexityProxy = d * (d + 1);
+  const priceMultiplier = Math.max(0.01,
+    1 - d * yieldShift + 0.5 * convexityProxy * yieldShift ** 2);
+  return Math.expm1(Math.log1p(bond.carry) +
+    Math.log(priceMultiplier) / horizon);
+}
+
 const bounded = (x) => Math.max(-0.85, Math.min(2, x));
 export function buildReturnAnchors(assets, settings = {}, overrides = {}) {
   return assets.map((asset) => {
@@ -29,6 +46,14 @@ export function buildReturnAnchors(assets, settings = {}, overrides = {}) {
       low = annual;
       high = annual;
       source = bond.source;
+    } else if (asset.type === "etf" &&
+               asset.symbol === settings.mandate?.benchmark &&
+               settings.assetAssumptions?.[asset.symbol]?.benchmarkOnlyProxy) {
+      const proxy = settings.assetAssumptions[asset.symbol];
+      annual = proxy.expectedReturn;
+      low = annual - proxy.uncertainty;
+      high = annual + proxy.uncertainty;
+      source = "Índice comparador exclusivamente: prima supuesta 3,5 pp sobre tasa corta; sin calibrar ni habilitar compras";
     } else if (settings.driftMode !== "manual" && forecast?.valid) {
       annual = forecast.central;
       low = forecast.low;
