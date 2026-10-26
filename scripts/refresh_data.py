@@ -25,9 +25,11 @@ import xml.etree.ElementTree as ET
 if __package__:
     from .data_providers import FRED_SERIES, ProviderError, analyst_estimates, fred_series, fred_csv_series, retained_estimates
     from .universe import AUTO_CIK, expanded_universe
+    from .etf_holdings import enrich_holdings
 else:
     from data_providers import FRED_SERIES, ProviderError, analyst_estimates, fred_series, fred_csv_series, retained_estimates
     from universe import AUTO_CIK, expanded_universe
+    from etf_holdings import enrich_holdings
 
 ROOT = Path(__file__).resolve().parents[1]
 CACHE = ROOT / ".cache"
@@ -815,6 +817,41 @@ def main():
                                 "portfolio": "Pesos constantes: rebalanceo diario teórico, sin costos ni impuestos",
                                 "valuation": "Previsión propia; consenso opcional comparable; incertidumbre y escenarios editables",
                                 "limitations": "Universo actual seleccionado. Histórico financiero con últimas rectificaciones disponibles. No constituye un backtest point-in-time."}}
+    # Holdings from today's *current* issuer/SEC-derived snapshots, not
+    # retrospective file-date reconstruction. Failures preserve previously
+    # observed constituents and never invent missing holdings.
+    if current_request:
+        holdings = enrich_holdings(
+            assets, old_assets, snapshot["price_as_of"], collected_at,
+            lambda url, cache_key: download(url, cache_key, max_age=1800),
+            archive_dir=ROOT / "data" / "holdings",
+        )
+        providers.append({
+            "id":"etf-holdings", "name":"TickerInside ETF constituents",
+            "status":"ok" if holdings["downloaded"]==holdings["checked"] else
+                "partial" if holdings["downloaded"] or holdings["retained"] else "error",
+            "detail":f'{holdings["downloaded"]}/{holdings["checked"]} fuentes actuales; '
+                     f'{holdings["retained"]} capturas originales conservadas',
+            "checked_at":collected_at,
+        })
+        if holdings["errors"]:
+            errors.append("ETF holdings: "+str(len(holdings["errors"]))+
+                          " fondos sin actualización: "+
+                          "; ".join(holdings["errors"][:6]))
+    else:
+        providers.append({"id":"etf-holdings","name":"TickerInside ETF constituents",
+                          "status":"historical_request",
+                          "detail":"Sin reconstrucción retrospectiva del contenido observado",
+                          "checked_at":collected_at})
+    snapshot["sources"].append({
+        "name":"TickerInside", "kind":"Copia pública actual, CC BY 4.0",
+        "url":"https://tickerinside.com/api/",
+        "data":"Holdings de ETF de renta variable transcritas de emisores o SEC N-PORT, fecha original y primer acceso; atribución requerida",
+    })
+    snapshot["methodology"]["etf_holdings"] = (
+        "Solo datos descargados en la captura original. Portafolios ETF históricos "
+        "no reproducidos con datos actuales. Fuente secundaria, cobertura parcial."
+    )
     archived = archive_observation(snapshot)
     write_snapshot(snapshot)
     print(f"Captura conservada: {archived.relative_to(ROOT)}", flush=True)

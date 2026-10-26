@@ -8,6 +8,7 @@ on:
     paths:
       - '.github/workflows/refresh-data.yml'
       - 'scripts/refresh_data.py'
+      - 'scripts/etf_holdings.py'
       - 'scripts/data_providers.py'
       - 'scripts/bond_profiles.py'
       - 'scripts/universe.py'
@@ -58,7 +59,7 @@ jobs:
         id: snapshot
         run: |
           git add dist/data/market.json dist/data/market.json.gz dist/data/volatility.json data/snapshots
-          git add data/forecasts || true
+          git add data/forecasts data/holdings || true
           if [ "$REPOSITORY_PRIVATE" = 'true' ] && [ -d data/research ]; then
             git add -f data/research
           fi
