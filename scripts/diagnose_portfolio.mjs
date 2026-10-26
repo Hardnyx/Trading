@@ -1,5 +1,7 @@
 import { readFileSync } from "node:fs";
 import { composePortfolio } from "../dist/assets/js/composer.mjs?v=0.8.3";
+import { actualHoldings } from "../dist/assets/js/economic-exposure.mjs?v=0.8.3";
+import { informationDate } from "../dist/assets/js/policy.mjs?v=0.8.3";
 
 // Reproducible diagnostic on the actual published cut. Not a backtest
 // or a recommendation to buy the positions selected.
@@ -14,7 +16,7 @@ console.log(JSON.stringify({
     .map((asset) => asset.symbol),
   priceCutoff: snapshot.price_as_of,
 }));
-const informationAsOf=snapshot.generated_at?.slice(0,10);
+const informationAsOf=informationDate(snapshot);
 const fundCoverage=snapshot.assets.filter(asset=>asset.type==="etf"&&asset.holdings)
   .map(asset=>{
     const original=actualHoldings(asset,snapshot.price_as_of,informationAsOf);
