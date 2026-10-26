@@ -607,7 +607,11 @@ export function composePortfolio(
   const shyIndex = x.assets.findIndex(a => a.symbol === "SHY");
   const cashIndex = x.assets.findIndex(a => a.symbol === "CASH");
   const verifiedCapCandidates = [];
-  const capAlternatives = [0.25, 0.50, 0.75].map(cap => {
+  // A tighter user mandate must never be loosened by a diagnostic frontier.
+  // Keep the domains nested: C_25 subset C_50 subset C_75 subset C_mandate.
+  const capLevels = [...new Set([0.25, 0.50, 0.75]
+    .map(cap => Math.min(cap, x.rules.reserveCap)))];
+  const capAlternatives = capLevels.map(cap => {
     const cappedX = { ...x, rules: { ...x.rules, reserveCap: cap } };
     const alternatives = [];
     const seenCapped = new Set();
@@ -687,12 +691,44 @@ export function composePortfolio(
   });
   // Search under the 25/50/75% caps explores candidates the unrestricted
   // pass can miss. Never ignore a verified, feasible improvement.
-  for (const candidate of verifiedCapCandidates)
-    if (!best || candidate.metrics.score > best.metrics.score) best = candidate;
-  for (const row of capAlternatives)
-    if (row.feasible && best)
-      row.certaintyGapVsSelected =
-        best.metrics.certaintyEquivalent - row.certaintyEquivalent;
+  for (const proposal of verifiedCapCandidates)
+    if (validWeights(proposal.weights, x) &&
+        (!best || proposal.metrics.score > best.metrics.score))
+      best = proposal;
+  // The independent cap searches discover candidates in different orders.
+  // Reconcile ALL verified finalists against EACH nested feasible set,
+  // including the final selected portfolio. The displayed frontier must
+  // measure the same opportunity set, not three unrelated random searches.
+  const pooledFinalists = [...verified, ...verifiedCapCandidates,
+    ...(best ? [best] : [])];
+  let previousFrontierScore = -Infinity;
+  for (const row of capAlternatives) {
+    const cappedX = { ...x, rules: { ...x.rules, reserveCap: row.cap } };
+    let winner = null;
+    for (const finalist of pooledFinalists) {
+      if (!validWeights(finalist.weights, cappedX)) continue;
+      const comparison = assess(finalist.weights, cappedX, verification,
+        false, finalist.kind === "passive");
+      if (comparison.feasible &&
+          (!winner || comparison.metrics.score > winner.metrics.score))
+        winner = comparison;
+    }
+    if (winner) {
+      if (winner.metrics.score + 1e-10 < previousFrontierScore)
+        throw new Error("Fronteras SHY no monótonas: revisar el conjunto acumulativo");
+      previousFrontierScore = winner.metrics.score;
+    }
+    row.feasible = !!winner;
+    row.positions = winner?.positions ?? [];
+    row.meanReturn = winner?.metrics.meanReturn ?? null;
+    row.cvar95 = winner?.metrics.cvar95 ?? null;
+    row.certaintyEquivalent = winner?.metrics.certaintyEquivalent ?? null;
+    row.score = winner?.metrics.score ?? null;
+    row.verifiedPoolSize = pooledFinalists.length;
+    row.certaintyGapVsSelected = winner && best
+      ? Math.max(0, best.metrics.certaintyEquivalent -
+        winner.metrics.certaintyEquivalent) : null;
+  }
   const shyAnchor = shyIndex >= 0 ? x.anchors[shyIndex] : null;
   const concentrationAudit = {
     shyAnnualAnchor: shyAnchor?.annual ?? null,
@@ -705,7 +741,7 @@ export function composePortfolio(
     eligibleButNotSimulated: x.selection.outsideSample.length,
     selectionMethod: x.selection.preselectionMethod,
     comparedCaps: capAlternatives,
-    note: "Cada tope se contrasta con efectivo y reservas deterministas, además de carteras exploradas. Los escenarios son idénticos; la búsqueda no garantiza el óptimo global. SHY puede prevalecer cuando su prima ajustada por riesgo es mayor.",
+    note: "Fronteras anidadas sobre la misma muestra acumulativa de finalistas verificados; la cartera seleccionada se incorpora a cada tope que cumple. Ninguna frontera afirma optimalidad global. SHY puede prevalecer con mejor utilidad ajustada por riesgo.",
   };
   const riskDiagnostics = (row) => {
     if (!row) return null;
