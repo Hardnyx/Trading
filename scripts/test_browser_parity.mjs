@@ -106,6 +106,24 @@ try {
      !layout.hasGlobalCap || !layout.cashDividendSummary)
     throw Error("La composición perdió espacios o faltan controles de concentración/ingresos: "+JSON.stringify(layout));
 
+  // The ETF look-through table must remain tucked inside the technical panel,
+  // with a horizontal scroll container rather than overflowing the workspace.
+  await page.locator(".composition-report details.composition-method > summary").click();
+  const lookthrough=await page.locator(".composition-etf-holdings").evaluate(table=>{
+    const wrapper=table.closest(".table-wrap"),panel=table.closest(".composition-report");
+    return {rows:table.querySelectorAll("tbody tr").length,
+      inset:parseFloat(getComputedStyle(wrapper).paddingLeft)||0,
+      width:table.scrollWidth,wrapperWidth:wrapper.clientWidth,
+      parentOverflows:panel.scrollWidth>panel.clientWidth+3,
+      sourceLinks:[...table.querySelectorAll("a")].every(a=>
+        a.href.startsWith("https://")&&a.target==="_blank"),
+    };
+  });
+  const expectedFunds=expected.diagnostics?.economicExposure?.funds?.length||0;
+  if(lookthrough.rows!==expectedFunds || lookthrough.parentOverflows ||
+     !lookthrough.sourceLinks)
+    throw Error("ETF holdings report geometry or provenance failed: "+
+      JSON.stringify({lookthrough,expectedFunds}));
   mkdirSync("out",{recursive:true});
   await page.screenshot({path:"out/browser-parity.png",fullPage:true});
   if(!source.includes("CONFIGURACIÓN BASE"))
