@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trading — diagnóstico de versión</title>
+<style>
+body { font: 14px/1.55 ui-monospace, Consolas, "Courier New", monospace; color: #d1d5db; background:#101419; max-width:780px; margin:32px auto; padding:0 18px }
+h1 { font-size:20px; font-weight:600; color:#fff }
+h2 {font-size:14px; margin-top:20px; color:#fff}
+table { width:100%; border-collapse:collapse; margin-top:18px; }
+th,td {text-align:left;padding:10px 6px;border-bottom:1px solid #374151;vertical-align:top;overflow-wrap:anywhere}
+th { color:#9ca3af; font-weight:normal; width:36% }
+#result {padding:10px 0; font-weight:600}
+a {color:#93c5fd}
+button {padding:8px 12px; background:#262f3c; border:1px solid #4b5563; color:white; cursor:pointer}
+small {color:#9ca3af}
+</style>
+</head>
+<body>
+<h1>TRADING / DIAGNÓSTICO DE PUBLICACIÓN</h1>
+<p>Compara la página principal, el manifiesto de compilación y la versión del motor. No modifica tu cartera ni tu almacenamiento local.</p>
+<button type="button" id="run">Comprobar de nuevo</button>
+<div id="result" role="status">Comprobando...</div>
+<table><tbody id="details"></tbody></table>
+<p id="go"></p>
+<small>La versión de tu pestaña original puede diferir de la que responde a una solicitud nueva; una ventana privada no elimina la caché de los servidores intermedios.</small>
+<script>
+const label = document.querySelector("#result");
+const details = document.querySelector("#details");
+const go = document.querySelector("#go");
+const row = (a,b) => {
+  const tr=document.createElement("tr");
+  for(const value of [a,b]){
+    const cell=document.createElement("td");
+    cell.textContent=String(value);
+    tr.append(cell);
+  }
+  details.append(tr);
+};
+async function get(url) {
+  const response=await fetch(url,{cache:"no-store",headers:{"Cache-Control":"no-cache"}});
+  if(!response.ok)throw Error(url+": HTTP "+response.status);
+  return {body:await response.text(),age:response.headers.get("age"),
+    cache:response.headers.get("cache-control"),etag:response.headers.get("etag")};
+}
+async function run(){
+  label.textContent="Comprobando...";details.replaceChildren();go.replaceChildren();
+  try{
+    const nonce=Date.now()+"-"+Math.random().toString(36).slice(2);
+    const [root,fresh,build,policy]=await Promise.all([
+      get("./"),get("./index.html?check="+nonce),
+      get("./build.json?check="+nonce),
+      get("./assets/js/policy.mjs?check="+nonce),
+    ]);
+    const appSource=x=>x.match(/app\.mjs\?v=([^"'\s<>]+)/)?.[1]||"No encontrado";
+    const sourceVersion=policy.body.match(/MODEL_VERSION\s*=\s*["']([^"']+)/)?.[1]||"No encontrado";
+    const info=JSON.parse(build.body);
+    row("HTML (URL principal)",appSource(root.body));
+    row("HTML (consulta nueva)",appSource(fresh.body));
+    row("Motor: policy.mjs",sourceVersion);
+    row("Versión publicada",info.model_version);
+    row("Commit publicado",info.commit);
+    row("Age (URL principal)",root.age??"No informado");
+    row("Cache-Control (URL principal)",root.cache??"No informado");
+    row("ETag (URL principal)",root.etag??"No informado");
+    const expected=info.module_query?.split("=")[1];
+    const same=sourceVersion===info.model_version &&
+      appSource(root.body)===expected &&
+      appSource(fresh.body)===expected;
+    const diverged=appSource(root.body)!==appSource(fresh.body);
+    label.textContent=same
+      ?"Correcto: los recursos consultados coinciden."
+      :diverged
+        ?"Desfase encontrado: la URL principal y la URL renovada entregan versiones diferentes."
+        :"Inconsistencia detectada: compara las versiones mostradas.";
+    const target=document.createElement("a");
+    target.href="./index.html?build="+encodeURIComponent(info.commit||nonce);
+    target.textContent="Abrir esta compilación en una URL nueva";
+    go.append(target);
+  }catch(error){label.textContent="No se pudo completar la prueba: "+error.message}
+}
+document.querySelector("#run").addEventListener("click",run);
+run();
+</script>
+</body>
+</html>
