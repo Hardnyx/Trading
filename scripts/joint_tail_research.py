@@ -44,8 +44,8 @@ def rolling_joint_tail_challenger(y, market, *,
                                   train_window=500,test_days=126,refit_every=42):
     a=np.asarray(y,dtype=float)
     b=np.asarray(market,dtype=float)
-    if len(a)!=len(b) or len(a)<train_window+test_days or
-        not np.all(np.isfinite(a)) or not np.all(np.isfinite(b)):
+    if (len(a)!=len(b) or len(a)<train_window+test_days or
+        not np.all(np.isfinite(a)) or not np.all(np.isfinite(b))):
         raise ValueError("Not enough finite joint return observations")
     values=np.column_stack((a,b))
     start=len(values)-test_days
