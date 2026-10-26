@@ -3,6 +3,7 @@ import { spawn } from "node:child_process";
 import { readFileSync, mkdirSync } from "node:fs";
 import { composePortfolio } from "../dist/assets/js/composer.mjs?v=0.8.1";
 import { referenceRequest } from "../dist/assets/js/reference-preset.mjs?v=0.8.1";
+import { exposureReport } from "../dist/assets/js/economic-exposure.mjs?v=0.8.1";
 
 const market=JSON.parse(readFileSync("dist/data/market.json","utf8"));
 const volatility=JSON.parse(readFileSync("dist/data/volatility.json","utf8"));
@@ -11,6 +12,15 @@ const {settings,overrides,rules}=referenceRequest(snapshot);
 const expected=composePortfolio(snapshot,settings,overrides,rules,
   {candidates:300,paths:600,finalPaths:3000});
 if(expected.status!=="proposed")throw Error("La referencia no produjo una cartera");
+const economicWeights=new Map(expected.positions.map(p=>[p.symbol,p.weight]));
+const economic=exposureReport(expected.model_inputs.assets,
+  expected.model_inputs.assets.map(a=>economicWeights.get(a.symbol)||0),expected.as_of);
+if(economic.sleeves.usEquity+economic.sleeves.globalEquity > expected.rules.maxEquity+1e-8)
+  throw Error("Equity sleeve exceeded the global risk budget");
+if(economic.sleeves.treasury>expected.rules.maxTreasury+1e-8)
+  throw Error("Treasury ETF sleeves were not aggregated");
+if(expected.positions.some(p=>p.symbol==="SHY"&&p.weight>expected.rules.maxGlobal+1e-8))
+  throw Error("SHY bypassed the global position cap");
 const expectedWeights=Object.fromEntries(expected.positions.map(p=>
   [p.symbol,Math.round(p.weight*1000)/10]));
 
@@ -128,6 +138,8 @@ try {
     expected:expectedWeights,
     rendered:result,
     model:expected.model_version,
+    equity_exposure:economic.sleeves.usEquity+economic.sleeves.globalEquity,
+    treasury_exposure:economic.sleeves.treasury,
     source,retainedUserSettings:true,
     reportExcerpt:report.slice(0,220),
   }));
