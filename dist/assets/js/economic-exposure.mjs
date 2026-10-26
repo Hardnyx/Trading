@@ -20,7 +20,10 @@ export function economicClass(a){
 }
 export function actualHoldings(a,asOf){
  const h=a.holdings;
- if(!h || !Array.isArray(h.positions) || !/^\d{4}-\d\d-\d\d$/.test(h.as_of||"") || h.as_of>asOf)return null;
+ if(!h || !Array.isArray(h.positions) ||
+    !/^\d{4}-\d\d-\d\d$/.test(h.as_of||"") || h.as_of>asOf ||
+    !/^\d{4}-\d\d-\d\dT/.test(h.observed_at||"") ||
+    h.observed_at.slice(0,10)>asOf)return null;
  let coverage=0;const seen=new Set();
  for(const p of h.positions){
   if(!/^[A-Z0-9.-]{1,15}$/.test(p?.symbol||"") || seen.has(p.symbol) || !Number.isFinite(p.weight) || p.weight<0 || p.weight>1)return null;

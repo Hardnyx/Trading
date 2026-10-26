@@ -45,7 +45,7 @@ test("Only dated issuer holdings count as issuer overlap, unknown is never silen
  const assets=[
  {symbol:"AAPL",type:"stock",sector:"Tecnología"},
  {symbol:"SPY",type:"etf",sector:"Índice amplio",
-  holdings:{as_of:"2026-10-22",source_url:"https://issuer.example",
+  holdings:{as_of:"2026-10-22",observed_at:"2026-10-22T20:00:00Z",source_url:"https://issuer.example",
             positions:[{symbol:"AAPL",weight:.3},{symbol:"MSFT",weight:.2}]}},
  {symbol:"CASH",type:"cash"}];
  let exp=exposureReport(assets,[.2,.3,.5],"2026-10-23");
