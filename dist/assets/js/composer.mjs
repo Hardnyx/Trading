@@ -166,7 +166,12 @@ export function prepareComposition(
     eligible,
     current.positions.map((row) => row.symbol),
     policy.benchmark,
-    40,
+    settings.researchUniverseLimit === undefined ? 40 :
+      (Number.isInteger(settings.researchUniverseLimit) &&
+       settings.researchUniverseLimit >= 20 &&
+       settings.researchUniverseLimit <= 40
+        ? settings.researchUniverseLimit
+        : (() => { throw new Error("Tamaño de muestra experimental fuera de 20–40"); })()),
     forwardPriority,
   );
   const permissionBySymbol = new Map(
