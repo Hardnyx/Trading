@@ -376,3 +376,21 @@ Los componentes de investigación se ejecutan **en paralelo**, mediante el workf
 6. **Pronósticos prospectivos originales:** el refresh intenta guardar `data/forecasts/YYYY-MM-DD.json` con hash de mercado, emisión real, pesos y distribución. El puntaje futuro se archiva aparte al madurar y en la primera sesión disponible posterior al vencimiento. No se reescribe la predicción original.
 
 No hay suficientes pronósticos maduros para afirmar que los retornos fundamentales, el CVaR anual, las estrategias de rebalanceo o una distribución Student-t superan modelos sencillos. La falta de vintages históricos de consenso, cambios en la composición del universo y delisted securities impide un backtest retrospectivo completo. La documentación detallada del nivel de evidencia está en [estado-validacion.md](estado-validacion.md).
+
+
+## 15. Política de diversificación e ingresos por distribuciones
+
+La versión 0.8.1 diferencia la exposición económica a deuda Treasury común, sector y emisor. La restricción de parejas con ETF utiliza correlación de rentabilidades **totales observadas**, no solamente residuales tras descontar el mercado. Si no existe cartera subyacente oficial y fechada, se indica cobertura incompleta y nunca se inventan ponderaciones. Un ETF de deuda Treasury y otro del mismo emisor forman parte del mismo presupuesto agregado.
+
+Los límites iniciales son 35% por instrumento (excluido efectivo) y 60% por conjunto Treasury, con posibilidad de superar el límite global hasta 50% **solamente** mediante evidencia prospectiva auditada que aún no está disponible. Su racionalidad es prudencial, no una predicción de pesos óptimos.
+
+Los precios ajustados de Yahoo ya integran dividendos: añadir su importe como un retorno adicional contaría dos veces la distribución. El componente de flujos descompone la trayectoria total en un rendimiento ex-dividendo aproximado y un ingreso no reinvertido, con retención paramétrica, según:
+
+```math
+G_{i,t}^{precio} = \frac{G_{i,t}^{total}}{(1+y_i)^t},
+\qquad
+D_{i,t} \approx V_{i,0}w_iG_{i,t-\Delta t}^{precio}
+[(1+y_i)^{\Delta t}-1](1-\tau).
+```
+
+La tasa y_i procede del último año de distribuciones conocidas. La trayectoria de ingreso se aproxima uniformemente por pasos; **no reproduce fechas efectivas de pago ni reinversión de cupones**. La retención supuesta de 0% no constituye recomendación fiscal. La hipótesis de pagos históricos persistentes y los grupos de exposición no reemplazan una validación cuantitativa fuera de muestra.
