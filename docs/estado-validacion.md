@@ -198,3 +198,19 @@ Los perfiles Treasury oficiales se amplían a IEF, IEI, SGOV y SHV mediante la p
 ### Transición de la candidata y conciliación de efectivo
 
 La comparación robusta incorpora un panel desplegable de cambios por instrumento, cantidades fraccionarias a precios del corte y costos desagregados. Los montos se calculan sobre capital neto de costos y se verifica la igualdad de efectivo inicial, ventas, compras, costos y reserva final. Cuando no existe ventaja robusta, se muestra como comparación hipotética. Esto cubre la explicación operativa de la candidata; siguen pendientes señales por invalidación de tesis, lotes enteros, precios ejecutables y conciliación real con broker.
+
+### Recuperación desde el informe original SEC
+
+Cuando el BPA falta, no supera la conciliación de escala o hay un informe primario
+posterior, el recolector intenta el iXBRL del último 10-Q/10-K/20-F. Extrae sólo
+conceptos estándar US GAAP consolidados en USD y USD/acción; conserva periodo,
+fecha de presentación, accession, URL y captura del documento. Omite dimensiones,
+otras entidades, unidades/transformaciones no soportadas y duplicados discrepantes.
+No interpreta conceptos particulares del emisor ni sustituye cifras ausentes.
+
+La reconstrucción TTM conserva sus componentes (anual + acumulado actual −
+acumulado anterior) para auditar fuentes y fechas. Una combinación de informes
+alrededor de un split permanece bloqueada si no se acredita la misma base por
+acción. La comprobación de vigencia y el bloqueo por beneficio/acciones siguen
+activos. La tabla de cobertura distingue la captura de companyfacts de la captura
+del informe original. Recuperar datos no valida crecimiento, múltiplos ni retornos.

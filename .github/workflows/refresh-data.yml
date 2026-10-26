@@ -8,6 +8,7 @@ on:
     paths:
       - '.github/workflows/refresh-data.yml'
       - 'scripts/refresh_data.py'
+      - 'scripts/filing_facts.py'
       - 'scripts/etf_holdings.py'
       - 'scripts/distributions.py'
       - 'scripts/data_providers.py'

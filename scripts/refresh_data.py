@@ -25,11 +25,13 @@ import xml.etree.ElementTree as ET
 if __package__:
     from .data_providers import FRED_SERIES, ProviderError, analyst_estimates, fred_series, fred_csv_series, retained_estimates
     from .universe import AUTO_CIK, expanded_universe
+    from .filing_facts import extract_filing_facts
     from .etf_holdings import enrich_holdings
     from .distributions import price_distribution_index, enrich_distributions
 else:
     from data_providers import FRED_SERIES, ProviderError, analyst_estimates, fred_series, fred_csv_series, retained_estimates
     from universe import AUTO_CIK, expanded_universe
+    from filing_facts import extract_filing_facts
     from etf_holdings import enrich_holdings
     from distributions import price_distribution_index, enrich_distributions
 
@@ -241,6 +243,10 @@ def facts_for(facts, tags, unit, cutoff):
     return [r[1] for r in records.values()]
 
 
+def accounting_components(rows):
+    return [{key: row[key] for key in ("start", "end", "filed", "val", "tag", "accn", "source_url", "source_kind") if key in row} for row in rows]
+
+
 def ttm(facts, tags, cutoff, unit="USD"):
     rows = facts_for(facts, tags, unit, cutoff)
     rows = [r for r in rows if r.get("start") and 60 <= (date(r["end"]) - date(r["start"])).days <= 390]
@@ -251,7 +257,7 @@ def ttm(facts, tags, cutoff, unit="USD"):
     direct = [r for r in annuals if r["end"] == latest_end]
     if direct:
         chosen = max(direct, key=lambda r: r.get("filed", ""))
-        return {"value": chosen["val"], "period_end": chosen["end"], "filed": chosen["filed"], "method": "TTM", "tag": chosen["tag"]}
+        return {"value": chosen["val"], "period_end": chosen["end"], "filed": chosen["filed"], "method": "TTM", "tag": chosen["tag"], "components": accounting_components([chosen])}
     current = sorted([r for r in rows if r["end"] == latest_end], key=lambda r: r["start"])
     for cur in current:
         bases = [a for a in annuals if abs((date(cur["start"]) - date(a["end"])).days - 1) <= 10]
@@ -263,10 +269,10 @@ def ttm(facts, tags, cutoff, unit="USD"):
         if prior:
             prev = min(prior, key=lambda r: abs((date(cur["end"]) - date(r["end"])).days - 365))
             return {"value": ann["val"] + cur["val"] - prev["val"], "period_end": cur["end"],
-                    "filed": max(ann["filed"], cur["filed"], prev["filed"]), "method": "TTM", "tag": cur["tag"]}
+                    "filed": max(ann["filed"], cur["filed"], prev["filed"]), "method": "TTM", "tag": cur["tag"], "components": accounting_components([ann, cur, prev])}
     if annuals:
         chosen = max(annuals, key=lambda r: r["end"])
-        return {"value": chosen["val"], "period_end": chosen["end"], "filed": chosen["filed"], "method": "FY", "tag": chosen["tag"]}
+        return {"value": chosen["val"], "period_end": chosen["end"], "filed": chosen["filed"], "method": "FY", "tag": chosen["tag"], "components": accounting_components([chosen])}
     return None
 
 
@@ -279,10 +285,27 @@ def instant(facts, tags, cutoff, unit="USD"):
     return {"value": r["val"], "period_end": r["end"], "filed": r["filed"], "tag": r["tag"]}
 
 
-def financials(cik, cutoff):
+def financials(cik, cutoff, original_filing=None):
     url = f"https://data.sec.gov/api/xbrl/companyfacts/CIK{cik:010d}.json"
     body = json.loads(download(url, f"sec-{cik}.json", max_age=6 * 3600, sec=True))
     facts = body.get("facts", {}).get("us-gaap", {})
+    recovery = None
+    if original_filing:
+        key = f"filing-{cik}-{original_filing['accession']}.html"
+        raw = download(original_filing["url"], key, max_age=24 * 3600, sec=True)
+        supplement = extract_filing_facts(raw, original_filing, cik, cutoff)
+        # Do not mutate the cached companyfacts response. Same-period facts in
+        # this original filing take precedence only at its publication date.
+        for tag, content in supplement.items():
+            target = facts.setdefault(tag, {"units": {}})["units"]
+            for unit, rows in content["units"].items():
+                identities = {(r["start"], r["end"], r["filed"]) for r in rows}
+                target[unit] = [r for r in target.get(unit, []) if (r.get("start"), r.get("end"), r.get("filed")) not in identities] + rows
+        cache_path = CACHE / key
+        recovery = {"source_url": original_filing["url"], "accession": original_filing["accession"],
+                    "report_date": original_filing["report_date"], "filed": original_filing["filing_date"],
+                    "standard_fact_count": sum(len(rows) for item in supplement.values() for rows in item["units"].values()),
+                    "observed_at": dt.datetime.fromtimestamp(cache_path.stat().st_mtime, UTC).isoformat() if cache_path.exists() else None}
     mapping = {
         "revenue": ["RevenueFromContractWithCustomerExcludingAssessedTax", "Revenues", "SalesRevenueNet", "RevenuesNetOfInterestExpense"],
         "operating_income": ["OperatingIncomeLoss"],
@@ -326,6 +349,8 @@ def financials(cik, cutoff):
     result["entity"] = body.get("entityName")
     result["observed_at"] = dt.datetime.fromtimestamp((CACHE / f"sec-{cik}.json").stat().st_mtime, UTC).isoformat() if (CACHE / f"sec-{cik}.json").exists() else None
     result["refresh_status"] = "available"
+    if recovery:
+        result["original_filing_recovery"] = recovery
     return result
 
 
@@ -582,6 +607,17 @@ def build_asset(spec, cutoff, previous):
             asset["filings"] = [row for row in previous.get(symbol, {}).get("filings", [])
                                 if row.get("filing_date", "9999") <= cutoff]
             errors.append(f"{symbol}: presentaciones no actualizadas ({error_label(exc)})")
+        reports = [r for r in asset.get("filings", []) if r.get("form") in {"10-K", "10-Q", "20-F"} and r.get("report_date")]
+        latest = max(reports, key=lambda r: (r["report_date"], r["filing_date"]), default=None)
+        eps = asset["financials"].get("eps") or {}
+        probe = dict(asset, financials=dict(asset["financials"]), quality_flags=[])
+        inconsistent = flag_inconsistent_eps(probe, cutoff)
+        if latest and (not eps or inconsistent or latest["report_date"] > eps.get("period_end", "")) and asset["financials"].get("refresh_status") == "available":
+            try:
+                asset["financials"] = financials(cik, cutoff, original_filing=latest)
+            except Exception as exc:
+                asset["financials"]["original_filing_recovery"] = {"status": "failed", "source_url": latest["url"], "reason": error_label(exc)}
+                errors.append(f"{symbol}: informe original sin reconciliar ({error_label(exc)})")
     else:
         asset["financials"] = None
     if cik and isinstance(asset.get("splits"),list):
@@ -591,6 +627,18 @@ def build_asset(spec, cutoff, previous):
                 row["shares"] = row["shares_unadjusted"] * factor
                 row["shares_split_adjusted"] = True
                 row["split_source"] = asset["source_url"]
+    recovered = (asset.get("financials") or {}).get("original_filing_recovery") or {}
+    recovered_eps = (asset.get("financials") or {}).get("eps") or {}
+    components = recovered_eps.get("components") or []
+    if recovered.get("accession") and components and any(
+        min(r["end"] for r in components) < split["date"] <= cutoff for split in asset.get("splits", [])
+    ) and any(r.get("accn") != recovered["accession"] for r in components):
+        # Mixed filing vintages across a split can silently add EPS expressed on
+        # different share bases. The broad NI/share ratio check cannot prove it.
+        asset["financials"]["eps_unverified"] = recovered_eps
+        asset["financials"]["eps"] = None
+        asset.setdefault("quality_flags", []).append("original_eps_split_vintage_unverified")
+        errors.append(f"{symbol}: BPA de informes distintos alrededor de un split; base por acción sin reconciliar")
     inconsistent_eps = flag_inconsistent_eps(asset, cutoff)
     if inconsistent_eps:
         errors.append(inconsistent_eps)

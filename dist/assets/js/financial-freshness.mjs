@@ -12,6 +12,8 @@ export function financialFreshness(asset,asOf){
  return {status,blocked:!usable||gap,period:usable?eps.period_end:null,
   filed:usable?eps.filed:null,method:usable?eps.method:null,
   observedAt:asset.financials?.observed_at||null,
+  originalRecovery:asset.financials?.original_filing_recovery||null,
+  originalEps:!!eps?.components?.some(r=>r.source_kind==='original_inline_xbrl'),
   refreshStatus:asset.financials?.refresh_status||'unknown',latestReport:latest||null,
   reason:!usable?'Sin BPA utilizable al corte':gap?
    'Informe contable más reciente que el BPA: verificar cobertura XBRL antes de nuevas compras':
