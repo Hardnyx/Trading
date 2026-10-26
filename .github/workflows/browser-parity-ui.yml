@@ -10,6 +10,7 @@ on:
       - 'dist/assets/js/ui/views.mjs'
       - 'dist/templates/portfolio.html'
       - 'dist/templates/composition.html'
+      - 'dist/templates/layout.html'
       - '.github/workflows/browser-parity-ui.yml'
 permissions:
   contents: read

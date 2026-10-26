@@ -34,6 +34,11 @@ try {
     {waitUntil:"networkidle",timeout:60000});
   const button=page.locator('[data-action="compose-reference"]');
   await button.waitFor({state:"visible",timeout:45000});
+  const actualFooter=await page.locator(".footer-right").innerText();
+  if(!actualFooter.includes("v0.7.1") || actualFooter.includes("v0.6.0"))
+    throw Error("La etiqueta de versión del pie de página no corresponde al motor: "+
+      actualFooter);
+
   // Simulate a genuine long-lived user workspace: previously selected stock,
   // different seed, tighter reserve cap, custom macro weights and broker holdings.
   await page.evaluate(()=>{
