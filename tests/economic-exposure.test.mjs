@@ -1,0 +1,58 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import { economicClass, exposureReport, actualHoldings, rawCorrelation, qualifiedOpportunity } from "../dist/assets/js/economic-exposure.mjs?v=0.8.0";
+import { validWeights, DEFAULT_COMPOSITION_RULES } from "../dist/assets/js/composer.mjs?v=0.8.0";
+
+test("Treasury funds aggregate despite having different tickers",()=>{
+ const assets=[
+  {symbol:"SHY",type:"etf",sector:"Treasuries cortos"},
+  {symbol:"IEF",type:"etf",sector:"Treasuries intermedios"},
+  {symbol:"TLT",type:"etf",sector:"Treasuries largos"},
+  {symbol:"CASH",type:"cash",sector:"Efectivo"}];
+ const result=exposureReport(assets,[.25,.20,.15,.40],"2026-10-23");
+ assert.ok(Math.abs(result.sleeves.treasury-.60)<1e-8);
+ assert.equal(economicClass(assets[0]),"treasury");
+ const x={
+  assets,asOf:"2026-10-23",
+  rules:{...DEFAULT_COMPOSITION_RULES,maxTreasury:.5},
+  buyAllowed:[true,true,true,true],
+  covariance:assets.map((_,i)=>assets.map((_,j)=>i===j?.04:.001)),
+  requiredCash:.05
+ };
+ assert.equal(validWeights([.25,.20,.15,.40],x),false);
+ x.rules.maxTreasury=.65;
+ assert.equal(validWeights([.25,.20,.15,.40],x),true);
+});
+
+test("Global cap never treats SHY differently without independent OOS evidence",()=>{
+ const assets=[{symbol:"SHY",type:"etf",sector:"Treasuries cortos"},{symbol:"CASH",type:"cash",sector:"Efectivo"}];
+ const x={assets,asOf:"2026-10-23",buyAllowed:[true,true],
+  covariance:[[.002,0],[0,0]],requiredCash:.05,
+  opportunityEvidence:{},
+  rules:{...DEFAULT_COMPOSITION_RULES,reserveCap:1,maxFund:1,maxGlobal:.35,maxOpportunity:.5}};
+ assert.equal(validWeights([.50,.50],x),false);
+ assert.equal(validWeights([.35,.65],x),true);
+ x.opportunityEvidence.SHY={source:"prospective-journal",validation:"self-reported",symbol:"SHY",
+  as_of:"2026-10-23",oosMatured:200,netAlphaLower95:.03,costAdjustedExpectedAlpha:.04,
+  factorOverlapReviewed:true,liquidityReviewed:true,parameterUncertaintyReviewed:true};
+ assert.equal(qualifiedOpportunity(assets[0],x.opportunityEvidence.SHY,x.asOf),false);
+ assert.equal(validWeights([.5,.5],x),false);
+ x.opportunityEvidence.SHY.validation="independently-reviewed";
+ assert.equal(validWeights([.5,.5],x),true);
+});
+
+test("Only dated issuer holdings count as issuer overlap, unknown is never silently diversified",()=>{
+ const assets=[
+ {symbol:"AAPL",type:"stock",sector:"Tecnología"},
+ {symbol:"SPY",type:"etf",sector:"Índice amplio",
+  holdings:{as_of:"2026-10-22",source_url:"https://issuer.example",
+            positions:[{symbol:"AAPL",weight:.3},{symbol:"MSFT",weight:.2}]}},
+ {symbol:"CASH",type:"cash"}];
+ let exp=exposureReport(assets,[.2,.3,.5],"2026-10-23");
+ assert.ok(Math.abs(exp.issuers.AAPL-.29)<1e-8);
+ assert.ok(exp.unknownHoldings.length>0);
+ exp=exposureReport(assets,[.2,.3,.5],"2026-10-20");
+ assert.equal(exp.issuers.AAPL,.2);
+ assert.equal(actualHoldings(assets[1],"2026-10-20"),null);
+ assert.ok(Math.abs(rawCorrelation([[.04,.018],[.018,.09]],0,1)-.3)<1e-8);
+});
