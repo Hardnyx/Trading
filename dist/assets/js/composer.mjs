@@ -163,9 +163,16 @@ export function prepareComposition(
   for (const row of current.positions)
     if (!eligible.some((a) => a.symbol === row.symbol))
       throw new Error(`Falta ${row.symbol} de la cuenta actual.`);
+  const forcedResearch = settings.researchShadowMode === true &&
+    Array.isArray(settings.researchForceInclude)
+    ? [...new Set(settings.researchForceInclude)]
+      .filter(symbol => typeof symbol === "string" &&
+        /^[A-Z0-9.\-]{1,15}$/.test(symbol) &&
+        eligible.some(a => a.symbol === symbol)).slice(0, 8)
+    : [];
   const sampled = selectCompositionUniverse(
     eligible,
-    current.positions.map((row) => row.symbol),
+    [...current.positions.map((row) => row.symbol), ...forcedResearch],
     policy.benchmark,
     settings.researchUniverseLimit === undefined ? 40 :
       (Number.isInteger(settings.researchUniverseLimit) &&
@@ -225,6 +232,7 @@ export function prepareComposition(
       published: raw.assets.length,
       eligible: eligible.length,
       simulated: sampled.assets.length,
+      forcedResearchCandidates: forcedResearch,
       benchmarkOnlyProxy: benchmarkOnlyProxy ? policy.benchmark : null,
       benchmarkProxyAssumption: benchmarkOnlyProxy
         ? "Solo comparación: tasa corta al corte + prima hipotética de 3,5 pp; banda ±15 pp, NO estimación validada ni compra autorizada"
