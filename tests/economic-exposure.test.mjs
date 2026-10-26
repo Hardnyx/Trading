@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { economicClass, exposureReport, actualHoldings, rawCorrelation, qualifiedOpportunity } from "../dist/assets/js/economic-exposure.mjs?v=0.8.1";
+import { economicClass, exposureReport, actualHoldings, rawCorrelation, qualifiedOpportunity, knownFundOverlap } from "../dist/assets/js/economic-exposure.mjs?v=0.8.1";
 import { validWeights, DEFAULT_COMPOSITION_RULES } from "../dist/assets/js/composer.mjs?v=0.8.1";
 
 test("Treasury funds aggregate despite having different tickers",()=>{
@@ -77,7 +77,6 @@ test("fund overlap is a dated lower bound, with share classes consolidated",()=>
  const b={symbol:"VTI",type:"etf",holdings:{
   as_of:"2026-10-21",observed_at:"2026-10-22T01:00:00Z",
   positions:[{symbol:"GOOGL",weight:.08},{symbol:"AAPL",weight:.12}]}};
- const {knownFundOverlap}=await import("../dist/assets/js/economic-exposure.mjs?v=0.8.1");
  const f=knownFundOverlap(a,b,"2026-10-23");
  assert.equal(f.available,true);
  assert.ok(Math.abs(f.lowerBound-.20)<1e-10);
