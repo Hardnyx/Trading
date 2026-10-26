@@ -3137,3 +3137,28 @@ tbody tr:hover {
     font-size: 18px;
   }
 }
+
+/* 0.8.x report spacing regression: preserve dense terminal UI with readable insets. */
+.composition-report { min-width: 0; overflow: hidden; }
+.composition-report > .composition-source { padding: 9px 14px 8px; margin: 0; line-height: 1.5; }
+.composition-report > .table-wrap { margin: 0 12px; width: calc(100% - 24px); }
+.composition-report > .table-wrap table { min-width: 700px; }
+.composition-report .composition-contributions { padding: 14px 12px 10px; margin-top: 10px; border-top: 1px solid var(--line); }
+.composition-report .composition-contributions h3 { margin: 0 0 9px; font: 700 11px var(--mono); color: var(--text); }
+.composition-report .composition-contributions table { min-width: 760px; }
+.composition-report .composition-contributions .table-wrap { width: 100%; }
+.composition-report .composition-attribution-note { margin: 9px 0 0; color: var(--muted); font: 11px/1.65 var(--sans); }
+.composition-report .composition-brief { border-top: 1px solid var(--soft-line); padding: 12px 14px; margin: 0; }
+.composition-report .composition-brief p { font: 11px/1.6 var(--sans); color: var(--muted); margin: 0 0 7px; overflow-wrap: anywhere; }
+.composition-report .composition-brief p:last-child { margin-bottom: 0; }
+.composition-report details.composition-method { border-top: 1px solid var(--line); padding: 0 14px 12px; margin: 0; }
+.composition-report details.composition-method > summary { padding: 12px 0; font: 11px var(--mono); color: var(--text); cursor: pointer; }
+.composition-report details.composition-method[open] > summary { margin-bottom: 4px; }
+.composition-report .composition-contributions th,
+.composition-report .composition-contributions td { padding: 10px 9px; }
+@media(max-width:760px) {
+ .composition-report > .table-wrap { margin: 0 8px; width: calc(100% - 16px); }
+ .composition-report .composition-contributions { padding: 12px 8px; }
+ .composition-report .composition-brief { padding: 11px 10px; }
+ .composition-report details.composition-method { padding: 0 10px 11px; }
+}

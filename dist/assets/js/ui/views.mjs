@@ -724,7 +724,10 @@ export function createViews(context) {
     const rules = { ...DEFAULT_COMPOSITION_RULES, ...state.compositionRules };
     const fields = [
       ["maxPosition", "MÁX. POR ACCIÓN", 5, 50, 5, 100, "%"],
-      ["maxFund", "MÁX. POR ETF DIVERSIFICADO", 5, 100, 5, 100, "%"],
+      ["maxFund", "MÁX. ETF · LÍMITE ESPECÍFICO", 5, 100, 5, 100, "%"],
+      ["maxGlobal", "MÁX. GLOBAL POR ACTIVO", 5, 75, 5, 100, "%"],
+      ["maxOpportunity", "TOPE POR OPORTUNIDAD VALIDADA", 5, 75, 5, 100, "%"],
+      ["maxTreasury", "MÁX. TREASURIES COMBINADOS", 5, 100, 5, 100, "%"],
       ["maxSector", "MÁX. SECTOR DIRECTO", 10, 100, 5, 100, "%"],
       ["reserveCap", "MÁX. RESERVA SHY", 5, 100, 5, 100, "%"],
       ["maxPositions", "MÁX. POSICIONES", 2, 12, 1, 1, ""],
@@ -852,6 +855,22 @@ export function createViews(context) {
       published: p.selection?.published ?? data.assets.length,
       eligible: p.selection?.eligible ?? "—",
       simulated: p.selection?.simulated ?? "—",
+      exposureSummary: (() => {
+        const d=p.diagnostics?.economicExposure;
+        if(!d)return "Sin desglose económico";
+        const s=d.sleeves;
+        return `Treasuries ${pct(s.treasury,1)} · Crédito ${pct(s.credit,1)} · Acciones USA ${pct(s.usEquity,1)} · Oro ${pct(s.gold,1)}`;
+      })(),
+      exposureWarning: (() => {
+        const d=p.diagnostics?.economicExposure;
+        return d?.unknownHoldings?.length
+          ? "Sin holdings verificadas al corte: " + d.unknownHoldings.join(", ") + ". No se asume diversificación de posiciones desconocidas."
+          : "No hay holdings desconocidas entre las posiciones seleccionadas.";
+      })(),
+      incomeSummary: p.metrics?.dividendPolicy==="cash"
+        ? `Dividendos netos estimados a efectivo USD ${fmt(p.metrics.expectedNetDividendCash,0)}; brutos USD ${fmt(p.metrics.expectedGrossDividendCash,0)}; retención supuesta ${pct(p.metrics.dividendWithholding,0)}. Flujo estimado a partir de los últimos 12 meses, no garantizado.`
+        : "Distribuciones reinvertidas dentro de los rendimientos totales; sin ingresos en efectivo separados.",
+      globalLimitNote: `Límite global ${pct(p.rules.maxGlobal,0)} por instrumento; tope de excepción ${pct(p.rules.maxOpportunity,0)} únicamente con validación prospectiva independiente. Treasuries combinados ${pct(p.rules.maxTreasury,0)}. Excepciones aprobadas: ${(p.diagnostics?.concentrationPolicy?.qualified||[]).join(", ")||"ninguna"}.`,
       concentration: p.diagnostics?.selected?.largestPosition
         ? `${p.diagnostics.selected.largestPosition.symbol} ${pct(p.diagnostics.selected.largestPosition.weight, 1)}`
         : "No determinada",
@@ -883,7 +902,7 @@ export function createViews(context) {
       shyExplanation: (() => {
         const a=p.diagnostics?.concentrationAudit;
         return a?.shyAnnualAnchor==null ? "Sin diagnóstico" :
-          `SHY: retorno supuesto ${pct(a.shyAnnualAnchor,1)} (${a.shyAnchorSource}); volatilidad condicional anual ${pct(a.shyAnnualVolatility,1)}. Tope editable ${pct(a.shyMaxAllowed,0)}; peso elegido ${pct(a.actualShyWeight,0)}. Una tasa relativamente elevada y bajo riesgo pueden dominar al no existir primas accionarias suficientemente respaldadas.`;
+          `SHY: retorno supuesto ${pct(a.shyAnnualAnchor,1)} (${a.shyAnchorSource}); volatilidad condicional anual ${pct(a.shyAnnualVolatility,1)}. Tope SHY ${pct(a.shyMaxAllowed,0)} (sujeto al tope global ${pct(p.rules.maxGlobal,0)}); peso elegido ${pct(a.actualShyWeight,0)}. Una tasa relativamente elevada y bajo riesgo pueden dominar al no existir primas accionarias suficientemente respaldadas.`;
       })(),
       shyCapAlternatives: (p.diagnostics?.concentrationAudit?.comparedCaps||[])
         .map(r => r.feasible

@@ -228,7 +228,9 @@ export function prepareComposition(
   return {
     ...paths,
     rules: limits,
-    opportunityEvidence: settings.opportunityEvidence || {},
+    // Only signed/reviewed evidence published with the market snapshot may
+    // lift a global concentration cap; session values are not certification.
+    opportunityEvidence: snapshot.validated_opportunities || {},
     policy,
     costs,
     current,
@@ -749,6 +751,7 @@ export function composePortfolio(
     comparedCaps: capAlternatives,
     note: "Fronteras anidadas sobre la misma muestra acumulativa de finalistas verificados; la cartera seleccionada se incorpora a cada tope que cumple. Ninguna frontera afirma optimalidad global. SHY puede prevalecer con mejor utilidad ajustada por riesgo.",
   };
+  const exposure = best ? exposureReport(x.assets,best.weights,x.asOf) : null;
   const riskDiagnostics = (row) => {
     if (!row) return null;
     const limits = [
@@ -775,6 +778,16 @@ export function composePortfolio(
   const diagnostics = {
     selected: riskDiagnostics(best),
     attribution,
+    economicExposure: exposure,
+    concentrationPolicy: {
+      global:x.rules.maxGlobal,
+      opportunity:x.rules.maxOpportunity,
+      treasury:x.rules.maxTreasury,
+      qualified:best?.positions.filter(p=>qualifiedOpportunity(
+        x.assets.find(a=>a.symbol===p.symbol),
+        x.opportunityEvidence[p.symbol],x.asOf)).map(p=>p.symbol)||[],
+      note:"Solo evidencia prospectiva revisada y publicada con el corte puede superar el límite global. Sin validación, no hay excepciones.",
+    },
     references,
     concentrationAudit,
     dependence: x.dependence,
@@ -1017,10 +1030,12 @@ export function composePortfolio(
     },
     objective: x.policy.objective,
     notes: [
+      "Dividendos: los ajustes de precios ya incluyen rentabilidad total; las distribuciones en efectivo se extraen sin duplicar el rendimiento. Retención asumida configurable; no es cálculo tributario individual.",
+      "ETF: límites por exposición a Treasuries y holdings fechados cuando disponibles; no se simulan composiciones internas que no publica el proveedor.",
       "Probabilidades y confianza son supuestos sin calibración predictiva demostrada.",
-      "Sectores: límites sobre acciones directas; sin composición interna de ETFs.",
+      "Sectores: se acumulan acciones y ETF sectoriales, además de holdings verificadas cuando disponibles.",
       "Retiros prefundados con efectivo; no se suponen ventas gratuitas durante las trayectorias.",
-      "Duración de bonos es una aproximación local; sin convexidad ni reinversión detallada.",
+      "Duración y convexidad proxy bajo shocks paralelos; no son curva completa, rolldown ni reinversión observada.",
     ],
   };
 }

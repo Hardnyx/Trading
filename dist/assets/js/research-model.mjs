@@ -49,6 +49,9 @@ export function assetAt(
         ? asset.price
         : latest?.close || asset.price,
     price_date: latest?.date || asset.price_date,
+    // Historical chart adjustments do not prove an original dividend vintage.
+    dividend_per_share: asset.price_date<=informationAsOf
+      ? asset.dividend_per_share : null,
     analyst_estimates:
       asset.analyst_estimates?.observed_at?.slice(0, 10) <= informationAsOf
         ? asset.analyst_estimates
