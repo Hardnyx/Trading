@@ -1,5 +1,5 @@
 import { readFileSync } from "node:fs";
-import { composePortfolio } from "../dist/assets/js/composer.mjs?v=0.8.0";
+import { composePortfolio } from "../dist/assets/js/composer.mjs?v=0.8.1";
 
 // Reproducible diagnostic on the actual published cut. Not a backtest
 // or a recommendation to buy the positions selected.
