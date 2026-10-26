@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "origin_type": "first-capture-forward-shadow-no-trading",
+  "research_only": true,
+  "issued_at": "2026-10-26T04:39:24.016Z",
+  "issue_ny_date": "2026-10-26",
+  "original_price_as_of": "2026-10-23",
+  "market_collected_at": "2026-10-26T04:36:06.661958+00:00",
+  "maturity_date": "2027-10-23",
+  "eligibility": {
+    "eligible": true,
+    "reason": "Original-close-to-next-session-window",
+    "next_session_start_estimate": "2026-10-26T09:30 America/New_York",
+    "warning": "Weekday calendar is conservative and does not certify exchange holidays."
+  },
+  "market_sha256": "ed0fa694069ab7b08a7f781a0075994af6604663c31f64835e37b77100662c60",
+  "volatility_sha256": "7b8c87e77f1946facbfc9487fde714b79307bf9528b4a87959d67cee3b229295",
+  "engine_version": "0.7.2",
+  "model_settings": {
+    "horizon": 1,
+    "seed": 20261024,
+    "volatility_mode": "hybrid"
+  },
+  "model_status": "proposed",
+  "positions": [
+    {
+      "symbol": "TLT",
+      "weight": 0.05
+    },
+    {
+      "symbol": "SHY",
+      "weight": 0.5
+    },
+    {
+      "symbol": "CASH",
+      "weight": 0.05
+    },
+    {
+      "symbol": "CMCSA",
+      "weight": 0.2
+    },
+    {
+      "symbol": "AMZN",
+      "weight": 0.1
+    },
+    {
+      "symbol": "NFLX",
+      "weight": 0.05
+    },
+    {
+      "symbol": "GOOGL",
+      "weight": 0.05
+    }
+  ],
+  "forecast": {
+    "expected_return": 0.07123143696763,
+    "median_return": 0.06351470741844512,
+    "p05": -0.07386336191500344,
+    "p95": 0.23764432056367432,
+    "probability_loss": 0.24333333333333335,
+    "simulated_cvar95": 0.10234983745268927
+  },
+  "note": "This is a sealed prior forecast, not proven predictive skill. It may never be silently altered by newer API data."
+}
