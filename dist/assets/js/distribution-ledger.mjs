@@ -127,6 +127,8 @@ export function distributionTerminalValue(view,sample,i,p){
 
 // Realization under the model's tax/reinvestment conventions, not a broker P&L.
 export function reconcileDistributionReturn(asset,start,end,policy={}){
+  if(!validDay(start) || !validDay(end) || end<start)
+    return {available:false,reason:"Intervalo de conciliación inválido"};
   if(asset.type==="cash")return {available:true,return:0,basis:"synthetic-cash"};
   const rate=policy.dividendWithholding??0;
   if(!Number.isFinite(rate) || rate<0 || rate>1 ||
@@ -144,7 +146,14 @@ export function reconcileDistributionReturn(asset,start,end,policy={}){
     return {available:false,reason:"Índice de distribuciones inválido"};
   if((asset.splits||[]).some(r=>r.date>start))
     return {available:false,reason:"Split pendiente de conciliación de la base por participación"};
-  const history=asset.history||[],initial=history.find(r=>r.date===start)?.close,
+  // Imported histories need not arrive in chronological order. A pay-date
+  // reinvestment uses the first trading close by date, never array position.
+  const history=[...(asset.history||[])].sort((a,b)=>String(a.date).localeCompare(String(b.date)));
+  const relevant=history.filter(r=>r.date>=start && r.date<=end);
+  if(relevant.some(r=>!validDay(r.date) || !Number.isFinite(r.close) || r.close<=0) ||
+     new Set(relevant.map(r=>r.date)).size!==relevant.length)
+    return {available:false,reason:"Histórico de precios inválido o ambiguo"};
+  const initial=history.find(r=>r.date===start)?.close,
     final=history.find(r=>r.date===end)?.close;
   if(!(Number.isFinite(initial)&&initial>0 && Number.isFinite(final)&&final>0))return {available:false,reason:"Faltan precios comparables"};
   const expected=index.records.filter(r=>r.ex_date>start && r.ex_date<=end && r.amount_per_share>0);
@@ -155,7 +164,8 @@ export function reconcileDistributionReturn(asset,start,end,policy={}){
     return {available:false,reason:"Faltan importes o fechas de pago contrastadas con el emisor"};
   if(!expected.length){
     const a=history.find(r=>r.date===start),b=history.find(r=>r.date===end);
-    if(!(a.adj_close>0 && b.adj_close>0) ||
+    if(!(Number.isFinite(a.adj_close) && a.adj_close>0 &&
+         Number.isFinite(b.adj_close) && b.adj_close>0) ||
        Math.abs((b.adj_close/a.adj_close)/(final/initial)-1)>1e-5)
       return {available:false,reason:"El ajuste de precios revela distribuciones o eventos sin conciliar"};
   }
@@ -195,7 +205,7 @@ export function reconcileDistributionReturn(asset,start,end,policy={}){
       if(policy.dividendPolicy==="cash")cash+=net;
       else{
         const price=history.find(h=>h.date>=a.date && h.date<=end)?.close;
-        if(!(price>0))return {available:false,reason:"Falta precio para reinversión al pago"};
+        if(!(Number.isFinite(price)&&price>0))return {available:false,reason:"Falta precio para reinversión al pago"};
         shares+=net/price;
       }
     }

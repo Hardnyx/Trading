@@ -164,3 +164,39 @@ test("observed Yahoo rounding reconciles with the precise issuer amount and reje
  a.distribution_index.records[0].amount_per_share=.26301;
  assert.equal(reconcileDistributionReturn(a,"2026-10-23","2026-12-01",{dividendPolicy:"cash"}).available,false);
 });
+
+test("payment reinvestment uses the earliest eligible close even with unordered imported history",()=>{
+ const a=realizedAsset(),policy={dividendPolicy:"reinvest",dividendWithholding:.3};
+ const expected=reconcileDistributionReturn(a,"2026-10-23","2026-12-01",policy);
+ a.history.reverse();
+ const actual=reconcileDistributionReturn(a,"2026-10-23","2026-12-01",policy);
+ assert.equal(actual.available,true);
+ assert.equal(actual.return,expected.return);
+ assert.ok(Math.abs(actual.return-((1+2.8/96)*99/100-1))<1e-12);
+});
+
+test("ambiguous prices and invalid reconciliation dates cannot produce realized scores",()=>{
+ for(const mutate of [
+   a=>a.history.push({...a.history[2],close:110}),
+   a=>a.history[2].close=Infinity,
+   a=>a.history[2].close=NaN,
+   a=>a.history[2].close=0,
+ ]){
+   const a=realizedAsset();mutate(a);
+   assert.equal(reconcileDistributionReturn(a,"2026-10-23","2026-12-01",
+     {dividendPolicy:"reinvest"}).available,false);
+ }
+ for(const [start,end] of [["2026-12-01","2026-10-23"],["2026-02-30","2026-12-01"],
+   ["2026-10-23","invalid"]]){
+   assert.equal(reconcileDistributionReturn(realizedAsset(),start,end).available,false);
+   assert.equal(reconcileDistributionReturn({type:"cash"},start,end).available,false);
+ }
+});
+
+test("a nonfinite adjusted close cannot certify the absence of distributions",()=>{
+ const a=realizedAsset();
+ a.distribution_index.records=[];
+ a.issuer_distributions.records=[];
+ a.history[0].adj_close=Infinity;
+ assert.equal(reconcileDistributionReturn(a,"2026-10-23","2026-12-01").available,false);
+});
