@@ -1,5 +1,7 @@
 import json
+import tempfile
 import unittest
+from pathlib import Path
 from scripts.etf_holdings import parse_fund, enrich_holdings
 
 class HoldingsTests(unittest.TestCase):
@@ -54,6 +56,24 @@ class HoldingsTests(unittest.TestCase):
             "2026-10-23","2026-10-26T01:00:00Z",unavailable)
         self.assertEqual(result["retained"],1)
         self.assertEqual(assets[0]["holdings"],old)
+    def test_source_corrections_remain_separate_archive_files(self):
+        with tempfile.TemporaryDirectory() as folder:
+            assets=[{"symbol":"SPY","type":"etf"}]
+            first_bytes=json.dumps(self.payload).encode()
+            enrich_holdings(assets,{},"2026-10-23","2026-10-26T09:00:00Z",
+                            lambda *_:first_bytes,archive_dir=folder)
+            old=assets[0]["holdings"]
+            altered={**self.payload,"holdings":{
+                **self.payload["holdings"],"AAPL":7.6,"OTH":70.1}}
+            next_bytes=json.dumps(altered).encode()
+            second=[{"symbol":"SPY","type":"etf"}]
+            enrich_holdings(second,{"SPY":{"holdings":old}},
+                "2026-10-23","2026-10-26T10:00:00Z",
+                lambda *_:next_bytes,archive_dir=folder)
+            self.assertEqual(len(list(Path(folder).rglob("SPY-*.json.gz"))),2)
+            self.assertNotEqual(old["source_sha256"],second[0]["holdings"]["source_sha256"])
+            self.assertEqual(second[0]["holdings"]["observed_at"],"2026-10-26T10:00:00Z")
+
     def test_historical_request_does_not_enrich_without_live_fetch(self):
         assets=[{"symbol":"SPY","type":"etf"}]
         result=enrich_holdings(assets,{},"2026-10-23",

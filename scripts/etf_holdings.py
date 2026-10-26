@@ -5,6 +5,7 @@ Trading saw each record: an old holdings date is not proof of prior knowledge.
 """
 import datetime as dt
 import gzip
+import hashlib
 import json
 from pathlib import Path
 import re
@@ -80,10 +81,16 @@ def enrich_holdings(assets, old_assets, price_cut, observed_at, fetch,
             original=fetch(url,f"etf-current-{symbol.lower()}.json")
             if len(original)>3_000_000:raise ValueError("Response exceeds ETF size limit")
             result=parse_fund(json.loads(original),symbol,price_cut,observed_at)
-            if old and old.get("as_of")==result["as_of"] and old.get("positions")==result["positions"]:
+            digest=hashlib.sha256(original).hexdigest()
+            result["source_sha256"]=digest
+            if (old and old.get("as_of")==result["as_of"] and
+                old.get("positions")==result["positions"] and
+                old.get("source_layer")==result["source_layer"]):
                 result["observed_at"]=old["observed_at"]
-            elif archive_dir is not None:
-                dest=Path(archive_dir)/result["as_of"]/(symbol+".json.gz")
+            if archive_dir is not None:
+                # Same report-date may be corrected later; never erase the
+                # earlier original or silently make it appear unrevised.
+                dest=Path(archive_dir)/result["as_of"]/(symbol+"-"+digest[:16]+".json.gz")
                 if not dest.exists():
                     dest.parent.mkdir(parents=True,exist_ok=True)
                     with dest.open("xb") as f:f.write(gzip.compress(original,mtime=0))
