@@ -36,6 +36,8 @@ export const DEFAULT_MANDATE = {
   fxConfirmed: false,
   benchmark: "SPY",
   riskAversion: 5,
+  dividendPolicy: "cash",
+  dividendWithholding: 0,
 };
 export const DEFAULT_EXECUTION = {
   commissionFixed: 0,
@@ -139,6 +141,8 @@ export function mandate(input = {}) {
   for (const key of ["monthlyWithdrawal", "terminalTarget", "capitalFloor"])
     range(value[key], 0, 1e12, key);
   range(value.riskAversion, 1, 20, "la aversión al riesgo");
+  if (!["cash","reinvest"].includes(value.dividendPolicy))throw new Error("Política de dividendos no válida");
+  range(value.dividendWithholding,0,1,"retención sobre dividendos");
   if (value.objective === "target" && !(value.terminalTarget > 0))
     throw new Error("Define el capital objetivo al final del horizonte.");
   if (value.referenceCurrency === "USD")

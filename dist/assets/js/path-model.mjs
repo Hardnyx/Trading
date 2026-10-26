@@ -9,6 +9,7 @@ import {
 import { seededRandom, normalGenerator, poisson } from "./random.mjs?v=0.8.0";
 import { ewmaCovariance, cholesky } from "./risk-math.mjs?v=0.8.0";
 import { buildReturnAnchors, sampleDrifts, bondScenarioAnnualReturn } from "./return-model.mjs?v=0.8.0";
+import { annualDistributionYield, dividendStep } from "./cashflows.mjs?v=0.8.0";
 import { assetAt } from "./research-model.mjs?v=0.8.0";
 import { factorModel } from "./factors.mjs?v=0.8.0";
 import { conditionalRisk, updateGjrVariance, updateEwmaVariance } from "./conditional-risk.mjs?v=0.8.0";
@@ -380,7 +381,11 @@ export function evaluatePaths(weights, sample, options = {}) {
     recoveries = 0,
     unfinishedRecoveries = 0;
   const selected = weights.map((w, i) => ({ w, i })).filter((r) => r.w > 0),
-    gamma = policy.riskAversion;
+    gamma = policy.riskAversion,
+    dividendYields=assets.map(annualDistributionYield),
+    cashDividends=policy.dividendPolicy==="cash",
+    withholding=policy.dividendWithholding || 0;
+  let distributionGrossSum=0, distributionNetSum=0;
   for (let p = 0; p < paths; p++) {
     let previous = initial,
       cashWithdrawn = 0,
@@ -391,15 +396,24 @@ export function evaluatePaths(weights, sample, options = {}) {
       floorBroken = initial * startFX < policy.capitalFloor,
       longest = 0,
       run = 0,
-      everUnder = false;
+      everUnder = false,
+      dividendsGross=0,
+      dividendsNet=0;
     const path = options.details && p < 12 ? [nav * 100] : null;
     if (observations) observations[0].push(nav * 100);
     for (let t = 1; t <= steps; t++) {
       const offset = p * (steps + 1) + t;
       const cashGross = cashIndex >= 0 ? gross[cashIndex][offset] : 1;
       let total = 0;
-      for (const { w, i } of selected) total += w * gross[i][offset] * initial;
-      total -= cashWithdrawn;
+      for(const {w,i} of selected) {
+        const dist=cashDividends
+          ? dividendStep(gross[i][offset-1],gross[i][offset],dividendYields[i],t,dt,withholding)
+          : {priceGross:gross[i][offset],grossCash:0,netCash:0};
+        total+=w*dist.priceGross*initial;
+        dividendsGross+=w*dist.grossCash*initial;
+        dividendsNet+=w*dist.netCash*initial;
+      }
+      total += dividendsNet-cashWithdrawn;
       const priorFX = fx[offset - 1],
         currentFX = fx[offset];
       nav *=
@@ -416,8 +430,8 @@ export function evaluatePaths(weights, sample, options = {}) {
       if (total * currentFX < policy.capitalFloor) floorBroken = true;
       const withdrawal = flows[t] / currentFX,
         cash =
-          (cashIndex >= 0 ? weights[cashIndex] * cashGross * initial : 0) -
-          cashWithdrawn;
+          (cashIndex >= 0 ? weights[cashIndex] * cashGross * initial : 0) +
+          dividendsNet - cashWithdrawn;
       if (cash + 1e-8 < withdrawal || total + 1e-8 < withdrawal) failed = true;
       cashWithdrawn += withdrawal;
       previous = Math.max(0, total - withdrawal);
@@ -425,6 +439,8 @@ export function evaluatePaths(weights, sample, options = {}) {
       if (observations) observations[t].push(nav * 100);
       if (path) path.push(nav * 100);
     }
+    distributionGrossSum+=dividendsGross;
+    distributionNetSum+=dividendsNet;
     const remaining = previous * fx[p * (steps + 1) + steps],
       ratio = nav;
     returns.push(ratio - 1);
@@ -468,6 +484,10 @@ export function evaluatePaths(weights, sample, options = {}) {
   const result = {
     score,
     certaintyEquivalent,
+    dividendPolicy:policy.dividendPolicy,
+    dividendWithholding:withholding,
+    expectedGrossDividendCash:distributionGrossSum/paths,
+    expectedNetDividendCash:distributionNetSum/paths,
     expectedLogGrowth: mean(
       returns.map((r) => Math.log(Math.max(1e-5, 1 + r))),
     ),
