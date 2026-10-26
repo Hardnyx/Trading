@@ -3189,6 +3189,7 @@ tbody tr:hover {
 .price-monitor select { margin: 10px 0 12px 8px; }
 .price-monitor .table-wrap { margin-top: 8px; }
 .price-monitor table { min-width: 1500px; }
+.price-monitor td small { display: block; margin-top: 4px; color: var(--muted); }
 .robustness-transition { margin: 12px; padding-top: 12px; border-top: 1px solid var(--line); }
 .robustness-transition > summary { cursor: pointer; font: 11px var(--mono); padding: 0 0 12px; }
 .robustness-transition .table-wrap { max-width: 100%; overflow-x: auto; }
