@@ -176,7 +176,7 @@ try {
   await page.locator('.robustness-scenarios').waitFor({state:'visible',timeout:240000});
   const robust=await page.evaluate(()=>JSON.parse(localStorage.getItem('trading-workspace-v1')).robustness);
   if(robust.scenarios.length!==5||robust.snapshot_generated_at!==
-      JSON.parse(localStorage.getItem('trading-workspace-v1')).proposal.snapshot_generated_at)
+      snapshot.generated_at)
     throw Error('Robustness report lost its scenario set or input vintage');
   const robustText=await page.locator('.robustness-report').innerText();
   if(!robustText.includes('EXPERIMENTAL')||!robustText.includes('MEDIANA · MANTENER')||
