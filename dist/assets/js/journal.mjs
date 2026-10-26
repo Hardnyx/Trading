@@ -1,6 +1,6 @@
-import { finite, mean, normalizeWeights, sum } from "./analytics.mjs?v=0.7.2";
-import { adjustedReturn } from "./factors.mjs?v=0.7.2";
-import { MODEL_VERSION } from "./policy.mjs?v=0.7.2";
+import { finite, mean, normalizeWeights, sum } from "./analytics.mjs?v=0.8.0";
+import { adjustedReturn } from "./factors.mjs?v=0.8.0";
+import { MODEL_VERSION } from "./policy.mjs?v=0.8.0";
 const clone = (value) => JSON.parse(JSON.stringify(value));
 function hash(value) {
   let h = 2166136261;
