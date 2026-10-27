@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { portfolioAttribution } from "../dist/assets/js/attribution.mjs?v=0.13.0";
+import { portfolioAttribution } from "../dist/assets/js/attribution.mjs?v=0.14.0";
 
 test("additive expected return and ES reconcile with financing costs",()=>{
   const assets=[{symbol:"SHY"},{symbol:"STOCK"}];

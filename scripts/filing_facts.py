@@ -12,7 +12,9 @@ import xml.etree.ElementTree as ET
 XBRLI = 'http://www.xbrl.org/2003/instance'
 IX = {'http://www.xbrl.org/2013/inlineXBRL', 'http://www.xbrl.org/2008/inlineXBRL'}
 TAGS = {
-    'EarningsPerShareDiluted', 'RevenueFromContractWithCustomerExcludingAssessedTax',
+    'EarningsPerShareDiluted', 'IncomeLossFromContinuingOperationsPerDilutedShare',
+    'IncomeLossFromDiscontinuedOperationsNetOfTaxPerDilutedShare',
+    'DiscontinuedOperationIncomeLossFromDiscontinuedOperationNetOfTaxPerDilutedShare', 'RevenueFromContractWithCustomerExcludingAssessedTax',
     'Revenues', 'SalesRevenueNet', 'RevenuesNetOfInterestExpense', 'OperatingIncomeLoss',
     'NetIncomeLoss', 'ProfitLoss', 'NetCashProvidedByUsedInOperatingActivities',
     'PaymentsToAcquirePropertyPlantAndEquipment', 'PaymentsToAcquireProductiveAssets',
@@ -81,7 +83,7 @@ def extract_filing_facts(raw, filing, cik, cutoff):
             continue
         period = contexts.get(node.get('contextRef'))
         unit = units.get(node.get('unitRef'))
-        expected = 'USD/shares' if tag == 'EarningsPerShareDiluted' else 'USD'
+        expected = 'USD/shares' if tag == 'EarningsPerShareDiluted' or tag.endswith('PerDilutedShare') else 'USD'
         if not period or unit != expected:
             continue
         transform = node.get('format')

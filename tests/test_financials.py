@@ -36,6 +36,24 @@ class FinancialPeriods(unittest.TestCase):
         ]}}}
         self.assertEqual(module.ttm(facts, ["EPS"], "2026-10-24", "USD/shares")["value"], 10)
 
+    def test_diluted_earnings_components_are_collected_separately(self):
+        tags = {'EarningsPerShareDiluted': 5,
+                'IncomeLossFromContinuingOperationsPerDilutedShare': 4,
+                'IncomeLossFromDiscontinuedOperationsNetOfTaxPerDilutedShare': 1}
+        body = {'facts': {'us-gaap': {tag: {'units': {'USD/shares': [{
+            'start': '2025-01-01', 'end': '2025-12-31', 'filed': '2026-02-01', 'val': val,
+            'accn': 'original'}]}} for tag, val in tags.items()}}}
+        original = module.download
+        try:
+            module.download = lambda *args, **kwargs: json.dumps(body).encode()
+            f = module.financials(1, '2026-10-26')
+            self.assertEqual(f['eps']['value'], 5)
+            self.assertEqual(f['continuing_eps']['value'], 4)
+            self.assertEqual(f['discontinued_eps']['value'], 1)
+            self.assertEqual(f['continuing_eps']['components'][0]['accn'], 'original')
+        finally:
+            module.download = original
+
     def test_missing_facts_remain_missing(self):
         self.assertIsNone(module.ttm({}, ["Revenue"], "2026-10-24"))
         self.assertIsNone(module.instant({}, ["Shares"], "2026-10-24", "shares"))

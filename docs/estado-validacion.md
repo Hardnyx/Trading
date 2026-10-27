@@ -214,3 +214,38 @@ alrededor de un split permanece bloqueada si no se acredita la misma base por
 acción. La comprobación de vigencia y el bloqueo por beneficio/acciones siguen
 activos. La tabla de cobertura distingue la captura de companyfacts de la captura
 del informe original. Recuperar datos no valida crecimiento, múltiplos ni retornos.
+
+### 0.14.0 — Puente del BPA y sensibilidad a la base contable
+
+Se recolectan por separado BPA diluido total, de operaciones continuadas y
+operaciones discontinuadas netas de impuestos mediante conceptos estándar SEC
+US GAAP (incluido el alias histórico de discontinuadas). El iXBRL original puede
+completar esos conceptos cuando se activa la recuperación de un informe.
+
+El puente exige tres observaciones publicadas al corte, mismo periodo/método y
+los mismos intervalos en sus componentes TTM. Se verifica la reconstrucción de
+cada cifra y total = continuadas + discontinuadas. La tolerancia de redondeo es
+min(0,05; max(0,005; 0,5% del BPA total absoluto)), en USD/acción; es una regla
+operativa conservadora, no un umbral estimado. Un componente ausente no se
+interpreta como cero. Se rechazan bases distintas alrededor de splits.
+
+El usuario puede seleccionar BPA continuado conciliado para la previsión propia.
+La opción exige BPA continuado positivo y no permite mezclarlo con modelos de
+márgenes o consenso sin otra conciliación. Conserva los bloqueos de vigencia.
+Por defecto se utiliza BPA total reportado. Para previsión propia con ambas bases
+positivas y conciliadas, la diferencia entre sus retornos de valoración fija un
+mínimo de amplitud simétrica alrededor del modo de la previsión. El modo reportado
+no cambia por este diagnóstico y tampoco se altera la confianza subjetiva.
+
+La página presenta cifras, diferencia, fecha, estado del puente y sensibilidad.
+No es una normalización completa: operaciones continuadas puede incluir deterioros,
+reestructuraciones, impuestos excepcionales y beneficios de pico del ciclo. Los
+rangos son sensibilidad condicional a supuestos, no intervalos de predicción
+calibrados. Queda pendiente estimar errores y cobertura fuera de muestra con
+vintages y horizontes comparables.
+
+Las capturas se guardan como instantes UTC y se muestran completas en la zona
+horaria configurada en el navegador, detectada con Intl sin geolocalización. Se
+explicita la zona y su desfase aplicable a ese instante, incluido horario de verano. Se eliminó el recorte de fecha UTC en la propuesta, que hacía aparecer
+27 de octubre para una captura realizada el 26 por la noche en Lima. Fechas
+contables y fechas de presentación permanecen como fechas de sus documentos.

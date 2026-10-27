@@ -4,7 +4,7 @@ import {
   normalizeWeights,
   metrics,
   scenarios,
-} from "../analytics.mjs?v=0.13.0";
+} from "../analytics.mjs?v=0.14.0";
 import {
   sparkline,
   portfolioChart,
@@ -13,7 +13,7 @@ import {
   scatter,
   forecastCone,
   histogram,
-} from "../charts.mjs?v=0.13.0";
+} from "../charts.mjs?v=0.14.0";
 import {
   esc,
   url,
@@ -23,22 +23,25 @@ import {
   compact,
   color,
   dateLabel,
-} from "./format.mjs?v=0.13.0";
-import { template } from "./templates.mjs?v=0.13.0";
-import { DEFAULT_COMPOSITION_RULES } from "../composer.mjs?v=0.13.0";
-import { factorModel } from "../factors.mjs?v=0.13.0";
-import { MODEL_VERSION } from "../policy.mjs?v=0.13.0";
-import { financialFreshness } from '../financial-freshness.mjs?v=0.13.0';
-import { priceMonitor } from '../price-monitor.mjs?v=0.13.0';
+  timestampLabel,
+} from "./format.mjs?v=0.14.0";
+import { template } from "./templates.mjs?v=0.14.0";
+import { DEFAULT_COMPOSITION_RULES } from "../composer.mjs?v=0.14.0";
+import { factorModel } from "../factors.mjs?v=0.14.0";
+import { MODEL_VERSION } from "../policy.mjs?v=0.14.0";
+import { financialFreshness } from '../financial-freshness.mjs?v=0.14.0';
+import { priceMonitor } from '../price-monitor.mjs?v=0.14.0';
 
-import { createDecisionViews } from "./decision-views.mjs?v=0.13.0";
+import { createDecisionViews } from "./decision-views.mjs?v=0.14.0";
 
 export function compositionValuationEvidence(signal) {
   if(!signal.filed)return "";
   const v=signal.valuationEvidence;
   if(!v)return "Supuestos sin guardar en esta propuesta: vuelve a proponer cartera.";
   const a=v.assumptions;
-  return `Supuestos: ${v.source} · crecimiento ${pct(a.growth)} · P/E de salida ${fmt(a.multiple,1)} · valoración a ${fmt(a.horizon,0)} años · confianza asignada ${pct(v.confidence)}. Sin calibración predictiva.`;
+  const base=finite(v.effectiveBaseEPS)?` · BPA de partida ${money(v.effectiveBaseEPS)} (${v.earningsBasis==='continuing'?'operaciones continuadas':'base de valoración'})`:"";
+  const sensitivity=v.accountingSensitivity>0?` · sensibilidad a base contable ${pct(v.accountingSensitivity)} / año`:"";
+  return `Supuestos: ${v.source}${base}${sensitivity} · crecimiento ${pct(a.growth)} · P/E de salida ${fmt(a.multiple,1)} · valoración a ${fmt(a.horizon,0)} años · confianza asignada ${pct(v.confidence)}. Sin calibración predictiva.`;
 }
 
 export function financialCoverageView(data){
@@ -51,8 +54,8 @@ export function financialCoverageView(data){
   rows:rows.sort((x,y)=>Number(y.f.blocked)-Number(x.f.blocked)||x.a.symbol.localeCompare(y.a.symbol))
    .map(({a,f})=>template('financial-coverage-row',{
     symbol:a.symbol,period:dateLabel(f.period),filed:dateLabel(f.filed),method:f.method||'—',
-    observed:f.observedAt?f.observedAt.replace('T',' ').slice(0,19)+' UTC':'No registrada',
-    originalObserved:f.originalRecovery?.observed_at?'Informe original: '+f.originalRecovery.observed_at.replace('T',' ').slice(0,19)+' UTC':'',
+    observed:f.observedAt?timestampLabel(f.observedAt):'No registrada',
+    originalObserved:f.originalRecovery?.observed_at?'Informe original: '+timestampLabel(f.originalRecovery.observed_at):'',
     latest:f.latestReport?f.latestReport.form+' · '+dateLabel(f.latestReport.filing_date):'Sin documento registrado',
     status:f.reason+(f.originalEps?' · BPA usa XBRL del informe original':f.originalRecovery?' · Recuperación del informe original sin BPA reconciliado':'')+(f.refreshStatus==='retained_after_failure'?' · Se conservó la captura previa por fallo de actualización':''),
     sourceUrl:url(f.latestReport?.url||a.financials?.source_url||'https://www.sec.gov/edgar/search/')
@@ -68,7 +71,7 @@ export function priceMonitorView(data,positions=[],filter='all',open=false){
   heldSelected:filter==='held'?'selected':'',eventsSelected:filter==='events'?'selected':'',
   rows:m.rows.map(r=>template('price-monitor-row',{
    symbol:r.symbol,held:r.held?'En cartera':'',price:money(r.price),date:dateLabel(r.priceDate),
-   observed:r.observedAt?'Captura '+r.observedAt.replace('T',' ').slice(0,19)+' UTC':'Captura no registrada',
+   observed:r.observedAt?'Captura '+timestampLabel(r.observedAt):'Captura no registrada',
    coverage:r.coverage,trend:r.available?r.trend:r.reason,event:r.available?r.event:'Sin evaluación',
    momentum:pct(r.momentum126,1,true),distance:pct(r.distance200,1,true),
    drawdown:pct(r.drawdown252,1),volatility:pct(r.volatility63,1),
@@ -957,7 +960,7 @@ export function createViews(context) {
             high: pct(s.favorableAnchor),
             valuationEvidence: compositionValuationEvidence(s),
             source: s.filed
-              ? `BPA ${money(s.eps)} · ${s.financialMethod||'método no registrado'} hasta ${dateLabel(s.financialPeriod)} · presentado ${dateLabel(s.filed)} · captura XBRL ${s.financialObservedAt?dateLabel(s.financialObservedAt.slice(0,10)):'no registrada'}`
+              ? `BPA publicado ${money(s.eps)} · ${s.financialMethod||'método no registrado'} hasta ${dateLabel(s.financialPeriod)} · presentado ${dateLabel(s.filed)} · captura XBRL ${s.financialObservedAt?timestampLabel(s.financialObservedAt):'no registrada'}`
               : s.source+(s.bondDate?' · perfil al '+dateLabel(s.bondDate):''),
           }),
         )

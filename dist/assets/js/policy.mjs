@@ -1,6 +1,6 @@
-import { finite, normalizeWeights, sum } from "./analytics.mjs?v=0.13.0";
+import { finite, normalizeWeights, sum } from "./analytics.mjs?v=0.14.0";
 
-export const MODEL_VERSION = "0.13.0";
+export const MODEL_VERSION = "0.14.0";
 export function informationDate(snapshot) {
   const parts = Object.fromEntries(
     new Intl.DateTimeFormat("en-US", {
@@ -52,6 +52,7 @@ export const DEFAULT_EXECUTION = {
 };
 export const DEFAULT_RESEARCH = {
   basis: "own",
+  earningsBasis: "reported",
   confidence: 0.6,
   priorReturn: 0.06,
   revenueGrowth: null,

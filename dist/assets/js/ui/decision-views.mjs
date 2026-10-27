@@ -1,6 +1,6 @@
-import { template as t } from "./templates.mjs?v=0.13.0";
-import { pct, fmt, money, dateLabel } from "./format.mjs?v=0.13.0";
-import { finite, sum, normalizeWeights } from "../analytics.mjs?v=0.13.0";
+import { template as t } from "./templates.mjs?v=0.14.0";
+import { pct, fmt, money, dateLabel } from "./format.mjs?v=0.14.0";
+import { finite, sum, normalizeWeights } from "../analytics.mjs?v=0.14.0";
 import {
   DEFAULT_MANDATE,
   DEFAULT_EXECUTION,
@@ -8,15 +8,16 @@ import {
   DEFAULT_REGIMES,
   currentAccount,
   informationDate,
-} from "../policy.mjs?v=0.13.0";
+} from "../policy.mjs?v=0.14.0";
 import {
   fundamentalForecast,
   businessQuality,
   evaluateThesis,
   bondAssumptions,
-} from "../research-model.mjs?v=0.13.0";
-import { factorModel, factorAttribution } from "../factors.mjs?v=0.13.0";
-import { evaluateJournal } from "../journal.mjs?v=0.13.0";
+} from "../research-model.mjs?v=0.14.0";
+import { dilutedEarningsBridge } from '../earnings-normalization.mjs?v=0.14.0';
+import { factorModel, factorAttribution } from "../factors.mjs?v=0.14.0";
+import { evaluateJournal } from "../journal.mjs?v=0.14.0";
 const objectives = {
   growth: "Crecimiento logarítmico",
   preservation: "Preservación · utilidad CRRA",
@@ -451,6 +452,7 @@ export function createDecisionViews({ state = {}, data, asset }) {
       }),
       q = businessQuality(a, asOf),
       thesis = evaluateThesis(a, r, asOf);
+    const bridge=dilutedEarningsBridge(a,asOf);
     const fields = [
       select(
         "research",
@@ -465,6 +467,8 @@ export function createDecisionViews({ state = {}, data, asset }) {
         ],
         a.symbol,
       ),
+      select("research", "earningsBasis", "BPA PARA PREVISIÓN PROPIA", r.earningsBasis,
+        [["reported", "Total reportado"], ["continuing", "Operaciones continuadas · requiere conciliación"]], a.symbol),
       field(
         "research",
         "confidence",
@@ -604,6 +608,18 @@ export function createDecisionViews({ state = {}, data, asset }) {
           comparison +
           message(f.error || (f.warnings || []).join(" · ")),
         "La confianza se ajusta por cobertura, antigüedad y contradicciones de tesis; no equivale a precisión observada. El consenso es anual, puede interpolarse entre ejercicios y requiere base contable comparable.",
+      ) +
+      section(
+        "PUENTE DEL BPA DILUIDO",
+        table(["CONCEPTO", "USD / ACCIÓN"], [
+          ["BPA total reportado", fmt(bridge.reported)],
+          ["BPA de operaciones continuadas", fmt(bridge.continuing)],
+          ["BPA discontinuado neto de impuestos", fmt(bridge.discontinued)],
+          ["Diferencia de conciliación", fmt(bridge.residual, 4)],
+          ["Sensibilidad anual a la base contable", pct(f.accountingSensitivity)],
+          ["Periodo / presentación", bridge.available ? dateLabel(bridge.period)+' / '+dateLabel(bridge.filed) : '—'],
+        ]) + message(bridge.reason),
+        "Total = continuadas + discontinuadas. La sensibilidad amplía el rango en ambas direcciones sin cambiar el modo reportado. Es un análisis condicional, sin calibración estadística. Operaciones continuadas puede contener extraordinarios y efectos del ciclo. El BPA continuado se usa sólo con previsión propia; conserva los controles de vigencia y splits.",
       ) +
       section(
         "CALIDAD Y SOSTENIBILIDAD",

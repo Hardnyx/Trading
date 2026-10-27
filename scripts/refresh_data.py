@@ -317,6 +317,9 @@ def financials(cik, cutoff, original_filing=None):
     }
     result = {name: ttm(facts, tags, cutoff) for name, tags in mapping.items()}
     result["eps"] = ttm(facts, ["EarningsPerShareDiluted"], cutoff, "USD/shares")
+    result["continuing_eps"] = ttm(facts, ["IncomeLossFromContinuingOperationsPerDilutedShare"], cutoff, "USD/shares")
+    result["discontinued_eps"] = ttm(facts, ["IncomeLossFromDiscontinuedOperationsNetOfTaxPerDilutedShare",
+        "DiscontinuedOperationIncomeLossFromDiscontinuedOperationNetOfTaxPerDilutedShare"], cutoff, "USD/shares")
     result["cash"] = instant(facts, ["CashAndCashEquivalentsAtCarryingValue", "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents"], cutoff)
     result["equity"] = instant(facts, ["StockholdersEquity", "StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest"], cutoff)
     result["assets"] = instant(facts, ["Assets"], cutoff)

@@ -1,25 +1,26 @@
+import {timestampLabel} from '../dist/assets/js/ui/format.mjs?v=0.14.0';
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import {
   createTemplateRenderer,
   loadTemplates,
-} from "../dist/assets/js/ui/templates.mjs?v=0.13.0";
-import { createViews, NAV } from "../dist/assets/js/ui/views.mjs?v=0.13.0";
+} from "../dist/assets/js/ui/templates.mjs?v=0.14.0";
+import { createViews, NAV } from "../dist/assets/js/ui/views.mjs?v=0.14.0";
 import {
   valuation,
   portfolioAnalysis,
   metrics,
-} from "../dist/assets/js/analytics.mjs?v=0.13.0";
+} from "../dist/assets/js/analytics.mjs?v=0.14.0";
 import {
   simulateForecast,
   validateRiskBands,
-} from "../dist/assets/js/forecast.mjs?v=0.13.0";
+} from "../dist/assets/js/forecast.mjs?v=0.14.0";
 import {
   registerPortfolio,
   reviewPortfolio,
   DEFAULT_RULES,
-} from "../dist/assets/js/monitor.mjs?v=0.13.0";
+} from "../dist/assets/js/monitor.mjs?v=0.14.0";
 
 test("external templates escape untrusted text and attributes without interpreting inserted placeholders", () => {
   const render = createTemplateRenderer([
@@ -43,7 +44,7 @@ test("template configuration rejects missing bindings and duplicate template nam
   assert.throws(() => render("missing"), /no disponible/);
 });
 
-import { MODEL_VERSION } from "../dist/assets/js/policy.mjs?v=0.13.0";
+import { MODEL_VERSION } from "../dist/assets/js/policy.mjs?v=0.14.0";
 
 await loadTemplates(async (url) => ({
   ok: true,
@@ -255,7 +256,7 @@ for (const populated of [false, true])
   });
 
 test("composition distinguishes published EPS from the effective valuation assumptions", async () => {
-  const { compositionValuationEvidence } = await import("../dist/assets/js/ui/views.mjs?v=0.13.0");
+  const { compositionValuationEvidence } = await import("../dist/assets/js/ui/views.mjs?v=0.14.0");
   const text = compositionValuationEvidence({filed:"2026-10-22",valuationEvidence:{
     source:"BPA y múltiplo propios",assumptions:{growth:.04,multiple:16,horizon:3},
     confidence:.514285714,prior:.06,
@@ -270,7 +271,7 @@ test("composition distinguishes published EPS from the effective valuation assum
 });
 
 test('robustness panel exposes conditional results, current comparison and stale-input protection', async()=>{
- const {robustnessView}=await import('../dist/assets/js/ui/views.mjs?v=0.13.0');
+ const {robustnessView}=await import('../dist/assets/js/ui/views.mjs?v=0.14.0');
  const metric={medianReturn:.03,cvar95:.1,lossProbability:.3};
  const report={as_of:'2026-10-23',horizon:1,account_source:'Cuenta <propia>',candidate_count:500,
   verified_candidates:12,decision:'no_robust_rebalance_evidence',current:{structuralFeasible:false,verification:{original:metric}},
@@ -289,8 +290,8 @@ test('robustness panel exposes conditional results, current comparison and stale
 });
 
 test('robust transition explains hypothetical trades, reconciles cash and blocks incomplete tax evidence',async()=>{
- const {robustTransitionView}=await import('../dist/assets/js/ui/views.mjs?v=0.13.0');
- const {robustTransition}=await import('../dist/assets/js/robust-transition.mjs?v=0.13.0');
+ const {robustTransitionView}=await import('../dist/assets/js/ui/views.mjs?v=0.14.0');
+ const {robustTransition}=await import('../dist/assets/js/robust-transition.mjs?v=0.14.0');
  const plan=robustTransition([{symbol:'A<',price:100},{symbol:'CASH',price:1}],
   [{symbol:'CASH',weight:1}],[{symbol:'A<',weight:.5},{symbol:'CASH',weight:.5}],10000,{commissionFixed:5});
  const html=robustTransitionView(plan,false);
@@ -305,18 +306,18 @@ test('robust transition explains hypothetical trades, reconciles cash and blocks
 });
 
 test('financial coverage distinguishes report, accounting period and source capture',async()=>{
- const {financialCoverageView}=await import('../dist/assets/js/ui/views.mjs?v=0.13.0');
+ const {financialCoverageView}=await import('../dist/assets/js/ui/views.mjs?v=0.14.0');
  const html=financialCoverageView({price_as_of:'2026-10-26',assets:[{symbol:'A<',type:'stock',
   financials:{eps:{value:5,period_end:'2026-06-30',filed:'2026-07-30',method:'TTM'},
    observed_at:'2026-10-26T21:00:00Z',refresh_status:'retained_after_failure'},
   filings:[{form:'10-Q',filing_date:'2026-10-23',report_date:'2026-09-30',url:'https://www.sec.gov/'}]}]});
  assert.match(html,/1 CON INFORME POSTERIOR/);assert.match(html,/CAPTURA XBRL/);
- assert.match(html,/A&lt;/);assert.match(html,/2026-10-26 21:00:00 UTC/);
+ assert.match(html,/A&lt;/);assert.ok(html.includes(timestampLabel('2026-10-26T21:00:00Z')));
  assert.match(html,/captura previa por fallo/);assert.ok(!html.includes('undefined'));
 });
 
 test('price monitor renders empty filters and keeps descriptive price data separate from anchors',async()=>{
- const {priceMonitorView}=await import('../dist/assets/js/ui/views.mjs?v=0.13.0');
+ const {priceMonitorView}=await import('../dist/assets/js/ui/views.mjs?v=0.14.0');
  const snapshot={price_as_of:'2026-10-26',assets:[{symbol:'A<',type:'stock',price:10,price_date:'2026-10-26',history:[]}]};
  const html=priceMonitorView(snapshot,[],'all');
  assert.match(html,/A&lt;/);assert.match(html,/252 cierres/);

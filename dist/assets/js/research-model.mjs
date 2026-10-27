@@ -1,6 +1,7 @@
-import { finite, metrics, valuation, scenarios } from "./analytics.mjs?v=0.13.0";
-import { DEFAULT_RESEARCH } from "./policy.mjs?v=0.13.0";
-import { financialFreshness } from './financial-freshness.mjs?v=0.13.0';
+import { finite, metrics, valuation, scenarios } from "./analytics.mjs?v=0.14.0";
+import { DEFAULT_RESEARCH } from "./policy.mjs?v=0.14.0";
+import { dilutedEarningsBridge } from './earnings-normalization.mjs?v=0.14.0';
+import { financialFreshness } from './financial-freshness.mjs?v=0.14.0';
 
 const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
 const years = (a, b) =>
@@ -63,6 +64,8 @@ export function validateResearch(input = {}) {
   const r = { ...DEFAULT_RESEARCH, ...input };
   if (!["own", "drivers", "consensus", "blend"].includes(r.basis))
     throw new Error("Base de previsión no válida.");
+  if (!["reported", "continuing"].includes(r.earningsBasis))
+    throw new Error("Base de beneficios no válida.");
   for (const [key, low, high] of [
     ["confidence", 0, 1],
     ["priorReturn", -0.8, 2],
@@ -330,6 +333,7 @@ export function fundamentalForecast(
     horizon = a.horizon,
     base = metrics(asset).eps,
     warnings = [];
+  const earningsBridge = dilutedEarningsBridge(asset, asOf);
   const freshness=financialFreshness(original,asOf);
   if(freshness.status==='newer_report')return {valid:false,error:freshness.reason,quality,thesis,freshness};
   if (!finite(horizon) || horizon < 1 || horizon > 10)
@@ -341,6 +345,13 @@ export function fundamentalForecast(
     };
   let adjustedAsset = asset,
     growth = a.growth;
+  if (r.earningsBasis === 'continuing') {
+    if (r.basis !== 'own') return {valid:false,error:'El BPA continuado requiere previsión propia; ventas/márgenes y consenso necesitan otra conciliación contable',quality,thesis,earningsBridge};
+    if (!earningsBridge.available || !(earningsBridge.continuing>0))
+      return {valid:false,error:'BPA continuado positivo sin conciliar: '+earningsBridge.reason,quality,thesis,earningsBridge};
+    adjustedAsset={...asset,financials:{...asset.financials,eps:{...asset.financials.eps,value:earningsBridge.continuing}}};
+    warnings.push('BPA de operaciones continuadas: no acredita beneficios recurrentes ni normalización del ciclo');
+  }
   if (
     ["blend", "consensus"].includes(r.basis) &&
     r.consensusComparable &&
@@ -389,7 +400,7 @@ export function fundamentalForecast(
     source =
       r.basis === "drivers"
         ? "Ventas, margen neto y dilución propios"
-        : "BPA y múltiplo propios";
+        : r.earningsBasis === "continuing" ? "BPA continuado conciliado y múltiplo propios" : "BPA y múltiplo propios";
   if (["consensus", "blend"].includes(r.basis)) {
     if (consensus.error && r.basis === "consensus")
       return {
@@ -440,9 +451,17 @@ export function fundamentalForecast(
     ),
     cases = scenarios(adjustedAsset, { ...a, growth: equivalentGrowth }),
     dispersion = 2 - confidence;
+  // Symmetric accounting sensitivity avoids moving the mode by treating a
+  // favorable normalization as certain. This is not a calibrated error band.
+  let accountingSensitivity = 0;
+  if (r.basis === 'own' && earningsBridge.available && earningsBridge.reported>0 && earningsBridge.continuing>0) {
+    const alternativeEPS=r.earningsBasis==='continuing'?earningsBridge.reported:earningsBridge.continuing;
+    const alternative=valuation({...asset,financials:{...asset.financials,eps:{...asset.financials.eps,value:alternativeEPS}}},{...a,growth});
+    if (alternative && finite(alternative.annualReturn)) accountingSensitivity=Math.abs(alternative.annualReturn-model.annualReturn);
+  }
   const low = clamp(
     Math.min(
-      central,
+      central - accountingSensitivity,
       central +
         (cases[0].result.annualReturn - model.annualReturn) * dispersion,
     ),
@@ -451,7 +470,7 @@ export function fundamentalForecast(
   );
   const high = clamp(
     Math.max(
-      central,
+      central + accountingSensitivity,
       central +
         (cases[2].result.annualReturn - model.annualReturn) * dispersion,
     ),
@@ -477,6 +496,10 @@ export function fundamentalForecast(
     consensus,
     forecastEPS,
     targetDate,
+    earningsBridge,
+    earningsBasis: r.earningsBasis,
+    accountingSensitivity,
+    effectiveBaseEPS: comparableBase,
     ownEPS: own.futureBase,
     ownAnnualReturn: own.annualReturn,
     confidence,

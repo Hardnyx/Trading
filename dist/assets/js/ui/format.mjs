@@ -1,4 +1,4 @@
-import { finite } from "../analytics.mjs?v=0.13.0";
+import { finite } from "../analytics.mjs?v=0.14.0";
 
 export const esc = (s) =>
   String(s ?? "").replace(
@@ -36,8 +36,29 @@ export const dateLabel = (d) =>
           day: "2-digit",
           month: "short",
           year: "numeric",
-          timeZone: d.includes("T") ? "America/Lima" : "UTC",
+          timeZone: d.includes("T") ? localTimeZone() : "UTC",
         })
         .replaceAll(".", "")
         .toUpperCase()
     : "—";
+
+// The browser exposes its configured time zone without geolocation permission.
+export function localTimeZone() {
+  try { return Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC'; }
+  catch { return 'UTC'; }
+}
+export function timestampLabel(value, zone = localTimeZone()) {
+  if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}T.*(?:Z|[+-]\d{2}:\d{2})$/.test(value)) return '—';
+  const instant = new Date(value);
+  if (!Number.isFinite(instant.getTime())) return '—';
+  try { new Intl.DateTimeFormat('es-PE', {timeZone: zone}); } catch { zone = 'UTC'; }
+  const day = new Intl.DateTimeFormat('es-PE', {timeZone: zone, day:'2-digit',month:'short',year:'numeric'})
+    .format(instant).replaceAll('.', '').toUpperCase();
+  const clock = new Intl.DateTimeFormat('es-PE', {timeZone: zone,
+    hour:'2-digit',minute:'2-digit',second:'2-digit',hourCycle:'h23',timeZoneName:'shortOffset'});
+  const parts = clock.formatToParts(instant);
+  const pick = type => parts.find(p=>p.type===type)?.value;
+  const offset = pick('timeZoneName').replace('GMT','UTC').replace('-', '−');
+  const label = zone==='UTC' ? 'UTC' : zone+' ('+offset+')';
+  return day+' '+pick('hour')+':'+pick('minute')+':'+pick('second')+' · '+label;
+}

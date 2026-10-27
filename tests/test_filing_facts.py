@@ -65,6 +65,15 @@ class OriginalFilingFacts(unittest.TestCase):
         raw = raw.replace(b'http://www.xbrl.org/inlineXBRL/transformation/2022-02-16', b'http://example.com/custom')
         self.assertEqual(self.extract(raw), {})
 
+    def test_continuing_and_discontinued_concepts_use_per_share_units(self):
+        names = ['IncomeLossFromContinuingOperationsPerDilutedShare',
+                 'IncomeLossFromDiscontinuedOperationsNetOfTaxPerDilutedShare',
+                 'DiscontinuedOperationIncomeLossFromDiscontinuedOperationNetOfTaxPerDilutedShare']
+        for name in names:
+            facts = self.extract(document(fact('1.25', 'us-gaap:'+name)))
+            self.assertEqual(facts[name]['units']['USD/shares'][0]['val'], 1.25)
+            self.assertEqual(self.extract(document(fact('1.25', 'us-gaap:'+name, 'u'))), {})
+
     def test_blocks_entity_declarations(self):
         with self.assertRaises(ValueError):
             self.extract(b'<!DOCTYPE x><x/>')
