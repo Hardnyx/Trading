@@ -2,7 +2,7 @@
 
 Research, composición y seguimiento de una cartera personal de acciones y ETFs de Estados Unidos.
 
-**Motor 0.25.0.** Propuesta más breve, con la explicación de la mezcla y del efectivo a la vista, y fuentes y supuestos en un desplegable. La búsqueda comprueba reasignaciones locales desde el efectivo antes de cerrar la propuesta. Se conservan la historia de BPA, las protecciones contables y las anclas existentes. El modelo sigue siendo experimental. Véanse [el estado actual, las comprobaciones y los pendientes](docs/estado-validacion.md).
+**Motor 0.26.0.** Propuesta más breve, con la explicación de la mezcla y del efectivo a la vista, y fuentes y supuestos en un desplegable. La búsqueda comprueba reasignaciones locales desde el efectivo antes de cerrar la propuesta. Se conservan la historia de BPA, las protecciones contables y las anclas existentes. El modelo sigue siendo experimental. Véanse [el estado actual, las comprobaciones y los pendientes](docs/estado-validacion.md).
 
 [Abrir aplicación](https://hardnyx.github.io/Trading/)
 

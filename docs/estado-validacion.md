@@ -704,3 +704,26 @@ Un equivalente cierto menor no indica una cartera peor: deja de contar
 alfa no acreditado. La renta variable sigue en su tope del 50% con acciones
 sueltas, porque un alfa positivo justifica sobreponderar frente al índice.
 Su tamaño depende del IC declarado, hasta que exista una medición (pendiente 1).
+
+### 0.26.0 — Centrado macro a todo horizonte y holdings con primera observación
+
+Cierra dos hallazgos de la [revisión de 0.24.0](revision-modelo-2026-10-27.md):
+
+- **Centrado al horizonte.** La simulación acumula la condición anual de
+  cada escenario durante H años, pero se centraba `exp(c)`, no `exp(H·c)`:
+  el multiplicador medio por escenarios era 0,991240 a tres meses y
+  1,016724 a cinco años. Ahora se resta `log(Σ p·e^(H·c)) / H`. La
+  identidad se cumple con error 1e-12 a 3 y 6 meses y a 1, 2, 3 y 5 años,
+  para bonos y para acciones con BPA al 12% bajo los escenarios por defecto.
+  Una prueba de extremo a extremo a dos años reproduce 1,04². La ficha de
+  bonos y las trayectorias siguen usando la misma función. A un año (valor
+  por defecto) las propuestas no cambian.
+- **Holdings con primera observación.** `holdingsAnchor` y el ajuste
+  transversal usan ahora `actualHoldings`, igual que el informe de
+  exposición. Exigen fecha económica, primera observación anterior al corte
+  de información, antigüedad de 120 días o menos, símbolos válidos sin
+  duplicados y pesos acotados. Al corte del 27-oct, las 51 composiciones
+  publicadas se observaron antes del corte y las anclas no cambian. La vía
+  de filtración afectaba a reconstrucciones e importaciones.
+
+Sigue abierta la sustitución CI → NFLX omitida por la búsqueda (pendiente 20).

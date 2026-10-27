@@ -1,8 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { crossSectionalRefinement, marketExposure, ALPHA_SCORE_LIMIT, BLUME_BETA_WEIGHT }
-  from "../dist/assets/js/return-model.mjs?v=0.25.0";
-import { seededRandom, normalGenerator } from "../dist/assets/js/random.mjs?v=0.25.0";
+  from "../dist/assets/js/return-model.mjs?v=0.26.0";
+import { seededRandom, normalGenerator } from "../dist/assets/js/random.mjs?v=0.26.0";
 
 const near = (a, b, tolerance = 1e-10) =>
   assert.ok(Math.abs(a - b) <= tolerance, `${a} != ${b}`);
@@ -23,7 +23,7 @@ function universe(count = 30, seed = 7) {
       history: path(market.map((m) => beta * m + vol * normal())) };
   });
   const benchmark = { symbol: "SPY", type: "etf", history: path(market),
-    holdings: { as_of: asOf, positions: stocks.map((s) => ({ symbol: s.symbol, weight: 1 / count })) } };
+    holdings: { as_of: asOf, observed_at: asOf + "T22:00:00Z", positions: stocks.map((s) => ({ symbol: s.symbol, weight: 1 / count })) } };
   // Building-block signals spread far wider than a modest skill supports.
   const forecasts = new Map(stocks.map((s, i) => {
     const raw = -0.1 + 0.3 * ((i * 11) % count) / count;

@@ -1,6 +1,6 @@
 # Trading · lo que falta
 
-Backlog actualizado el 27 de octubre de 2026 para el motor 0.24.0, corte de
+Backlog actualizado el 27 de octubre de 2026 para el motor 0.26.0, corte de
 precios examinado del 27-oct, 260 instrumentos (160 acciones, 100 ETF).
 Consultar las pruebas y los cierres en `docs/estado-validacion.md`. Cero
 incidencias publicadas o pruebas de software aprobadas no acreditan datos
@@ -61,10 +61,6 @@ Este archivo lista **solo lo que falta**. Para el funcionamiento, consultar
   Faltan ratios de gastos fechados, que hoy no se descuentan. La banda supone
   errores perfectamente correlacionados entre constituyentes; falta medir su
   diversificación. El umbral de 70% es operativo.
-- **Defecto temporal medido en 0.24.0:** `holdingsAnchor` acepta una
-  composición cuya primera observación es posterior al corte; no comparte
-  los controles de `actualHoldings`. Falta exigir primera observación y
-  validación estructural, incluidos duplicados, antes de habilitar el ancla.
 - **Terminado cuando:** todo ETF de renta variable comprable tiene ancla con
   fuente y fecha, neta de gastos, o queda en observación con el motivo.
 
@@ -94,18 +90,6 @@ Este archivo lista **solo lo que falta**. Para el funcionamiento, consultar
   Puntuación por horizonte semanal y mensual, no solo a una sesión.
 - **Terminado cuando:** el estado pasa a `evaluable` (≥ 20 sesiones y ≥ 500
   activo-días) y existe una decisión documentada sobre GJR frente a EWMA.
-
-### Centrado macro incompleto fuera del horizonte de un año
-
-- **Evidencia en 0.24.0:** se centra `exp(c)` pero se simula `exp(H*c)`.
-  Con los escenarios predeterminados y BPA al 12%, el multiplicador medio
-  por escenarios es 0,991240 a tres meses y 1,016724 a cinco años; debe ser
-  uno bajo la convención declarada. A un año sí se cumple.
-- **Falta:** normalizar la condición anual con la media bruta del horizonte
-  completo y comprobar 3/6 meses y 1/2/3/5 años, también para bonos.
-- **Terminado cuando:** la identidad ponderada se cumple por horizonte y la
-  simulación y las fichas usan la misma función. Véase la
-  [revisión reproducida](revision-modelo-2026-10-27.md).
 
 ## P1 · Modelo frente al documento técnico (`docs/modelo-estocastico-eventos.md`)
 

@@ -1,6 +1,6 @@
-import { alignReturns, covariance, variance, mean, finite } from "./analytics.mjs?v=0.25.0";
-import { SECTOR_PROXIES } from "./policy.mjs?v=0.25.0";
-import { ewmaCovariance } from "./risk-math.mjs?v=0.25.0";
+import { alignReturns, covariance, variance, mean, finite } from "./analytics.mjs?v=0.26.0";
+import { SECTOR_PROXIES } from "./policy.mjs?v=0.26.0";
+import { ewmaCovariance } from "./risk-math.mjs?v=0.26.0";
 
 const clamp = (x, low, high) => Math.max(low, Math.min(high, x));
 const toCorrelation = (matrix) => matrix.map((row, i) =>

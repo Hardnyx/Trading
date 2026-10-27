@@ -5,23 +5,23 @@ import {
   quantile,
   sum,
   normalizeWeights,
-} from "./analytics.mjs?v=0.25.0";
-import { seededRandom, normalGenerator, poisson } from "./random.mjs?v=0.25.0";
-import { ewmaCovariance, cholesky } from "./risk-math.mjs?v=0.25.0";
-import { buildReturnAnchors, sampleDrifts, bondScenarioAnnualReturn, bondRegimeShift } from "./return-model.mjs?v=0.25.0";
-import { distributionAccounting } from "./distribution-ledger.mjs?v=0.25.0";
-import { cashGrowth, uniformCashGrowth } from "./cashflows.mjs?v=0.25.0";
-import { copulaInnovationCovariance } from './copula-covariance.mjs?v=0.25.0';
-import { assetAt } from "./research-model.mjs?v=0.25.0";
-import { factorModel } from "./factors.mjs?v=0.25.0";
-import { conditionalRisk, updateGjrVariance, updateEwmaVariance, updateTargetedVariance, studentMarginal, HORIZON_PERSISTENCE } from "./conditional-risk.mjs?v=0.25.0";
-import { marketFactorCovariance, conditionalFactorization } from "./factor-covariance.mjs?v=0.25.0";
+} from "./analytics.mjs?v=0.26.0";
+import { seededRandom, normalGenerator, poisson } from "./random.mjs?v=0.26.0";
+import { ewmaCovariance, cholesky } from "./risk-math.mjs?v=0.26.0";
+import { buildReturnAnchors, sampleDrifts, bondScenarioAnnualReturn, bondRegimeShift } from "./return-model.mjs?v=0.26.0";
+import { distributionAccounting } from "./distribution-ledger.mjs?v=0.26.0";
+import { cashGrowth, uniformCashGrowth } from "./cashflows.mjs?v=0.26.0";
+import { copulaInnovationCovariance } from './copula-covariance.mjs?v=0.26.0';
+import { assetAt } from "./research-model.mjs?v=0.26.0";
+import { factorModel } from "./factors.mjs?v=0.26.0";
+import { conditionalRisk, updateGjrVariance, updateEwmaVariance, updateTargetedVariance, studentMarginal, HORIZON_PERSISTENCE } from "./conditional-risk.mjs?v=0.26.0";
+import { marketFactorCovariance, conditionalFactorization } from "./factor-covariance.mjs?v=0.26.0";
 import {
   mandate,
   regimes,
   withdrawalSchedule,
   DEFAULT_REGIMES,
-} from "./policy.mjs?v=0.25.0";
+} from "./policy.mjs?v=0.26.0";
 
 export const BASE_REGIME = {
   id: "base",
@@ -183,12 +183,15 @@ export function regimeCondition(asset, anchor, regime, H) {
     Math.log1p(regime.multipleShift) / H;
 }
 /**
- * Scenario log-drift adjustments as the simulation applies them: centered so
- * the probability-weighted gross return of the scenarios is exactly one.
+ * Scenario log-drift adjustments as the simulation applies them: annual
+ * conditions accumulated over the horizon H, centered so the probability-
+ * weighted terminal gross return of the scenarios is exactly one at H
+ * (centering exp(c) instead of exp(H c) is exact only at one year).
  */
 export function centeredRegimeConditions(asset, anchor, macro, H) {
   const raw = macro.map((row) => regimeCondition(asset, anchor, row, H));
-  const mean = Math.log(macro.reduce((total, row, k) => total + row.probability * Math.exp(raw[k]), 0));
+  const mean = Math.log(macro.reduce((total, row, k) =>
+    total + row.probability * Math.exp(H * raw[k]), 0)) / H;
   return raw.map((value) => value - mean);
 }
 export function jumpParameters(asset, anchor, options, regime) {
@@ -269,7 +272,7 @@ export function generatePaths(inputs, paths, seed, stepsPerYear = 52) {
   // Probability-weighted scenario effect per instrument, removed so that the
   // anchor stays the expected return (uncentered scenarios cut the simulated
   // equity mean by about 6 pp and acted as an undeclared pessimistic prior).
-  // Centered in gross-return space: E[exp(condition - mean)] = 1 exactly.
+  // Centered in terminal gross-return space: E[exp(H (condition - mean))] = 1.
   const centered = assets.map((a, i) => centeredRegimeConditions(a, anchors[i], macro, H));
   for (let p = 0; p < paths; p++) {
     let u = random(),

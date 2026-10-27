@@ -7,14 +7,14 @@ import {
   withCashAsset,
   regimes,
   DEFAULT_REGIMES,
-} from "../dist/assets/js/policy.mjs?v=0.25.0";
+} from "../dist/assets/js/policy.mjs?v=0.26.0";
 import {
   fundamentalForecast,
   consensusAt,
   evaluateThesis,
   bondAssumptions,
   CREDIT_CONVENTIONS,
-} from "../dist/assets/js/research-model.mjs?v=0.25.0";
+} from "../dist/assets/js/research-model.mjs?v=0.26.0";
 import {
   valuation,
   correlation,
@@ -22,12 +22,12 @@ import {
   resolveAssumptions,
   returnDecomposition,
   RERATING_HALF_LIFE_YEARS,
-} from "../dist/assets/js/analytics.mjs?v=0.25.0";
-import { sampleDrifts, bondScenarioAnnualReturn, buildReturnAnchors, holdingsAnchor, constituentForecasts, HOLDINGS_ANCHOR_MIN_COVERAGE, centeredTriangularQuantile, bondRegimeShift } from "../dist/assets/js/return-model.mjs?v=0.25.0";
+} from "../dist/assets/js/analytics.mjs?v=0.26.0";
+import { sampleDrifts, bondScenarioAnnualReturn, buildReturnAnchors, holdingsAnchor, constituentForecasts, HOLDINGS_ANCHOR_MIN_COVERAGE, centeredTriangularQuantile, bondRegimeShift } from "../dist/assets/js/return-model.mjs?v=0.26.0";
 import {
   seededRandom,
   normalGenerator,
-} from "../dist/assets/js/random.mjs?v=0.25.0";
+} from "../dist/assets/js/random.mjs?v=0.26.0";
 import {
   generatePaths,
   evaluatePaths,
@@ -35,17 +35,17 @@ import {
   jumpParameters,
   regimeCondition,
   centeredRegimeConditions,
-} from "../dist/assets/js/path-model.mjs?v=0.25.0";
+} from "../dist/assets/js/path-model.mjs?v=0.26.0";
 import {
   journalOrigin,
   appendForecast,
   evaluateJournal,
   freezeMaturedOutcomes,
-} from "../dist/assets/js/journal.mjs?v=0.25.0";
+} from "../dist/assets/js/journal.mjs?v=0.26.0";
 import {
   reviewPortfolio,
   registerPortfolio,
-} from "../dist/assets/js/monitor.mjs?v=0.25.0";
+} from "../dist/assets/js/monitor.mjs?v=0.26.0";
 
 const near = (a, b, tol = 1e-8) =>
   assert.ok(Math.abs(a - b) < tol, `${a} != ${b}`);
@@ -331,6 +331,13 @@ test("bond rate scenarios use duration instead of the equity jump", () => {
     assert.ok(Math.abs(value - 1.04 * Math.exp(cUp - centre)) < 1e-9 ||
       Math.abs(value - 1.04 * Math.exp(cDown - centre)) < 1e-9);
   near(terminal.reduce((s, v) => s + v, 0) / terminal.length, 1.04, 0.002);
+  // Two years: each scenario compounds its condition, the mean stays 1.04².
+  const x2 = inputs(assets, [a], { horizon: 2 });
+  x2.regimes = [up, down];
+  const long = generatePaths(x2, 400, 4, 12);
+  const terminal2 = Array.from({ length: long.paths }, (_, p) =>
+    long.gross[0][p * (long.steps + 1) + long.steps]);
+  near(terminal2.reduce((s, v) => s + v, 0) / terminal2.length, 1.04 ** 2, 0.003);
   const j = jumpParameters(assets[0], a, x.options, up);
   near(j.mean, -0.02);
 });
@@ -341,8 +348,16 @@ test("centered scenario conditions match the simulation and keep the gross mean"
       { ...BASE_REGIME, id: "up", probability: .3, rateShift: 0.01 },
       { ...BASE_REGIME, id: "down", probability: .7, rateShift: -0.005 },
     ];
+  // The terminal mean is preserved at every horizon, not only at one year:
+  // bonds and equities (EPS growth 12%) under the default scenarios.
+  const defaults = regimes(DEFAULT_REGIMES),
+    equity = [{ symbol: "EQ", type: "stock" }, { ...anchor(.08), forecast: { equivalentGrowth: .12 } }];
+  for (const H of [0.25, 0.5, 1, 2, 3, 5])
+    for (const [who, law, rows] of [[asset, a, macro], [asset, a, defaults], [...equity, defaults]]) {
+      const c = centeredRegimeConditions(who, law, rows, H);
+      near(rows.reduce((s, r, k) => s + r.probability * Math.exp(H * c[k]), 0), 1, 1e-12);
+    }
   const centered = centeredRegimeConditions(asset, a, macro, 5);
-  near(macro.reduce((s, r, k) => s + r.probability * Math.exp(centered[k]), 0), 1);
   for (const [k, r] of macro.entries())
     near(centered[k] - centered[0],
       regimeCondition(asset, a, r, 5) - regimeCondition(asset, a, macro[0], 5));
@@ -658,9 +673,9 @@ test("return decomposition rejects missing inputs", () => {
 test("equity ETFs take a building-block anchor from dated holdings", () => {
   const a = stock(); // AAA, valid own-forecast anchor
   const b = { ...stock(), symbol: "BBB", price: 80 };
-  const etf = (positions, as_of = "2026-10-20") => ({
+  const etf = (positions, as_of = "2026-10-20", observed_at = "2026-10-21T02:00:00Z") => ({
     symbol: "FFF", type: "etf", sector: "Índice amplio", price: 50, price_date: "2026-10-23",
-    history: [], holdings: { as_of, positions },
+    history: [], holdings: { as_of, observed_at, positions },
   });
   const settings = { asOf: "2026-10-23", informationAsOf: "2026-10-23" };
   const universe = [a, b];
@@ -679,6 +694,11 @@ test("equity ETFs take a building-block anchor from dated holdings", () => {
   assert.equal(holdingsAnchor(etf([{ symbol: "AAA", weight: .6 }, { symbol: "ZZZ", weight: .4 }]), lookup, settings), null);
   assert.equal(holdingsAnchor(etf([{ symbol: "AAA", weight: .9 }], "2026-05-01"), lookup, settings), null);
   assert.equal(holdingsAnchor(etf([{ symbol: "AAA", weight: .9 }], "2026-10-24"), lookup, settings), null);
+  // Dated before the cut but first observed after it, unobserved, or with
+  // duplicated constituents: the same rejection as the exposure report.
+  assert.equal(holdingsAnchor(etf([{ symbol: "AAA", weight: .9 }], "2026-10-20", "2026-10-28T02:00:00Z"), lookup, settings), null);
+  assert.equal(holdingsAnchor(etf([{ symbol: "AAA", weight: .9 }], "2026-10-20", null), lookup, settings), null);
+  assert.equal(holdingsAnchor(etf([{ symbol: "AAA", weight: .45 }, { symbol: "AAA", weight: .45 }]), lookup, settings), null);
   // The anchor builder uses it, and an explicit user expectation still wins.
   const fund = etf([{ symbol: "AAA", weight: .9 }, { symbol: "ZZZ", weight: .1 }]);
   const [built] = buildReturnAnchors([fund], settings, {}, universe);

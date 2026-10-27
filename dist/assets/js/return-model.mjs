@@ -1,7 +1,8 @@
-import { finite } from "./analytics.mjs?v=0.25.0";
-import { fundamentalForecast, bondAssumptions, assetAt } from "./research-model.mjs?v=0.25.0";
-import { DEFAULT_RESEARCH } from "./policy.mjs?v=0.25.0";
-import { normalCDF, normalGenerator } from "./random.mjs?v=0.25.0";
+import { finite } from "./analytics.mjs?v=0.26.0";
+import { fundamentalForecast, bondAssumptions, assetAt } from "./research-model.mjs?v=0.26.0";
+import { DEFAULT_RESEARCH } from "./policy.mjs?v=0.26.0";
+import { normalCDF, normalGenerator } from "./random.mjs?v=0.26.0";
+import { actualHoldings } from "./economic-exposure.mjs?v=0.26.0";
 
 /**
  * Annualized scenario return for a bond ETF under a parallel yield change.
@@ -30,7 +31,6 @@ const bounded = (x) => Math.max(-0.85, Math.min(2, x));
 // holdings. They are stated rules, not estimates: below them the fund stays
 // under observation.
 export const HOLDINGS_ANCHOR_MIN_COVERAGE = 0.70;
-export const HOLDINGS_MAX_AGE_DAYS = 120;
 export const HOLDINGS_UNCOVERED_BAND = 0.15;
 
 // Cross-sectional refinement of stock anchors (Grinold-Kahn): a building-block
@@ -104,7 +104,8 @@ export function crossSectionalRefinement(universe, settings, lookup) {
   }
   const bySymbol = new Map(rows.map((r) => [r.symbol, r]));
   let weight = 0, alpha = 0, beta = 0, market = 0;
-  for (const position of benchmark.holdings?.positions || []) {
+  const holdings = actualHoldings(benchmark, settings.informationAsOf || asOf, settings.informationAsOf || asOf);
+  for (const position of holdings?.positions || []) {
     const r = bySymbol.get(position.symbol), w = position.weight;
     if (!r || !(w > 0)) continue;
     weight += w; alpha += w * r.alpha; beta += w * r.adjustedBeta; market += w * r.forecast.central;
@@ -188,11 +189,11 @@ export function constituentForecasts(universe = [], settings = {}, overrides = {
  * deducted.
  */
 export function holdingsAnchor(asset, lookup, settings = {}) {
-  const h = asset.holdings, info = settings.informationAsOf || settings.asOf;
-  if (asset.type !== "etf" || !h?.as_of || !Array.isArray(h.positions) || !info ||
-      h.as_of > info) return null;
-  const age = (Date.parse(info + "T12:00:00Z") - Date.parse(h.as_of + "T12:00:00Z")) / 86400000;
-  if (!(age <= HOLDINGS_MAX_AGE_DAYS)) return null;
+  const info = settings.informationAsOf || settings.asOf;
+  // Same temporal and structural validation as the exposure report: dated,
+  // first observed by the information cut, no duplicates, bounded weights.
+  const h = asset.type === "etf" && info ? actualHoldings(asset, info, info) : null;
+  if (!h) return null;
   let covered = 0, mode = 0, low = 0, high = 0, count = 0;
   for (const position of h.positions) {
     const w = position.weight;
@@ -208,8 +209,8 @@ export function holdingsAnchor(asset, lookup, settings = {}) {
     annual: (mode / covered) * share + prior * rest,
     low: (low / covered) * share + (prior - HOLDINGS_UNCOVERED_BAND) * rest,
     high: (high / covered) * share + (prior + HOLDINGS_UNCOVERED_BAND) * rest,
-    coverage: share, constituents: count, holdingsAsOf: h.as_of,
-    source: `Holdings al ${h.as_of}: ${Math.round(share * 100)}% del peso con ancla propia de ${count} acciones; resto con prior ${(prior * 100).toFixed(0)}% ±${HOLDINGS_UNCOVERED_BAND * 100} pp; gastos del fondo no descontados`,
+    coverage: share, constituents: count, holdingsAsOf: h.asOf,
+    source: `Holdings al ${h.asOf}: ${Math.round(share * 100)}% del peso con ancla propia de ${count} acciones; resto con prior ${(prior * 100).toFixed(0)}% ±${HOLDINGS_UNCOVERED_BAND * 100} pp; gastos del fondo no descontados`,
   };
 }
 

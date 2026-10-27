@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {growthEvidence} from '../dist/assets/js/growth-evidence.mjs?v=0.25.0';
-import {assetAt, fundamentalForecast} from '../dist/assets/js/research-model.mjs?v=0.25.0';
+import {growthEvidence} from '../dist/assets/js/growth-evidence.mjs?v=0.26.0';
+import {assetAt, fundamentalForecast} from '../dist/assets/js/research-model.mjs?v=0.26.0';
 
 const asset=()=>({symbol:'TEST',type:'stock',price:100,price_date:'2026-10-26',history:[],
  assumptions:{growth:.05,multiple:20,discount:.1,horizon:3},financials:{

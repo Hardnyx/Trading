@@ -107,3 +107,10 @@ Comprobaciones locales: **193 pruebas JavaScript**, **126 Python** y
 de GitHub Actions también finalizaron correctamente. Los casos adversariales
 anteriores no estaban cubiertos por esas pruebas. Esta revisión documenta
 hallazgos; no modifica el motor.
+
+## Seguimiento
+
+Los hallazgos 2 y 3 se cierran en 0.26.0 (véase el
+[estado consolidado](estado-validacion.md)). El hallazgo 1 sigue abierto en
+el pendiente 20. Desde 0.25.0 las anclas de acciones cambian, así que la
+cartera reproducida arriba describe solo 0.24.0.
