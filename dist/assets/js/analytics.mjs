@@ -1,4 +1,4 @@
-import { earningsShareBasis } from './financial-freshness.mjs?v=0.22.0';
+import { earningsShareBasis } from './financial-freshness.mjs?v=0.23.0';
 
 export const TRADING_DAYS = 252;
 export const finite = (x) => typeof x === "number" && Number.isFinite(x);

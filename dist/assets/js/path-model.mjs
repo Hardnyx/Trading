@@ -5,23 +5,23 @@ import {
   quantile,
   sum,
   normalizeWeights,
-} from "./analytics.mjs?v=0.22.0";
-import { seededRandom, normalGenerator, poisson } from "./random.mjs?v=0.22.0";
-import { ewmaCovariance, cholesky } from "./risk-math.mjs?v=0.22.0";
-import { buildReturnAnchors, sampleDrifts, bondScenarioAnnualReturn } from "./return-model.mjs?v=0.22.0";
-import { distributionAccounting } from "./distribution-ledger.mjs?v=0.22.0";
-import { cashGrowth, uniformCashGrowth } from "./cashflows.mjs?v=0.22.0";
-import { copulaInnovationCovariance } from './copula-covariance.mjs?v=0.22.0';
-import { assetAt } from "./research-model.mjs?v=0.22.0";
-import { factorModel } from "./factors.mjs?v=0.22.0";
-import { conditionalRisk, updateGjrVariance, updateEwmaVariance, updateTargetedVariance, studentMarginal, HORIZON_PERSISTENCE } from "./conditional-risk.mjs?v=0.22.0";
-import { marketFactorCovariance, conditionalFactorization } from "./factor-covariance.mjs?v=0.22.0";
+} from "./analytics.mjs?v=0.23.0";
+import { seededRandom, normalGenerator, poisson } from "./random.mjs?v=0.23.0";
+import { ewmaCovariance, cholesky } from "./risk-math.mjs?v=0.23.0";
+import { buildReturnAnchors, sampleDrifts, bondScenarioAnnualReturn, bondRegimeShift } from "./return-model.mjs?v=0.23.0";
+import { distributionAccounting } from "./distribution-ledger.mjs?v=0.23.0";
+import { cashGrowth, uniformCashGrowth } from "./cashflows.mjs?v=0.23.0";
+import { copulaInnovationCovariance } from './copula-covariance.mjs?v=0.23.0';
+import { assetAt } from "./research-model.mjs?v=0.23.0";
+import { factorModel } from "./factors.mjs?v=0.23.0";
+import { conditionalRisk, updateGjrVariance, updateEwmaVariance, updateTargetedVariance, studentMarginal, HORIZON_PERSISTENCE } from "./conditional-risk.mjs?v=0.23.0";
+import { marketFactorCovariance, conditionalFactorization } from "./factor-covariance.mjs?v=0.23.0";
 import {
   mandate,
   regimes,
   withdrawalSchedule,
   DEFAULT_REGIMES,
-} from "./policy.mjs?v=0.22.0";
+} from "./policy.mjs?v=0.23.0";
 
 export const BASE_REGIME = {
   id: "base",
@@ -166,6 +166,22 @@ export function longRunVariances(assets, asOf, window = 500) {
     persistence: HORIZON_PERSISTENCE, window, longRunDaily,
   };
 }
+/**
+ * Log-drift adjustment a macro scenario applies to one instrument. Scenarios
+ * are applied as deviations from their probability-weighted mean (see
+ * generatePaths): they add dispersion, not a shift of the stated expectation.
+ */
+export function regimeCondition(asset, anchor, regime, H) {
+  if (asset.type === "cash" || asset.symbol === "CASH") return 0;
+  const bond = anchor.bond;
+  if (bond)
+    return Math.log1p(bondScenarioAnnualReturn(bond, bondRegimeShift(bond, regime), H)) -
+      Math.log1p(finite(bond.carry) ? bond.carry : 0);
+  if (asset.symbol === "GLD") return -regime.rateShift * 0.5;
+  const baseGrowth = anchor.forecast?.equivalentGrowth ?? 0;
+  return Math.log(Math.max(0.01, 1 + baseGrowth + regime.earningsShift) / (1 + baseGrowth)) +
+    Math.log1p(regime.multipleShift) / H;
+}
 export function jumpParameters(asset, anchor, options, regime) {
   if (asset.type === "cash" || asset.symbol === "CASH")
     return { mean: 0, vol: 0, compensator: 0 };
@@ -241,6 +257,12 @@ export function generatePaths(inputs, paths, seed, stepsPerYear = 52) {
     ),
     fx = new Float64Array(paths * (steps + 1));
   const scenarioCounts = Object.fromEntries(macro.map((r) => [r.id, 0]));
+  // Probability-weighted scenario effect per instrument, removed so that the
+  // anchor stays the expected return (uncentered scenarios cut the simulated
+  // equity mean by about 6 pp and acted as an undeclared pessimistic prior).
+  // Centered in gross-return space: E[exp(condition - mean)] = 1 exactly.
+  const scenarioMean = assets.map((a, i) => Math.log(macro.reduce((total, row) =>
+    total + row.probability * Math.exp(regimeCondition(a, anchors[i], row, H)), 0)));
   for (let p = 0; p < paths; p++) {
     let u = random(),
       regime = macro.at(-1);
@@ -257,21 +279,8 @@ export function generatePaths(inputs, paths, seed, stepsPerYear = 52) {
         jumpParameters(a, anchors[i], options, regime),
       );
     const drift = mu.map((v, i) => {
-      const bond = anchors[i].bond;
-      const baseGrowth = anchors[i].forecast?.equivalentGrowth ?? 0;
       const condition =
-        assets[i].type === "cash"
-          ? 0
-          : bond
-            ? (Math.log1p(bondScenarioAnnualReturn(bond, regime.rateShift, H)) -
-                Math.log1p(finite(bond.carry) ? bond.carry : 0))
-            : assets[i].symbol === "GLD"
-              ? -regime.rateShift * 0.5
-              : Math.log(
-                  Math.max(0.01, 1 + baseGrowth + regime.earningsShift) /
-                    (1 + baseGrowth),
-                ) +
-                Math.log1p(regime.multipleShift) / H;
+        regimeCondition(assets[i], anchors[i], regime, H) - scenarioMean[i];
       return (
         (v +
           condition -

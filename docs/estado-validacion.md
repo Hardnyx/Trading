@@ -577,3 +577,47 @@ cierto USD 103.642 (103.575). El optimizador aún prefiere acciones sueltas:
 sus anclas individuales (9–11%) superan la media de sus propios índices (~6%).
 Es selección sobre estimaciones ruidosas, ligada a la falta de calibración
 del crecimiento (pendiente 1), no evidencia de superioridad.
+
+### 0.23.0 — El simulador espera el retorno que declaran sus anclas
+
+Auditoría de medias simuladas sobre el corte del 26-oct, 4.000 trayectorias,
+retorno simple a 12 meses. Con los escenarios por defecto: SPY ancla 6,2% →
+media −1,6%; QQQ 6,0% → −1,9%; AMZN 10,9% → 4,1%; GOOGL 9,2% → 2,7%; TLT
+5,2% → 6,4%; LQD 5,6% → 3,3%. Dos sesgos se sumaban:
+
+1. El drift incierto se muestreaba de una triangular con **moda** en el
+   ancla. Con bandas sesgadas a la baja, la media quedaba ~2 pp por debajo
+   (SPY 4,3% solo con el escenario base).
+2. Los escenarios macro no estaban centrados. Ponderados por probabilidad
+   restaban unos 1,5 pp anuales de beneficios y 4,5% de múltiplo a la renta
+   variable, y añadían convexidad a TLT. Funcionaban como un prior pesimista
+   no declarado, que dejaba la prima de renta variable en torno a −5 pp.
+
+La §3 del documento técnico define μ como la esperanza condicionada y exige
+choques centrados. Ahora la triangular se reubica para que su media sea el
+ancla, conservando su amplitud. Cada escenario se aplica como desviación
+respecto de su media ponderada, centrada en retorno bruto: E[e^(c−m)] = 1.
+La dispersión, las colas y los escenarios adversos se conservan; solo
+desaparece el desplazamiento de la media. Tras el cambio, las medias
+simuladas coinciden con sus anclas dentro del error de Monte Carlo (SPY
+6,0%, AMZN 10,7%, TLT 5,0%, LQD 5,4%).
+
+**Crédito con grado de inversión.** AGG, LQD e IGSB reciben perfil oficial
+fechado de iShares (TIR 5,32%, 5,98% y 5,48%; duración 5,7, 7,6 y 2,6 al
+26-oct). El carry descuenta gastos y una pérdida esperada de crédito
+declarada como convención: 0,25%/año para corporativo IG y 0,08% para AGG,
+compuesto sobre todo por Treasuries y MBS. Cada escenario incluye un cambio
+de diferencial (recesión +1,5 pp, inflación +0,25, expansión −0,25,
+editable) aplicado con una beta por fondo (1 corporativo, 0,35 AGG). Un
+perfil de crédito desactualizado no toma la curva Treasury como sustituto.
+Las sesiones guardadas sin el campo heredan la convención de su escenario.
+
+Efecto en la propuesta por defecto. Corte publicado sin perfiles de
+crédito: SHY 35, IEF 10, efectivo 5 y renta variable 50 (MSFT 15, AMZN 10,
+NFLX 10, GOOGL 10, NVDA 5), con media 7,1%, CVaR 14,6% y equivalente cierto
+USD 106.424. Con los perfiles de crédito inyectados: SHY 20, IGSB 15, AGG
+10, efectivo 5, PEP 20, AMZN 15, GOOGL 10 y KMB 5, con media 6,4%, CVaR
+11,9% y USD 105.914. Que más opciones den un equivalente menor refleja la
+inestabilidad de la búsqueda (pendiente 20). La renta variable alcanza su
+tope del 50% con acciones sueltas, cuyas anclas superan las de sus índices
+(pendiente 1).

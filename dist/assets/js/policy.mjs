@@ -1,6 +1,6 @@
-import { finite, normalizeWeights, sum } from "./analytics.mjs?v=0.22.0";
+import { finite, normalizeWeights, sum } from "./analytics.mjs?v=0.23.0";
 
-export const MODEL_VERSION = "0.22.0";
+export const MODEL_VERSION = "0.23.0";
 export function informationDate(snapshot) {
   const parts = Object.fromEntries(
     new Intl.DateTimeFormat("en-US", {
@@ -72,6 +72,8 @@ export const DEFAULT_RESEARCH = {
   catalyst: "",
   reviewDate: "",
 };
+// spreadShift: change of the credit spread over the horizon (decimal). A
+// stated convention: IG spreads widened roughly 1-4 pp in recent recessions.
 export const DEFAULT_REGIMES = [
   {
     id: "base",
@@ -80,6 +82,7 @@ export const DEFAULT_REGIMES = [
     earningsShift: 0,
     multipleShift: 0,
     rateShift: 0,
+    spreadShift: 0,
     rateJumpBps: -40,
   },
   {
@@ -89,6 +92,7 @@ export const DEFAULT_REGIMES = [
     earningsShift: -0.07,
     multipleShift: -0.12,
     rateShift: -0.015,
+    spreadShift: 0.015,
     rateJumpBps: -80,
   },
   {
@@ -98,6 +102,7 @@ export const DEFAULT_REGIMES = [
     earningsShift: -0.03,
     multipleShift: -0.15,
     rateShift: 0.015,
+    spreadShift: 0.0025,
     rateJumpBps: 60,
   },
   {
@@ -107,6 +112,7 @@ export const DEFAULT_REGIMES = [
     earningsShift: 0.03,
     multipleShift: 0.05,
     rateShift: 0.005,
+    spreadShift: -0.0025,
     rateJumpBps: -20,
   },
 ];
@@ -202,13 +208,20 @@ export function execution(input = {}) {
 export function regimes(input = DEFAULT_REGIMES) {
   if (!Array.isArray(input) || !input.length || input.length > 8)
     throw new Error("Escenarios macro no válidos.");
-  const result = input.map((row) => ({ ...row }));
+  // Sessions saved before spreadShift existed inherit the default convention
+  // for their scenario id rather than a silent zero credit risk.
+  const result = input.map((row) => ({
+    ...row,
+    spreadShift: row.spreadShift ??
+      DEFAULT_REGIMES.find((d) => d.id === row.id)?.spreadShift ?? 0,
+  }));
   for (const row of result) {
     range(row.probability, 0, 1, "la probabilidad del escenario");
     range(row.earningsShift, -0.5, 0.5, "el cambio de beneficios");
     range(row.multipleShift, -0.8, 1, "el cambio de múltiplo");
     range(row.rateShift, -0.1, 0.1, "el cambio de tasa");
     range(row.rateJumpBps, -500, 500, "el shock de tasas");
+    range(row.spreadShift, -0.05, 0.1, "el cambio del diferencial de crédito");
   }
   if (Math.abs(sum(result.map((row) => row.probability)) - 1) > 1e-6)
     throw new Error("Las probabilidades macro deben sumar 100%.");

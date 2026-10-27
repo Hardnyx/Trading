@@ -31,6 +31,11 @@ DISTRIBUTION_URLS = {
 }
 
 
+# Funds whose dated yield/duration profile feeds a return model. Credit funds
+# use the credit conventions in research-model.mjs on top of the profile.
+PROFILE_FUNDS = {"SHY", "TLT", "IEF", "IEI", "SGOV", "SHV", "AGG", "LQD", "IGSB"}
+
+
 def _date(value):
     return dt.datetime.strptime(str(value), "%Y%m%d").date().isoformat()
 
@@ -191,7 +196,7 @@ def enrich_distributions(assets, old_assets, cutoff, observed_at, fetch, archive
         if previous:
             asset["issuer_distributions"] = previous
         prior_profile = old.get("bond_profile")
-        if (symbol in {"SHY", "TLT", "IEF", "IEI", "SGOV", "SHV"} and prior_profile
+        if (symbol in PROFILE_FUNDS and prior_profile
                 and prior_profile.get("date", "9999") <= cutoff
                 and prior_profile.get("observed_at", "9999") <= observed_at):
             asset["bond_profile"] = prior_profile
@@ -205,9 +210,9 @@ def enrich_distributions(assets, old_assets, cutoff, observed_at, fetch, archive
                     dest.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n")
             asset["issuer_distributions"] = result
             histories += 1
-            # Treasury carry/duration only. Credit and inflation-linked funds
-            # still need their own return model before enabling new purchases.
-            if symbol in {"SHY", "TLT", "IEF", "IEI", "SGOV", "SHV"}:
+            # Treasury and investment-grade credit profiles. High yield, EM and
+            # inflation-linked funds still need their own return model.
+            if symbol in PROFILE_FUNDS:
                 try:
                     asset["bond_profile"] = parse_profile(html, symbol, cutoff, received_at(),
                         source_url=DISTRIBUTION_URLS[symbol])

@@ -59,14 +59,18 @@ Este archivo lista **solo lo que falta**. Para el funcionamiento, consultar
 - **Terminado cuando:** todo ETF de renta variable comprable tiene ancla con
   fuente y fecha, neta de gastos, o queda en observación con el motivo.
 
-### 3. Renta fija de crédito e inflación sin modelo
-- **Evidencia:** AGG, BND, LQD, HYG, EMB, TIP e IGSB tienen historial de
-  pagos, pero no perfil de retorno (TIR, duración, spread, pérdida esperada).
-- **Falta:** perfil oficial fechado por emisor, un modelo de spread y
-  default para crédito, y tasa real/breakeven para TIP. Hoy solo existe
-  T10YIE; falta la serie real (DFII10).
-- **Terminado cuando:** el ancla separa carry, efecto de tasas, spread y
-  pérdida esperada, con su fuente y su fecha.
+### 3. Renta fija de alto rendimiento, emergente e inflación sin modelo
+- **Avance en 0.23.0:** AGG, LQD e IGSB tienen perfil oficial fechado y un
+  ancla: TIR − gastos − pérdida esperada de crédito (convención: 0,25%/año
+  corporativo IG y 0,08% AGG). Un choque de diferencial por escenario, con
+  beta por fondo, se suma al de tasas.
+- **Falta:** HYG (pérdida por impago y diferencial de alto rendimiento), EMB
+  (riesgo soberano emergente) y TIP (tasa real; falta descargar DFII10).
+  BND no es iShares y no tiene perfil. Las convenciones de pérdida, beta y
+  ampliación en recesión no están calibradas con historia de diferenciales.
+- **Terminado cuando:** cada fondo de renta fija comprable separa carry,
+  efecto de tasas, diferencial y pérdida esperada con fuente y fecha, y las
+  convenciones se contrastan con historia de diferenciales e impagos.
 
 ### 4. Validación prospectiva sin observaciones maduras
 - **Evidencia al corte examinado:** registro diario de referencias
@@ -105,10 +109,12 @@ Este archivo lista **solo lo que falta**. Para el funcionamiento, consultar
 10. **Oro.** Usa el supuesto genérico de ETF y un ajuste −0,5 × cambio de
     tasas. Falta un modelo con tasas reales (DFII10) y dólar (DTWEXBGS); hoy
     no se descarga ninguna de las dos series.
-11. **Regímenes macro.** Probabilidades fijas a mano (base 0,55; recesión
-    0,20; inflación 0,15; expansión 0,10). Las 14 series macro no informan
-    nada. Falta condicionarlas al corte o declararlas sensibilidad pura en
-    la interfaz.
+11. **Regímenes macro.** Desde 0.23.0 se aplican centrados: añaden
+    dispersión y colas, pero no mueven el retorno esperado. Sus
+    probabilidades y magnitudes siguen fijas a mano (base 0,55; recesión
+    0,20; inflación 0,15; expansión 0,10) y las 14 series macro no las
+    informan. Falta condicionarlas al corte, o declararlas sensibilidad pura
+    en la interfaz, y contrastar la dispersión que generan con la historia.
 12. **Convenciones sin calibrar.** La vida media de 10 años del re-rating,
     el prior del 6 % y la confianza subjetiva por empresa. Falta medir su
     error con vintages, o al menos mostrar la sensibilidad de la propuesta a

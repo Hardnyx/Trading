@@ -4,15 +4,15 @@ import {
   mean,
   quantile,
   normalizeWeights,
-} from "./analytics.mjs?v=0.22.0";
-import { seededRandom } from "./random.mjs?v=0.22.0";
-import { portfolioAttribution } from "./attribution.mjs?v=0.22.0";
+} from "./analytics.mjs?v=0.23.0";
+import { seededRandom } from "./random.mjs?v=0.23.0";
+import { portfolioAttribution } from "./attribution.mjs?v=0.23.0";
 import {
   preparePaths,
   generatePaths,
   evaluatePaths,
   marginalRisk,
-} from "./path-model.mjs?v=0.22.0";
+} from "./path-model.mjs?v=0.23.0";
 import {
   withCashAsset,
   mandate,
@@ -21,12 +21,12 @@ import {
   tradePlan,
   withdrawalSchedule,
   MODEL_VERSION,
-} from "./policy.mjs?v=0.22.0";
-import { buildReturnAnchors, bondScenarioAnnualReturn, constituentForecasts, holdingsAnchor } from "./return-model.mjs?v=0.22.0";
-import { assetAt, fundamentalForecast, bondAssumptions } from "./research-model.mjs?v=0.22.0";
-import { selectCompositionUniverse } from "./universe.mjs?v=0.22.0";
-import { factorizeStressedCovariance } from "./factor-covariance.mjs?v=0.22.0";
-import { economicClass, exposureReport, rawCorrelation, qualifiedOpportunity, holdingsOverlap, knownFundOverlap } from "./economic-exposure.mjs?v=0.22.0";
+} from "./policy.mjs?v=0.23.0";
+import { buildReturnAnchors, bondScenarioAnnualReturn, bondRegimeShift, constituentForecasts, holdingsAnchor } from "./return-model.mjs?v=0.23.0";
+import { assetAt, fundamentalForecast, bondAssumptions } from "./research-model.mjs?v=0.23.0";
+import { selectCompositionUniverse } from "./universe.mjs?v=0.23.0";
+import { factorizeStressedCovariance } from "./factor-covariance.mjs?v=0.23.0";
+import { economicClass, exposureReport, rawCorrelation, qualifiedOpportunity, holdingsOverlap, knownFundOverlap } from "./economic-exposure.mjs?v=0.23.0";
 
 export const DEFAULT_COMPOSITION_RULES = {
   maxPosition: 0.2,
@@ -1051,11 +1051,11 @@ export function composePortfolio(
       anchor: anchor.annual,
       adverseAnchor: anchor.bond
         ? Math.min(...x.regimes.map(r =>
-            bondScenarioAnnualReturn(anchor.bond, r.rateShift, x.options.horizon)))
+            bondScenarioAnnualReturn(anchor.bond, bondRegimeShift(anchor.bond, r), x.options.horizon)))
         : anchor.low,
       favorableAnchor: anchor.bond
         ? Math.max(...x.regimes.map(r =>
-            bondScenarioAnnualReturn(anchor.bond, r.rateShift, x.options.horizon)))
+            bondScenarioAnnualReturn(anchor.bond, bondRegimeShift(anchor.bond, r), x.options.horizon)))
         : anchor.high,
       confidence: anchor.confidence,
       valuationEvidence: anchor.forecast?.valid ? {

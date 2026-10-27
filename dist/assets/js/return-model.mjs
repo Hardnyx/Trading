@@ -1,7 +1,7 @@
-import { finite } from "./analytics.mjs?v=0.22.0";
-import { fundamentalForecast, bondAssumptions, assetAt } from "./research-model.mjs?v=0.22.0";
-import { DEFAULT_RESEARCH } from "./policy.mjs?v=0.22.0";
-import { normalCDF, normalGenerator } from "./random.mjs?v=0.22.0";
+import { finite } from "./analytics.mjs?v=0.23.0";
+import { fundamentalForecast, bondAssumptions, assetAt } from "./research-model.mjs?v=0.23.0";
+import { DEFAULT_RESEARCH } from "./policy.mjs?v=0.23.0";
+import { normalCDF, normalGenerator } from "./random.mjs?v=0.23.0";
 
 /**
  * Annualized scenario return for a bond ETF under a parallel yield change.
@@ -21,6 +21,10 @@ export function bondScenarioAnnualReturn(bond, yieldShift = 0, horizon = 1) {
     Math.log(priceMultiplier) / horizon);
 }
 
+/** Yield change a bond fund faces in a scenario: rates plus its spread share. */
+export function bondRegimeShift(bond, regime) {
+  return (regime?.rateShift || 0) + (bond?.spreadBeta || 0) * (regime?.spreadShift || 0);
+}
 const bounded = (x) => Math.max(-0.85, Math.min(2, x));
 // Operational thresholds for building an equity ETF anchor from its dated
 // holdings. They are stated rules, not estimates: below them the fund stays
@@ -168,7 +172,8 @@ export function buildReturnAnchors(assets, settings = {}, overrides = {}, univer
       mu: Math.log1p(annual),
       low,
       high,
-      distributionMean: (low + annual + high) / 3,
+      // Drifts are sampled with this mean (centered triangular law).
+      distributionMean: annual,
       fundamental,
       source,
       forecast,
@@ -191,6 +196,16 @@ export function triangularQuantile(p, low, mode, high) {
   return p < split
     ? low + Math.sqrt(p * (high - low) * (mode - low))
     : high - Math.sqrt((1 - p) * (high - low) * (high - mode));
+}
+/**
+ * Quantile of a triangular law on [low, high] whose MEAN is the anchor (the
+ * stated expectation, §3 of the technical document). A mode equal to the
+ * anchor shifted the mean toward the longer tail: about -2 pp for equities.
+ */
+export function centeredTriangularQuantile(p, low, anchor, high) {
+  if (high - low < 1e-12) return anchor;
+  const mode = Math.max(low, Math.min(high, 3 * anchor - low - high));
+  return triangularQuantile(p, low, mode, high) + (anchor - (low + mode + high) / 3);
 }
 export function sampleDrifts(
   anchors,
@@ -221,7 +236,7 @@ export function sampleDrifts(
       Math.sqrt(1 - marketShare - sectorShare) * normal();
     return Math.log1p(
       uncertain
-        ? triangularQuantile(
+        ? centeredTriangularQuantile(
             Math.max(0, Math.min(1, normalCDF(z))),
             anchor.low,
             anchor.annual,

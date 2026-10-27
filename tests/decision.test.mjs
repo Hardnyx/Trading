@@ -5,12 +5,16 @@ import {
   currentAccount,
   tradePlan,
   withCashAsset,
-} from "../dist/assets/js/policy.mjs?v=0.22.0";
+  regimes,
+  DEFAULT_REGIMES,
+} from "../dist/assets/js/policy.mjs?v=0.23.0";
 import {
   fundamentalForecast,
   consensusAt,
   evaluateThesis,
-} from "../dist/assets/js/research-model.mjs?v=0.22.0";
+  bondAssumptions,
+  CREDIT_CONVENTIONS,
+} from "../dist/assets/js/research-model.mjs?v=0.23.0";
 import {
   valuation,
   correlation,
@@ -18,28 +22,29 @@ import {
   resolveAssumptions,
   returnDecomposition,
   RERATING_HALF_LIFE_YEARS,
-} from "../dist/assets/js/analytics.mjs?v=0.22.0";
-import { sampleDrifts, bondScenarioAnnualReturn, buildReturnAnchors, holdingsAnchor, constituentForecasts, HOLDINGS_ANCHOR_MIN_COVERAGE } from "../dist/assets/js/return-model.mjs?v=0.22.0";
+} from "../dist/assets/js/analytics.mjs?v=0.23.0";
+import { sampleDrifts, bondScenarioAnnualReturn, buildReturnAnchors, holdingsAnchor, constituentForecasts, HOLDINGS_ANCHOR_MIN_COVERAGE, centeredTriangularQuantile, bondRegimeShift } from "../dist/assets/js/return-model.mjs?v=0.23.0";
 import {
   seededRandom,
   normalGenerator,
-} from "../dist/assets/js/random.mjs?v=0.22.0";
+} from "../dist/assets/js/random.mjs?v=0.23.0";
 import {
   generatePaths,
   evaluatePaths,
   BASE_REGIME,
   jumpParameters,
-} from "../dist/assets/js/path-model.mjs?v=0.22.0";
+  regimeCondition,
+} from "../dist/assets/js/path-model.mjs?v=0.23.0";
 import {
   journalOrigin,
   appendForecast,
   evaluateJournal,
   freezeMaturedOutcomes,
-} from "../dist/assets/js/journal.mjs?v=0.22.0";
+} from "../dist/assets/js/journal.mjs?v=0.23.0";
 import {
   reviewPortfolio,
   registerPortfolio,
-} from "../dist/assets/js/monitor.mjs?v=0.22.0";
+} from "../dist/assets/js/monitor.mjs?v=0.23.0";
 
 const near = (a, b, tol = 1e-8) =>
   assert.ok(Math.abs(a - b) < tol, `${a} != ${b}`);
@@ -309,10 +314,23 @@ test("bond rate scenarios use duration instead of the equity jump", () => {
   const assets = [{ symbol: "SHY", type: "etf" }],
     a = { ...anchor(0.04), bond: { duration: 2 } },
     x = inputs(assets, [a]);
-  x.regimes = [{ ...BASE_REGIME, rateShift: 0.01, rateJumpBps: 100 }];
-  const sample = generatePaths(x, 100, 4, 12);
-  near(sample.gross[0][sample.steps], 1.04 * (1 - 2 * .01 + .5 * 2 * 3 * .01**2));
-  const j = jumpParameters(assets[0], a, x.options, x.regimes[0]);
+  // Two equally likely rate scenarios: each path gets the duration/convexity
+  // effect of its scenario, centered so the anchor stays the expected return.
+  const up = { ...BASE_REGIME, id: "up", probability: .5, rateShift: 0.01, rateJumpBps: 100 },
+    down = { ...BASE_REGIME, id: "down", probability: .5, rateShift: -0.01, rateJumpBps: -100 };
+  x.regimes = [up, down];
+  const cUp = Math.log(1 - 2 * .01 + .5 * 2 * 3 * .01**2),
+    cDown = Math.log(1 + 2 * .01 + .5 * 2 * 3 * .01**2),
+    centre = Math.log(.5 * Math.exp(cUp) + .5 * Math.exp(cDown));
+  near(regimeCondition(assets[0], a, up, 1), cUp);
+  const sample = generatePaths(x, 400, 4, 12);
+  const terminal = Array.from({ length: sample.paths }, (_, p) =>
+    sample.gross[0][p * (sample.steps + 1) + sample.steps]);
+  for (const value of terminal)
+    assert.ok(Math.abs(value - 1.04 * Math.exp(cUp - centre)) < 1e-9 ||
+      Math.abs(value - 1.04 * Math.exp(cDown - centre)) < 1e-9);
+  near(terminal.reduce((s, v) => s + v, 0) / terminal.length, 1.04, 0.002);
+  const j = jumpParameters(assets[0], a, x.options, up);
   near(j.mean, -0.02);
 });
 test("withdrawals change funding wealth without creating investment drawdown", () => {
@@ -652,4 +670,42 @@ test("equity ETFs take a building-block anchor from dated holdings", () => {
   const [own] = buildReturnAnchors([fund], { ...settings, assetAssumptions: { FFF: { expectedReturn: .03, uncertainty: .05 } } }, {}, universe);
   assert.equal(own.annual, .03);
   assert.equal(own.holdingsCoverage, null);
+});
+
+test("drift uncertainty keeps the anchor as its mean, also when the band is skewed", () => {
+  const mean = (low, anchor, high) => {
+    let total = 0; const n = 20000;
+    for (let k = 0; k < n; k++) total += centeredTriangularQuantile((k + .5) / n, low, anchor, high);
+    return total / n;
+  };
+  near(mean(-.148, .062, .216), .062, 1e-6);
+  near(mean(-.30, .10, .12), .10, 1e-6); // mode clipped at the top: shifted, still centered
+  near(centeredTriangularQuantile(.3, .04, .04, .04), .04);
+});
+
+test("macro scenarios add dispersion without moving the expected equity return", () => {
+  const assets = [{ symbol: "AAA", type: "stock", sector: "Tecnología" }],
+    x = inputs(assets, [anchor(0.08)]);
+  x.regimes = regimes(DEFAULT_REGIMES);
+  x.options = { ...x.options, uncertainFundamentals: false };
+  const sample = generatePaths(x, 6000, 9, 12);
+  let total = 0;
+  for (let p = 0; p < sample.paths; p++) total += sample.gross[0][p * (sample.steps + 1) + sample.steps];
+  near(total / sample.paths, 1.08, 0.003);
+});
+
+test("investment-grade credit nets expected loss and widens with the scenario spread", () => {
+  const lqd = { symbol: "LQD", type: "etf", price_date: "2026-10-26",
+    bond_profile: { yieldToMaturity: .0598, duration: 7.63, expenseRatio: .0014, date: "2026-10-23" } };
+  const b = bondAssumptions(lqd, { asOf: "2026-10-26", yieldCurve: { DGS30: 5.3 } });
+  near(b.carry, .0598 - .0014 - CREDIT_CONVENTIONS.LQD.expectedLoss);
+  assert.equal(b.spreadBeta, 1);
+  assert.match(b.source, /pérdida esperada de crédito/);
+  // A stale credit profile never borrows the Treasury curve.
+  assert.equal(bondAssumptions(lqd, { asOf: "2027-03-01", yieldCurve: { DGS30: 5.3 } }), null);
+  near(bondRegimeShift(b, { rateShift: -.015, spreadShift: .015 }), 0);
+  near(bondRegimeShift({ spreadBeta: 0 }, { rateShift: -.015, spreadShift: .015 }), -.015);
+  // Saved scenarios without the field inherit the default convention by id.
+  const legacy = regimes([{ id: "recession", probability: 1, earningsShift: 0, multipleShift: 0, rateShift: 0, rateJumpBps: 0 }]);
+  assert.equal(legacy[0].spreadShift, DEFAULT_REGIMES.find(r => r.id === "recession").spreadShift);
 });

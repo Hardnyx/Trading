@@ -1,8 +1,8 @@
-import { finite, metrics, valuation, scenarios, resolveAssumptions, returnDecomposition } from "./analytics.mjs?v=0.22.0";
-import { DEFAULT_RESEARCH } from "./policy.mjs?v=0.22.0";
-import { dilutedEarningsBridge } from './earnings-normalization.mjs?v=0.22.0';
-import { financialFreshness } from './financial-freshness.mjs?v=0.22.0';
-import { growthEvidence } from './growth-evidence.mjs?v=0.22.0';
+import { finite, metrics, valuation, scenarios, resolveAssumptions, returnDecomposition } from "./analytics.mjs?v=0.23.0";
+import { DEFAULT_RESEARCH } from "./policy.mjs?v=0.23.0";
+import { dilutedEarningsBridge } from './earnings-normalization.mjs?v=0.23.0';
+import { financialFreshness } from './financial-freshness.mjs?v=0.23.0';
+import { growthEvidence } from './growth-evidence.mjs?v=0.23.0';
 
 const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
 const years = (a, b) =>
@@ -559,6 +559,14 @@ export const INITIAL_BOND_PROFILES = {
       "https://www.ishares.com/us/products/239454/ishares-20-year-treasury-bond-etf",
   },
 };
+// Investment-grade credit funds: expected annual credit loss and spread beta
+// (share of duration exposed to corporate spreads). Stated conventions, not
+// estimates. AGG is mostly Treasuries and agency MBS.
+export const CREDIT_CONVENTIONS = {
+  LQD: { expectedLoss: 0.0025, spreadBeta: 1, label: "Crédito corporativo grado de inversión" },
+  IGSB: { expectedLoss: 0.0025, spreadBeta: 1, label: "Crédito corporativo grado de inversión corto" },
+  AGG: { expectedLoss: 0.0008, spreadBeta: 0.35, label: "Bonos agregados (Treasuries, MBS y crédito)" },
+};
 export function bondAssumptions(asset, settings = {}) {
   const supplied = settings.assetAssumptions?.[asset.symbol] || {},
     profile = asset.bond_profile || INITIAL_BOND_PROFILES[asset.symbol],
@@ -567,6 +575,9 @@ export function bondAssumptions(asset, settings = {}) {
     curve = settings.yieldCurve || {},
     proxy = asset.symbol === "SHY" ? curve.DGS2 : curve.DGS30;
   const stale = usable && years(usable.date, asOf) * 365.25 > 45;
+  const credit = CREDIT_CONVENTIONS[asset.symbol] || null;
+  // A Treasury curve point is no proxy for a credit fund's yield.
+  if (credit && !finite(supplied.yieldToMaturity) && (!usable || stale)) return null;
   const yieldRate = finite(supplied.yieldToMaturity)
     ? supplied.yieldToMaturity
     : finite(proxy) && (!usable || stale)
@@ -594,13 +605,17 @@ export function bondAssumptions(asset, settings = {}) {
     yieldToMaturity: yieldRate,
     duration,
     expenseRatio: expense,
-    carry: yieldRate - expense,
+    expectedLoss: credit?.expectedLoss ?? 0,
+    spreadBeta: credit?.spreadBeta ?? 0,
+    carry: yieldRate - expense - (credit?.expectedLoss ?? 0),
     date: usable?.date || null,
     source: finite(supplied.yieldToMaturity)
       ? "TIR y duración ingresadas"
-      : finite(proxy) && (!usable || stale)
-        ? "Curva Treasury próxima / duración del perfil"
-        : "iShares: TIR bruta menos gastos",
+      : credit
+        ? `iShares: TIR bruta menos gastos y pérdida esperada de crédito ${(credit.expectedLoss * 100).toFixed(2)}% (convención); diferencial por escenario`
+        : finite(proxy) && (!usable || stale)
+          ? "Curva Treasury próxima / duración del perfil"
+          : "iShares: TIR bruta menos gastos",
     stale: !!stale,
     source_url: usable?.source_url || null,
   };

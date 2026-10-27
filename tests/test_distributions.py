@@ -147,4 +147,16 @@ class DistributionFacts(unittest.TestCase):
             price_distribution_index(response,[{'date':'2026-10-23'},{'date':'2026-12-01'}],'SHY','2026-12-02T20:00:00Z')
 
 
-if __name__=='__main__':unittest.main()
+
+
+class CreditProfileFunds(unittest.TestCase):
+    def test_investment_grade_credit_profiles_are_collected_but_not_high_yield(self):
+        from scripts.distributions import PROFILE_FUNDS, DISTRIBUTION_URLS
+        self.assertTrue({"AGG", "LQD", "IGSB"} <= PROFILE_FUNDS)
+        self.assertTrue(PROFILE_FUNDS <= set(DISTRIBUTION_URLS))
+        # No return model yet for high yield, EM debt or inflation-linked funds.
+        self.assertFalse({"HYG", "EMB", "TIP"} & PROFILE_FUNDS)
+
+
+if __name__ == "__main__":
+    unittest.main()
