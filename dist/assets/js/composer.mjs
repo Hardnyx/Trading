@@ -4,15 +4,16 @@ import {
   mean,
   quantile,
   normalizeWeights,
-} from "./analytics.mjs?v=0.23.0";
-import { seededRandom } from "./random.mjs?v=0.23.0";
-import { portfolioAttribution } from "./attribution.mjs?v=0.23.0";
+} from "./analytics.mjs?v=0.24.0";
+import { seededRandom } from "./random.mjs?v=0.24.0";
+import { portfolioAttribution } from "./attribution.mjs?v=0.24.0";
 import {
   preparePaths,
   generatePaths,
   evaluatePaths,
   marginalRisk,
-} from "./path-model.mjs?v=0.23.0";
+  centeredRegimeConditions,
+} from "./path-model.mjs?v=0.24.0";
 import {
   withCashAsset,
   mandate,
@@ -21,12 +22,12 @@ import {
   tradePlan,
   withdrawalSchedule,
   MODEL_VERSION,
-} from "./policy.mjs?v=0.23.0";
-import { buildReturnAnchors, bondScenarioAnnualReturn, bondRegimeShift, constituentForecasts, holdingsAnchor } from "./return-model.mjs?v=0.23.0";
-import { assetAt, fundamentalForecast, bondAssumptions } from "./research-model.mjs?v=0.23.0";
-import { selectCompositionUniverse } from "./universe.mjs?v=0.23.0";
-import { factorizeStressedCovariance } from "./factor-covariance.mjs?v=0.23.0";
-import { economicClass, exposureReport, rawCorrelation, qualifiedOpportunity, holdingsOverlap, knownFundOverlap } from "./economic-exposure.mjs?v=0.23.0";
+} from "./policy.mjs?v=0.24.0";
+import { buildReturnAnchors, constituentForecasts, holdingsAnchor } from "./return-model.mjs?v=0.24.0";
+import { assetAt, fundamentalForecast, bondAssumptions } from "./research-model.mjs?v=0.24.0";
+import { selectCompositionUniverse } from "./universe.mjs?v=0.24.0";
+import { factorizeStressedCovariance } from "./factor-covariance.mjs?v=0.24.0";
+import { economicClass, exposureReport, rawCorrelation, qualifiedOpportunity, holdingsOverlap, knownFundOverlap } from "./economic-exposure.mjs?v=0.24.0";
 
 export const DEFAULT_COMPOSITION_RULES = {
   maxPosition: 0.2,
@@ -1032,6 +1033,10 @@ export function composePortfolio(
       hurdle,
     };
   const risks = marginalRisk(best.weights, x.innovationCovariance||x.covariance);
+  // Bond scenario anchors as simulated: regime effects centered on the carry.
+  const bondScenarioAnchors = (asset, anchor) =>
+    centeredRegimeConditions(asset, anchor, x.regimes, x.options.horizon)
+      .map((condition) => Math.expm1(Math.log1p(anchor.annual) + condition));
   const signals = best.positions.map((p) => {
     const i = x.assets.findIndex((a) => a.symbol === p.symbol),
       a = x.assets[i],
@@ -1049,14 +1054,8 @@ export function composePortfolio(
       bondDate: anchor.bond?.date ?? a.bond_profile?.date ?? null,
       holdingsCoverage: anchor.holdingsCoverage ?? null,
       anchor: anchor.annual,
-      adverseAnchor: anchor.bond
-        ? Math.min(...x.regimes.map(r =>
-            bondScenarioAnnualReturn(anchor.bond, bondRegimeShift(anchor.bond, r), x.options.horizon)))
-        : anchor.low,
-      favorableAnchor: anchor.bond
-        ? Math.max(...x.regimes.map(r =>
-            bondScenarioAnnualReturn(anchor.bond, bondRegimeShift(anchor.bond, r), x.options.horizon)))
-        : anchor.high,
+      adverseAnchor: anchor.bond ? Math.min(...bondScenarioAnchors(a, anchor)) : anchor.low,
+      favorableAnchor: anchor.bond ? Math.max(...bondScenarioAnchors(a, anchor)) : anchor.high,
       confidence: anchor.confidence,
       valuationEvidence: anchor.forecast?.valid ? {
         source: anchor.forecast.source,

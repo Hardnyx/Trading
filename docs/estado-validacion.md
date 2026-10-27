@@ -621,3 +621,21 @@ USD 106.424. Con los perfiles de crédito inyectados: SHY 20, IGSB 15, AGG
 inestabilidad de la búsqueda (pendiente 20). La renta variable alcanza su
 tope del 50% con acciones sueltas, cuyas anclas superan las de sus índices
 (pendiente 1).
+
+### 0.24.0 — Las anclas de escenario de los bonos son las simuladas
+
+Revisión de la propuesta del corte del 26-oct con 6 posiciones y correlación
+máxima 0,85 (TLT 25, SHY 20, efectivo 5, NVDA 15, AMZN 20, NFLX 15; media
+8,0%, CVaR 16,2%, equivalente cierto USD 107.206). El motor la reproduce de
+forma exacta. Una incoherencia quedaba en la ficha: las anclas adversa y
+favorable de los bonos se calculaban con los escenarios sin centrar, mientras
+que desde 0.23.0 la simulación los aplica centrados. TLT mostraba −15,6% y
++31,6% en torno a un carry de 5,2%, en lugar de −16,7% y +29,9%. Ahora la
+ficha y las trayectorias usan la misma función. Su media ponderada en
+retorno bruto es el carry, y la propuesta no cambia.
+
+BKNG (split 25:1, 6-abr-2026) y CRWD (4:1, 2-jul-2026) siguen sin BPA
+valorable. Su TTM combina el 10-K presentado antes del split con 10-Q
+reexpresados. Conforme a H7, no se divide mecánicamente el componente
+anterior por el ratio: quedan bloqueadas hasta contar con componentes
+publicados en la base posterior.

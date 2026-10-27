@@ -5,23 +5,23 @@ import {
   quantile,
   sum,
   normalizeWeights,
-} from "./analytics.mjs?v=0.23.0";
-import { seededRandom, normalGenerator, poisson } from "./random.mjs?v=0.23.0";
-import { ewmaCovariance, cholesky } from "./risk-math.mjs?v=0.23.0";
-import { buildReturnAnchors, sampleDrifts, bondScenarioAnnualReturn, bondRegimeShift } from "./return-model.mjs?v=0.23.0";
-import { distributionAccounting } from "./distribution-ledger.mjs?v=0.23.0";
-import { cashGrowth, uniformCashGrowth } from "./cashflows.mjs?v=0.23.0";
-import { copulaInnovationCovariance } from './copula-covariance.mjs?v=0.23.0';
-import { assetAt } from "./research-model.mjs?v=0.23.0";
-import { factorModel } from "./factors.mjs?v=0.23.0";
-import { conditionalRisk, updateGjrVariance, updateEwmaVariance, updateTargetedVariance, studentMarginal, HORIZON_PERSISTENCE } from "./conditional-risk.mjs?v=0.23.0";
-import { marketFactorCovariance, conditionalFactorization } from "./factor-covariance.mjs?v=0.23.0";
+} from "./analytics.mjs?v=0.24.0";
+import { seededRandom, normalGenerator, poisson } from "./random.mjs?v=0.24.0";
+import { ewmaCovariance, cholesky } from "./risk-math.mjs?v=0.24.0";
+import { buildReturnAnchors, sampleDrifts, bondScenarioAnnualReturn, bondRegimeShift } from "./return-model.mjs?v=0.24.0";
+import { distributionAccounting } from "./distribution-ledger.mjs?v=0.24.0";
+import { cashGrowth, uniformCashGrowth } from "./cashflows.mjs?v=0.24.0";
+import { copulaInnovationCovariance } from './copula-covariance.mjs?v=0.24.0';
+import { assetAt } from "./research-model.mjs?v=0.24.0";
+import { factorModel } from "./factors.mjs?v=0.24.0";
+import { conditionalRisk, updateGjrVariance, updateEwmaVariance, updateTargetedVariance, studentMarginal, HORIZON_PERSISTENCE } from "./conditional-risk.mjs?v=0.24.0";
+import { marketFactorCovariance, conditionalFactorization } from "./factor-covariance.mjs?v=0.24.0";
 import {
   mandate,
   regimes,
   withdrawalSchedule,
   DEFAULT_REGIMES,
-} from "./policy.mjs?v=0.23.0";
+} from "./policy.mjs?v=0.24.0";
 
 export const BASE_REGIME = {
   id: "base",
@@ -182,6 +182,15 @@ export function regimeCondition(asset, anchor, regime, H) {
   return Math.log(Math.max(0.01, 1 + baseGrowth + regime.earningsShift) / (1 + baseGrowth)) +
     Math.log1p(regime.multipleShift) / H;
 }
+/**
+ * Scenario log-drift adjustments as the simulation applies them: centered so
+ * the probability-weighted gross return of the scenarios is exactly one.
+ */
+export function centeredRegimeConditions(asset, anchor, macro, H) {
+  const raw = macro.map((row) => regimeCondition(asset, anchor, row, H));
+  const mean = Math.log(macro.reduce((total, row, k) => total + row.probability * Math.exp(raw[k]), 0));
+  return raw.map((value) => value - mean);
+}
 export function jumpParameters(asset, anchor, options, regime) {
   if (asset.type === "cash" || asset.symbol === "CASH")
     return { mean: 0, vol: 0, compensator: 0 };
@@ -261,8 +270,7 @@ export function generatePaths(inputs, paths, seed, stepsPerYear = 52) {
   // anchor stays the expected return (uncentered scenarios cut the simulated
   // equity mean by about 6 pp and acted as an undeclared pessimistic prior).
   // Centered in gross-return space: E[exp(condition - mean)] = 1 exactly.
-  const scenarioMean = assets.map((a, i) => Math.log(macro.reduce((total, row) =>
-    total + row.probability * Math.exp(regimeCondition(a, anchors[i], row, H)), 0)));
+  const centered = assets.map((a, i) => centeredRegimeConditions(a, anchors[i], macro, H));
   for (let p = 0; p < paths; p++) {
     let u = random(),
       regime = macro.at(-1);
@@ -278,9 +286,9 @@ export function generatePaths(inputs, paths, seed, stepsPerYear = 52) {
       jumps = assets.map((a, i) =>
         jumpParameters(a, anchors[i], options, regime),
       );
+    const regimeIndex = macro.indexOf(regime);
     const drift = mu.map((v, i) => {
-      const condition =
-        regimeCondition(assets[i], anchors[i], regime, H) - scenarioMean[i];
+      const condition = centered[i][regimeIndex];
       return (
         (v +
           condition -

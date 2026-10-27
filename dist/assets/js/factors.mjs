@@ -1,5 +1,5 @@
-import { finite, sum } from "./analytics.mjs?v=0.23.0";
-import { estimateResidualDependence } from "./residual-dependence.mjs?v=0.23.0";
+import { finite, sum } from "./analytics.mjs?v=0.24.0";
+import { estimateResidualDependence } from "./residual-dependence.mjs?v=0.24.0";
 
 export function factorModel(assets, positions, asOf, lookback = 500,
                             lambda = 0.94, references = assets) {

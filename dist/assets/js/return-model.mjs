@@ -1,7 +1,7 @@
-import { finite } from "./analytics.mjs?v=0.23.0";
-import { fundamentalForecast, bondAssumptions, assetAt } from "./research-model.mjs?v=0.23.0";
-import { DEFAULT_RESEARCH } from "./policy.mjs?v=0.23.0";
-import { normalCDF, normalGenerator } from "./random.mjs?v=0.23.0";
+import { finite } from "./analytics.mjs?v=0.24.0";
+import { fundamentalForecast, bondAssumptions, assetAt } from "./research-model.mjs?v=0.24.0";
+import { DEFAULT_RESEARCH } from "./policy.mjs?v=0.24.0";
+import { normalCDF, normalGenerator } from "./random.mjs?v=0.24.0";
 
 /**
  * Annualized scenario return for a bond ETF under a parallel yield change.

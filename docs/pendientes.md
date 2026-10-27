@@ -125,11 +125,12 @@ Este archivo lista **solo lo que falta**. Para el funcionamiento, consultar
 
 ## P1 · Datos
 
-14. **V y FCX sin BPA; BKNG sin base de split conciliada; WEC con informe posterior.**
+14. **V y FCX sin BPA; BKNG y CRWD sin base de split conciliada; WEC con informe posterior.**
     La recuperación desde el iXBRL original corre, pero no obtiene BPA.
     Hipótesis sin confirmar: BPA por clase de acción con dimensiones (Visa) o
-    conceptos no estándar. BKNG queda bloqueado aunque falte beneficio neto;
-    recuperar componentes reexpresados antes de rehabilitarlo. Requiere
+    conceptos no estándar. BKNG (25:1) y CRWD (4:1) quedan bloqueadas aunque
+    falte beneficio neto; recuperar componentes reexpresados antes de
+    rehabilitarlas. Requiere
     acceso a la SEC con el `SEC_USER_AGENT` del proyecto.
 15. **HON:** acciones declaradas 633,7 M (31-mar-2026) → 316,9 M
     (30-jun-2026), frente a un ajuste del proveedor de 0,9535. Falta un

@@ -1,7 +1,7 @@
 /** Experimental model uncertainty. No changes to market facts or live defaults. */
-import { assetAt } from './research-model.mjs?v=0.23.0';
-import { resolveAssumptions } from './analytics.mjs?v=0.23.0';
-import { buildReturnAnchors } from './return-model.mjs?v=0.23.0';
+import { assetAt } from './research-model.mjs?v=0.24.0';
+import { resolveAssumptions } from './analytics.mjs?v=0.24.0';
+import { buildReturnAnchors } from './return-model.mjs?v=0.24.0';
 
 export function operatingMarginStress(original, priceAsOf, informationAsOf) {
   const asset=assetAt(original,priceAsOf,informationAsOf),f=asset.financials||{};

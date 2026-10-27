@@ -7,14 +7,14 @@ import {
   withCashAsset,
   regimes,
   DEFAULT_REGIMES,
-} from "../dist/assets/js/policy.mjs?v=0.23.0";
+} from "../dist/assets/js/policy.mjs?v=0.24.0";
 import {
   fundamentalForecast,
   consensusAt,
   evaluateThesis,
   bondAssumptions,
   CREDIT_CONVENTIONS,
-} from "../dist/assets/js/research-model.mjs?v=0.23.0";
+} from "../dist/assets/js/research-model.mjs?v=0.24.0";
 import {
   valuation,
   correlation,
@@ -22,29 +22,30 @@ import {
   resolveAssumptions,
   returnDecomposition,
   RERATING_HALF_LIFE_YEARS,
-} from "../dist/assets/js/analytics.mjs?v=0.23.0";
-import { sampleDrifts, bondScenarioAnnualReturn, buildReturnAnchors, holdingsAnchor, constituentForecasts, HOLDINGS_ANCHOR_MIN_COVERAGE, centeredTriangularQuantile, bondRegimeShift } from "../dist/assets/js/return-model.mjs?v=0.23.0";
+} from "../dist/assets/js/analytics.mjs?v=0.24.0";
+import { sampleDrifts, bondScenarioAnnualReturn, buildReturnAnchors, holdingsAnchor, constituentForecasts, HOLDINGS_ANCHOR_MIN_COVERAGE, centeredTriangularQuantile, bondRegimeShift } from "../dist/assets/js/return-model.mjs?v=0.24.0";
 import {
   seededRandom,
   normalGenerator,
-} from "../dist/assets/js/random.mjs?v=0.23.0";
+} from "../dist/assets/js/random.mjs?v=0.24.0";
 import {
   generatePaths,
   evaluatePaths,
   BASE_REGIME,
   jumpParameters,
   regimeCondition,
-} from "../dist/assets/js/path-model.mjs?v=0.23.0";
+  centeredRegimeConditions,
+} from "../dist/assets/js/path-model.mjs?v=0.24.0";
 import {
   journalOrigin,
   appendForecast,
   evaluateJournal,
   freezeMaturedOutcomes,
-} from "../dist/assets/js/journal.mjs?v=0.23.0";
+} from "../dist/assets/js/journal.mjs?v=0.24.0";
 import {
   reviewPortfolio,
   registerPortfolio,
-} from "../dist/assets/js/monitor.mjs?v=0.23.0";
+} from "../dist/assets/js/monitor.mjs?v=0.24.0";
 
 const near = (a, b, tol = 1e-8) =>
   assert.ok(Math.abs(a - b) < tol, `${a} != ${b}`);
@@ -332,6 +333,22 @@ test("bond rate scenarios use duration instead of the equity jump", () => {
   near(terminal.reduce((s, v) => s + v, 0) / terminal.length, 1.04, 0.002);
   const j = jumpParameters(assets[0], a, x.options, up);
   near(j.mean, -0.02);
+});
+test("centered scenario conditions match the simulation and keep the gross mean", () => {
+  const asset = { symbol: "TLT", type: "etf" },
+    a = { ...anchor(0.045), bond: { carry: .045, duration: 16 } },
+    macro = [
+      { ...BASE_REGIME, id: "up", probability: .3, rateShift: 0.01 },
+      { ...BASE_REGIME, id: "down", probability: .7, rateShift: -0.005 },
+    ];
+  const centered = centeredRegimeConditions(asset, a, macro, 5);
+  near(macro.reduce((s, r, k) => s + r.probability * Math.exp(centered[k]), 0), 1);
+  for (const [k, r] of macro.entries())
+    near(centered[k] - centered[0],
+      regimeCondition(asset, a, r, 5) - regimeCondition(asset, a, macro[0], 5));
+  // Uncentered regime returns would put both bounds of TLT on one side of carry.
+  const bounds = centered.map((c) => Math.expm1(Math.log1p(.045) + c));
+  assert.ok(Math.min(...bounds) < .045 && Math.max(...bounds) > .045);
 });
 test("withdrawals change funding wealth without creating investment drawdown", () => {
   const assets = [{ symbol: "CASH", type: "cash", price_date: "2026-10-23" }],
