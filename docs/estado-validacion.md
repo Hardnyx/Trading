@@ -382,3 +382,19 @@ SHY 15, SGOV 20, IEI 5, efectivo 5, AMZN 15, NFLX 15 y VZ 5, con media 4,1%,
 mediana 3,6% y CVaR 14,0%. Los supuestos de crecimiento siguen siendo
 genéricos por sector y dominan ahora el orden; requieren vintages de consenso
 o de BPA para calibrarse.
+
+### Hechos contables solo de informes periódicos
+
+Cinco de las siete incidencias del corte del 26 de octubre (SCHW, ANET, MDT,
+FDX y ED, con «BPA no comparable con beneficio/acciones») no eran fallos del
+BPA. El beneficio neto anual procedía de **DEF 14A**: la tabla
+pay-versus-performance de los proxy statements repite el beneficio neto
+etiquetado en miles o millones sin escala (SCHW 8.852.000 en lugar de
+8.852 M$; FDX 4.433 en lugar de 4.433 M$). Al presentarse después del 10-K,
+la regla «última presentación por período» lo prefería. La selección de
+hechos acepta ahora solo 10-K, 10-Q, 20-F, 40-F, sus versiones de transición
+y sus enmiendas, que sí pueden reexpresar cifras. Con companyfacts actual,
+las cinco empresas concilian beneficio neto ≈ BPA × acciones con ratios
+entre 0,94 y 1,01. La comprobación de conciliación sigue activa. Las dos
+incidencias restantes (SPGI, BKNG) son BPA de informes distintos alrededor de
+un split y siguen bloqueadas a propósito.

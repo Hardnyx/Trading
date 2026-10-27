@@ -226,13 +226,25 @@ def number(value):
     return float(value) if isinstance(value, (int, float)) and math.isfinite(value) else None
 
 
+# Financial statements live in periodic reports. Proxy statements (DEF 14A
+# pay-versus-performance tables) and other forms restate figures with their
+# own scale tagging and, being filed later, would otherwise supersede them.
+PERIODIC_FORMS = {"10-K", "10-Q", "20-F", "40-F", "10-KT", "10-QT"}
+
+
+def periodic_form(form):
+    return form is None or form.removesuffix("/A") in PERIODIC_FORMS
+
+
 def facts_for(facts, tags, unit, cutoff):
-    """Keep latest available filing for each exact accounting period."""
+    """Keep latest periodic-report filing for each exact accounting period."""
     records = {}
     for priority, tag in enumerate(tags):
         units = facts.get(tag, {}).get("units", {})
         for row in units.get(unit, []):
             if not row.get("end") or row["end"] > cutoff or row.get("filed", "9999") > cutoff:
+                continue
+            if not periodic_form(row.get("form")):
                 continue
             if number(row.get("val")) is None:
                 continue

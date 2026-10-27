@@ -29,6 +29,21 @@ class FinancialPeriods(unittest.TestCase):
         self.assertEqual(module.ttm(facts, ["Revenue"], "2026-10-24")["value"], 115)
         self.assertEqual(module.ttm(facts, ["Revenue"], "2026-03-01")["value"], 100)
 
+    def test_later_proxy_statement_does_not_supersede_the_annual_report(self):
+        # DEF 14A pay-versus-performance tables repeat net income with their
+        # own scale tagging (here: in thousands) and are filed after the 10-K.
+        facts = {"NetIncomeLoss": {"units": {"USD": [
+            {"start": "2025-01-01", "end": "2025-12-31", "val": 8852000000, "filed": "2026-02-25", "form": "10-K"},
+            {"start": "2025-01-01", "end": "2025-12-31", "val": 8852000, "filed": "2026-04-06", "form": "DEF 14A"},
+            {"start": "2025-01-01", "end": "2025-12-31", "val": 8900000000, "filed": "2026-05-01", "form": "10-K/A"},
+        ]}}}
+        row = module.ttm(facts, ["NetIncomeLoss"], "2026-10-26")
+        self.assertEqual(row["value"], 8900000000)  # a periodic amendment still restates
+        facts["NetIncomeLoss"]["units"]["USD"].pop()
+        self.assertEqual(module.ttm(facts, ["NetIncomeLoss"], "2026-10-26")["value"], 8852000000)
+        self.assertFalse(module.periodic_form("DEF 14A"))
+        self.assertTrue(module.periodic_form(None))  # original iXBRL rows carry their own form check
+
     def test_future_filing_is_not_available_at_cutoff(self):
         facts = {"EPS": {"units": {"USD/shares": [
             {"start": "2025-01-01", "end": "2025-12-31", "filed": "2026-02-01", "val": 10},
