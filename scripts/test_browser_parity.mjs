@@ -124,7 +124,11 @@ try {
     const style=e=>e?getComputedStyle(e):null;
     return {
       sourcePadding:Number.parseFloat(style(source)?.paddingLeft||"0"),
-      contributionsPadding:Number.parseFloat(style(contributions)?.paddingLeft||"0"),
+      // Tables run edge to edge; what must keep its inset is the content:
+      // container padding plus the heading's and first cell's own padding.
+      contributionsPadding:Number.parseFloat(style(contributions)?.paddingLeft||"0")+
+        Math.min(...[contributions?.querySelector("h3"),contributions?.querySelector("th, td")]
+          .map(e=>Number.parseFloat(style(e)?.paddingLeft||"0"))),
       briefPadding:Number.parseFloat(style(brief)?.paddingLeft||"0"),
       technicalOpen:methods?.open,
       hasGlobalCap:panel.textContent?.includes("Límite global"),
