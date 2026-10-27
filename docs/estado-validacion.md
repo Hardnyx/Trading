@@ -554,3 +554,26 @@ del 45%, con un error binomial de ±3,5 pp. Ahora exige la probabilidad de
 pérdida más 1,645 errores estándar por debajo del límite. Resultado: 51
 candidatas cribadas y 6 de 8 finalistas verificadas. La verificación y sus
 límites no cambian.
+
+### 0.22.0 — Ancla compuesta para ETF de renta variable
+
+Hasta 0.21.0, 94 de 100 ETF no tenían ancla y no podían comprarse; el tramo
+de renta variable de la propuesta quedaba en tres o cuatro acciones con
+supuestos genéricos. Un ETF de renta variable obtiene ahora un ancla por
+bloques a partir de sus holdings fechadas. La parte cubierta toma las anclas
+de sus constituyentes del universo, con los mismos supuestos, ajustes del
+usuario, reversión parcial de múltiplos y variantes robustas. La parte no
+cubierta toma el prior común del 6% con ±15 pp. Requiere holdings de 120 días
+o menos, no posteriores al corte, y al menos 70% del peso cubierto (umbral
+operativo). Una expectativa explícita del usuario prevalece. Cobertura del
+corte del 26-oct: DIA 91%, XLK 80%, VIG 77%, QUAL y VUG 75%, DGRO y XLE 74%,
+QQQ 73% y SPY 72%. Las anclas resultan de 4,4% (XLE) a 6,5% (VUG), en línea
+con hipótesis de mercado de largo plazo para renta variable de EE. UU. Los
+gastos del fondo no se descuentan porque el corte no los contiene.
+
+Efecto en la propuesta por defecto: TLT 20, SHV 30, IEF 5, efectivo 5, AMZN
+15, GOOGL 10, HON 10 y NFLX 5. CVaR95 13,4% (16,2% en 0.21.0) y equivalente
+cierto USD 103.642 (103.575). El optimizador aún prefiere acciones sueltas:
+sus anclas individuales (9–11%) superan la media de sus propios índices (~6%).
+Es selección sobre estimaciones ruidosas, ligada a la falta de calibración
+del crecimiento (pendiente 1), no evidencia de superioridad.

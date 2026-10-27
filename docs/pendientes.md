@@ -44,17 +44,20 @@ Este archivo lista **solo lo que falta**. Para el funcionamiento, consultar
 - **Terminado cuando:** cada ancla de crecimiento indica su fuente y vintage,
   y existe un error de previsión medido fuera de muestra.
 
-### 2. 94 de 100 ETF sin ancla económica: no se pueden comprar
-- **Evidencia:** solo TLT, SHY, IEF, IEI, SGOV y SHV tienen perfil. Los ETF
-  de índice (VTI, QQQ, sectoriales, internacionales) quedan en observación;
-  SPY es solo comparador. 51 ETF tienen holdings fechadas.
-- **Falta:** ancla por bloques para ETF de renta variable a partir de sus
-  holdings: rendimiento por dividendo, recompras netas, crecimiento y cambio
-  de múltiplo de los constituyentes, ponderados, con la misma reversión
-  parcial que las acciones y cobertura mínima de composición.
-- **Terminado cuando:** un ETF con ≥ 80 % del peso en constituyentes con ancla
-  válida obtiene ancla y banda trazables (umbral operativo, a revisar); con
-  menos cobertura sigue en observación.
+### 2. ETF sin ancla: internacionales, sectoriales con poca cobertura y gastos
+- **Avance en 0.22.0:** 15 ETF de renta variable de EE. UU. con holdings
+  fechadas de 120 días o menos y al menos 70% del peso en constituyentes con
+  ancla obtienen un ancla compuesta (SPY, QQQ, DIA, XLK, VUG, QUAL, VIG,
+  DGRO, SCHD…). SPY deja de ser solo comparador.
+- **Falta:** internacionales y emergentes (VEA, VWO, EFA, EEM, países) tienen
+  0% de cobertura: sus constituyentes no están en el universo; requieren un
+  ancla por bloques a nivel de índice (rendimiento, crecimiento, valoración,
+  divisa). IWM, XLRE, XBI, KRE, IBB, XLB, RSP y SPLV quedan bajo el 70%.
+  Faltan ratios de gastos fechados, que hoy no se descuentan. La banda supone
+  errores perfectamente correlacionados entre constituyentes; falta medir su
+  diversificación. El umbral de 70% es operativo.
+- **Terminado cuando:** todo ETF de renta variable comprable tiene ancla con
+  fuente y fecha, neta de gastos, o queda en observación con el motivo.
 
 ### 3. Renta fija de crédito e inflación sin modelo
 - **Evidencia:** AGG, BND, LQD, HYG, EMB, TIP e IGSB tienen historial de

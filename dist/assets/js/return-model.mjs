@@ -1,6 +1,7 @@
-import { finite } from "./analytics.mjs?v=0.21.0";
-import { fundamentalForecast, bondAssumptions } from "./research-model.mjs?v=0.21.0";
-import { normalCDF, normalGenerator } from "./random.mjs?v=0.21.0";
+import { finite } from "./analytics.mjs?v=0.22.0";
+import { fundamentalForecast, bondAssumptions, assetAt } from "./research-model.mjs?v=0.22.0";
+import { DEFAULT_RESEARCH } from "./policy.mjs?v=0.22.0";
+import { normalCDF, normalGenerator } from "./random.mjs?v=0.22.0";
 
 /**
  * Annualized scenario return for a bond ETF under a parallel yield change.
@@ -21,7 +22,72 @@ export function bondScenarioAnnualReturn(bond, yieldShift = 0, horizon = 1) {
 }
 
 const bounded = (x) => Math.max(-0.85, Math.min(2, x));
-export function buildReturnAnchors(assets, settings = {}, overrides = {}) {
+// Operational thresholds for building an equity ETF anchor from its dated
+// holdings. They are stated rules, not estimates: below them the fund stays
+// under observation.
+export const HOLDINGS_ANCHOR_MIN_COVERAGE = 0.70;
+export const HOLDINGS_MAX_AGE_DAYS = 120;
+export const HOLDINGS_UNCOVERED_BAND = 0.15;
+
+/** Memoized fundamental anchors of the universe's stocks for one context. */
+export function constituentForecasts(universe = [], settings = {}, overrides = {}) {
+  const bySymbol = new Map(universe.map((asset) => [asset.symbol, asset]));
+  const memo = new Map();
+  const priceAsOf = settings.asOf, info = settings.informationAsOf || settings.asOf;
+  return (symbol) => {
+    if (!memo.has(symbol)) {
+      const original = bySymbol.get(symbol);
+      let forecast = null;
+      if (original?.type === "stock" && priceAsOf) {
+        const asset = assetAt(original, priceAsOf, info);
+        const f = asset.price_date === priceAsOf
+          ? fundamentalForecast(asset, overrides[symbol] || {},
+              settings.research?.[symbol] || {}, { asOf: info, priceAsOf })
+          : null;
+        forecast = f?.valid && f.thesis?.status !== "contradicted" ? f : null;
+      }
+      memo.set(symbol, forecast);
+    }
+    return memo.get(symbol);
+  };
+}
+
+/**
+ * Building-block anchor for an equity ETF from dated holdings: covered weight
+ * takes the constituents' own anchors (same assumptions, overrides and
+ * partial re-rating); the uncovered remainder takes the common prior with a
+ * wide band. Bounds weight the constituents' extremes (perfectly correlated
+ * errors: conservative). Expense ratios are not in the snapshot and are not
+ * deducted.
+ */
+export function holdingsAnchor(asset, lookup, settings = {}) {
+  const h = asset.holdings, info = settings.informationAsOf || settings.asOf;
+  if (asset.type !== "etf" || !h?.as_of || !Array.isArray(h.positions) || !info ||
+      h.as_of > info) return null;
+  const age = (Date.parse(info + "T12:00:00Z") - Date.parse(h.as_of + "T12:00:00Z")) / 86400000;
+  if (!(age <= HOLDINGS_MAX_AGE_DAYS)) return null;
+  let covered = 0, mode = 0, low = 0, high = 0, count = 0;
+  for (const position of h.positions) {
+    const w = position.weight;
+    if (!(w > 0) || position.symbol === asset.symbol) continue;
+    const f = lookup(position.symbol);
+    if (!f) continue;
+    covered += w; mode += w * f.central; low += w * f.low; high += w * f.high; count++;
+  }
+  if (!(covered >= HOLDINGS_ANCHOR_MIN_COVERAGE) || covered > 1.05) return null;
+  const share = Math.min(1, covered), rest = 1 - share,
+    prior = settings.research?.[asset.symbol]?.priorReturn ?? DEFAULT_RESEARCH.priorReturn;
+  return {
+    annual: (mode / covered) * share + prior * rest,
+    low: (low / covered) * share + (prior - HOLDINGS_UNCOVERED_BAND) * rest,
+    high: (high / covered) * share + (prior + HOLDINGS_UNCOVERED_BAND) * rest,
+    coverage: share, constituents: count, holdingsAsOf: h.as_of,
+    source: `Holdings al ${h.as_of}: ${Math.round(share * 100)}% del peso con ancla propia de ${count} acciones; resto con prior ${(prior * 100).toFixed(0)}% ±${HOLDINGS_UNCOVERED_BAND * 100} pp; gastos del fondo no descontados`,
+  };
+}
+
+export function buildReturnAnchors(assets, settings = {}, overrides = {}, universe = assets) {
+  const lookup = constituentForecasts(universe, settings, overrides);
   return assets.map((asset) => {
     const research = settings.research?.[asset.symbol] || {},
       bond = bondAssumptions(asset, settings);
@@ -32,7 +98,8 @@ export function buildReturnAnchors(assets, settings = {}, overrides = {}) {
             priceAsOf: settings.asOf || asset.price_date,
           })
         : null;
-    let annual,
+    let holdings = null,
+      annual,
       low,
       high,
       source,
@@ -64,6 +131,11 @@ export function buildReturnAnchors(assets, settings = {}, overrides = {}) {
       low = forecast.low;
       high = forecast.high;
       source = forecast.source;
+      fundamental = true;
+    } else if (settings.driftMode !== "manual" && asset.type === "etf" &&
+               !finite(settings.assetAssumptions?.[asset.symbol]?.expectedReturn) &&
+               (holdings = holdingsAnchor(asset, lookup, settings))) {
+      ({ annual, low, high, source } = holdings);
       fundamental = true;
     } else {
       const own = settings.assetAssumptions?.[asset.symbol] || {};
@@ -100,6 +172,7 @@ export function buildReturnAnchors(assets, settings = {}, overrides = {}) {
       fundamental,
       source,
       forecast,
+      holdingsCoverage: holdings?.coverage ?? null,
       confidence: forecast?.confidence ?? null,
     };
   });

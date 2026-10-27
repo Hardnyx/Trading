@@ -5,12 +5,12 @@ import {
   currentAccount,
   tradePlan,
   withCashAsset,
-} from "../dist/assets/js/policy.mjs?v=0.21.0";
+} from "../dist/assets/js/policy.mjs?v=0.22.0";
 import {
   fundamentalForecast,
   consensusAt,
   evaluateThesis,
-} from "../dist/assets/js/research-model.mjs?v=0.21.0";
+} from "../dist/assets/js/research-model.mjs?v=0.22.0";
 import {
   valuation,
   correlation,
@@ -18,28 +18,28 @@ import {
   resolveAssumptions,
   returnDecomposition,
   RERATING_HALF_LIFE_YEARS,
-} from "../dist/assets/js/analytics.mjs?v=0.21.0";
-import { sampleDrifts, bondScenarioAnnualReturn } from "../dist/assets/js/return-model.mjs?v=0.21.0";
+} from "../dist/assets/js/analytics.mjs?v=0.22.0";
+import { sampleDrifts, bondScenarioAnnualReturn, buildReturnAnchors, holdingsAnchor, constituentForecasts, HOLDINGS_ANCHOR_MIN_COVERAGE } from "../dist/assets/js/return-model.mjs?v=0.22.0";
 import {
   seededRandom,
   normalGenerator,
-} from "../dist/assets/js/random.mjs?v=0.21.0";
+} from "../dist/assets/js/random.mjs?v=0.22.0";
 import {
   generatePaths,
   evaluatePaths,
   BASE_REGIME,
   jumpParameters,
-} from "../dist/assets/js/path-model.mjs?v=0.21.0";
+} from "../dist/assets/js/path-model.mjs?v=0.22.0";
 import {
   journalOrigin,
   appendForecast,
   evaluateJournal,
   freezeMaturedOutcomes,
-} from "../dist/assets/js/journal.mjs?v=0.21.0";
+} from "../dist/assets/js/journal.mjs?v=0.22.0";
 import {
   reviewPortfolio,
   registerPortfolio,
-} from "../dist/assets/js/monitor.mjs?v=0.21.0";
+} from "../dist/assets/js/monitor.mjs?v=0.22.0";
 
 const near = (a, b, tol = 1e-8) =>
   assert.ok(Math.abs(a - b) < tol, `${a} != ${b}`);
@@ -618,4 +618,38 @@ test("expected returns close only part of the gap to the sector multiple", () =>
 test("return decomposition rejects missing inputs", () => {
   assert.equal(returnDecomposition(null, 10, 100), null);
   assert.equal(returnDecomposition(valuation(stock()), 0, 100), null);
+});
+
+test("equity ETFs take a building-block anchor from dated holdings", () => {
+  const a = stock(); // AAA, valid own-forecast anchor
+  const b = { ...stock(), symbol: "BBB", price: 80 };
+  const etf = (positions, as_of = "2026-10-20") => ({
+    symbol: "FFF", type: "etf", sector: "Índice amplio", price: 50, price_date: "2026-10-23",
+    history: [], holdings: { as_of, positions },
+  });
+  const settings = { asOf: "2026-10-23", informationAsOf: "2026-10-23" };
+  const universe = [a, b];
+  const lookup = constituentForecasts(universe, settings, {});
+  const fa = lookup("AAA"), fb = lookup("BBB");
+  assert.ok(fa && fb);
+  // 50% AAA + 30% BBB covered; 20% outside the universe takes the 6% prior.
+  const anchor = holdingsAnchor(etf([{ symbol: "AAA", weight: .5 }, { symbol: "BBB", weight: .3 }, { symbol: "ZZZ", weight: .2 }]), lookup, settings);
+  const covered = (.5 * fa.central + .3 * fb.central) / .8;
+  assert.ok(Math.abs(anchor.annual - (.8 * covered + .2 * .06)) < 1e-12);
+  assert.ok(Math.abs(anchor.low - (.8 * (.5 * fa.low + .3 * fb.low) / .8 + .2 * (.06 - .15))) < 1e-12);
+  assert.equal(anchor.coverage, .8);
+  assert.match(anchor.source, /80% del peso con ancla propia de 2 acciones/);
+  // Below the coverage rule, stale or future holdings: no anchor.
+  assert.ok(HOLDINGS_ANCHOR_MIN_COVERAGE >= .7);
+  assert.equal(holdingsAnchor(etf([{ symbol: "AAA", weight: .6 }, { symbol: "ZZZ", weight: .4 }]), lookup, settings), null);
+  assert.equal(holdingsAnchor(etf([{ symbol: "AAA", weight: .9 }], "2026-05-01"), lookup, settings), null);
+  assert.equal(holdingsAnchor(etf([{ symbol: "AAA", weight: .9 }], "2026-10-24"), lookup, settings), null);
+  // The anchor builder uses it, and an explicit user expectation still wins.
+  const fund = etf([{ symbol: "AAA", weight: .9 }, { symbol: "ZZZ", weight: .1 }]);
+  const [built] = buildReturnAnchors([fund], settings, {}, universe);
+  assert.ok(Math.abs(built.annual - (.9 * fa.central + .1 * .06)) < 1e-12);
+  assert.equal(built.holdingsCoverage, .9);
+  const [own] = buildReturnAnchors([fund], { ...settings, assetAssumptions: { FFF: { expectedReturn: .03, uncertainty: .05 } } }, {}, universe);
+  assert.equal(own.annual, .03);
+  assert.equal(own.holdingsCoverage, null);
 });

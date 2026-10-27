@@ -1,11 +1,11 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {projectionCalendar,distributionAccounting,reconcileDistributionReturn,yearFraction}
-  from "../dist/assets/js/distribution-ledger.mjs?v=0.21.0";
-import {evaluatePaths} from "../dist/assets/js/path-model.mjs?v=0.21.0";
-import {portfolioAttribution} from "../dist/assets/js/attribution.mjs?v=0.21.0";
-import {mandate} from "../dist/assets/js/policy.mjs?v=0.21.0";
-import {journalOrigin,appendForecast,evaluateJournal,freezeMaturedOutcomes} from "../dist/assets/js/journal.mjs?v=0.21.0";
+  from "../dist/assets/js/distribution-ledger.mjs?v=0.22.0";
+import {evaluatePaths} from "../dist/assets/js/path-model.mjs?v=0.22.0";
+import {portfolioAttribution} from "../dist/assets/js/attribution.mjs?v=0.22.0";
+import {mandate} from "../dist/assets/js/policy.mjs?v=0.22.0";
+import {journalOrigin,appendForecast,evaluateJournal,freezeMaturedOutcomes} from "../dist/assets/js/journal.mjs?v=0.22.0";
 import {maturityCheck} from "../scripts/seal_forecast.mjs";
 
 function sample(mode="cash",tax=0,level=1){

@@ -4,15 +4,15 @@ import {
   mean,
   quantile,
   normalizeWeights,
-} from "./analytics.mjs?v=0.21.0";
-import { seededRandom } from "./random.mjs?v=0.21.0";
-import { portfolioAttribution } from "./attribution.mjs?v=0.21.0";
+} from "./analytics.mjs?v=0.22.0";
+import { seededRandom } from "./random.mjs?v=0.22.0";
+import { portfolioAttribution } from "./attribution.mjs?v=0.22.0";
 import {
   preparePaths,
   generatePaths,
   evaluatePaths,
   marginalRisk,
-} from "./path-model.mjs?v=0.21.0";
+} from "./path-model.mjs?v=0.22.0";
 import {
   withCashAsset,
   mandate,
@@ -21,12 +21,12 @@ import {
   tradePlan,
   withdrawalSchedule,
   MODEL_VERSION,
-} from "./policy.mjs?v=0.21.0";
-import { buildReturnAnchors, bondScenarioAnnualReturn } from "./return-model.mjs?v=0.21.0";
-import { assetAt, fundamentalForecast, bondAssumptions } from "./research-model.mjs?v=0.21.0";
-import { selectCompositionUniverse } from "./universe.mjs?v=0.21.0";
-import { factorizeStressedCovariance } from "./factor-covariance.mjs?v=0.21.0";
-import { economicClass, exposureReport, rawCorrelation, qualifiedOpportunity, holdingsOverlap, knownFundOverlap } from "./economic-exposure.mjs?v=0.21.0";
+} from "./policy.mjs?v=0.22.0";
+import { buildReturnAnchors, bondScenarioAnnualReturn, constituentForecasts, holdingsAnchor } from "./return-model.mjs?v=0.22.0";
+import { assetAt, fundamentalForecast, bondAssumptions } from "./research-model.mjs?v=0.22.0";
+import { selectCompositionUniverse } from "./universe.mjs?v=0.22.0";
+import { factorizeStressedCovariance } from "./factor-covariance.mjs?v=0.22.0";
+import { economicClass, exposureReport, rawCorrelation, qualifiedOpportunity, holdingsOverlap, knownFundOverlap } from "./economic-exposure.mjs?v=0.22.0";
 
 export const DEFAULT_COMPOSITION_RULES = {
   maxPosition: 0.2,
@@ -113,6 +113,8 @@ export function prepareComposition(
     }
     return observations >= 60 ? Math.sqrt(252 * squared / observations) : 1;
   };
+  const anchorContext = { asOf, informationAsOf: info, research: settings.research || {} };
+  const constituents = constituentForecasts(snapshot.assets, anchorContext, overrides);
   for (const original of snapshot.assets) {
     const asset = assetAt(original, asOf, info);
     let reason = null;
@@ -148,9 +150,15 @@ export function prepareComposition(
           .filter((row) => row.date <= info)
           .map((row) => [row.id, row.value])),
       });
-      if (!reason && !isBondPriced && !hasExplicitReturn)
-        reason = "ETF sin retorno esperado fundamentado: no se permite compra nueva con el supuesto genérico del 6 %. Introduce una expectativa y una incertidumbre explícitas.";
-      else if(!reason) {
+      const composite = !reason && !isBondPriced && !hasExplicitReturn
+        ? holdingsAnchor(asset, constituents, anchorContext) : null;
+      if (!reason && !isBondPriced && !hasExplicitReturn && !composite)
+        reason = "ETF sin retorno esperado fundamentado: holdings insuficientes o antiguas para un ancla compuesta y sin expectativa explícita. Introduce una expectativa y una incertidumbre explícitas.";
+      else if (!reason && composite)
+        forwardPriority[asset.symbol] = composite.annual -
+          0.15 * Math.max(0, composite.high - composite.low) -
+          0.04 * historicalVolatility(asset);
+      else if(!reason && !composite) {
         const bond = bondAssumptions(asset, {
           ...settings, asOf, informationAsOf: info,
           yieldCurve: Object.fromEntries((snapshot.macro || [])
@@ -1039,6 +1047,7 @@ export function composePortfolio(
       financialMethod: a.financials?.eps?.method ?? null,
       financialObservedAt: a.financials?.observed_at ?? null,
       bondDate: anchor.bond?.date ?? a.bond_profile?.date ?? null,
+      holdingsCoverage: anchor.holdingsCoverage ?? null,
       anchor: anchor.annual,
       adverseAnchor: anchor.bond
         ? Math.min(...x.regimes.map(r =>
@@ -1120,7 +1129,7 @@ export function composePortfolio(
       factorization: test.correlation
         ? factorizeStressedCovariance(covariance, x.assets)
         : x.factorization,
-      anchors: buildReturnAnchors(x.assets, options, changedOverrides),
+      anchors: buildReturnAnchors(x.assets, options, changedOverrides, x.anchorUniverse || x.assets),
     };
     const draws = generatePaths(altered, Math.min(paths, 600), seed, 12);
     const choices = [...ranked.slice(0, 20), {weights:best.weights}, { weights: current }]

@@ -7,7 +7,7 @@ import {
   resolveAssumptions,
   returnDecomposition,
   valuation,
-} from "../analytics.mjs?v=0.21.0";
+} from "../analytics.mjs?v=0.22.0";
 import {
   sparkline,
   portfolioChart,
@@ -16,7 +16,7 @@ import {
   scatter,
   forecastCone,
   histogram,
-} from "../charts.mjs?v=0.21.0";
+} from "../charts.mjs?v=0.22.0";
 import {
   esc,
   url,
@@ -27,16 +27,16 @@ import {
   color,
   dateLabel,
   timestampLabel,
-} from "./format.mjs?v=0.21.0";
-import { template } from "./templates.mjs?v=0.21.0";
-import { DEFAULT_COMPOSITION_RULES } from "../composer.mjs?v=0.21.0";
-import { factorModel } from "../factors.mjs?v=0.21.0";
-import { MODEL_VERSION, informationDate } from "../policy.mjs?v=0.21.0";
-import { fundamentalForecast } from "../research-model.mjs?v=0.21.0";
-import { financialFreshness } from '../financial-freshness.mjs?v=0.21.0';
-import { priceMonitor } from '../price-monitor.mjs?v=0.21.0';
+} from "./format.mjs?v=0.22.0";
+import { template } from "./templates.mjs?v=0.22.0";
+import { DEFAULT_COMPOSITION_RULES } from "../composer.mjs?v=0.22.0";
+import { factorModel } from "../factors.mjs?v=0.22.0";
+import { MODEL_VERSION, informationDate } from "../policy.mjs?v=0.22.0";
+import { fundamentalForecast } from "../research-model.mjs?v=0.22.0";
+import { financialFreshness } from '../financial-freshness.mjs?v=0.22.0';
+import { priceMonitor } from '../price-monitor.mjs?v=0.22.0';
 
-import { createDecisionViews } from "./decision-views.mjs?v=0.21.0";
+import { createDecisionViews } from "./decision-views.mjs?v=0.22.0";
 
 /**
  * Describes the process the Monte Carlo actually runs. Jumps and the GBM /
@@ -128,6 +128,8 @@ export function compositionRole(signal, proposal={}) {
   const bonds={TLT:'Treasuries largos',IEF:'Treasuries intermedios',IEI:'Treasuries intermedios',
     SHY:'Treasuries cortos',SHV:'Treasuries de vencimiento corto',SGOV:'Letras del Tesoro'};
   if (bonds[signal.symbol]) return bonds[signal.symbol]+(signal.symbol==='TLT'?' · sensibilidad a tasas':'');
+  if (finite(signal.holdingsCoverage))
+    return `Fondo de acciones · ${pct(signal.holdingsCoverage,0)} del peso con ancla de sus constituyentes`;
   const growth=signal.valuationEvidence?.assumptions?.growth;
   const dividend=signal.valuationEvidence?.decomposition?.dividends;
   return finite(growth) ? (dividend>.001
