@@ -7,7 +7,7 @@ import {
   resolveAssumptions,
   returnDecomposition,
   valuation,
-} from "../analytics.mjs?v=0.20.0";
+} from "../analytics.mjs?v=0.21.0";
 import {
   sparkline,
   portfolioChart,
@@ -16,7 +16,7 @@ import {
   scatter,
   forecastCone,
   histogram,
-} from "../charts.mjs?v=0.20.0";
+} from "../charts.mjs?v=0.21.0";
 import {
   esc,
   url,
@@ -27,16 +27,16 @@ import {
   color,
   dateLabel,
   timestampLabel,
-} from "./format.mjs?v=0.20.0";
-import { template } from "./templates.mjs?v=0.20.0";
-import { DEFAULT_COMPOSITION_RULES } from "../composer.mjs?v=0.20.0";
-import { factorModel } from "../factors.mjs?v=0.20.0";
-import { MODEL_VERSION, informationDate } from "../policy.mjs?v=0.20.0";
-import { fundamentalForecast } from "../research-model.mjs?v=0.20.0";
-import { financialFreshness } from '../financial-freshness.mjs?v=0.20.0';
-import { priceMonitor } from '../price-monitor.mjs?v=0.20.0';
+} from "./format.mjs?v=0.21.0";
+import { template } from "./templates.mjs?v=0.21.0";
+import { DEFAULT_COMPOSITION_RULES } from "../composer.mjs?v=0.21.0";
+import { factorModel } from "../factors.mjs?v=0.21.0";
+import { MODEL_VERSION, informationDate } from "../policy.mjs?v=0.21.0";
+import { fundamentalForecast } from "../research-model.mjs?v=0.21.0";
+import { financialFreshness } from '../financial-freshness.mjs?v=0.21.0';
+import { priceMonitor } from '../price-monitor.mjs?v=0.21.0';
 
-import { createDecisionViews } from "./decision-views.mjs?v=0.20.0";
+import { createDecisionViews } from "./decision-views.mjs?v=0.21.0";
 
 /**
  * Describes the process the Monte Carlo actually runs. Jumps and the GBM /
@@ -59,10 +59,10 @@ export function simulatedProcess(settings = {}, volatility = null) {
   const gjr = mode === "hybrid" && accepted > 0;
   return {
     legacy: false, jumps: false,
-    label: gjr ? `GJR-t validado (${accepted}) + EWMA diario` : "EWMA diario",
+    label: gjr ? `GJR-t validado (${accepted}) + EWMA con reversión` : "EWMA con reversión",
     subtitle: gjr
-      ? `Varianza GJR-t validada en ${accepted} activo${accepted === 1 ? "" : "s"}, con su innovación Student-t, y recursión EWMA gaussiana en los demás. Dependencia por cópula gaussiana; sin saltos.`
-      : "Recursión EWMA diaria sobre la covarianza total. Innovaciones conjuntas gaussianas; sin saltos.",
+      ? `Varianza GJR-t validada en ${accepted} activo${accepted === 1 ? "" : "s"}, con su innovación Student-t, y en los demás EWMA gaussiano que revierte a su varianza de 500 sesiones (persistencia diaria 0,99). Dependencia por cópula gaussiana; sin saltos.`
+      : "EWMA diario que revierte a la varianza de 500 sesiones (persistencia 0,99) sobre la covarianza total. Innovaciones conjuntas gaussianas; sin saltos.",
   };
 }
 

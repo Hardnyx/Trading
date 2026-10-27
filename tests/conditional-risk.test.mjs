@@ -1,8 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { conditionalRisk, studentScale, updateGjrVariance, studentMarginal, studentUpperTail, normalUpperTail } from "../dist/assets/js/conditional-risk.mjs";
-import { preparePaths, generatePaths } from "../dist/assets/js/path-model.mjs?v=0.20.0";
-import { seededRandom, normalGenerator } from "../dist/assets/js/random.mjs?v=0.20.0";
+import { conditionalRisk, studentScale, updateGjrVariance, studentMarginal, studentUpperTail, normalUpperTail, updateTargetedVariance, updateEwmaVariance } from "../dist/assets/js/conditional-risk.mjs";
+import { preparePaths, generatePaths } from "../dist/assets/js/path-model.mjs?v=0.21.0";
+import { seededRandom, normalGenerator } from "../dist/assets/js/random.mjs?v=0.21.0";
 
 const DATE="2026-10-23";
 function accepted(symbol,variance=1.8) {
@@ -178,4 +178,48 @@ test("accepted GJR instruments get fat-tailed daily innovations; fallback stays 
   const fat4=kurtosis(0), fallback4=kurtosis(1);
   assert.ok(fat4>7,`accepted kurtosis ${fat4}`);
   assert.ok(fat4>fallback4+2,`accepted ${fat4} vs fallback ${fallback4}`);
+});
+
+test("fallback variance reverts to its long-run level instead of carrying a spike",()=>{
+  const longRun=.0001, spike=.0009;
+  let targeted=spike, flat=spike;
+  for(let day=0;day<1000;day++){
+    // Feed each recursion its own expected squared innovation (e^2 = h).
+    targeted=updateTargetedVariance(targeted,Math.sqrt(targeted),longRun,.94,.99);
+    flat=updateEwmaVariance(flat,Math.sqrt(flat),.94);
+  }
+  // In expectation the flat EWMA keeps the spike; the targeted one returns to the long run.
+  assert.ok(Math.abs(flat-spike)<1e-12,`flat ${flat}`);
+  assert.ok(Math.abs(targeted-longRun)<1e-6,`targeted ${targeted}`);
+  // Expected next variance equals the GARCH(1,1) mean: (1-phi)*LR + phi*h.
+  const h=.0004, e=Math.sqrt(h);
+  assert.ok(Math.abs(updateTargetedVariance(h,e,longRun,.94,.99)-(.01*longRun+.99*h))<1e-15);
+  assert.throws(()=>updateTargetedVariance(h,e,longRun,.5,.3),/reversión/);
+});
+
+test("simulated fallback volatility moves toward the 500-session level",()=>{
+  // Calm long history, then a violent last month: EWMA alone would carry it all year.
+  const base=etf("AAA");
+  base.history=base.history.map((row,t,all)=>({...row}));
+  let close=100;
+  base.history.forEach((row,t)=>{
+    const sigma=t>=base.history.length-21?.04:.008;
+    close*=Math.exp(sigma*Math.sin(t*12.9898)*1.4);
+    row.close=row.adj_close=close;
+  });
+  base.price=close;
+  const vol=sampleSource({AAA:{...accepted("AAA"),status:"research_only"}});
+  const inputs=preparePaths([base],{asOf:DATE,informationAsOf:DATE,volatilityMode:"hybrid",
+    volatilityData:vol,horizon:1,model:"gbm",macroRegimes:[{id:"base",label:"b",probability:1,earningsShift:0,multipleShift:0,rateShift:0,rateJumpBps:0}]},{},[base]);
+  const lr=inputs.horizonVariance.longRunDaily[0];
+  assert.ok(lr>0 && lr<inputs.covariance[0][0]/252,"spot EWMA must exceed the long-run level here");
+  const terminalVol=(sample)=>{
+    const r=[];for(let p=0;p<sample.paths;p++)r.push(Math.log(sample.gross[0][p*(sample.steps+1)+sample.steps]));
+    const m=r.reduce((a,b)=>a+b,0)/r.length;return Math.sqrt(r.reduce((a,b)=>a+(b-m)**2,0)/(r.length-1));
+  };
+  const reverting=terminalVol(generatePaths(inputs,600,5,52));
+  const flat=terminalVol(generatePaths({...inputs,horizonVariance:undefined},600,5,52));
+  const spot=Math.sqrt(inputs.covariance[0][0]);
+  assert.ok(reverting<flat,`reverting ${reverting} flat ${flat}`);
+  assert.ok(reverting<spot && reverting>Math.sqrt(lr*252)*.8);
 });

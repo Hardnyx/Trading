@@ -23,7 +23,7 @@
             <label for="composition-volatility">VOLATILIDAD / RIESGO</label>
             <select id="composition-volatility" data-setting="volatilityMode">
               <option value="hybrid" {{{volatilityHybridSelected}}}>GJR validado + EWMA (automático)</option>
-              <option value="ewma" {{{volatilityEWMASelected}}}>EWMA diario sin saltos no calibrados</option>
+              <option value="ewma" {{{volatilityEWMASelected}}}>EWMA con reversión, sin saltos no calibrados</option>
               <option value="legacy" {{{volatilityLegacySelected}}}>Merton legado · solo comparación (saltos no calibrados)</option>
             </select>
           </div>

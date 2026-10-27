@@ -511,3 +511,46 @@ incluyendo el valor distribuido.
 Observación sin resolver: HON declara 633,7 M acciones al 31-mar-2026 y
 316,9 M al 30-jun-2026, mientras el proveedor indica un ajuste de 0,9535. No
 se reinterpreta como contrasplit sin un documento que lo acredite.
+
+### 0.21.0 — La varianza a horizonte revierte a su nivel de largo plazo
+
+Diagnóstico de la propuesta por defecto del corte del 26 de octubre (TLT 35,
+IEF 20, SGOV 5, efectivo 5, GOOGL 15, VZ 10, AMZN 5, HPQ 5), reproducida
+exactamente con `referenceRequest`. VZ aportaba el 28% de la varianza con un
+10% del peso, HPQ el 18% con un 5% y AMZN el 0,5% con un 5%. Causa: los
+241 instrumentos sin GJR aceptado se simulaban con EWMA λ = 0,94 (vida
+media ≈ 11 sesiones), que es una martingala. La varianza del último mes se
+arrastraba los doce meses: VZ 38% anual tras su −9,2% del 9-oct (24,5% a dos
+años), SPY 10,4% (16,4%), GOOGL 24,9% (31,8%). El riesgo de renta variable
+quedaba subestimado en conjunto y la selección dependía de picos recientes.
+
+Contraste fuera de muestra (`scripts/horizon_variance_research.py`): 260
+instrumentos, orígenes sin solape, ventana de 500 sesiones conocida en cada
+origen y QLIKE sobre la varianza realizada. La EWMA plana se compara con la
+misma EWMA revirtiendo hacia la varianza de esas 500 sesiones. Con φ = 0,99,
+la ganancia es de +0,027 a 21 sesiones (33 meses de origen, error por mes
+0,005, 88% de meses mejor), +0,067 a 63 sesiones (11 meses, 0,013, 100%) y
++0,128 a 252 sesiones (solo dos orígenes independientes: mismo signo, sin
+fuerza propia). φ = 0,97 y 0,995 dan el mismo signo en todos los horizontes.
+φ se fija en 0,99, valor habitual de persistencia diaria, sin elegir el
+mejor resultado.
+
+La simulación aplica a esos instrumentos un GARCH(1,1) con objetivo de
+varianza: α = 1 − λ, β = φ − α y ω = (1 − φ)·σ²₅₀₀. Parte de la EWMA
+vigente. Los GJR aceptados no cambian. Volatilidad simulada a doce meses:
+SPY 10,7% → 15,2%, VZ 42,4% → 32,1%, GOOGL 25,1% → 29,9%. La propuesta por
+defecto pasa a TLT 35, IEF 10, SGOV 10, SHY 5, efectivo 5, GOOGL 15, VZ 15 y
+AMZN 5, con CVaR95 de 16,2% frente a 17,7%. Las correlaciones siguen siendo
+EWMA y la persistencia es común a todos los instrumentos; ninguna de las dos
+cosas está validada por activo.
+
+**Margen de muestreo en el cribado robusto.** Con el riesgo de renta variable
+mejor medido, la sesión de prueba del navegador (SHY ≤ 10%, acciones ≤ 10%,
+cuenta con NVDA) dejó de obtener candidata: 226 superaban el cribado con 200
+trayectorias, pero ninguna de las 9 finalistas pasaba la verificación
+independiente. Todas fallaban por probabilidad de pérdida, sobre todo en el
+modelo de baja convicción. El cribado elegía candidatas pegadas al límite
+del 45%, con un error binomial de ±3,5 pp. Ahora exige la probabilidad de
+pérdida más 1,645 errores estándar por debajo del límite. Resultado: 51
+candidatas cribadas y 6 de 8 finalistas verificadas. La verificación y sus
+límites no cambian.

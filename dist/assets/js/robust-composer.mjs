@@ -1,11 +1,11 @@
-import {prepareComposition,validWeights} from "./composer.mjs?v=0.20.0";
-import {generatePaths,evaluatePaths} from "./path-model.mjs?v=0.20.0";
-import {distributionAccounting,distributionTerminalValue} from "./distribution-ledger.mjs?v=0.20.0";
-import {tradePlan,MODEL_VERSION} from "./policy.mjs?v=0.20.0";
-import {bondAssumptions} from "./research-model.mjs?v=0.20.0";
-import {seededRandom} from "./random.mjs?v=0.20.0";
-import {MODEL_VARIANTS,variantInputs,minimaxRegret,pairedUtilityEvidence} from "./robust-core.mjs?v=0.20.0";
-import {robustTransition} from './robust-transition.mjs?v=0.20.0';
+import {prepareComposition,validWeights} from "./composer.mjs?v=0.21.0";
+import {generatePaths,evaluatePaths} from "./path-model.mjs?v=0.21.0";
+import {distributionAccounting,distributionTerminalValue} from "./distribution-ledger.mjs?v=0.21.0";
+import {tradePlan,MODEL_VERSION} from "./policy.mjs?v=0.21.0";
+import {bondAssumptions} from "./research-model.mjs?v=0.21.0";
+import {seededRandom} from "./random.mjs?v=0.21.0";
+import {MODEL_VARIANTS,variantInputs,minimaxRegret,pairedUtilityEvidence} from "./robust-core.mjs?v=0.21.0";
+import {robustTransition} from './robust-transition.mjs?v=0.21.0';
 
 export function compareRobustPortfolio(snapshot,settings={},overrides={},rules={},options={}){
  const config={candidateCount:300,searchPaths:200,verificationPaths:1000,finalists:6,
@@ -110,7 +110,11 @@ for(let round=0;round<config.localRounds;round++){
  for(const row of rows.slice(start))for(let s=0;s<ids.length;s++){
   const m=terminalMetrics(row.weights,screeningTerminals[s],row.cost);
   row.screen[ids[s]]=m;row.utilities[ids[s]]=m.utility;
-  if(m.cvar95>x.rules.cvarBudget||m.lossProbability>x.rules.maxLossProbability)row.feasible=false;
+  // Screening paths are few: a candidate selected right at the loss limit
+  // fails independent verification about half the time. Require a one-sided
+  // 95% binomial margin so verification receives candidates that can pass.
+  const lossMargin=1.645*Math.sqrt(m.lossProbability*(1-m.lossProbability)/config.searchPaths);
+  if(m.cvar95>x.rules.cvarBudget||m.lossProbability+lossMargin>x.rules.maxLossProbability)row.feasible=false;
  }
  progress('Intercambios locales',round+1);
  if(rows.length===start)break;

@@ -208,7 +208,28 @@ export function updateGjrVariance(fit, varianceDaily, logInnovation) {
   return Math.max(1e-12, Math.min(.25, next));
 }
 
-/** Daily EWMA recursion, applied to EVERY unaccepted GJR instrument. */
+// Daily persistence of the horizon variance for instruments without an
+// accepted GJR fit. Fixed a priori at the usual practitioner GARCH value;
+// out-of-sample QLIKE at 21, 63 and 252 sessions favours mean reversion over
+// the flat EWMA for 0.97, 0.99 and 0.995 alike (docs/estado-validacion.md).
+export const HORIZON_PERSISTENCE = 0.99;
+/**
+ * EWMA reaction (alpha = 1 - lambda) with mean reversion toward the
+ * long-run variance: a variance-targeted GARCH(1,1). The plain EWMA is a
+ * martingale and carries last month's variance through a 12-month horizon.
+ */
+export function updateTargetedVariance(varianceDaily, innovation, longRunDaily,
+                                       lambda=0.94, persistence=HORIZON_PERSISTENCE) {
+  const alpha=1-lambda, beta=persistence-alpha;
+  if (!Number.isFinite(varianceDaily) || varianceDaily<0 ||
+      !Number.isFinite(innovation) || !Number.isFinite(longRunDaily) ||
+      longRunDaily<0 || !(lambda>0&&lambda<1) || !(beta>=0&&persistence<1))
+    throw new Error("Actualización de varianza con reversión inválida");
+  const next=(1-persistence)*longRunDaily+alpha*innovation*innovation+beta*varianceDaily;
+  return Math.max(0,Math.min(.25,next));
+}
+
+/** Plain daily EWMA recursion (comparator; no mean reversion). */
 export function updateEwmaVariance(varianceDaily, innovation, lambda=0.94) {
   if (!Number.isFinite(varianceDaily) || varianceDaily<0 ||
       !Number.isFinite(innovation) || !(lambda>0&&lambda<1))

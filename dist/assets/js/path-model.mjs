@@ -5,23 +5,23 @@ import {
   quantile,
   sum,
   normalizeWeights,
-} from "./analytics.mjs?v=0.20.0";
-import { seededRandom, normalGenerator, poisson } from "./random.mjs?v=0.20.0";
-import { ewmaCovariance, cholesky } from "./risk-math.mjs?v=0.20.0";
-import { buildReturnAnchors, sampleDrifts, bondScenarioAnnualReturn } from "./return-model.mjs?v=0.20.0";
-import { distributionAccounting } from "./distribution-ledger.mjs?v=0.20.0";
-import { cashGrowth, uniformCashGrowth } from "./cashflows.mjs?v=0.20.0";
-import { copulaInnovationCovariance } from './copula-covariance.mjs?v=0.20.0';
-import { assetAt } from "./research-model.mjs?v=0.20.0";
-import { factorModel } from "./factors.mjs?v=0.20.0";
-import { conditionalRisk, updateGjrVariance, updateEwmaVariance, studentMarginal } from "./conditional-risk.mjs?v=0.20.0";
-import { marketFactorCovariance, conditionalFactorization } from "./factor-covariance.mjs?v=0.20.0";
+} from "./analytics.mjs?v=0.21.0";
+import { seededRandom, normalGenerator, poisson } from "./random.mjs?v=0.21.0";
+import { ewmaCovariance, cholesky } from "./risk-math.mjs?v=0.21.0";
+import { buildReturnAnchors, sampleDrifts, bondScenarioAnnualReturn } from "./return-model.mjs?v=0.21.0";
+import { distributionAccounting } from "./distribution-ledger.mjs?v=0.21.0";
+import { cashGrowth, uniformCashGrowth } from "./cashflows.mjs?v=0.21.0";
+import { copulaInnovationCovariance } from './copula-covariance.mjs?v=0.21.0';
+import { assetAt } from "./research-model.mjs?v=0.21.0";
+import { factorModel } from "./factors.mjs?v=0.21.0";
+import { conditionalRisk, updateGjrVariance, updateEwmaVariance, updateTargetedVariance, studentMarginal, HORIZON_PERSISTENCE } from "./conditional-risk.mjs?v=0.21.0";
+import { marketFactorCovariance, conditionalFactorization } from "./factor-covariance.mjs?v=0.21.0";
 import {
   mandate,
   regimes,
   withdrawalSchedule,
   DEFAULT_REGIMES,
-} from "./policy.mjs?v=0.20.0";
+} from "./policy.mjs?v=0.21.0";
 
 export const BASE_REGIME = {
   id: "base",
@@ -135,6 +135,7 @@ export function preparePaths(assets, options = {}, overrides = {}, references = 
       explanation: exposures.note,
       residualMarketRiskExcluded: false,
     },
+    horizonVariance: longRunVariances(clean, asOf),
     anchors: buildReturnAnchors(clean, { ...settings, asOf }, overrides),
     observations: aligned.dates.length,
     calibrationEnd: aligned.dates.at(-1),
@@ -142,6 +143,25 @@ export function preparePaths(assets, options = {}, overrides = {}, references = 
       settings.macroRegimes ||
         (settings.driftMode === "manual" ? [BASE_REGIME] : DEFAULT_REGIMES),
     ),
+  };
+}
+/**
+ * Long-run daily variance per instrument from its own last 500 log returns
+ * known at the cut: the level toward which fallback variances revert.
+ */
+export function longRunVariances(assets, asOf, window = 500) {
+  const longRunDaily = assets.map((asset) => {
+    if (asset.type === "cash" || asset.symbol === "CASH") return 0;
+    const closes = (asset.history || []).filter((row) => row.date <= asOf)
+      .map((row) => row.adj_close).filter((v) => v > 0).slice(-(window + 1));
+    if (closes.length < 61) return null;
+    const r = closes.slice(1).map((v, i) => Math.log(v / closes[i]));
+    const m = r.reduce((s, v) => s + v, 0) / r.length;
+    return r.reduce((s, v) => s + (v - m) ** 2, 0) / (r.length - 1);
+  });
+  return {
+    method: "variance-targeted EWMA: alpha = 1 - lambda, persistence " + HORIZON_PERSISTENCE,
+    persistence: HORIZON_PERSISTENCE, window, longRunDaily,
   };
 }
 export function jumpParameters(asset, anchor, options, regime) {
@@ -263,6 +283,7 @@ export function generatePaths(inputs, paths, seed, stepsPerYear = 52) {
       ? assets.map((a,i) => conditional.fits[i]?.hInitial ?? Math.max(0,covariance[i][i]/252))
       : null;
     const baseDailyVariances = covariance.map((row,i)=>Math.max(0,row[i]/252));
+    const longRun = inputs.horizonVariance?.longRunDaily;
     // Accepted GJR fits were estimated and screened with standardized
     // Student-t innovations; simulate that same marginal law. Fallback
     // instruments keep Gaussian innovations.
@@ -309,7 +330,9 @@ export function generatePaths(inputs, paths, seed, stepsPerYear = 52) {
             values[i] *= Math.exp(annualLogDrift[i]/252-h/2+innovation);
             variances[i] = conditional.fits[i]
               ? updateGjrVariance(conditional.fits[i],h,innovation)
-              : updateEwmaVariance(h,innovation,options.lambda);
+              : Number.isFinite(longRun?.[i])
+                ? updateTargetedVariance(h,innovation,longRun[i],options.lambda,inputs.horizonVariance.persistence)
+                : updateEwmaVariance(h,innovation,options.lambda);
             if (i === marketIndex && baseDailyVariances[i]>0)
               marketSum += innovation/Math.sqrt(Math.max(h,1e-18));
           }
