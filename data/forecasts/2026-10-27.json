@@ -1,0 +1,93 @@
+{
+  "schema_version": 2,
+  "origin_type": "first-capture-forward-shadow-no-trading",
+  "research_only": true,
+  "issued_at": "2026-10-27T22:10:00.218Z",
+  "issue_ny_date": "2026-10-27",
+  "original_price_as_of": "2026-10-27",
+  "market_collected_at": "2026-10-27T22:05:04.366914+00:00",
+  "maturity_date": "2027-10-27",
+  "eligibility": {
+    "eligible": true,
+    "reason": "Original-close-to-next-session-window",
+    "next_session_start_estimate": "2026-10-28T09:30 America/New_York",
+    "warning": "Weekday calendar is conservative and does not certify exchange holidays."
+  },
+  "market_sha256": "f59d4614e699129ed258ecc224fb88fb92cb3917148c743cd4d9e3324395596d",
+  "volatility_sha256": "370266fba1c74ba11c52750a4b2246b88013235dd75b6197d26cce6a54ba6db1",
+  "engine_version": "0.23.0",
+  "model_settings": {
+    "horizon": 1,
+    "seed": 20261024,
+    "volatility_mode": "hybrid",
+    "mandate": {
+      "objective": "growth",
+      "referenceCurrency": "USD",
+      "horizon": 1,
+      "maxDrawdown": 0.25,
+      "maxDrawdownProbability": 0.25,
+      "minimumCash": 0.05,
+      "monthlyWithdrawal": 0,
+      "withdrawals": [],
+      "terminalTarget": 0,
+      "capitalFloor": 0,
+      "maxLiquidityFailure": 0.02,
+      "fxSpot": 1,
+      "fxAnnualChange": 0,
+      "fxVolatility": 0,
+      "fxMarketCorrelation": 0,
+      "fxConfirmed": false,
+      "benchmark": "SPY",
+      "riskAversion": 5,
+      "dividendPolicy": "cash",
+      "dividendWithholding": 0,
+      "cashYield": 0
+    },
+    "capital": 100000,
+    "initial_cost": 42.73173218448971
+  },
+  "model_status": "proposed",
+  "positions": [
+    {
+      "symbol": "TLT",
+      "weight": 0.1
+    },
+    {
+      "symbol": "LQD",
+      "weight": 0.35
+    },
+    {
+      "symbol": "CASH",
+      "weight": 0.04999999999999999
+    },
+    {
+      "symbol": "NVDA",
+      "weight": 0.15000000000000002
+    },
+    {
+      "symbol": "PGR",
+      "weight": 0.1
+    },
+    {
+      "symbol": "UPS",
+      "weight": 0.05
+    },
+    {
+      "symbol": "NKE",
+      "weight": 0.1
+    },
+    {
+      "symbol": "TFC",
+      "weight": 0.10000000000000002
+    }
+  ],
+  "forecast": {
+    "expected_return": 0.06944425680335516,
+    "median_return": 0.062078160355216294,
+    "p05": -0.12702614625819814,
+    "p95": 0.2873149728088896,
+    "probability_loss": 0.29933333333333334,
+    "simulated_cvar95": 0.16677785097874231
+  },
+  "note": "This is a sealed prior forecast, not proven predictive skill. It may never be silently altered by newer API data."
+}
