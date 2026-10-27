@@ -4,7 +4,10 @@ import {
   normalizeWeights,
   metrics,
   scenarios,
-} from "../analytics.mjs?v=0.16.0";
+  resolveAssumptions,
+  returnDecomposition,
+  valuation,
+} from "../analytics.mjs?v=0.17.0";
 import {
   sparkline,
   portfolioChart,
@@ -13,7 +16,7 @@ import {
   scatter,
   forecastCone,
   histogram,
-} from "../charts.mjs?v=0.16.0";
+} from "../charts.mjs?v=0.17.0";
 import {
   esc,
   url,
@@ -24,16 +27,16 @@ import {
   color,
   dateLabel,
   timestampLabel,
-} from "./format.mjs?v=0.16.0";
-import { template } from "./templates.mjs?v=0.16.0";
-import { DEFAULT_COMPOSITION_RULES } from "../composer.mjs?v=0.16.0";
-import { factorModel } from "../factors.mjs?v=0.16.0";
-import { MODEL_VERSION, informationDate } from "../policy.mjs?v=0.16.0";
-import { fundamentalForecast } from "../research-model.mjs?v=0.16.0";
-import { financialFreshness } from '../financial-freshness.mjs?v=0.16.0';
-import { priceMonitor } from '../price-monitor.mjs?v=0.16.0';
+} from "./format.mjs?v=0.17.0";
+import { template } from "./templates.mjs?v=0.17.0";
+import { DEFAULT_COMPOSITION_RULES } from "../composer.mjs?v=0.17.0";
+import { factorModel } from "../factors.mjs?v=0.17.0";
+import { MODEL_VERSION, informationDate } from "../policy.mjs?v=0.17.0";
+import { fundamentalForecast } from "../research-model.mjs?v=0.17.0";
+import { financialFreshness } from '../financial-freshness.mjs?v=0.17.0';
+import { priceMonitor } from '../price-monitor.mjs?v=0.17.0';
 
-import { createDecisionViews } from "./decision-views.mjs?v=0.16.0";
+import { createDecisionViews } from "./decision-views.mjs?v=0.17.0";
 
 /**
  * Describes the process the Monte Carlo actually runs. Jumps and the GBM /
@@ -87,7 +90,16 @@ export function compositionValuationEvidence(signal) {
   const a=v.assumptions;
   const base=finite(v.effectiveBaseEPS)?` · BPA de partida ${money(v.effectiveBaseEPS)} (${v.earningsBasis==='continuing'?'operaciones continuadas':'base de valoración'})`:"";
   const sensitivity=v.accountingSensitivity>0?` · sensibilidad a base contable ${pct(v.accountingSensitivity)} / año`:"";
-  return `Supuestos: ${v.source}${base}${sensitivity} · crecimiento ${pct(a.growth)} · P/E de salida ${fmt(a.multiple,1)} · valoración a ${fmt(a.horizon,0)} años · confianza asignada ${pct(v.confidence)}. Sin calibración predictiva.`;
+  return `Supuestos: ${v.source}${base}${sensitivity} · crecimiento ${pct(a.growth)} · ${reratingText(v.rerating,a)} · valoración a ${fmt(a.horizon,0)} años · confianza asignada ${pct(v.confidence)}.${decompositionText(v.decomposition)} Sin calibración predictiva.`;
+}
+/** Exit multiple: explicit user value or partial reversion to the sector reference. */
+export function reratingText(r,a){
+  if(r?.applied)return `P/E actual ${fmt(r.current,1)} → salida ${fmt(r.effective,1)} (${pct(r.share,0)} de la brecha al sectorial ${fmt(r.reference,1)}; vida media ${fmt(r.halfLife,0)} años)`;
+  return `P/E de salida ${fmt(a.multiple,1)}${r?.explicit?" fijado por ti":""}`;
+}
+export function decompositionText(d){
+  if(!d)return "";
+  return ` Retorno del modelo ${pct(d.total,1,true)}/año = BPA ${pct(d.growth,1,true)} + múltiplo ${pct(d.rerating,1,true)} + dividendos ${pct(d.dividends,1,true)}.`;
 }
 
 export function financialCoverageView(data){
@@ -1324,6 +1336,8 @@ export function createViews(context) {
         eps:{...a.financials.eps,value:forecast.effectiveBaseEPS}}} : a,
       v = useContinuing ? (forecast.valid ? forecast.model : null) : model(a, state.method),
       ass = { ...a.assumptions, ...override(a.symbol) },
+      expected = resolveAssumptions(valuationAsset, override(a.symbol), state.method),
+      expectedModel = v && valuation(valuationAsset, expected, state.method),
       sc = useContinuing && !forecast.valid ? [] : scenarios(valuationAsset, override(a.symbol), state.method);
     return (
       title(
@@ -1388,6 +1402,7 @@ export function createViews(context) {
                 }),
               )
               .join(""),
+            reratingNote: `Valor justo con el múltiplo de referencia. Retorno esperado: ${reratingText(expected.rerating, expected)}.${expectedModel ? decompositionText(returnDecomposition(expectedModel, expectedModel.base, a.price)) : ""} Editar el múltiplo lo fija tal cual.`,
           }),
         ),
         panel6: panel(
@@ -1430,7 +1445,7 @@ export function createViews(context) {
                 base: money(v.base),
                 growth: pct(ass.growth, 0),
                 horizon: ass.horizon,
-                multiple: fmt(ass.multiple, 0),
+                multiple: fmt(ass.multiple, 1),
                 exitPrice: money(v.exitPrice),
                 discount: pct(ass.discount, 0),
                 fairValue16: money(v.fairValue),

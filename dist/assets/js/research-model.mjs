@@ -1,7 +1,7 @@
-import { finite, metrics, valuation, scenarios } from "./analytics.mjs?v=0.16.0";
-import { DEFAULT_RESEARCH } from "./policy.mjs?v=0.16.0";
-import { dilutedEarningsBridge } from './earnings-normalization.mjs?v=0.16.0';
-import { financialFreshness } from './financial-freshness.mjs?v=0.16.0';
+import { finite, metrics, valuation, scenarios, resolveAssumptions, returnDecomposition } from "./analytics.mjs?v=0.17.0";
+import { DEFAULT_RESEARCH } from "./policy.mjs?v=0.17.0";
+import { dilutedEarningsBridge } from './earnings-normalization.mjs?v=0.17.0';
+import { financialFreshness } from './financial-freshness.mjs?v=0.17.0';
 
 const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
 const years = (a, b) =>
@@ -382,6 +382,11 @@ export function fundamentalForecast(
         (1 + r.annualDilution) -
       1;
   }
+  // The default sector multiple is a reference reached only partially; an
+  // explicit user multiple is honored as given.
+  const exit = resolveAssumptions(adjustedAsset, assumptions),
+    referenceMultiple = a.multiple;
+  a.multiple = exit.multiple;
   const own = valuation(adjustedAsset, { ...a, growth });
   if (!own)
     return {
@@ -459,9 +464,21 @@ export function fundamentalForecast(
     const alternative=valuation({...asset,financials:{...asset.financials,eps:{...asset.financials.eps,value:alternativeEPS}}},{...a,growth});
     if (alternative && finite(alternative.annualReturn)) accountingSensitivity=Math.abs(alternative.annualReturn-model.annualReturn);
   }
+  // Re-rating is uncertainty, not expectation: no reversion and full
+  // convergence to the sector reference bound the band.
+  let reratingLow = 0, reratingHigh = 0;
+  if (exit.rerating.applied) {
+    const bounds = [exit.rerating.current, exit.rerating.reference].map((multiple) =>
+      valuation(adjustedAsset, { ...a, growth: equivalentGrowth, multiple })?.annualReturn);
+    if (bounds.every(finite)) {
+      reratingLow = Math.min(0, Math.min(...bounds) - model.annualReturn) * dispersion;
+      reratingHigh = Math.max(0, Math.max(...bounds) - model.annualReturn) * dispersion;
+    }
+  }
   const low = clamp(
     Math.min(
       central - accountingSensitivity,
+      central + reratingLow,
       central +
         (cases[0].result.annualReturn - model.annualReturn) * dispersion,
     ),
@@ -471,6 +488,7 @@ export function fundamentalForecast(
   const high = clamp(
     Math.max(
       central + accountingSensitivity,
+      central + reratingHigh,
       central +
         (cases[2].result.annualReturn - model.annualReturn) * dispersion,
     ),
@@ -481,7 +499,7 @@ export function fundamentalForecast(
   for (let t = 1; t <= horizon; t++)
     pvDividends += (asset.dividend_per_share || 0) / (1 + a.discount) ** t;
   const neededEPS =
-    ((asset.price - pvDividends) * (1 + a.discount) ** horizon) / a.multiple;
+    ((asset.price - pvDividends) * (1 + a.discount) ** horizon) / referenceMultiple;
   const impliedGrowth =
     neededEPS > 0 ? (neededEPS / comparableBase) ** (1 / horizon) - 1 : null;
   if (quality.ageDays > 180)
@@ -510,6 +528,8 @@ export function fundamentalForecast(
     impliedGrowth,
     equivalentGrowth,
     assumptions: { ...a, growth: equivalentGrowth },
+    rerating: exit.rerating,
+    decomposition: returnDecomposition(model, comparableBase, asset.price),
     research: r,
   };
 }

@@ -348,3 +348,37 @@ NFLX/GOOGL con CVaR 15,5 % frente a 14,6 %: es otra muestra de la
 sensibilidad de la búsqueda, no una mejora demostrada. La marginal t por
 activo se contrasta en el registro diario sellado (VaR95 y ES95 GJR-t frente
 a EWMA gaussiano). Las coexcedencias conjuntas siguen sin validar.
+
+### 0.17.0 — El retorno esperado ya no supone convergencia total al múltiplo sectorial
+
+Diagnóstico sobre el corte del 26 de octubre. Las 142 acciones con BPA
+utilizable compartían 34 combinaciones genéricas de supuestos por sector (por
+ejemplo, las 24 tecnológicas: P/E de salida 22 y crecimiento 6%). El retorno
+anual del modelo suponía que cada P/E alcanzaba esa referencia en tres años, y
+la correlación entre el retorno del modelo y el componente de cambio de
+múltiplo era 0,99. CMCSA (P/E 7 → 16) obtenía 31,9 de sus 40,3 puntos anuales
+del re-rating; MU, HPQ y CI, 22, 19 y 14 puntos. 83 acciones caras recibían
+contracción. Las propuestas elegían, en la práctica, la distancia a un múltiplo
+sectorial genérico.
+
+Los datos publicados no permiten estimar un múltiplo histórico propio por
+empresa: la historia contable conserva acciones en circulación y márgenes de
+unos 11 trimestres, no BPA. Se adopta el enfoque por bloques de las hipótesis
+de mercado de largo plazo: retorno = dividendos + crecimiento del BPA +
+reversión parcial y lenta del múltiplo. La brecha logarítmica entre P/E
+observado y referencia se cierra con vida media de 10 años: φ = 1 − 0,5^(h/10),
+≈19% a tres años. Es una convención declarada, no una estimación calibrada. La
+convergencia total y la ausencia de reversión pasan a ser extremos de la
+banda, es decir, incertidumbre y no expectativa. El valor justo de Valoración y
+las alertas de prima del seguimiento conservan el múltiplo de referencia
+completo. Un múltiplo editado por el usuario se respeta tal cual. La variante
+robusta «sin expansión» parte del múltiplo efectivo. La propuesta y Valoración
+muestran el desglose BPA + múltiplo + dividendos, que suma exactamente el
+retorno del modelo.
+
+Efecto en las anclas: mediana de 1,0% a 5,2%, percentil 90 de 11,8% a 8,1% y
+máxima de 23,6% (CMCSA) a 11,9% (NVDA). La propuesta por defecto pasa a TLT 20,
+SHY 15, SGOV 20, IEI 5, efectivo 5, AMZN 15, NFLX 15 y VZ 5, con media 4,1%,
+mediana 3,6% y CVaR 14,0%. Los supuestos de crecimiento siguen siendo
+genéricos por sector y dominan ahora el orden; requieren vintages de consenso
+o de BPA para calibrarse.

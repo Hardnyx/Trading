@@ -218,6 +218,45 @@ export function metrics(asset) {
     periodType: f.eps?.method || f.revenue?.method || null,
   };
 }
+// Building-block convention for EXPECTED returns: the gap between the
+// observed P/E and the generic sector reference closes with a 10-year
+// half-life (practitioner capital-market assumptions use slow, partial
+// reversion). It is a stated convention, not a calibrated estimate; full
+// convergence and no reversion bound the uncertainty band instead. Fair
+// value keeps the reference multiple: valuation() stays a pure function.
+export const RERATING_HALF_LIFE_YEARS = 10;
+/**
+ * Merge default and user assumptions. A multiple the user sets explicitly is
+ * honored as given; the default sector multiple is only a reference toward
+ * which the observed P/E partially reverts over the valuation horizon.
+ */
+export function resolveAssumptions(asset, assumptions = {}, method = "pe") {
+  const a = { ...asset.assumptions, ...assumptions };
+  const eps = metrics(asset).eps, reference = asset.assumptions?.multiple;
+  const explicit = finite(assumptions.multiple);
+  if (explicit || method !== "pe" || !(eps > 0) || !(asset.price > 0) ||
+      !(reference > 0) || !(a.horizon >= 1))
+    return { ...a, rerating: { explicit, applied: false } };
+  const current = asset.price / eps,
+    share = 1 - 0.5 ** (a.horizon / RERATING_HALF_LIFE_YEARS),
+    effective = current * (reference / current) ** share;
+  return {
+    ...a,
+    multiple: effective,
+    rerating: { explicit: false, applied: true, current, reference, effective,
+      share, halfLife: RERATING_HALF_LIFE_YEARS },
+  };
+}
+/** Additive split of an annualized valuation return; the parts sum exactly. */
+export function returnDecomposition(result, base, price) {
+  if (!result || !(base > 0) || !(price > 0)) return null;
+  const a = result.assumptions, h = a.horizon,
+    growth = (result.futureBase / base) ** (1 / h) - 1,
+    rerating = (a.multiple / (price / base)) ** (1 / h) - 1,
+    priceOnly = (1 + growth) * (1 + rerating) - 1;
+  return { growth, rerating: priceOnly - growth,
+    dividends: result.annualReturn - priceOnly, total: result.annualReturn };
+}
 export function valuation(asset, assumptions = {}, method = "pe") {
   const m = metrics(asset),
     a = { ...asset.assumptions, ...assumptions };

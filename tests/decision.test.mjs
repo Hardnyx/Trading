@@ -5,38 +5,41 @@ import {
   currentAccount,
   tradePlan,
   withCashAsset,
-} from "../dist/assets/js/policy.mjs?v=0.16.0";
+} from "../dist/assets/js/policy.mjs?v=0.17.0";
 import {
   fundamentalForecast,
   consensusAt,
   evaluateThesis,
-} from "../dist/assets/js/research-model.mjs?v=0.16.0";
+} from "../dist/assets/js/research-model.mjs?v=0.17.0";
 import {
   valuation,
   correlation,
   mean,
-} from "../dist/assets/js/analytics.mjs?v=0.16.0";
-import { sampleDrifts, bondScenarioAnnualReturn } from "../dist/assets/js/return-model.mjs?v=0.16.0";
+  resolveAssumptions,
+  returnDecomposition,
+  RERATING_HALF_LIFE_YEARS,
+} from "../dist/assets/js/analytics.mjs?v=0.17.0";
+import { sampleDrifts, bondScenarioAnnualReturn } from "../dist/assets/js/return-model.mjs?v=0.17.0";
 import {
   seededRandom,
   normalGenerator,
-} from "../dist/assets/js/random.mjs?v=0.16.0";
+} from "../dist/assets/js/random.mjs?v=0.17.0";
 import {
   generatePaths,
   evaluatePaths,
   BASE_REGIME,
   jumpParameters,
-} from "../dist/assets/js/path-model.mjs?v=0.16.0";
+} from "../dist/assets/js/path-model.mjs?v=0.17.0";
 import {
   journalOrigin,
   appendForecast,
   evaluateJournal,
   freezeMaturedOutcomes,
-} from "../dist/assets/js/journal.mjs?v=0.16.0";
+} from "../dist/assets/js/journal.mjs?v=0.17.0";
 import {
   reviewPortfolio,
   registerPortfolio,
-} from "../dist/assets/js/monitor.mjs?v=0.16.0";
+} from "../dist/assets/js/monitor.mjs?v=0.17.0";
 
 const near = (a, b, tol = 1e-8) =>
   assert.ok(Math.abs(a - b) < tol, `${a} != ${b}`);
@@ -575,4 +578,44 @@ test("new forecasts do not discard old origins before a long horizon matures", (
   const result = appendForecast(older, origin, prediction);
   assert.equal(result.length, 131);
   assert.equal(result[0].id, "older-0");
+});
+
+test("expected returns close only part of the gap to the sector multiple", () => {
+  const a = stock(); // P/E 10, sector reference 15, three-year horizon
+  const resolved = resolveAssumptions(a);
+  const share = 1 - 0.5 ** (3 / RERATING_HALF_LIFE_YEARS);
+  assert.ok(Math.abs(resolved.rerating.share - share) < 1e-12);
+  assert.ok(Math.abs(resolved.multiple - 10 * 1.5 ** share) < 1e-12);
+  assert.ok(resolved.multiple > 10 && resolved.multiple < 15);
+  // An explicit multiple is the user's view and is honored as given.
+  assert.equal(resolveAssumptions(a, { multiple: 15 }).multiple, 15);
+  assert.equal(resolveAssumptions(a, { multiple: 15 }).rerating.explicit, true);
+  // FCF multiples are not compared with a P/E reference.
+  assert.equal(resolveAssumptions(a, {}, "fcf").multiple, 15);
+  // Fair value keeps the reference multiple.
+  assert.equal(valuation(a).assumptions.multiple, 15);
+
+  const p = fundamentalForecast(a, {}, { confidence: 1, priorReturn: 0 });
+  const full = valuation(a, { multiple: 15 }).annualReturn;
+  const none = valuation(a, { multiple: 10 }).annualReturn;
+  assert.ok(p.model.annualReturn > none && p.model.annualReturn < full);
+  assert.ok(p.low <= none + 1e-12 && p.high >= full - 1e-12,
+    "no reversion and full convergence must bound the band");
+  const d = p.decomposition;
+  assert.ok(Math.abs(d.growth + d.rerating + d.dividends - p.model.annualReturn) < 1e-12);
+  assert.ok(Math.abs(d.growth - 0.07) < 1e-12);
+  assert.ok(d.rerating > 0 && d.rerating < (1.5 ** (1 / 3) - 1) * 1.07);
+  // The price-implied growth still inverts the fair-value equation.
+  const fair = { ...a, price: valuation(a).fairValue };
+  assert.ok(Math.abs(fundamentalForecast(fair).impliedGrowth - 0.07) < 1e-9);
+  // An expensive stock gets partial, not full, multiple contraction.
+  const rich = { ...a, price: 250 };
+  const contraction = fundamentalForecast(rich, {}, { confidence: 1, priorReturn: 0 });
+  assert.ok(contraction.decomposition.rerating < 0);
+  assert.ok(contraction.model.annualReturn > valuation(rich).annualReturn);
+});
+
+test("return decomposition rejects missing inputs", () => {
+  assert.equal(returnDecomposition(null, 10, 100), null);
+  assert.equal(returnDecomposition(valuation(stock()), 0, 100), null);
 });

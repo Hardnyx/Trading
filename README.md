@@ -26,7 +26,7 @@ Cada corte sella además, antes de la apertura siguiente, la varianza, el VaR95 
 
 ## Método
 
-**Previsión.** Para acciones, BPA y múltiplo de salida propios; también ventas × margen neto / dilución, consenso comparable o mezcla 50/50. El crecimiento implícito en precio usa la misma ecuación de dividendos descontados que la valoración. El retorno anual equivalente aproxima los dividendos al final; no se suman otra vez al simular. No es un DCF completo.
+**Previsión.** Para acciones, BPA y múltiplo de salida propios; también ventas × margen neto / dilución, consenso comparable o mezcla 50/50. El múltiplo de salida por defecto es una referencia sectorial genérica: el valor justo la usa completa, pero el retorno esperado solo cierra la brecha entre el P/E observado y esa referencia con vida media de 10 años (≈19% de la brecha logarítmica en 3 años); convergencia total y ausencia de reversión delimitan la banda. Un múltiplo que fijes por empresa se respeta tal cual. El crecimiento implícito en precio usa la misma ecuación de dividendos descontados que la valoración. El retorno anual equivalente aproxima los dividendos al final; no se suman otra vez al simular. No es un DCF completo.
 
 La confianza subjetiva se reduce por cobertura y antigüedad de fundamentos y contradicciones de tesis. Contrae la previsión hacia un retorno previo explícito y amplía sus rangos. Una contradicción no mejora el retorno previsto y bloquea nuevas compras hasta revisar las hipótesis. Confianza no equivale a precisión predictiva demostrada. Las observaciones faltantes aparecen como `—`, no como cero.
 

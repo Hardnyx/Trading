@@ -1,6 +1,7 @@
 /** Experimental model uncertainty. No changes to market facts or live defaults. */
-import { assetAt } from './research-model.mjs?v=0.16.0';
-import { buildReturnAnchors } from './return-model.mjs?v=0.16.0';
+import { assetAt } from './research-model.mjs?v=0.17.0';
+import { resolveAssumptions } from './analytics.mjs?v=0.17.0';
+import { buildReturnAnchors } from './return-model.mjs?v=0.17.0';
 
 export function operatingMarginStress(original, priceAsOf, informationAsOf) {
   const asset=assetAt(original,priceAsOf,informationAsOf),f=asset.financials||{};
@@ -46,7 +47,7 @@ export function variantInputs(inputs,variant){
     const asset=assetAt(original,inputs.asOf,inputs.informationAsOf);
     const eps=asset.financials?.eps?.value;
     if(variant.noRerating && eps>0 && asset.price>0)
-      overrides[asset.symbol]={...overrides[asset.symbol],multiple:Math.min(overrides[asset.symbol]?.multiple??asset.assumptions.multiple,asset.price/eps)};
+      overrides[asset.symbol]={...overrides[asset.symbol],multiple:Math.min(resolveAssumptions(asset,overrides[asset.symbol]||{}).multiple,asset.price/eps)};
     if(variant.confidence!==undefined)research[asset.symbol]={...research[asset.symbol],confidence:Math.min(research[asset.symbol]?.confidence??.6,variant.confidence)};
     if(!variant.marginStress)return asset;
     const stress=['consensus','blend'].includes(research[asset.symbol]?.basis)

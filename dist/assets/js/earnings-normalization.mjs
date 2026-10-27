@@ -1,4 +1,4 @@
-import { finite } from './analytics.mjs?v=0.16.0';
+import { finite } from './analytics.mjs?v=0.17.0';
 
 // An accounting bridge, not a claim that continuing earnings are recurring.
 // Missing discontinued earnings cannot be interpreted as zero.
