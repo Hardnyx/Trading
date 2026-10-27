@@ -4,16 +4,16 @@ import {
   mean,
   quantile,
   normalizeWeights,
-} from "./analytics.mjs?v=0.26.0";
-import { seededRandom } from "./random.mjs?v=0.26.0";
-import { portfolioAttribution } from "./attribution.mjs?v=0.26.0";
+} from "./analytics.mjs?v=0.27.0";
+import { seededRandom } from "./random.mjs?v=0.27.0";
+import { portfolioAttribution } from "./attribution.mjs?v=0.27.0";
 import {
   preparePaths,
   generatePaths,
   evaluatePaths,
   marginalRisk,
   centeredRegimeConditions,
-} from "./path-model.mjs?v=0.26.0";
+} from "./path-model.mjs?v=0.27.0";
 import {
   withCashAsset,
   mandate,
@@ -22,12 +22,12 @@ import {
   tradePlan,
   withdrawalSchedule,
   MODEL_VERSION,
-} from "./policy.mjs?v=0.26.0";
-import { buildReturnAnchors, constituentForecasts, holdingsAnchor } from "./return-model.mjs?v=0.26.0";
-import { assetAt, fundamentalForecast, bondAssumptions } from "./research-model.mjs?v=0.26.0";
-import { selectCompositionUniverse } from "./universe.mjs?v=0.26.0";
-import { factorizeStressedCovariance } from "./factor-covariance.mjs?v=0.26.0";
-import { economicClass, exposureReport, rawCorrelation, qualifiedOpportunity, holdingsOverlap, knownFundOverlap } from "./economic-exposure.mjs?v=0.26.0";
+} from "./policy.mjs?v=0.27.0";
+import { buildReturnAnchors, constituentForecasts, holdingsAnchor } from "./return-model.mjs?v=0.27.0";
+import { assetAt, fundamentalForecast, bondAssumptions } from "./research-model.mjs?v=0.27.0";
+import { selectCompositionUniverse } from "./universe.mjs?v=0.27.0";
+import { factorizeStressedCovariance } from "./factor-covariance.mjs?v=0.27.0";
+import { economicClass, exposureReport, rawCorrelation, qualifiedOpportunity, holdingsOverlap, knownFundOverlap } from "./economic-exposure.mjs?v=0.27.0";
 
 export const DEFAULT_COMPOSITION_RULES = {
   maxPosition: 0.2,
@@ -556,6 +556,89 @@ export function reviewCashAllocation(initial, x, sample, maxRounds = 4) {
     step:.05, improvements, comparisons:allComparisons.sort((a,b)=>b.score-a.score).slice(0,32),
     scope:'Local reallocations of 5 and 10 percentage points on the finalist simulation; not a global or prospectively validated optimum'}};
 }
+// One-sided 95% threshold for the paired per-path utility gain.
+export const SUBSTITUTION_Z = 1.645;
+/**
+ * Exchanges of 5 points between any two positions (cash above its reserve
+ * included) and full substitutions of a holding by any simulated instrument.
+ * Screened on the search sample; the best few are re-run on the verification
+ * paths and accepted only if the paired per-path utility gain is significant
+ * (one-sided 95%). Otherwise the incumbent stays, so statistically equivalent
+ * candidates never add trades. Same model and data: this measures Monte Carlo
+ * error, not parameter error.
+ */
+export function reviewSubstitutions(initial, x, sample, verification, maxRounds = 3, verifyTop = 5) {
+  if (!initial) return { best: initial, finalists: [], audit: null };
+  const cash = x.assets.findIndex(a => a.symbol === "CASH");
+  const utilities = (row) => evaluatePaths(row.weights, verification, {
+    capital: x.current.capital, cost: row.plan.total, pathUtilities: true }).pathUtilities;
+  const paired = (candidate, incumbent) => {
+    const n = candidate.length;
+    let total = 0, squares = 0;
+    for (let p = 0; p < n; p++) {
+      const d = candidate[p] - incumbent[p];
+      total += d; squares += d * d;
+    }
+    const mean = total / n, sd = Math.sqrt(Math.max(0, squares / n - mean * mean) * n / (n - 1));
+    return { mean, z: sd > 0 ? mean / (sd / Math.sqrt(n)) : mean > 0 ? Infinity : 0 };
+  };
+  const describe = (move, result, test) => ({
+    from: x.assets[move.i].symbol, to: x.assets[move.j].symbol, transfer: move.amount,
+    full: move.full, certaintyEquivalentGain:
+      result.metrics.certaintyEquivalent - best.metrics.certaintyEquivalent,
+    z: test.z,
+  });
+  let best = initial, incumbent = utilities(initial), screened = 0, verified = 0,
+    blocked = 0, rounds = 0, status = "no_significant_improvement", closest = null;
+  const accepted = [], finalists = [], seen = new Set();
+  for (let round = 0; round < maxRounds; round++) {
+    rounds++;
+    const base = best.weights, moves = [];
+    const reference = assess(base, x, sample).metrics.score;
+    for (let i = 0; i < base.length; i++) {
+      const free = i === cash ? base[i] - x.requiredCash : base[i];
+      if (free < .05 - 1e-8) continue;
+      for (let j = 0; j < base.length; j++) {
+        if (j === i || !x.buyAllowed[j]) continue;
+        for (const [amount, full] of i === cash || base[i] <= .05 + 1e-8
+          ? [[.05, base[i] <= .05 + 1e-8 && i !== cash]] : [[.05, false], [base[i], true]]) {
+          const w = base.slice();
+          w[i] = Math.round((w[i] - amount) * 1e12) / 1e12;
+          w[j] = Math.round((w[j] + amount) * 1e12) / 1e12;
+          const key = w.map(v => v.toFixed(6)).join();
+          if (seen.has(key)) continue;
+          seen.add(key);
+          if (!validWeights(w, x)) { blocked++; continue; }
+          const result = assess(w, x, sample);
+          screened++;
+          if (result.feasible && result.metrics.score > reference + 1e-12)
+            moves.push({ i, j, amount, full, w, score: result.metrics.score });
+        }
+      }
+    }
+    moves.sort((a, b) => b.score - a.score);
+    let winner = null;
+    for (const move of moves.slice(0, verifyTop)) {
+      const result = assess(move.w, x, verification);
+      if (!result.feasible) continue;
+      verified++;
+      finalists.push(result);
+      const own = utilities(result), test = paired(own, incumbent);
+      const row = { move, result, own, test };
+      if (test.mean > 0 && test.z >= SUBSTITUTION_Z) {
+        if (!winner || test.mean > winner.test.mean) winner = row;
+      } else if (!closest || test.z > closest.z) closest = describe(move, result, test);
+    }
+    if (!winner) { status = round ? "converged" : "no_significant_improvement"; break; }
+    accepted.push(describe(winner.move, winner.result, winner.test));
+    best = winner.result;
+    incumbent = winner.own;
+    if (round === maxRounds - 1) status = "search_budget";
+  }
+  return { best, finalists, audit: { status, rounds, screened, verified,
+    structurallyBlocked: blocked, accepted, closestRejected: closest, threshold: SUBSTITUTION_Z,
+    scope: "5-point exchanges and full substitutions within the simulated sample; paired one-sided 95% test on the verification paths; Monte Carlo error only, not a global optimum" } };
+}
 function passiveCandidates(x) {
   const market = x.assets.findIndex((a) => a.symbol === x.policy.benchmark),
     cash = x.assets.findIndex((a) => a.symbol === "CASH"),
@@ -807,11 +890,14 @@ export function composePortfolio(
       best = proposal;
   const cashReview = reviewCashAllocation(best, x, verification);
   best = cashReview.best;
+  const substitutionReview = reviewSubstitutions(best, x, sample, verification);
+  best = substitutionReview.best;
   // The independent cap searches discover candidates in different orders.
   // Reconcile ALL verified finalists against EACH nested feasible set,
   // including the final selected portfolio. The displayed frontier must
   // measure the same opportunity set, not three unrelated random searches.
   const pooledFinalists = [...verified, ...verifiedCapCandidates, ...cashReview.finalists,
+    ...substitutionReview.finalists,
     ...(best ? [best] : [])];
   let previousFrontierScore = -Infinity;
   for (const row of capAlternatives) {
@@ -916,6 +1002,7 @@ export function composePortfolio(
     best.plan.total, x.current.capital) : {available:false};
   const diagnostics = {
     cashAllocation: cashReview.audit,
+    substitutions: substitutionReview.audit,
     selected: riskDiagnostics(best),
     attribution,
     economicExposure: exposure,
@@ -990,6 +1077,7 @@ export function composePortfolio(
       method: "reserve-tilts-random-local-exchanges-with-capped-challengers",
       capChallengersExamined: capAlternatives.reduce((total,row)=>total+row.compared,0),
       cashReallocationsEvaluated: cashReview.audit?.evaluated || 0,
+      substitutionsScreened: substitutionReview.audit?.screened || 0,
       exhaustive: false,
     },
     verification: {

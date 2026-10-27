@@ -7,7 +7,7 @@ import {
   resolveAssumptions,
   returnDecomposition,
   valuation,
-} from "../analytics.mjs?v=0.26.0";
+} from "../analytics.mjs?v=0.27.0";
 import {
   sparkline,
   portfolioChart,
@@ -16,7 +16,7 @@ import {
   scatter,
   forecastCone,
   histogram,
-} from "../charts.mjs?v=0.26.0";
+} from "../charts.mjs?v=0.27.0";
 import {
   esc,
   url,
@@ -27,16 +27,16 @@ import {
   color,
   dateLabel,
   timestampLabel,
-} from "./format.mjs?v=0.26.0";
-import { template } from "./templates.mjs?v=0.26.0";
-import { DEFAULT_COMPOSITION_RULES } from "../composer.mjs?v=0.26.0";
-import { factorModel } from "../factors.mjs?v=0.26.0";
-import { MODEL_VERSION, informationDate } from "../policy.mjs?v=0.26.0";
-import { fundamentalForecast } from "../research-model.mjs?v=0.26.0";
-import { financialFreshness } from '../financial-freshness.mjs?v=0.26.0';
-import { priceMonitor } from '../price-monitor.mjs?v=0.26.0';
+} from "./format.mjs?v=0.27.0";
+import { template } from "./templates.mjs?v=0.27.0";
+import { DEFAULT_COMPOSITION_RULES } from "../composer.mjs?v=0.27.0";
+import { factorModel } from "../factors.mjs?v=0.27.0";
+import { MODEL_VERSION, informationDate } from "../policy.mjs?v=0.27.0";
+import { fundamentalForecast } from "../research-model.mjs?v=0.27.0";
+import { financialFreshness } from '../financial-freshness.mjs?v=0.27.0';
+import { priceMonitor } from '../price-monitor.mjs?v=0.27.0';
 
-import { createDecisionViews } from "./decision-views.mjs?v=0.26.0";
+import { createDecisionViews } from "./decision-views.mjs?v=0.27.0";
 
 /**
  * Describes the process the Monte Carlo actually runs. Jumps and the GBM /
@@ -120,6 +120,25 @@ export function compositionAnchorRefinement(signal){
   const r=signal.valuationEvidence?.refinement;
   if(!r)return "";
   return `Ancla ${pct(r.anchor,1)} = equilibrio ${pct(r.equilibrium,1)} (β ${fmt(r.beta,2)} frente a ${r.benchmark}) + alfa ${pct(r.alpha,1,true)} · IC ${fmt(r.ic,3)} × volatilidad residual ${pct(r.omega,0)} × puntuación ${fmt(r.score,2)}. Bloques sin ajustar ${pct(r.buildingBlock,1)}.`;
+}
+/** One paragraph on the exchange and substitution review of the proposal. */
+export function compositionSubstitutionSummary(a){
+  if(!a)return 'Sin revisión de intercambios entre posiciones en esta propuesta.';
+  const move=r=>r.full?`${r.from} → ${r.to} (${pct(r.transfer,0)} completo)`:`${r.from} → ${r.to} ${pct(r.transfer,0)}`;
+  const done=a.accepted.length
+    ?`Aceptados: ${a.accepted.map(r=>`${move(r)}, USD ${fmt(r.certaintyEquivalentGain,0)}, z ${fmt(r.z,1)}`).join('; ')}. `
+    :'Ningún cambio supera el umbral; se conserva la cartera. ';
+  const near=a.closestRejected
+    ?`Más cercano descartado: ${move(a.closestRejected)}, USD ${fmt(a.closestRejected.certaintyEquivalentGain,0)}, z ${fmt(a.closestRejected.z,1)}. `:'';
+  return `Intercambios de 5 puntos y sustituciones completas: ${a.screened} probados en la muestra de búsqueda, ${a.verified} verificados en los escenarios finales, ${a.structurallyBlocked} bloqueados por los topes. `+
+    done+near+`Se acepta solo una mejora pareada significativa (z ≥ ${fmt(a.threshold,3)}, 95% unilateral): mide error de Monte Carlo del mismo modelo, no error de parámetros.`;
+}
+/** Loss-card detail: chance of trailing the riskless alternative, and MC error. */
+export function shortfallDetail(m){
+  const error=`error MC ±${pct(1.96*Math.max(m.lossProbabilitySE||0,m.shortfallProbabilitySE||0))}`;
+  if(!finite(m.shortfallProbability))return `Error Monte Carlo ±${pct(1.96*m.lossProbabilitySE)}`;
+  const label=m.shortfallBasis==="bill"?"letra 3M":"efectivo";
+  return `${pct(m.shortfallProbability)} bajo ${label} (${pct(m.shortfallRate,1)} anual) · ${error}`;
 }
 /** One-line split of the model return; the parts sum to the total. */
 export function compositionReturnSplit(signal){
@@ -1044,7 +1063,7 @@ export function createViews(context) {
         "PROB. DE PÉRDIDA",
         pct(p.metrics.lossProbability),
         "",
-        `Error Monte Carlo ±${pct(1.96 * p.metrics.lossProbabilitySE)}`,
+        shortfallDetail(p.metrics),
       ],
       [
         "CVAR 95% · SIMULADO",
@@ -1118,6 +1137,7 @@ export function createViews(context) {
           'Tramos de 5 y 10 puntos en los mismos escenarios finales: no es una validación independiente ni un óptimo global.'
           : 'Sin comprobación de reasignación del efectivo en esta propuesta.';
       })(),
+      substitutionAuditSummary:compositionSubstitutionSummary(p.diagnostics?.substitutions),
       cashAuditRows:(p.diagnostics?.cashAllocation?.comparisons||[]).slice(0,10).map(r=>
         template('composition-cash-comparison',{
           target:`${r.symbol} +${pct(r.transfer,0)}`,cash:pct(r.toCash,1),

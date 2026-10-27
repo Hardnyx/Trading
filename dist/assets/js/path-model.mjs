@@ -5,23 +5,23 @@ import {
   quantile,
   sum,
   normalizeWeights,
-} from "./analytics.mjs?v=0.26.0";
-import { seededRandom, normalGenerator, poisson } from "./random.mjs?v=0.26.0";
-import { ewmaCovariance, cholesky } from "./risk-math.mjs?v=0.26.0";
-import { buildReturnAnchors, sampleDrifts, bondScenarioAnnualReturn, bondRegimeShift } from "./return-model.mjs?v=0.26.0";
-import { distributionAccounting } from "./distribution-ledger.mjs?v=0.26.0";
-import { cashGrowth, uniformCashGrowth } from "./cashflows.mjs?v=0.26.0";
-import { copulaInnovationCovariance } from './copula-covariance.mjs?v=0.26.0';
-import { assetAt } from "./research-model.mjs?v=0.26.0";
-import { factorModel } from "./factors.mjs?v=0.26.0";
-import { conditionalRisk, updateGjrVariance, updateEwmaVariance, updateTargetedVariance, studentMarginal, HORIZON_PERSISTENCE } from "./conditional-risk.mjs?v=0.26.0";
-import { marketFactorCovariance, conditionalFactorization } from "./factor-covariance.mjs?v=0.26.0";
+} from "./analytics.mjs?v=0.27.0";
+import { seededRandom, normalGenerator, poisson } from "./random.mjs?v=0.27.0";
+import { ewmaCovariance, cholesky } from "./risk-math.mjs?v=0.27.0";
+import { buildReturnAnchors, sampleDrifts, bondScenarioAnnualReturn, bondRegimeShift } from "./return-model.mjs?v=0.27.0";
+import { distributionAccounting } from "./distribution-ledger.mjs?v=0.27.0";
+import { cashGrowth, uniformCashGrowth } from "./cashflows.mjs?v=0.27.0";
+import { copulaInnovationCovariance } from './copula-covariance.mjs?v=0.27.0';
+import { assetAt } from "./research-model.mjs?v=0.27.0";
+import { factorModel } from "./factors.mjs?v=0.27.0";
+import { conditionalRisk, updateGjrVariance, updateEwmaVariance, updateTargetedVariance, studentMarginal, HORIZON_PERSISTENCE } from "./conditional-risk.mjs?v=0.27.0";
+import { marketFactorCovariance, conditionalFactorization } from "./factor-covariance.mjs?v=0.27.0";
 import {
   mandate,
   regimes,
   withdrawalSchedule,
   DEFAULT_REGIMES,
-} from "./policy.mjs?v=0.26.0";
+} from "./policy.mjs?v=0.27.0";
 
 export const BASE_REGIME = {
   id: "base",
@@ -412,6 +412,7 @@ export function generatePaths(inputs, paths, seed, stepsPerYear = 52) {
     asOf: options.asOf || assets[0].price_date,
     informationAsOf: options.informationAsOf || options.asOf || assets[0].price_date,
     scenarioCounts,
+    riskFreeRate: finite(options.yieldCurve?.DGS3MO) ? options.yieldCurve.DGS3MO / 100 : null,
   };
 }
 export function evaluatePaths(weights, sample, options = {}) {
@@ -437,7 +438,16 @@ export function evaluatePaths(weights, sample, options = {}) {
       ? Array.from({ length: steps + 1 }, () => [])
       : null,
     samplePaths = [];
+  // Alternative without market risk: the 3-month bill at the cut, held at
+  // that rate over the horizon, or the declared cash yield if it pays more.
+  const billRate = finite(sample.riskFreeRate) ? sample.riskFreeRate : null,
+    cashRate = policy.cashYield || 0,
+    alternativeRate = Math.max(billRate ?? 0, cashRate),
+    alternativeGross = (1 + alternativeRate) ** policy.horizon;
+  // Per-path utilities only on request: paired comparisons of candidates.
+  const utilities = options.pathUtilities ? new Float64Array(paths) : null;
   let utility = 0,
+    shortfalls = 0,
     losses = 0,
     failures = 0,
     goalSuccess = 0,
@@ -558,13 +568,14 @@ export function evaluatePaths(weights, sample, options = {}) {
     drawdowns.push(worst);
     underwater.push(longest * dt);
     if (ratio < 1) losses++;
+    if (ratio < alternativeGross) shortfalls++;
     if (failed) failures++;
     if (floorBroken) floorBreaches++;
     if (everUnder && run === 0) recoveries++;
     if (run > 0) unfinishedRecoveries++;
     if (remaining >= policy.terminalTarget && !failed) goalSuccess++;
     const safe = Math.max(1e-5, ratio);
-    utility +=
+    const pathUtility =
       policy.objective === "target"
         ? -(
             Math.max(
@@ -577,6 +588,8 @@ export function evaluatePaths(weights, sample, options = {}) {
             ? Math.log(safe)
             : (safe ** (1 - gamma) - 1) / (1 - gamma)
           : Math.log(safe);
+    utility += pathUtility;
+    if (utilities) utilities[p] = pathUtility;
     if (path) samplePaths.push(path);
   }
   const sorted = [...returns].sort((a, b) => a - b),
@@ -593,6 +606,7 @@ export function evaluatePaths(weights, sample, options = {}) {
           : capital * Math.exp(score);
   const result = {
     score,
+    ...(utilities ? { pathUtilities: utilities } : {}),
     certaintyEquivalent,
     dividendPolicy:policy.dividendPolicy,
     dividendWithholding:withholding,
@@ -626,6 +640,12 @@ export function evaluatePaths(weights, sample, options = {}) {
     lossProbabilitySE: Math.sqrt(
       (lossProbability * (1 - lossProbability)) / paths,
     ),
+    shortfallRate: alternativeRate > 0 ? alternativeRate : null,
+    shortfallBasis: alternativeRate <= 0 ? null
+      : billRate !== null && billRate >= cashRate ? "bill" : "cash",
+    shortfallProbability: alternativeRate > 0 ? shortfalls / paths : null,
+    shortfallProbabilitySE: alternativeRate > 0
+      ? Math.sqrt((shortfalls / paths) * (1 - shortfalls / paths) / paths) : null,
     drawdownProbability:
       drawdowns.filter((d) => d < -policy.maxDrawdown).length / paths,
     worstDrawdownP05: quantile(drawdowns, 0.05),

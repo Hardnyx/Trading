@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {dilutedEarningsBridge} from '../dist/assets/js/earnings-normalization.mjs?v=0.26.0';
-import {fundamentalForecast,assetAt} from '../dist/assets/js/research-model.mjs?v=0.26.0';
+import {dilutedEarningsBridge} from '../dist/assets/js/earnings-normalization.mjs?v=0.27.0';
+import {fundamentalForecast,assetAt} from '../dist/assets/js/research-model.mjs?v=0.27.0';
 const record=value=>({value,period_end:'2026-06-30',filed:'2026-08-01',method:'TTM',components:[
  {start:'2025-07-01',end:'2026-06-30',filed:'2026-08-01',val:value,accn:'one'}]});
 const asset=()=>({symbol:'AAA',type:'stock',price:100,price_date:'2026-10-26',sector:'Industrial',

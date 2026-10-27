@@ -9,20 +9,20 @@ import {
   alignReturns,
   returnStats,
   validateSnapshot,
-} from "./analytics.mjs?v=0.26.0";
+} from "./analytics.mjs?v=0.27.0";
 import {
   registerPortfolio,
   reviewPortfolio,
   DEFAULT_RULES,
-} from "./monitor.mjs?v=0.26.0";
+} from "./monitor.mjs?v=0.27.0";
 
-import { fmt, pct, money, dateLabel } from "./ui/format.mjs?v=0.26.0";
-import { createViews, NAV } from "./ui/views.mjs?v=0.26.0";
-import { loadTemplates } from "./ui/templates.mjs?v=0.26.0";
-import { applyVisualValues, showStartupError } from "./ui/dom.mjs?v=0.26.0";
-import { createTickerRotation } from "./ui/ticker-rotation.mjs?v=0.26.0";
-import { createValueFlash } from "./ui/value-flash.mjs?v=0.26.0";
-import { DEFAULT_COMPOSITION_RULES } from "./composer.mjs?v=0.26.0";
+import { fmt, pct, money, dateLabel } from "./ui/format.mjs?v=0.27.0";
+import { createViews, NAV } from "./ui/views.mjs?v=0.27.0";
+import { loadTemplates } from "./ui/templates.mjs?v=0.27.0";
+import { applyVisualValues, showStartupError } from "./ui/dom.mjs?v=0.27.0";
+import { createTickerRotation } from "./ui/ticker-rotation.mjs?v=0.27.0";
+import { createValueFlash } from "./ui/value-flash.mjs?v=0.27.0";
+import { DEFAULT_COMPOSITION_RULES } from "./composer.mjs?v=0.27.0";
 
 import {
   DEFAULT_MANDATE,
@@ -35,22 +35,22 @@ import {
   currentAccount,
   informationDate,
   MODEL_VERSION,
-} from "./policy.mjs?v=0.26.0";
-import { validateResearch } from "./research-model.mjs?v=0.26.0";
+} from "./policy.mjs?v=0.27.0";
+import { validateResearch } from "./research-model.mjs?v=0.27.0";
 import {
   journalOrigin,
   appendForecast,
   freezeMaturedOutcomes,
-} from "./journal.mjs?v=0.26.0";
+} from "./journal.mjs?v=0.27.0";
 
-import { openJournal, saveJournal } from "./journal-store.mjs?v=0.26.0";
+import { openJournal, saveJournal } from "./journal-store.mjs?v=0.27.0";
 
 let journalDBReady = false,
   storageErrorShown = false;
 
 const $ = (s, root = document) => root.querySelector(s);
 
-import { referenceRequest, REFERENCE_ID } from "./reference-preset.mjs?v=0.26.0";
+import { referenceRequest, REFERENCE_ID } from "./reference-preset.mjs?v=0.27.0";
 
 let saved = {};
 try {
@@ -423,7 +423,7 @@ function runForecast() {
       state.research,
     );
     worker ||= new Worker(
-      new URL("./forecast-worker.mjs?v=0.26.0", import.meta.url),
+      new URL("./forecast-worker.mjs?v=0.27.0", import.meta.url),
       {
         type: "module",
       },
@@ -499,7 +499,7 @@ function runComposition(reference = false) {
   state.compositionError = null;
   try {
     compositionWorker ||= new Worker(
-      new URL("./composer-worker.mjs?v=0.26.0", import.meta.url),
+      new URL("./composer-worker.mjs?v=0.27.0", import.meta.url),
       { type: "module" },
     );
     compositionWorker.onmessage = (event) => {
@@ -572,7 +572,7 @@ function runRobustness(){
  }
  state.robustnessBusy=true;state.robustnessError=null;state.robustnessProgress='Preparando comparación';render();
  try{
-  robustWorker??=new Worker(new URL('./robust-worker.mjs?v=0.26.0',import.meta.url),{type:'module'});
+  robustWorker??=new Worker(new URL('./robust-worker.mjs?v=0.27.0',import.meta.url),{type:'module'});
   robustWorker.onmessage=({data:message})=>{
    if(message.id!==robustJob)return;
    if(proposalSignature()!==signature){

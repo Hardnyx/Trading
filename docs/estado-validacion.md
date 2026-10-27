@@ -727,3 +727,34 @@ Cierra dos hallazgos de la [revisión de 0.24.0](revision-modelo-2026-10-27.md):
   de filtración afectaba a reconstrucciones e importaciones.
 
 Sigue abierta la sustitución CI → NFLX omitida por la búsqueda (pendiente 20).
+
+### 0.27.0 — Probabilidad bajo la letra y revisión de sustituciones
+
+**Probabilidad de quedar bajo la alternativa sin riesgo.** La probabilidad
+de pérdida ya es la de terminar por debajo de 0%, que con el efectivo al 0%
+equivale a igualar al efectivo. La comparación relevante para decidir si el
+riesgo compensa es otra: terminar por debajo de la letra del Tesoro a 3
+meses al corte (DGS3MO, supuesta constante y compuesta al horizonte), o del
+efectivo declarado si rinde más. Se cuenta en las mismas trayectorias y se
+muestra como línea secundaria de la tarjeta de pérdida, con el error de
+Monte Carlo. Al corte del 27-oct, con la letra al 4,22%, la propuesta por
+defecto tiene 30,5% de probabilidad de pérdida y 45,1% de quedar bajo la
+letra. La mediana (5,5%) supera a la letra por poco más de un punto.
+
+**Intercambios y sustituciones.** Tras la revisión del efectivo se prueban
+intercambios de 5 puntos entre cualquier par de posiciones (incluido el
+efectivo por encima de su reserva) y sustituciones completas de una posición
+por cualquier instrumento simulado. Se filtran con la muestra de búsqueda.
+Las cinco mejores se reevalúan en los escenarios de verificación, y se
+acepta la que tenga mayor ganancia pareada significativa (z ≥ 1,645,
+unilateral al 95%). Hay hasta tres rondas. Sin significancia se conserva la
+cartera: entre candidatas equivalentes gana la de menos operaciones. Esto
+cubre la sustitución CI → NFLX de la revisión de 0.24.0, que la búsqueda no
+podía alcanzar con el efectivo en su mínimo.
+
+Al corte del 27-oct, por defecto: 175 vecinas probadas y 5 verificadas,
+ninguna con mejora (la más cercana, GOOGL → HON, z −0,4); la cartera no
+cambia. Con 6 posiciones y correlación 0,85: se acepta SHV → IEI 10% (USD
++52, z 5,3) y se descarta TGT → NFLX 5% (z 1,4). El coste es de 1 a 3
+segundos por propuesta. Es una revisión local con el mismo modelo y datos:
+mide error de Monte Carlo, no error de parámetros ni optimalidad global.

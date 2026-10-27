@@ -1,6 +1,6 @@
 # Trading · lo que falta
 
-Backlog actualizado el 27 de octubre de 2026 para el motor 0.26.0, corte de
+Backlog actualizado el 27 de octubre de 2026 para el motor 0.27.0, corte de
 precios examinado del 27-oct, 260 instrumentos (160 acciones, 100 ETF).
 Consultar las pruebas y los cierres en `docs/estado-validacion.md`. Cero
 incidencias publicadas o pruebas de software aprobadas no acreditan datos
@@ -155,21 +155,17 @@ Este archivo lista **solo lo que falta**. Para el funcionamiento, consultar
 ## P2 · Optimización y operativa
 
 20. **Estabilidad de la propuesta.** Se simulan 20–80 activos de 260, con 40
-    como valor inicial, y la convergencia no está verificada. En 0.20.0 se
-    comprueban reasignaciones locales desde CASH en tramos de 5 y 10 puntos,
-    con hasta cuatro rondas, y se guarda su diagnóstico. La reproducción de
-    seis posiciones y correlación máxima 0,85 redujo CASH de 15% a 5% sin
-    relajar límites. Esto corrige una omisión local, no demuestra optimalidad
-    ni estabilidad global. La propuesta cambia con semilla, versión
-    y perturbaciones pequeñas (el sello del 26-oct y la propuesta actual
-    difieren). Falta una métrica de estabilidad visible y desempate a favor
-    de la menor rotación entre candidatas estadísticamente equivalentes.
-    La revisión de 0.24.0 al 27-oct encuentra además una sustitución simple
-    omitida (CI 10% → NFLX 10%): mejora el equivalente cierto USD 224,96
-    sobre los mismos escenarios y USD 259,96/275,07 en dos muestras nuevas,
-    sin relajar límites. Falta revisar sistemáticamente intercambios entre
-    instrumentos y sustituciones completas; revisar solo CASH no lo cubre.
-    Estas muestras comprueban el simulador, no resultados reales.
+    como valor inicial, y la convergencia no está verificada. Desde 0.27.0,
+    tras revisar el efectivo, se prueban intercambios de 5 puntos entre
+    posiciones y sustituciones completas por cualquier instrumento simulado.
+    Solo se acepta una mejora pareada significativa (z ≥ 1,645) en los
+    escenarios de verificación: entre candidatas equivalentes se conserva la
+    cartera con menos operaciones. Esto cubre el contraejemplo CI → NFLX de la
+    revisión de 0.24.0, pero sigue siendo local y mide solo error de Monte
+    Carlo. La propuesta aún cambia con la semilla, el corte y la muestra de
+    40 (dos cortes seguidos dieron carteras distintas). Falta una métrica de
+    estabilidad visible: proponer con varias semillas y muestras y mostrar
+    cuánto coinciden los pesos.
 21. **Comparación robusta** limitada a crecimiento en USD sin retiros, suelo
     ni meta. Falta extenderla a los demás mandatos.
 22. **Topes prudenciales sin validar** (Treasury 60 %, renta variable 50 %,

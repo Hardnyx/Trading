@@ -1,4 +1,4 @@
-import { finite } from './analytics.mjs?v=0.26.0';
+import { finite } from './analytics.mjs?v=0.27.0';
 
 // Observing filing dates today does not establish original historical vintages.
 export function growthEvidence(asset, assumptions={}, research={}, context={}) {
