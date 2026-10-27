@@ -200,7 +200,8 @@ try {
      baselineStorage.compositionRules.reserveCap!==0.1 ||
      baselineStorage.account.positions[0].symbol!=="NVDA")
     throw Error("La prueba no restauró realmente la sesión personalizada");
-  if(!report.includes("MOTOR 0.20.0") && !report.includes("Motor 0.20.0"))
+  const detailedReport=await page.locator('.composition-report').innerText();
+  if(!detailedReport.includes("MOTOR 0.20.0") && !detailedReport.includes("Motor 0.20.0"))
     throw Error("El informe no identifica el motor 0.20.0");
   // The real worker must compare the preserved session and keep all account
   // quantities, settings and working weights unchanged.
