@@ -1291,7 +1291,7 @@ document.addEventListener("change", async (event) => {
     }
     state.settings[key] = value;
     if (key === "horizon") state.mandate.horizon = value;
-    if(key === "dividendPolicy" || key === "dividendWithholding"){
+    if(["dividendPolicy","dividendWithholding","cashYield"].includes(key)){
       const next={...state.mandate,[key]:value};
       try { mandate(next); }
       catch(error){ toast(error.message); render(); return; }

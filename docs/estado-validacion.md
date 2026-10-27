@@ -292,3 +292,9 @@ El selector GBM/Merton y los parámetros de salto solo aparecen con el
 comparador legado elegido en Componer cartera, que es el único modo donde se
 aplican. Antes la página mostraba Merton con 0,35 saltos anuales aunque la
 intensidad efectiva fuese cero.
+
+**Rendimiento declarado del efectivo.** El mandato admite la tasa anual neta
+que paga la cuenta sobre efectivo USD (0–20%). CASH crece a esa tasa de forma
+determinista y sin riesgo de precio; 0% significa efectivo explícitamente no
+remunerado, como pide la §3 del documento técnico. No se infiere de Treasury
+3M ni de Fed funds: depende del contrato de cada cuenta.

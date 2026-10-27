@@ -38,6 +38,9 @@ export const DEFAULT_MANDATE = {
   riskAversion: 5,
   dividendPolicy: "cash",
   dividendWithholding: 0,
+  // Net annual yield the account pays on uninvested USD cash. Zero means the
+  // cash is explicitly assumed unremunerated, not that it earns nothing.
+  cashYield: 0,
 };
 export const DEFAULT_EXECUTION = {
   commissionFixed: 0,
@@ -144,6 +147,7 @@ export function mandate(input = {}) {
   range(value.riskAversion, 1, 20, "la aversión al riesgo");
   if (!["cash","reinvest"].includes(value.dividendPolicy))throw new Error("Política de dividendos no válida");
   range(value.dividendWithholding,0,1,"retención sobre dividendos");
+  range(value.cashYield,0,0.2,"el rendimiento neto del efectivo");
   if (value.objective === "target" && !(value.terminalTarget > 0))
     throw new Error("Define el capital objetivo al final del horizonte.");
   if (value.referenceCurrency === "USD")

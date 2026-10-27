@@ -7,7 +7,8 @@ import {
   evaluateWeights,
   DEFAULT_COMPOSITION_RULES,
 } from "../dist/assets/js/composer.mjs?v=0.14.0";
-import { triangularQuantile } from "../dist/assets/js/return-model.mjs?v=0.14.0";
+import { triangularQuantile, buildReturnAnchors } from "../dist/assets/js/return-model.mjs?v=0.14.0";
+import { mandate } from "../dist/assets/js/policy.mjs?v=0.14.0";
 
 function snapshot() {
   const asOf = "2026-10-23";
@@ -322,4 +323,18 @@ test("fundamental uncertainty remains bounded and degenerates to the central anc
     const r = triangularQuantile(i / 100, -0.2, 0.1, 0.4);
     assert.ok(r >= -0.2 && r <= 0.4);
   }
+});
+
+test("cash earns the declared net account yield and nothing else", () => {
+  const cash = { symbol: "CASH", type: "cash", history: [] };
+  const [unpaid] = buildReturnAnchors([cash], { mandate: mandate({}) });
+  assert.equal(unpaid.annual, 0);
+  assert.match(unpaid.source, /0% declarado/);
+  const [paid] = buildReturnAnchors([cash], { mandate: mandate({ cashYield: 0.035 }) });
+  assert.equal(paid.annual, 0.035);
+  assert.equal(paid.low, paid.high);
+  assert.ok(Math.abs(paid.mu - Math.log1p(0.035)) < 1e-12);
+  assert.match(paid.source, /3[.,]50% neto/);
+  assert.throws(() => mandate({ cashYield: -0.01 }), /efectivo/);
+  assert.throws(() => mandate({ cashYield: 0.5 }), /efectivo/);
 });

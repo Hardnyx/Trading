@@ -444,7 +444,7 @@ export function createDecisionViews({ state = {}, data, asset }) {
         grid(fields),
         bond
           ? `${bond.source} · perfil ${dateLabel(bond.date)}. Carry aproximado = TIR bruta menos gastos; efecto local de tasas = −duración × cambio de tasa. No utiliza Treasury 3M como retorno de SHY.`
-          : "ETF: retorno futuro asumido, no extrapolado de su rentabilidad histórica. Efectivo CASH: 0% de remuneración.",
+          : `ETF: retorno futuro asumido, no extrapolado de su rentabilidad histórica. Efectivo CASH: ${((state.mandate?.cashYield || 0) * 100).toFixed(2)}% neto declarado en el mandato.`,
       );
     }
     const f = fundamentalForecast(a, state.overrides?.[a.symbol] || {}, r, {

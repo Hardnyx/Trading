@@ -888,6 +888,7 @@ export function createViews(context) {
       dividendsCashSelected:(state.mandate?.dividendPolicy??"cash") === "cash" ? "selected" : "",
       dividendsReinvestSelected:state.mandate?.dividendPolicy === "reinvest" ? "selected" : "",
       dividendWithholdingValue:fmt(100*(state.mandate?.dividendWithholding||0),0),
+      cashYieldValue:fmt(100*(state.mandate?.cashYield||0),2),
       fields: fields
         .map(([key, label, min, max, step, scale, unit]) =>
           template("composition-field", {

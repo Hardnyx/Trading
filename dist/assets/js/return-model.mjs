@@ -38,10 +38,14 @@ export function buildReturnAnchors(assets, settings = {}, overrides = {}) {
       source,
       fundamental = false;
     if (asset.type === "cash") {
-      annual = 0;
-      low = 0;
-      high = 0;
-      source = "Efectivo USD sin remuneración supuesta";
+      // Declared account yield, net of fees: a contractual rate, not a forecast.
+      const declared = settings.mandate?.cashYield ?? 0;
+      annual = declared;
+      low = declared;
+      high = declared;
+      source = declared > 0
+        ? `Efectivo USD remunerado al ${(declared * 100).toFixed(2)}% neto declarado en el mandato; sin riesgo de tasa modelado`
+        : "Efectivo USD sin remuneración (0% declarado en el mandato)";
     } else if (bond) {
       annual = bond.carry;
       low = annual;

@@ -43,6 +43,15 @@
             </div>
           </div>
           <div class="field">
+            <label for="composition-cash-yield">RENDIMIENTO NETO DEL EFECTIVO USD</label>
+            <div class="input-unit">
+              <input id="composition-cash-yield" type="number" min="0" max="20" step="0.05"
+                value="{{cashYieldValue}}" data-setting="cashYield"
+                data-scale="100"><span>%/año</span>
+            </div>
+            <small>Tasa contractual de tu cuenta, neta de comisiones. 0% supone efectivo no remunerado.</small>
+          </div>
+          <div class="field">
             <label for="composition-horizon">HORIZONTE</label
             ><select
               id="composition-horizon"
