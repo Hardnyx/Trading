@@ -10,9 +10,9 @@ Se propone un sistema predictivo para carteras multiactivo que distingue entre (
 
 **Palabras clave:** cálculo estocástico, GJR-GARCH, efectos asimétricos, regímenes, datos *point-in-time*, eventos, riesgo de cartera, CVaR.
 
-### Estado de implementación (27 de octubre de 2026 · motor 0.18.0)
+### Estado de implementación (27 de octubre de 2026 · motor 0.19.0)
 
-El motor 0.18.0 factoriza una matriz EWMA conjunta con SPY y residuo PSD; actualiza GJR en activos aceptados y EWMA en los demás. Los primeros utilizan marginales Student-t mediante una cópula gaussiana. Se distingue su covarianza lineal inicial inducida de la matriz latente. El registro diario evalúa referencias estadísticas, cuyo centro y EWMA difieren del simulador, y no valida por sí solo el CVaR de cartera. Se protegen las bases de BPA tras splits y se concilian los flujos de caja modelados. **No** equivale al modelo factorial-GARCH completo: GJR sigue estimado sobre retornos totales; GJR residual, GARCH-X, DCC, saltos informativos, cobertura extrema y rentabilidad económica continúan pendientes de validación. El [estado consolidado](estado-validacion.md) separa implementación y evidencia.
+El motor 0.19.0 factoriza una matriz EWMA conjunta con SPY y residuo PSD; actualiza GJR en activos aceptados y EWMA en los demás. Los primeros utilizan marginales Student-t mediante una cópula gaussiana. Se distingue su covarianza lineal inicial inducida de la matriz latente. El registro diario evalúa referencias estadísticas, cuyo centro y EWMA difieren del simulador, y no valida por sí solo el CVaR de cartera. Se protegen las bases de BPA tras splits y se concilian los flujos de caja modelados. La historia anual SEC y el contraste secuencial de crecimiento se conservan como investigación reconstruida, sin sustituir las anclas ni certificar vintages históricos. **No** equivale al modelo factorial-GARCH completo: GJR sigue estimado sobre retornos totales; GJR residual, GARCH-X, DCC, saltos informativos, cobertura extrema y rentabilidad económica continúan pendientes de validación. El [estado consolidado](estado-validacion.md) separa implementación y evidencia.
 
 ## 1. Problema y pregunta de investigación
 

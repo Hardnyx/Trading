@@ -7,7 +7,7 @@ import {
   resolveAssumptions,
   returnDecomposition,
   valuation,
-} from "../analytics.mjs?v=0.18.0";
+} from "../analytics.mjs?v=0.19.0";
 import {
   sparkline,
   portfolioChart,
@@ -16,7 +16,7 @@ import {
   scatter,
   forecastCone,
   histogram,
-} from "../charts.mjs?v=0.18.0";
+} from "../charts.mjs?v=0.19.0";
 import {
   esc,
   url,
@@ -27,16 +27,16 @@ import {
   color,
   dateLabel,
   timestampLabel,
-} from "./format.mjs?v=0.18.0";
-import { template } from "./templates.mjs?v=0.18.0";
-import { DEFAULT_COMPOSITION_RULES } from "../composer.mjs?v=0.18.0";
-import { factorModel } from "../factors.mjs?v=0.18.0";
-import { MODEL_VERSION, informationDate } from "../policy.mjs?v=0.18.0";
-import { fundamentalForecast } from "../research-model.mjs?v=0.18.0";
-import { financialFreshness } from '../financial-freshness.mjs?v=0.18.0';
-import { priceMonitor } from '../price-monitor.mjs?v=0.18.0';
+} from "./format.mjs?v=0.19.0";
+import { template } from "./templates.mjs?v=0.19.0";
+import { DEFAULT_COMPOSITION_RULES } from "../composer.mjs?v=0.19.0";
+import { factorModel } from "../factors.mjs?v=0.19.0";
+import { MODEL_VERSION, informationDate } from "../policy.mjs?v=0.19.0";
+import { fundamentalForecast } from "../research-model.mjs?v=0.19.0";
+import { financialFreshness } from '../financial-freshness.mjs?v=0.19.0';
+import { priceMonitor } from '../price-monitor.mjs?v=0.19.0';
 
-import { createDecisionViews } from "./decision-views.mjs?v=0.18.0";
+import { createDecisionViews } from "./decision-views.mjs?v=0.19.0";
 
 /**
  * Describes the process the Monte Carlo actually runs. Jumps and the GBM /
@@ -107,7 +107,8 @@ export function compositionValuationEvidence(signal) {
   const a=v.assumptions;
   const base=finite(v.effectiveBaseEPS)?` · BPA de partida ${money(v.effectiveBaseEPS)} (${v.earningsBasis==='continuing'?'operaciones continuadas':'base de valoración'})`:"";
   const sensitivity=v.accountingSensitivity>0?` · sensibilidad a base contable ${pct(v.accountingSensitivity)} / año`:"";
-  return `Supuestos: ${v.source}${base}${sensitivity} · crecimiento ${pct(a.growth)} · ${reratingText(v.rerating,a)} · valoración a ${fmt(a.horizon,0)} años · confianza asignada ${pct(v.confidence)}. Sin calibración predictiva.`;
+  const growthSource=v.growthEvidence?` (${v.growthEvidence.source}${v.growthEvidence.sourceVintage?' · captura '+timestampLabel(v.growthEvidence.sourceVintage):'; sin vintage predictivo'})`:'';
+  return `Supuestos: ${v.source}${base}${sensitivity} · crecimiento ${pct(a.growth)}${growthSource} · ${reratingText(v.rerating,a)} · valoración a ${fmt(a.horizon,0)} años · confianza asignada ${pct(v.confidence)}. Sin calibración predictiva.`;
 }
 /** Exit multiple: explicit user value or partial reversion to the sector reference. */
 export function reratingText(r,a){

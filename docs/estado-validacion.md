@@ -3,7 +3,48 @@
 **Fecha del diagnóstico:** 27 de octubre de 2026, con cortes de precios publicados por el repositorio.
 **Clasificación:** investigación activa; no es asesoramiento de inversión ni certificación predictiva.
 
-## Estado actual consolidado · motor 0.18.0
+## Estado actual consolidado · motor 0.19.0
+
+### Historia y contraste del crecimiento · 0.19.0
+
+El recolector añade `financials.earnings_history`: hasta doce años de BPA
+anual diluido, con cada versión disponible, su presentación y enlace al
+informe SEC. Se excluyen formularios no periódicos, registros futuros,
+periodos no anuales y conflictos dentro del mismo accession. La descarga
+aprovecha la consulta companyfacts existente. Las capturas originales del
+proyecto conservan la historia observada sin reescribir archivos previos.
+
+El candidato `annual-eps-shrinkage-shadow-1` usa hasta cinco crecimientos
+anuales publicados al origen. Contrae la media logarítmica hacia 6% con fuerza
+cinco; esos valores son convenciones fijas. El resultado siguiente se mide
+con BPA actual y comparativo del **mismo informe**, evitando mezclar bases de
+splits. Los errores de bandas solo entran después de publicarse su resultado;
+se requieren cinco errores anteriores y se comunica su cobertura observada.
+Los casos con pérdidas o sin comparativo positivo no reciben un crecimiento
+calculado a partir de bases negativas. No se eliminan crecimientos extremos
+para mejorar el error.
+
+`python scripts/earnings_growth_research.py` produce el detalle auditable,
+comparadores pareados y MAE, RMSE, sesgo y cobertura. CI conserva el informe
+como artefacto. F5 muestra la procedencia del crecimiento usado, la captura
+local de la historia y el diagnóstico reconstruido. La propuesta guarda esa
+procedencia junto con sus supuestos.
+
+**Límite de interpretación:** es una reconstrucción de presentaciones desde
+la respuesta SEC actual, con universo seleccionado hoy y posibles
+reexpresiones. No certifica vintages originales ni observaciones prospectivas.
+Un crecimiento de BPA anual no equivale a retorno de inversión calibrado a
+tres años. El candidato queda `production_eligible=false`; no cambia
+crecimiento, confianza, anclas ni bandas de la simulación. El punto P0.1
+permanece abierto.
+
+**Comprobaciones de 0.19.0:** 178 pruebas JavaScript y 123 Python aprobadas,
+con versiones de fuentes consistentes. Se comprueba que futuras
+presentaciones no cambien la previsión ni la banda de un origen anterior,
+que un split no mezcle cifras de informes distintos y que la historia
+reconstruida no cambie las anclas de producción.
+
+### Protecciones conservadas · 0.18.0
 
 El universo contiene 260 instrumentos (160 acciones y 100 ETF). Los tickers y los indicadores de cálculo del commit definitivo `f43efeb` se conservan. El [backlog actualizado](pendientes.md) aplica los criterios de cierre proporcionados. Las correcciones de integridad de la auditoría se implementan así:
 

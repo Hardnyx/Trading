@@ -2,7 +2,7 @@
 
 Research, composición y seguimiento de una cartera personal de acciones y ETFs de Estados Unidos.
 
-**Motor 0.18.0.** BPA protegido frente a bases incompatibles tras splits, valoración y fórmula coherentes, efectivo remunerado hasta cada retiro y evidencia de riesgo identificada por su alcance. Se mantienen los calendarios de distribuciones, los límites de exposición y los cambios visuales recientes. El modelo sigue siendo experimental. Véanse [el estado actual, las comprobaciones y los pendientes](docs/estado-validacion.md).
+**Motor 0.19.0.** Historia anual de BPA diluido con presentaciones y fuentes, diagnóstico secuencial del crecimiento y procedencia explícita de los supuestos. El candidato de crecimiento permanece en investigación y no modifica las anclas. Se conservan las protecciones de splits, la valoración conciliada y el devengo de efectivo de 0.18.0. El modelo sigue siendo experimental. Véanse [el estado actual, las comprobaciones y los pendientes](docs/estado-validacion.md).
 
 [Abrir aplicación](https://hardnyx.github.io/Trading/)
 
@@ -16,7 +16,7 @@ Research, composición y seguimiento de una cartera personal de acciones y ETFs 
 
 La cuenta, tesis, supuestos y pronósticos quedan en este navegador. **Exportar cartera** permite conservarlos y trasladarlos. Los avisos requieren permiso del navegador y la página abierta; no hay vigilancia de la cartera personal con la página cerrada.
 
-## Validación y evidencia (0.8.0)
+## Validación y evidencia
 
 El modelo de producción y sus pronósticos **siguen siendo experimentales**. La versión 0.8.0 añade investigaciones independientes sobre vintages/point-in-time, GJR multifactorial, coexcedencias y colas, Student-t bivariante, registros de eventos SEC y estabilidad de selección. Estas pruebas no se convierten automáticamente en nuevas reglas de inversión.
 
@@ -29,6 +29,8 @@ Cada corte sella además, antes de la apertura siguiente, la varianza, el VaR95 
 ## Método
 
 **Previsión.** Para acciones, BPA y múltiplo de salida propios; también ventas × margen neto / dilución, consenso comparable o mezcla 50/50. El múltiplo de salida por defecto es una referencia sectorial genérica: el valor justo la usa completa, pero el retorno esperado solo cierra la brecha entre el P/E observado y esa referencia con vida media de 10 años (≈19% de la brecha logarítmica en 3 años); convergencia total y ausencia de reversión delimitan la banda. Un múltiplo que fijes por empresa se respeta tal cual. El crecimiento implícito en precio usa la misma ecuación de dividendos descontados que la valoración. El retorno anual equivalente aproxima los dividendos al final; no se suman otra vez al simular. No es un DCF completo.
+
+**Evidencia del crecimiento.** El recolector conserva hasta doce años de BPA anual diluido y todas sus versiones disponibles en la respuesta actual de SEC, con periodo, presentación, accession y enlace. El contraste usa pares anuales del mismo informe, sin mezclar bases por acción alrededor de splits. `python scripts/earnings_growth_research.py` evalúa un candidato con hasta cinco crecimientos conocidos, contraído hacia 6% con fuerza cinco, frente al prior común y al último crecimiento. Son convenciones fijas, no parámetros calibrados. Las bandas se calculan solo con errores ya publicados en cada origen; no se recortan pérdidas ni crecimientos extremos para mejorar métricas. La página identifica por separado la convención del catálogo, la edición manual y el consenso observado. La historia descargada hoy no acredita vintages originales y el diagnóstico no ajusta la propuesta automáticamente.
 
 La confianza subjetiva se reduce por cobertura y antigüedad de fundamentos y contradicciones de tesis. Contrae la previsión hacia un retorno previo explícito y amplía sus rangos. Una contradicción no mejora el retorno previsto y bloquea nuevas compras hasta revisar las hipótesis. Confianza no equivale a precisión predictiva demostrada. Las observaciones faltantes aparecen como `—`, no como cero.
 
@@ -94,11 +96,11 @@ El colector usa la biblioteca estándar de Python y `pypdf` para leer el calenda
 | FRED                            | Series macro y fechas de observación                                                             | CSV actual sin clave; API histórica con clave |
 | FMP                             | Consenso anual y revisiones entre capturas                                                       | Clave y acceso al endpoint; uso local/privado |
 
-Universo objetivo: **100 acciones y 77 ETF** (177 símbolos), entre sectores estadounidenses, estilos, países, renta fija y materias primas. Los 71 nuevos CIK de acciones se resuelven en el catálogo oficial SEC; si falla la consulta y no existe una identificación anterior verificada, la acción queda fuera del corte y se informa la incidencia. Cada corte puede contener menos activos si faltan precios o fundamentos. CASH se crea localmente como reserva sin remuneración, no como cotización descargada.
+Universo objetivo: **160 acciones y 100 ETF** (260 símbolos), entre sectores estadounidenses, estilos, países, renta fija y materias primas. Los CIK de acciones adicionales se resuelven en el catálogo oficial SEC; si falla la consulta y no existe una identificación anterior verificada, la acción queda fuera del corte y se informa la incidencia. Cada corte puede contener menos activos si faltan precios. La falta de fundamentales bloquea nuevas compras sin eliminar el instrumento del catálogo de precios. CASH se crea localmente con la remuneración neta declarada en el mandato, no como cotización descargada.
 
 **Diagnóstico reproducible:** `node scripts/diagnose_portfolio.mjs` compara sobre el archivo publicado una búsqueda limitada con tope SHY original y tope SHY de 50%, usando las mismas semillas y presupuestos de simulación. Es una sensibilidad de implementación, no un backtest ni resultados suficientes para recomendar operaciones.
 
-**Escala del optimizador:** el universo de investigación incluye todos los instrumentos publicados, pero cada ejecución de composición simula como máximo **40 activos**, conservando SHY, SPY, el benchmark y la cartera existente, y seleccionando el resto por documentación, liquidez histórica y representación de sectores. Se registra cuáles quedaron fuera de la muestra. Una propuesta no constituye una optimización global de los 177 instrumentos: ampliar el catálogo no obliga a comprar. Los supuestos P/E y crecimiento de las acciones añadidas son **hipótesis sectoriales editables**, no previsiones verificadas. Para REIT se dejan vacíos hasta incorporar valoración FFO/AFFO.
+**Escala del optimizador:** cada ejecución permite muestras de **20, 40, 60 u 80 activos**, con 40 como valor inicial, conservando SHY, SPY, el benchmark y la cartera existente, y seleccionando el resto por documentación, liquidez histórica y representación de sectores. Se registra cuáles quedaron fuera de la muestra. Una propuesta no constituye una optimización global de los 260 instrumentos: ampliar el catálogo no obliga a comprar. Los supuestos P/E y crecimiento de las acciones añadidas son **hipótesis sectoriales editables**, no previsiones verificadas. Para REIT se dejan vacíos hasta incorporar valoración FFO/AFFO.
 
 Los vencimientos sólo se muestran cuando existe el concepto estándar en Company Facts. La dilución requiere historia de acciones y ajuste documentado por splits. El BPA se contrasta con beneficio neto y acciones, considerando períodos contables comparables o splits recientes: una discrepancia extrema (más de 3 veces en uno u otro sentido) bloquea automáticamente su utilización en valoración, guarda el dato original como `eps_unverified` y muestra un aviso. Es un control de plausibilidad, no una conciliación contable integral; un BPA validado no garantiza valor intrínseco correcto. No hay cobertura completa de clases múltiples, conceptos XBRL personalizados ni calendario integral de deuda.
 
