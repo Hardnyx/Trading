@@ -9,18 +9,18 @@ import {
   alignReturns,
   returnStats,
   validateSnapshot,
-} from "./analytics.mjs?v=0.14.0";
+} from "./analytics.mjs?v=0.15.0";
 import {
   registerPortfolio,
   reviewPortfolio,
   DEFAULT_RULES,
-} from "./monitor.mjs?v=0.14.0";
+} from "./monitor.mjs?v=0.15.0";
 
-import { fmt, pct, money, dateLabel } from "./ui/format.mjs?v=0.14.0";
-import { createViews, NAV } from "./ui/views.mjs?v=0.14.0";
-import { loadTemplates } from "./ui/templates.mjs?v=0.14.0";
-import { applyVisualValues, showStartupError } from "./ui/dom.mjs?v=0.14.0";
-import { DEFAULT_COMPOSITION_RULES } from "./composer.mjs?v=0.14.0";
+import { fmt, pct, money, dateLabel } from "./ui/format.mjs?v=0.15.0";
+import { createViews, NAV } from "./ui/views.mjs?v=0.15.0";
+import { loadTemplates } from "./ui/templates.mjs?v=0.15.0";
+import { applyVisualValues, showStartupError } from "./ui/dom.mjs?v=0.15.0";
+import { DEFAULT_COMPOSITION_RULES } from "./composer.mjs?v=0.15.0";
 
 import {
   DEFAULT_MANDATE,
@@ -33,22 +33,22 @@ import {
   currentAccount,
   informationDate,
   MODEL_VERSION,
-} from "./policy.mjs?v=0.14.0";
-import { validateResearch } from "./research-model.mjs?v=0.14.0";
+} from "./policy.mjs?v=0.15.0";
+import { validateResearch } from "./research-model.mjs?v=0.15.0";
 import {
   journalOrigin,
   appendForecast,
   freezeMaturedOutcomes,
-} from "./journal.mjs?v=0.14.0";
+} from "./journal.mjs?v=0.15.0";
 
-import { openJournal, saveJournal } from "./journal-store.mjs?v=0.14.0";
+import { openJournal, saveJournal } from "./journal-store.mjs?v=0.15.0";
 
 let journalDBReady = false,
   storageErrorShown = false;
 
 const $ = (s, root = document) => root.querySelector(s);
 
-import { referenceRequest, REFERENCE_ID } from "./reference-preset.mjs?v=0.14.0";
+import { referenceRequest, REFERENCE_ID } from "./reference-preset.mjs?v=0.15.0";
 
 let saved = {};
 try {
@@ -404,7 +404,7 @@ function runForecast() {
       state.research,
     );
     worker ||= new Worker(
-      new URL("./forecast-worker.mjs?v=0.14.0", import.meta.url),
+      new URL("./forecast-worker.mjs?v=0.15.0", import.meta.url),
       {
         type: "module",
       },
@@ -480,7 +480,7 @@ function runComposition(reference = false) {
   state.compositionError = null;
   try {
     compositionWorker ||= new Worker(
-      new URL("./composer-worker.mjs?v=0.14.0", import.meta.url),
+      new URL("./composer-worker.mjs?v=0.15.0", import.meta.url),
       { type: "module" },
     );
     compositionWorker.onmessage = (event) => {
@@ -553,7 +553,7 @@ function runRobustness(){
  }
  state.robustnessBusy=true;state.robustnessError=null;state.robustnessProgress='Preparando comparación';render();
  try{
-  robustWorker??=new Worker(new URL('./robust-worker.mjs?v=0.14.0',import.meta.url),{type:'module'});
+  robustWorker??=new Worker(new URL('./robust-worker.mjs?v=0.15.0',import.meta.url),{type:'module'});
   robustWorker.onmessage=({data:message})=>{
    if(message.id!==robustJob)return;
    if(proposalSignature()!==signature){
@@ -729,6 +729,19 @@ async function matchingVolatility(snapshot) {
     return null; // A missing or malformed research file must not break the site.
   }
 }
+// Prospective one-session risk ledger summary; independent of the cut loaded.
+async function riskCalibration() {
+  try {
+    const url=new URL("../../data/risk-calibration.json",import.meta.url);
+    const response=await fetch(url,{cache:"no-cache"});
+    if(!response.ok)return null;
+    const source=await response.json();
+    return source.schema_version===1 && source.versions &&
+      typeof source.versions==="object" ? source : null;
+  } catch {
+    return null; // Missing evidence must not break the site.
+  }
+}
 let marketETag = null;
 let marketURL = null;
 
@@ -759,6 +772,7 @@ async function loadData() {
   marketURL = result.url;
   const checked=validateSnapshot(result.snapshot);
   checked.volatility=await matchingVolatility(checked);
+  checked.riskCalibration=await riskCalibration();
   data = withCashAsset(checked);
   if (state.proposal &&
       (state.proposal.model_version !== MODEL_VERSION ||
@@ -817,6 +831,7 @@ setInterval(async () => {
     if (next.generated_at === data.generated_at) return;
     const previous = monitoring()?.alerts.map((a) => a.id) || [];
     next.volatility=await matchingVolatility(next);
+    next.riskCalibration=await riskCalibration();
     data = withCashAsset(next);
     if (state.proposal &&
         (state.proposal.model_version !== MODEL_VERSION ||

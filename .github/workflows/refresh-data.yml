@@ -16,6 +16,7 @@ on:
       - 'scripts/universe.py'
       - 'scripts/volatility_research.py'
       - 'scripts/build_volatility.py'
+      - 'scripts/risk_ledger.py'
       - 'requirements-research.txt'
   workflow_dispatch:
 permissions:
@@ -53,6 +54,12 @@ jobs:
         run: python scripts/refresh_data.py
       - name: Calibrate conditional volatility (point-in-time)
         run: python scripts/build_volatility.py
+      - name: Score sealed one-session risk forecasts on the first later session
+        run: python scripts/risk_ledger.py score
+      - name: Seal one-session risk forecasts per original market close
+        run: python scripts/risk_ledger.py seal --skip-ineligible
+      - name: Summarize the prospective risk ledger
+        run: python scripts/risk_ledger.py summary
       - name: Seal one prospective proposal per original market close
         run: node scripts/seal_forecast.mjs --skip-ineligible
       - name: Score previously sealed forecasts only after maturity
@@ -62,6 +69,8 @@ jobs:
         run: |
           git add dist/data/market.json dist/data/market.json.gz dist/data/volatility.json data/snapshots
           git add data/forecasts data/holdings || true
+          git add dist/data/risk-calibration.json
+          if [ -d data/risk-forecasts ]; then git add data/risk-forecasts; fi
           if [ -d data/distributions ]; then git add data/distributions; fi
           if [ "$REPOSITORY_PRIVATE" = 'true' ] && [ -d data/research ]; then
             git add -f data/research

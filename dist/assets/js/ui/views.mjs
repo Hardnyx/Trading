@@ -4,7 +4,7 @@ import {
   normalizeWeights,
   metrics,
   scenarios,
-} from "../analytics.mjs?v=0.14.0";
+} from "../analytics.mjs?v=0.15.0";
 import {
   sparkline,
   portfolioChart,
@@ -13,7 +13,7 @@ import {
   scatter,
   forecastCone,
   histogram,
-} from "../charts.mjs?v=0.14.0";
+} from "../charts.mjs?v=0.15.0";
 import {
   esc,
   url,
@@ -24,16 +24,16 @@ import {
   color,
   dateLabel,
   timestampLabel,
-} from "./format.mjs?v=0.14.0";
-import { template } from "./templates.mjs?v=0.14.0";
-import { DEFAULT_COMPOSITION_RULES } from "../composer.mjs?v=0.14.0";
-import { factorModel } from "../factors.mjs?v=0.14.0";
-import { MODEL_VERSION, informationDate } from "../policy.mjs?v=0.14.0";
-import { fundamentalForecast } from "../research-model.mjs?v=0.14.0";
-import { financialFreshness } from '../financial-freshness.mjs?v=0.14.0';
-import { priceMonitor } from '../price-monitor.mjs?v=0.14.0';
+} from "./format.mjs?v=0.15.0";
+import { template } from "./templates.mjs?v=0.15.0";
+import { DEFAULT_COMPOSITION_RULES } from "../composer.mjs?v=0.15.0";
+import { factorModel } from "../factors.mjs?v=0.15.0";
+import { MODEL_VERSION, informationDate } from "../policy.mjs?v=0.15.0";
+import { fundamentalForecast } from "../research-model.mjs?v=0.15.0";
+import { financialFreshness } from '../financial-freshness.mjs?v=0.15.0';
+import { priceMonitor } from '../price-monitor.mjs?v=0.15.0';
 
-import { createDecisionViews } from "./decision-views.mjs?v=0.14.0";
+import { createDecisionViews } from "./decision-views.mjs?v=0.15.0";
 
 /**
  * Describes the process the Monte Carlo actually runs. Jumps and the GBM /
@@ -62,6 +62,23 @@ export function simulatedProcess(settings = {}, volatility = null) {
       : "Recursión EWMA diaria sobre la covarianza total.") +
       " Innovaciones conjuntas gaussianas; sin saltos.",
   };
+}
+
+/** Summary of the sealed one-session risk ledger (data/risk-forecasts). */
+export function riskCalibrationNote(summary) {
+  const version = summary?.current_risk_model_version;
+  const v = summary?.versions?.[version];
+  if (!v) return "Registro diario sellado de riesgo: todavía sin sesiones selladas.";
+  const used = v.models?.production || {};
+  const p = (x) => finite(x) ? fmt(x, 2) : "—";
+  const paired = v.paired_qlike_ewma_minus_gjr || {};
+  return `Registro diario sellado · modelo de riesgo ${version}: ${v.scored_sessions} de ${v.sealed_sessions} sesiones puntuadas, ${used.observations || 0} activo-días. ` +
+    (used.observations
+      ? `Excepciones VaR95 del modelo en uso ${pct(used.var95_exception_rate, 1)} (esperado 5%; Kupiec p=${p(used.kupiec?.p_value)}; agrupamiento Christoffersen p=${p(used.christoffersen?.p_value)}). QLIKE EWMA − GJR ${p(paired.mean)} en ${paired.observations || 0} pares. `
+      : "") +
+    (v.status === "evaluable"
+      ? "Evaluable con cautelas: activos no independientes; no promueve parámetros."
+      : `Acumulando: se interpreta desde ${summary.minimum_sessions} sesiones y ${summary.minimum_observations} observaciones.`);
 }
 
 export function compositionValuationEvidence(signal) {
@@ -1270,7 +1287,8 @@ export function createViews(context) {
             : "No existe un corte de volatilidad compatible. Simulación con EWMA y los supuestos previos, sin atribución automática de noticias.",
         }),
         "",
-        "QLIKE walk-forward frente a EWMA; Student-t solo para calibraciones aceptadas. La elección de la distribución y la cobertura del CVaR requieren validación continua."
+        "QLIKE walk-forward frente a EWMA; Student-t solo para calibraciones aceptadas. La elección de la distribución y la cobertura del CVaR requieren validación continua. " +
+          riskCalibrationNote(data.riskCalibration)
       ) +
       panel(
         "SHOCKS EXTREMOS · SIN ATRIBUCIÓN A NOTICIAS",

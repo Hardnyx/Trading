@@ -1,7 +1,7 @@
-import { finite, metrics, valuation, scenarios } from "./analytics.mjs?v=0.14.0";
-import { DEFAULT_RESEARCH } from "./policy.mjs?v=0.14.0";
-import { dilutedEarningsBridge } from './earnings-normalization.mjs?v=0.14.0';
-import { financialFreshness } from './financial-freshness.mjs?v=0.14.0';
+import { finite, metrics, valuation, scenarios } from "./analytics.mjs?v=0.15.0";
+import { DEFAULT_RESEARCH } from "./policy.mjs?v=0.15.0";
+import { dilutedEarningsBridge } from './earnings-normalization.mjs?v=0.15.0';
+import { financialFreshness } from './financial-freshness.mjs?v=0.15.0';
 
 const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
 const years = (a, b) =>

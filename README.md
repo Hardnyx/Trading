@@ -22,7 +22,7 @@ El modelo de producción y sus pronósticos **siguen siendo experimentales**. La
 
 [**Estado de validación, resultados, límites y comandos reproducibles**](docs/estado-validacion.md)
 
-GitHub Actions conserva diagnósticos como artefactos en **Research evidence (shadow)**; la actualización de datos intenta sellar un pronóstico independiente una sola vez por corte de mercado en `data/forecasts/` y guardará su resultado al madurar. Eso **no incluye tu cartera personal**, que permanece en el navegador. No se ha demostrado todavía calidad predictiva a doce meses ni ventaja frente a portafolios sencillos netos de costos.
+Cada corte sella además, antes de la apertura siguiente, la varianza, el VaR95 y el ES95 a una sesión de cada instrumento (`data/risk-forecasts/`), y los puntúa al publicarse la sesión siguiente; Riesgo muestra la cobertura acumulada por versión del modelo de riesgo. GitHub Actions conserva diagnósticos como artefactos en **Research evidence (shadow)**; la actualización de datos intenta sellar un pronóstico independiente una sola vez por corte de mercado en `data/forecasts/` y guardará su resultado al madurar. Eso **no incluye tu cartera personal**, que permanece en el navegador. No se ha demostrado todavía calidad predictiva a doce meses ni ventaja frente a portafolios sencillos netos de costos.
 
 ## Método
 

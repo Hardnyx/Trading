@@ -28,6 +28,7 @@ La aprobación de GitHub Actions certifica ejecución y consistencia de software
 | Holdings fechadas de ETF | `python scripts/refresh_data.py` (captura actual) | Conservar primeros accesos, cobertura parcial y fuente TickerInside/issuer/SEC; no usar nuevas capturas para reconstruir carteras históricas |
 | Pronóstico prospectivo permanente | `node scripts/seal_forecast.mjs --skip-ineligible` | Sellado antes de la siguiente sesión de mercado, sin sobrescritura |
 | Resultados posteriores a maduración | `node scripts/seal_forecast.mjs --score` | No evaluar un retorno a doce meses antes de conocerlo |
+| Riesgo diario sellado por activo | `python scripts/risk_ledger.py seal --skip-ineligible`, `score`, `summary` | Sellar h, VaR95 y ES95 antes de la apertura siguiente; puntuar solo la primera sesión posterior; interpretar desde 20 sesiones y 500 activo-días |
 
 El workflow **Research evidence (shadow)** ejecuta estas investigaciones, guarda archivos JSON como artefactos y nunca modifica directamente el optimizador de la página.
 
@@ -298,3 +299,28 @@ que paga la cuenta sobre efectivo USD (0–20%). CASH crece a esa tasa de forma
 determinista y sin riesgo de precio; 0% significa efectivo explícitamente no
 remunerado, como pide la §3 del documento técnico. No se infiere de Treasury
 3M ni de Fed funds: depende del contrato de cada cuenta.
+
+**Registro diario sellado de riesgo.** La validación de la cartera a doce
+meses agrupa por versión del motor y exige 20 ventanas sin solape: con una
+versión nueva cada pocos días, esa muestra no puede completarse. El documento
+técnico (§8) se formula sobre pronósticos a una sesión, que acumulan evidencia
+en semanas. `scripts/risk_ledger.py` sella cada corte, antes de la apertura
+siguiente y una sola vez, la varianza h_{t+1|t}, el VaR95 y el ES95 de cada
+instrumento con GJR-GARCH-t (parámetros del mismo corte) y con la referencia
+EWMA(0,94) sobre las 500 sesiones previas, además del modelo que usa el modo
+híbrido. Cada sello conserva hashes del mercado y la calibración.
+
+La puntuación usa la primera sesión posterior presente en un corte publicado
+más tarde y se escribe en `data/risk-forecasts/scores/` sin tocar el sello. Un
+resultado ausente queda sin puntuar. `dist/data/risk-calibration.json` resume
+por **versión del modelo de riesgo** (1.0.0), independiente de la versión del
+motor: QLIKE, tasa de excepciones VaR95 con Kupiec, agrupamiento de
+excepciones con Christoffersen, profundidad de cola (pérdida realizada media
+sobre ES sellado en días de excepción) y QLIKE pareado EWMA − GJR. Riesgo
+muestra el resumen. Los contrastes agregados tratan los activos como
+independientes, lo que no son; los mínimos de 20 sesiones y 500 activo-días
+son reglas operativas. El registro no promueve parámetros ni decide
+operaciones.
+
+La versión del motor pasa a 0.15.0 para invalidar propuestas calculadas con la
+correlación residual anterior.
