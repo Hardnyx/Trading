@@ -89,6 +89,16 @@
     <template id="decision-td">
       <td>{{value}}</td>
     </template>
+    <template id="decision-symbol-th">
+      <th>
+        <button class="symbol" data-detail="{{value}}">{{value}}</button>
+      </th>
+    </template>
+    <template id="decision-symbol-td">
+      <td>
+        <button class="symbol" data-detail="{{value}}">{{value}}</button>
+      </td>
+    </template>
     <template id="decision-row">
       <tr>
         {{{cells}}}
@@ -108,7 +118,7 @@
     </template>
     <template id="decision-holding">
       <tr>
-        <th>{{symbol}}</th>
+        <th><button class="symbol" data-detail="{{symbol}}">{{symbol}}</button></th>
         <td>{{{quantity}}}</td>
         <td>{{{basis}}}</td>
         <td>
@@ -132,7 +142,7 @@
     </template>
     <template id="decision-actions">
       <div class="decision-actions">
-        <button class="button primary" data-action="compose">
+        <button class="button primary" data-action="compose" {{{composeBusy}}}>
           Reevaluar mantener o cambiar</button
         ><button class="button" data-action="export">
           Exportar cartera y registro

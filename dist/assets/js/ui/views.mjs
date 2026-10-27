@@ -746,6 +746,7 @@ export function createViews(context) {
         value13: state.forecast ? pct(state.forecast.coverage, 0) : "—",
         refreshIcon: icon("refresh"),
         value15: state.busy ? "Calculando…" : "Recalcular simulación",
+        resimulateBusy: state.busy ? 'aria-busy="true"' : "",
         seed: s.seed,
       }),
     );
@@ -811,6 +812,8 @@ export function createViews(context) {
           composeDisabled: state.compositionBusy || state.robustnessBusy ? "disabled" : "",
           referenceDisabled: state.compositionBusy || state.robustnessBusy ? "disabled" : "",
           robustLabel: state.robustnessBusy ? "Comparando…" : "Comparar robustez",
+          robustBusy: state.robustnessBusy ? 'aria-busy="true"' : "",
+          composeBusy: state.compositionBusy ? 'aria-busy="true"' : "",
           applyDisabled: state.proposal?.status === "proposed" &&
             state.proposal.model_version === MODEL_VERSION &&
             state.proposal.as_of === data.price_as_of &&
@@ -1703,6 +1706,10 @@ export function createViews(context) {
         })
         .join(""),
       toUpperCase: nav[1].toUpperCase(),
+      busy:
+        state.busy || state.compositionBusy || state.robustnessBusy
+          ? 'aria-busy="true"'
+          : "",
       value6: state.busy
         ? "CALCULANDO…"
         : "MOTOR " + MODEL_VERSION + " · CORTE " + dateLabel(data.price_as_of),

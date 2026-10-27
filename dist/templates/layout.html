@@ -21,7 +21,7 @@
 
     <template id="command-results-3">
       <button class="command-result" data-detail="{{symbol}}">
-        <span><b class="mono orange">{{symbol2}}</b> &nbsp; {{name}}</span
+        <span><b class="symbol">{{symbol2}}</b> &nbsp; {{name}}</span
         ><span class="muted mono small">{{price}}</span>
       </button>
     </template>
@@ -94,7 +94,7 @@
       <div class="ticker-strip">{{{items}}}</div>
       <div class="workspace">
         <main id="workspace-main" class="main-area" tabindex="-1">
-          <div class="function-bar">
+          <div class="function-bar" {{{busy}}}>
             <div class="path">
               <span>TRADING</span><span>/</span><b>{{toUpperCase}}</b>
             </div>

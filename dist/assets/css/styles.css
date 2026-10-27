@@ -580,7 +580,8 @@ th button:hover {
   background: var(--raised-3);
 }
 .heat-label:hover {
-  color: var(--orange);
+  color: var(--blue-soft);
+  text-decoration: underline;
 }
 .heat-corner {
   color: var(--orange);
@@ -1308,9 +1309,6 @@ h1 {
 .allocation-table td:first-child {
   width: 65px;
 }
-.allocation-table .text-button {
-  font: var(--fs-md) var(--mono);
-}
 .allocation-track {
   height: 6px;
   background: var(--raised-3);
@@ -1728,7 +1726,7 @@ a.text-button,
   padding: 8px 4px;
   text-align: center;
   font: var(--fs-sm) var(--mono);
-  color: var(--soft);
+  color: var(--blue);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2137,12 +2135,6 @@ a.text-button,
   border: 1px solid var(--line-hover);
   padding: 8px;
   background: var(--raised);
-}
-.prediction-progress {
-  height: 1px;
-  background: var(--soft);
-  background-size: 200% 100%;
-  animation: none;
 }
 .empty-state,
 .empty-chart {
@@ -2920,6 +2912,145 @@ a.text-button,
 }
 .robustness-report > button {
   margin: var(--pad);
+}
+
+/* Ticker symbol: one look in every table, list and search result. */
+.symbol {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--blue);
+  font-family: var(--mono);
+  font-size: inherit;
+  font-weight: 400;
+  text-align: left;
+  white-space: nowrap;
+}
+button.symbol:hover {
+  color: var(--blue-soft);
+  text-decoration: underline;
+}
+
+/* Work in progress: spinners on busy buttons and placeholders, sweeping bars
+   for the boot screen, the function bar and panels that are computing. */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes pulse {
+  50% {
+    opacity: 0.55;
+  }
+}
+@keyframes sweep {
+  from {
+    background-position: -100% 0;
+  }
+  to {
+    background-position: 200% 0;
+  }
+}
+@keyframes dots {
+  from {
+    width: 0;
+  }
+  to {
+    width: 4ch;
+  }
+}
+@keyframes blink {
+  to {
+    visibility: hidden;
+  }
+}
+.button[aria-busy="true"] {
+  cursor: progress;
+}
+.button[aria-busy="true"]:disabled {
+  opacity: 1;
+}
+.button[aria-busy="true"] svg {
+  display: none;
+}
+.button[aria-busy="true"]::before,
+.loading::before {
+  content: "";
+  flex: none;
+  width: 10px;
+  height: 10px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+.loading {
+  animation: pulse 1.6s ease-in-out infinite;
+}
+.loading::before {
+  display: inline-block;
+  margin-right: 8px;
+  vertical-align: -1px;
+}
+.empty-chart.loading::before {
+  margin: 0 auto 8px;
+}
+.boot-bar,
+.prediction-progress,
+.function-bar[aria-busy="true"]::after,
+.panel.is-busy > .panel-header::after {
+  background: var(--raised-3)
+    linear-gradient(90deg, transparent, var(--orange), transparent) no-repeat;
+  background-size: 40% 100%;
+  animation: sweep 1.2s ease-in-out infinite;
+}
+.boot-bar {
+  width: 160px;
+  height: 2px;
+  margin: 0 auto;
+}
+.prediction-progress {
+  height: 2px;
+}
+.function-bar,
+.panel.is-busy > .panel-header {
+  position: relative;
+}
+.function-bar[aria-busy="true"]::after,
+.panel.is-busy > .panel-header::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+}
+.loading-dots {
+  display: inline-block;
+  width: 3ch;
+  overflow: hidden;
+  vertical-align: bottom;
+  text-align: left;
+  animation: dots 1.2s steps(4, end) infinite;
+}
+.brand-cursor {
+  animation: blink 1s steps(2, start) infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .loading,
+  .loading::before,
+  .button[aria-busy="true"]::before,
+  .loading-dots,
+  .brand-cursor {
+    animation: none;
+  }
+  .boot-bar,
+  .prediction-progress,
+  .function-bar[aria-busy="true"]::after,
+  .panel.is-busy > .panel-header::after {
+    animation: none;
+    background: var(--orange-line);
+  }
 }
 
 /* Layout rhythm: stacked panels, panels inside panels and in-panel notices. */

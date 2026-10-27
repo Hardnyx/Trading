@@ -136,9 +136,10 @@
         class="button primary"
         data-action="compose"
         {{{composeDisabled}}}
+        {{{composeBusy}}}
       >
         {{composeLabel}}</button
-      ><button class="button ghost" data-action="compare-robustness" {{{referenceDisabled}}}>
+      ><button class="button ghost" data-action="compare-robustness" {{{referenceDisabled}}} {{{robustBusy}}}>
         {{robustLabel}}</button
       ><button class="button ghost" data-action="compose-reference" {{{referenceDisabled}}}>
         Comparar base limpia</button
@@ -167,7 +168,7 @@
     <template id="allocation-row">
       <tr>
         <td>
-          <button class="text-button" data-detail="{{symbol}}">
+          <button class="symbol" data-detail="{{symbol}}">
             {{symbol2}}
           </button>
         </td>

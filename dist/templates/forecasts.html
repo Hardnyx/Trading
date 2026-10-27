@@ -24,14 +24,14 @@
 
     <template id="forecasts-view-6">
       <tr>
-        <td colspan="4">Calculando…</td>
+        <td colspan="4" class="loading">Calculando…</td>
       </tr>
     </template>
 
     <template id="forecasts-view-7">
       <tr>
         <td>
-          <button class="text-button" data-detail="{{symbol}}">
+          <button class="symbol" data-detail="{{symbol}}">
             {{symbol2}}
           </button>
         </td>
@@ -203,7 +203,7 @@
           <b>{{value13}}</b> del peso. Bonos: TIR, gastos y duración del perfil
           fechado; ETFs: supuesto propio.
         </div>
-        <button class="button primary" data-action="resimulate">
+        <button class="button primary" data-action="resimulate" {{{resimulateBusy}}}>
           {{{refreshIcon}}}{{value15}}
         </button>
         <div class="forecast-input-note">

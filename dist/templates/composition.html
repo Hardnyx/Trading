@@ -110,7 +110,7 @@
       </details>
     </template>
     <template id="financial-coverage-row">
-      <tr><td>{{symbol}}</td><td>{{period}}</td><td>{{method}}</td><td>{{filed}}</td><td>{{observed}}<small>{{originalObserved}}</small></td><td>{{latest}}</td><td>{{status}}</td><td><a href="{{sourceUrl}}" target="_blank" rel="noopener noreferrer">SEC</a></td></tr>
+      <tr><td><button class="symbol" data-detail="{{symbol}}">{{symbol}}</button></td><td>{{period}}</td><td>{{method}}</td><td>{{filed}}</td><td>{{observed}}<small>{{originalObserved}}</small></td><td>{{latest}}</td><td>{{status}}</td><td><a href="{{sourceUrl}}" target="_blank" rel="noopener noreferrer">SEC</a></td></tr>
     </template>
 
     <template id="price-monitor">
@@ -125,16 +125,16 @@
       </details>
     </template>
     <template id="price-monitor-row">
-      <tr><td><button class="text-button" data-detail="{{symbol}}">{{symbol}}</button><small>{{held}}</small></td><td>{{price}}</td><td>{{date}}<small>{{observed}}</small></td><td>{{coverage}}</td><td>{{trend}}</td><td>{{event}}</td><td>{{momentum}}</td><td>{{distance}}</td><td>{{drawdown}}</td><td>{{volatility}}</td><td>{{ratio}}</td></tr>
+      <tr><td><button class="symbol" data-detail="{{symbol}}">{{symbol}}</button><small>{{held}}</small></td><td>{{price}}</td><td>{{date}}<small>{{observed}}</small></td><td>{{coverage}}</td><td>{{trend}}</td><td>{{event}}</td><td>{{momentum}}</td><td>{{distance}}</td><td>{{drawdown}}</td><td>{{volatility}}</td><td>{{ratio}}</td></tr>
     </template>
     <template id="price-monitor-empty">
       <tr><td colspan="11">Sin activos para este filtro.</td></tr>
     </template>
 
     <template id="robustness-running">
-      <section class="panel robustness-report" aria-live="polite">
+      <section class="panel robustness-report is-busy" aria-live="polite">
         <div class="panel-header"><h2 class="panel-title">COMPARACIÓN ROBUSTA</h2></div>
-        <p class="robustness-summary">{{progress}} · Las posiciones se conservan durante el cálculo.</p>
+        <p class="robustness-summary loading">{{progress}} · Las posiciones se conservan durante el cálculo.</p>
         <button class="button ghost" data-action="cancel-robustness">Cancelar comparación</button>
       </section>
     </template>
@@ -151,7 +151,7 @@
       </section>
     </template>
     <template id="robustness-weight">
-      <span><b>{{symbol}}</b> {{weight}}</span>
+      <span><b class="symbol">{{symbol}}</b> {{weight}}</span>
     </template>
     <template id="robustness-scenario">
       <tr><td>{{name}}</td><td>{{currentMedian}}</td><td>{{median}}</td><td>{{cvar}}</td><td>{{probability}}</td><td>{{gain}}</td><td>{{lower}}</td></tr>
@@ -175,7 +175,7 @@
       </details>
     </template>
     <template id="robustness-transition-row">
-      <tr><td>{{symbol}}</td><td>{{action}}<small>{{note}}</small></td><td>{{from}}</td><td>{{to}}</td>
+      <tr><td><button class="symbol" data-detail="{{symbol}}">{{symbol}}</button></td><td>{{action}}<small>{{note}}</small></td><td>{{from}}</td><td>{{to}}</td>
         <td>{{currentValue}}</td><td>{{targetValue}}</td><td>{{change}}</td><td>{{quantity}}</td><td>{{price}}</td><td>{{cost}}</td></tr>
     </template>
 
@@ -313,7 +313,7 @@
 
     <template id="composition-etf-holding">
       <tr>
-        <td>{{symbol}}</td><td>{{weight}}</td><td>{{group}}</td>
+        <td><span class="symbol">{{symbol}}</span></td><td>{{weight}}</td><td>{{group}}</td>
         <td>{{date}}</td><td>{{observed}}</td><td>{{coverage}}</td>
         <td>{{positions}}</td>
         <td>{{{sourceCell}}}</td>
@@ -329,7 +329,7 @@
 
     <template id="composition-contribution">
       <tr>
-        <td>{{symbol}}</td><td>{{weight}}</td>
+        <td><button class="symbol" data-detail="{{symbol}}">{{symbol}}</button></td><td>{{weight}}</td>
         <td>{{returnContribution}}</td>
         <td>{{leftTailContribution}}</td>
         <td>{{varianceContribution}}</td>
@@ -339,7 +339,7 @@
     <template id="composition-signal">
       <tr>
         <td>
-          <button class="text-button" data-detail="{{symbol}}">
+          <button class="symbol" data-detail="{{symbol}}">
             {{symbol}}
           </button>
         </td>
@@ -351,7 +351,7 @@
       </tr>
     </template>
     <template id="composition-dividend-row">
-      <tr><td>{{symbol}}</td><td>{{exDate}}</td><td>{{payDate}}</td><td>{{amount}}</td>
+      <tr><td><button class="symbol" data-detail="{{symbol}}">{{symbol}}</button></td><td>{{exDate}}</td><td>{{payDate}}</td><td>{{amount}}</td>
         <td><a href="{{sourceUrl}}" target="_blank" rel="noopener noreferrer">Calendario del emisor</a></td></tr>
     </template>
   </body>

@@ -27,17 +27,32 @@ const objectives = {
 const section = (title, body, note = "", meta = "") =>
   t("decision-section", { title, body, note, meta });
 const grid = (fields) => t("decision-grid", { fields: fields.join("") });
-const table = (headers, rows) =>
-  t("decision-table", {
-    headers: headers.map((value) => t("decision-th", { value })).join(""),
+// Ticker cells use the shared symbol component, like every other table: the
+// "ACTIVO" column by default, or the first column and the headers after it
+// for a matrix keyed by ticker on both axes.
+const table = (headers, rows, { matrix = false } = {}) => {
+  const symbolColumn = matrix ? 0 : headers.indexOf("ACTIVO");
+  return t("decision-table", {
+    headers: headers
+      .map((value, i) =>
+        t(matrix && i > 0 ? "decision-symbol-th" : "decision-th", { value }),
+      )
+      .join(""),
     rows: rows
       .map((row) =>
         t("decision-row", {
-          cells: row.map((value) => t("decision-td", { value })).join(""),
+          cells: row
+            .map((value, i) =>
+              t(i === symbolColumn ? "decision-symbol-td" : "decision-td", {
+                value,
+              }),
+            )
+            .join(""),
         }),
       )
       .join(""),
   });
+};
 const stats = (items) =>
   t("decision-summary", {
     items: items
@@ -386,7 +401,9 @@ export function createDecisionViews({ state = {}, data, asset }) {
         scenarioFields,
         `Probabilidades supuestas, editables: suma ${pct(sum((state.macroRegimes || DEFAULT_REGIMES).map((r) => r.probability)), 0)}. Deben sumar 100%. Beneficios y múltiplos afectan renta variable; tasas y duración afectan bonos. La covarianza histórica y estos escenarios se superponen como incertidumbre del modelo.`,
       ) +
-      t("decision-actions")
+      t("decision-actions", {
+        composeBusy: state.compositionBusy ? 'aria-busy="true"' : "",
+      })
     );
   }
   function researchPanel() {
@@ -832,7 +849,9 @@ export function createDecisionViews({ state = {}, data, asset }) {
               ]),
             )
           : "") +
-        t("decision-actions"),
+        t("decision-actions", {
+          composeBusy: state.compositionBusy ? 'aria-busy="true"' : "",
+        }),
       `Cuenta: ${p.account_source || "capital inicial"}. Alternativas con los mismos escenarios, objetivos, costos y límites; exposición directa e indirecta por sector y emisor. La segunda simulación semanal comprueba la propuesta. ${(p.notes || []).join(" ")}`,
     );
   }
@@ -918,6 +937,7 @@ export function createDecisionViews({ state = {}, data, asset }) {
               r.symbol,
               ...factors.residualCorrelation[i].map((v) => fmt(v, 2)),
             ]),
+            { matrix: true },
           ),
         factors.note,
       ) +

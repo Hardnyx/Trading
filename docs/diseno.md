@@ -27,7 +27,7 @@ Herramienta personal para componer una cartera con los datos del corte disponibl
 ## Color
 
 - Naranja: encabezados, función activa y supuestos del modelo.
-- Azul: acciones y enlaces a activos/documentos.
+- Azul: acciones y enlaces a activos/documentos. Todos los tickers usan el mismo componente (`.symbol`): IBM Plex Mono en azul y, donde el activo existe en el universo, clic para abrir su ficha.
 - Verde y rojo: dirección de cambios o resultados. Las cifras llevan signos o etiquetas; el color no es el único indicador.
 - Gris: estructura, información secundaria y valores de referencia.
 
@@ -40,6 +40,10 @@ Superficies y bordes usan una escala neutra (`--panel`, `--surface`, `--raised`;
 - IBM Plex Sans para interfaz y textos explicativos; IBM Plex Mono para cifras, etiquetas, tablas y códigos. Ambas se sirven desde `dist/assets/fonts` con los archivos divididos oficiales de IBM, sin modificar (SIL Open Font License): latín, latín extendido, griego (en Sans) y símbolos, cada uno con su `unicode-range`, para que flechas, letras griegas y operadores no caigan en fuentes del sistema. Plex Sans actúa como respaldo de Plex Mono para el griego. Los índices de las fórmulas usan `<sub>`/`<sup>` y la dirección en la cinta de precios se dibuja con CSS, porque Plex no incluye esos glifos.
 - Escala de tamaños: 10, 11, 12, 14, 18, 24 y 32 px (`--fs-xs` a `--fs-3xl`). No se usan tamaños menores de 10 px.
 - Espaciado en múltiplos de 4 px. Los paneles tienen un relleno interior de 12 px y una separación de 12 px entre ellos. Controles y botones miden 28 px de alto.
+
+## Trabajo en curso
+
+Los cálculos largos se señalan sin bloquear la página: el botón que trabaja muestra un indicador giratorio (`aria-busy="true"`), la barra de funciones y el panel de robustez llevan una barra de progreso indeterminada, y los textos "Calculando…" pulsan con su propio indicador. Con `prefers-reduced-motion` las animaciones se sustituyen por indicadores estáticos.
 
 Se incluyen foco visible, etiquetas de campos, enlace para saltar al contenido, navegación por teclado y diálogos con control del foco. Las tablas conservan sus columnas y permiten desplazamiento horizontal en pantallas estrechas. No se afirma una auditoría integral de conformidad WCAG.
 
