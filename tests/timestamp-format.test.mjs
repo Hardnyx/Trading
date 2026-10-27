@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {timestampLabel,dateLabel,localTimeZone} from '../dist/assets/js/ui/format.mjs?v=0.15.0';
+import {timestampLabel,dateLabel,localTimeZone} from '../dist/assets/js/ui/format.mjs?v=0.16.0';
 test('capture conversion uses the browser zone and preserves the instant across calendar days',()=>{
  const stamp='2026-10-27T02:15:11.078239+00:00';
  assert.equal(timestampLabel(stamp,'America/Lima'),'26 OCT 2026 21:15:11 · America/Lima (UTC−5)');

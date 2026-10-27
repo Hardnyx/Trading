@@ -1,8 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { conditionalRisk, studentScale, updateGjrVariance } from "../dist/assets/js/conditional-risk.mjs";
-import { preparePaths, generatePaths } from "../dist/assets/js/path-model.mjs?v=0.15.0";
-import { seededRandom, normalGenerator } from "../dist/assets/js/random.mjs?v=0.15.0";
+import { conditionalRisk, studentScale, updateGjrVariance, studentMarginal, studentUpperTail, normalUpperTail } from "../dist/assets/js/conditional-risk.mjs";
+import { preparePaths, generatePaths } from "../dist/assets/js/path-model.mjs?v=0.16.0";
+import { seededRandom, normalGenerator } from "../dist/assets/js/random.mjs?v=0.16.0";
 
 const DATE="2026-10-23";
 function accepted(symbol,variance=1.8) {
@@ -126,4 +126,56 @@ test("hybrid without validated GJR cannot revert to generic Merton jumps",()=>{
   assert.equal(explicit.conditional.enabled,false);
   assert.notDeepEqual(Array.from(a.gross[0]),
     Array.from(generatePaths(explicit,100,37,52).gross[0]));
+});
+
+test("Student-t marginal map matches reference quantiles and keeps unit variance",()=>{
+  // Reference values: scipy t.ppf(norm.cdf(z), nu) * sqrt((nu-2)/nu).
+  const reference={
+    4.5:[[1,.8378958392],[2.326347874,2.6289085171],[3,4.4482219568],[5,30.6066561698]],
+    8:[[1,.9236407074],[3,3.7036724252],[5,12.3404294918]],
+  };
+  for(const [nu,rows] of Object.entries(reference)){
+    const law=studentMarginal(Number(nu));
+    for(const [z,x] of rows){
+      assert.ok(Math.abs(law(z)-x)<5e-6*Math.max(1,x),`nu=${nu} z=${z}: ${law(z)} vs ${x}`);
+      assert.equal(law(-z),-law(z));
+    }
+    // E[T(Z)^2] by quadrature over the normal density.
+    let second=0;
+    for(let z=-8.5;z<=8.5;z+=.001)
+      second+=law(z)**2*Math.exp(-z*z/2)/Math.sqrt(2*Math.PI)*.001;
+    assert.ok(Math.abs(second-1)<2e-3,`variance ${second}`);
+  }
+  assert.ok(Math.abs(studentUpperTail(0,6)-.5)<1e-12);
+  assert.ok(Math.abs(normalUpperTail(5)/2.866515718791939e-7-1)<2e-7);
+  assert.throws(()=>studentMarginal(2),/Student-t/);
+});
+
+test("accepted GJR instruments get fat-tailed daily innovations; fallback stays Gaussian",()=>{
+  const assets=[etf("AAA"),etf("BBB",2)];
+  const fat={...accepted("AAA"),nu:4.5,alpha:0,gamma:0,beta:0,omega:1.8};
+  const vol=sampleSource({AAA:fat,BBB:{...accepted("BBB"),status:"research_only"}});
+  const inputs=preparePaths(assets,{
+    asOf:DATE,informationAsOf:DATE,volatilityMode:"hybrid",volatilityData:vol,
+    horizon:1,seed:20261025,
+  },{},assets);
+  assert.equal(inputs.conditional.active,1);
+  assert.equal(inputs.conditional.innovationLaw,"student-t-marginals-gaussian-copula");
+  const sample=generatePaths(inputs,400,91,252);
+  const kurtosis=(i)=>{
+    const r=[];
+    for(let p=0;p<sample.paths;p++)for(let t=1;t<=sample.steps;t++){
+      const o=p*(sample.steps+1)+t;
+      r.push(Math.log(sample.gross[i][o]/sample.gross[i][o-1]));
+    }
+    const m=r.reduce((a,b)=>a+b,0)/r.length;
+    const v=r.reduce((a,b)=>a+(b-m)**2,0)/r.length;
+    return r.reduce((a,b)=>a+(b-m)**4,0)/r.length/v/v;
+  };
+  // Constant GJR variance isolates the innovation law: t(4.5) has infinite
+  // theoretical kurtosis. The EWMA fallback is Gaussian but its variance
+  // clusters, so its kurtosis exceeds 3 for a different reason.
+  const fat4=kurtosis(0), fallback4=kurtosis(1);
+  assert.ok(fat4>7,`accepted kurtosis ${fat4}`);
+  assert.ok(fat4>fallback4+2,`accepted ${fat4} vs fallback ${fallback4}`);
 });

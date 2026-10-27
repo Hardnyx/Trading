@@ -5,12 +5,12 @@ import {
   finite,
   normalizeWeights,
   alignReturns,
-} from "./analytics.mjs?v=0.15.0";
-import { ewmaCovariance } from "./risk-math.mjs?v=0.15.0";
-import { preparePaths, generatePaths, evaluatePaths } from "./path-model.mjs?v=0.15.0";
-import { factorModel } from "./factors.mjs?v=0.15.0";
-export { seededRandom, normalGenerator, poisson } from "./random.mjs?v=0.15.0";
-export { ewmaCovariance, cholesky } from "./risk-math.mjs?v=0.15.0";
+} from "./analytics.mjs?v=0.16.0";
+import { ewmaCovariance } from "./risk-math.mjs?v=0.16.0";
+import { preparePaths, generatePaths, evaluatePaths } from "./path-model.mjs?v=0.16.0";
+import { factorModel } from "./factors.mjs?v=0.16.0";
+export { seededRandom, normalGenerator, poisson } from "./random.mjs?v=0.16.0";
+export { ewmaCovariance, cholesky } from "./risk-math.mjs?v=0.16.0";
 
 export function simulateForecast(
   assets,
@@ -84,7 +84,9 @@ export function simulateForecast(
       reason: inputs.conditional.reason,
       studentNu: null,
       innovationLaw: inputs.conditional.dynamic
-        ? "Gaussian common-market plus residual innovations"
+        ? (inputs.conditional.active
+          ? "Gaussian-copula common market plus residuals; Student-t marginals for accepted GJR"
+          : "Gaussian common-market plus residual innovations")
         : "Legacy covariance/Merton",
       factorMethod: inputs.factorCovariance.method,
       residualGarchValidated: false,

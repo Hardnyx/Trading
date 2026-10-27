@@ -4,7 +4,7 @@ import {
   normalizeWeights,
   metrics,
   scenarios,
-} from "../analytics.mjs?v=0.15.0";
+} from "../analytics.mjs?v=0.16.0";
 import {
   sparkline,
   portfolioChart,
@@ -13,7 +13,7 @@ import {
   scatter,
   forecastCone,
   histogram,
-} from "../charts.mjs?v=0.15.0";
+} from "../charts.mjs?v=0.16.0";
 import {
   esc,
   url,
@@ -24,16 +24,16 @@ import {
   color,
   dateLabel,
   timestampLabel,
-} from "./format.mjs?v=0.15.0";
-import { template } from "./templates.mjs?v=0.15.0";
-import { DEFAULT_COMPOSITION_RULES } from "../composer.mjs?v=0.15.0";
-import { factorModel } from "../factors.mjs?v=0.15.0";
-import { MODEL_VERSION, informationDate } from "../policy.mjs?v=0.15.0";
-import { fundamentalForecast } from "../research-model.mjs?v=0.15.0";
-import { financialFreshness } from '../financial-freshness.mjs?v=0.15.0';
-import { priceMonitor } from '../price-monitor.mjs?v=0.15.0';
+} from "./format.mjs?v=0.16.0";
+import { template } from "./templates.mjs?v=0.16.0";
+import { DEFAULT_COMPOSITION_RULES } from "../composer.mjs?v=0.16.0";
+import { factorModel } from "../factors.mjs?v=0.16.0";
+import { MODEL_VERSION, informationDate } from "../policy.mjs?v=0.16.0";
+import { fundamentalForecast } from "../research-model.mjs?v=0.16.0";
+import { financialFreshness } from '../financial-freshness.mjs?v=0.16.0';
+import { priceMonitor } from '../price-monitor.mjs?v=0.16.0';
 
-import { createDecisionViews } from "./decision-views.mjs?v=0.15.0";
+import { createDecisionViews } from "./decision-views.mjs?v=0.16.0";
 
 /**
  * Describes the process the Monte Carlo actually runs. Jumps and the GBM /
@@ -57,10 +57,9 @@ export function simulatedProcess(settings = {}, volatility = null) {
   return {
     legacy: false, jumps: false,
     label: gjr ? `GJR-t validado (${accepted}) + EWMA diario` : "EWMA diario",
-    subtitle: (gjr
-      ? `Varianza GJR-t validada en ${accepted} activo${accepted === 1 ? "" : "s"} y recursión EWMA diaria en los demás.`
-      : "Recursión EWMA diaria sobre la covarianza total.") +
-      " Innovaciones conjuntas gaussianas; sin saltos.",
+    subtitle: gjr
+      ? `Varianza GJR-t validada en ${accepted} activo${accepted === 1 ? "" : "s"}, con su innovación Student-t, y recursión EWMA gaussiana en los demás. Dependencia por cópula gaussiana; sin saltos.`
+      : "Recursión EWMA diaria sobre la covarianza total. Innovaciones conjuntas gaussianas; sin saltos.",
   };
 }
 
@@ -1138,7 +1137,7 @@ export function createViews(context) {
       volatilityNote: (p.diagnostics?.volatility?.reason || "Sin calibración disponible") +
         " · Covarianza: " + (p.diagnostics?.volatility?.factorMethod || "total"),
       stochasticTail: p.diagnostics?.volatility?.accepted > 0
-        ? "Innovaciones gaussianas en riesgo conjunto; GJR-t solo estimación"
+        ? "Marginales Student-t en GJR aceptados, gaussianas en los demás; dependencia por cópula gaussiana sin cola conjunta validada"
         : p.diagnostics?.volatility?.additionalMertonJumps
           ? "Saltos genéricos de Merton (comparador)"
           : "Innovaciones gaussianas EWMA",

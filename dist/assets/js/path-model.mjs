@@ -5,21 +5,21 @@ import {
   quantile,
   sum,
   normalizeWeights,
-} from "./analytics.mjs?v=0.15.0";
-import { seededRandom, normalGenerator, poisson } from "./random.mjs?v=0.15.0";
-import { ewmaCovariance, cholesky } from "./risk-math.mjs?v=0.15.0";
-import { buildReturnAnchors, sampleDrifts, bondScenarioAnnualReturn } from "./return-model.mjs?v=0.15.0";
-import { distributionAccounting } from "./distribution-ledger.mjs?v=0.15.0";
-import { assetAt } from "./research-model.mjs?v=0.15.0";
-import { factorModel } from "./factors.mjs?v=0.15.0";
-import { conditionalRisk, updateGjrVariance, updateEwmaVariance } from "./conditional-risk.mjs?v=0.15.0";
-import { marketFactorCovariance, conditionalFactorization } from "./factor-covariance.mjs?v=0.15.0";
+} from "./analytics.mjs?v=0.16.0";
+import { seededRandom, normalGenerator, poisson } from "./random.mjs?v=0.16.0";
+import { ewmaCovariance, cholesky } from "./risk-math.mjs?v=0.16.0";
+import { buildReturnAnchors, sampleDrifts, bondScenarioAnnualReturn } from "./return-model.mjs?v=0.16.0";
+import { distributionAccounting } from "./distribution-ledger.mjs?v=0.16.0";
+import { assetAt } from "./research-model.mjs?v=0.16.0";
+import { factorModel } from "./factors.mjs?v=0.16.0";
+import { conditionalRisk, updateGjrVariance, updateEwmaVariance, studentMarginal } from "./conditional-risk.mjs?v=0.16.0";
+import { marketFactorCovariance, conditionalFactorization } from "./factor-covariance.mjs?v=0.16.0";
 import {
   mandate,
   regimes,
   withdrawalSchedule,
   DEFAULT_REGIMES,
-} from "./policy.mjs?v=0.15.0";
+} from "./policy.mjs?v=0.16.0";
 
 export const BASE_REGIME = {
   id: "base",
@@ -257,6 +257,17 @@ export function generatePaths(inputs, paths, seed, stepsPerYear = 52) {
       ? assets.map((a,i) => conditional.fits[i]?.hInitial ?? Math.max(0,covariance[i][i]/252))
       : null;
     const baseDailyVariances = covariance.map((row,i)=>Math.max(0,row[i]/252));
+    // Accepted GJR fits were estimated and screened with standardized
+    // Student-t innovations; simulate that same marginal law. Fallback
+    // instruments keep Gaussian innovations.
+    const studentLaws = dynamic
+      ? assets.map((a,i) => conditional.fits[i]?.nu ? studentMarginal(conditional.fits[i].nu) : null)
+      : null;
+    const shockScale = dynamic
+      ? assets.map((a,i) => factorization
+          ? Math.sqrt(factorization.loading[i]**2 + factorization.residualCovariance[i][i])
+          : 1)
+      : null;
     const annualLogDrift = dynamic
       ? drift.map((v,i) => v/dt + covariance[i][i]/2) : null;
     let exchange = policy.fxSpot;
@@ -282,11 +293,13 @@ export function generatePaths(inputs, paths, seed, stepsPerYear = 52) {
               ? factorization.residualFactor[i] : correlationFactor[i];
             for (let j = 0; j <= i; j++) shock += lower[j]*z[j];
             const h = variances[i];
-            const innovation = factorization
-              ? shock/Math.sqrt(252) *
-                (baseDailyVariances[i]>0
-                  ? Math.sqrt(Math.max(0,h)/baseDailyVariances[i]) : 0)
-              : Math.sqrt(Math.max(0,h))*shock;
+            const innovation = studentLaws[i] && shockScale[i] > 0
+              ? Math.sqrt(Math.max(0,h))*studentLaws[i](shock/shockScale[i])
+              : factorization
+                ? shock/Math.sqrt(252) *
+                  (baseDailyVariances[i]>0
+                    ? Math.sqrt(Math.max(0,h)/baseDailyVariances[i]) : 0)
+                : Math.sqrt(Math.max(0,h))*shock;
             values[i] *= Math.exp(annualLogDrift[i]/252-h/2+innovation);
             variances[i] = conditional.fits[i]
               ? updateGjrVariance(conditional.fits[i],h,innovation)

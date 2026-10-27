@@ -324,3 +324,27 @@ operaciones.
 
 La versión del motor pasa a 0.15.0 para invalidar propuestas calculadas con la
 correlación residual anterior.
+
+### 0.16.0 — Ley de innovación coherente con el GJR aceptado
+
+Los GJR aceptados se estiman por verosimilitud Student-t estandarizada y su
+filtro de VaR95 usa cuantiles t, pero el Monte Carlo los simulaba con
+innovaciones gaussianas que nunca se validaron. Ahora cada activo aceptado
+transforma su shock gaussiano correlacionado al mismo cuantil de su t con ν
+propio y varianza unitaria: Φ(z) = F_ν(x)·√((ν−2)/ν). La correlación sigue
+siendo una cópula gaussiana, sin la dependencia de cola que imponía el factor
+t radial retirado en 0.7.0. Los activos sin GJR aceptado conservan EWMA
+gaussiano. La transformación usa la beta incompleta regularizada y una erfc
+con error relativo menor que 1,2·10⁻⁷, tabuladas por ν. Coincide con scipy en
+menos de 5·10⁻⁶ hasta z = 5.
+
+Impacto medido sobre el corte del 26 de octubre, semilla 20261024. El CVaR95
+a 12 meses de una cartera fija (TLT 20, SHV 25, CMCSA 15, HPQ 5, AMZN 20,
+MU 5, CI 5) pasa de 13,95 % a 13,97 %; el percentil 1 de AMZN, de −57,0 % a
+−58,4 %. A doce meses las colas diarias se diluyen al agregarse y el riesgo
+de cola lo dominan la incertidumbre del ancla y los regímenes; el efecto será
+mayor en horizontes cortos. La propuesta por defecto cambió de HPQ/MU/CI a
+NFLX/GOOGL con CVaR 15,5 % frente a 14,6 %: es otra muestra de la
+sensibilidad de la búsqueda, no una mejora demostrada. La marginal t por
+activo se contrasta en el registro diario sellado (VaR95 y ES95 GJR-t frente
+a EWMA gaussiano). Las coexcedencias conjuntas siguen sin validar.

@@ -4,15 +4,15 @@ import {
   mean,
   quantile,
   normalizeWeights,
-} from "./analytics.mjs?v=0.15.0";
-import { seededRandom } from "./random.mjs?v=0.15.0";
-import { portfolioAttribution } from "./attribution.mjs?v=0.15.0";
+} from "./analytics.mjs?v=0.16.0";
+import { seededRandom } from "./random.mjs?v=0.16.0";
+import { portfolioAttribution } from "./attribution.mjs?v=0.16.0";
 import {
   preparePaths,
   generatePaths,
   evaluatePaths,
   marginalRisk,
-} from "./path-model.mjs?v=0.15.0";
+} from "./path-model.mjs?v=0.16.0";
 import {
   withCashAsset,
   mandate,
@@ -21,12 +21,12 @@ import {
   tradePlan,
   withdrawalSchedule,
   MODEL_VERSION,
-} from "./policy.mjs?v=0.15.0";
-import { buildReturnAnchors, bondScenarioAnnualReturn } from "./return-model.mjs?v=0.15.0";
-import { assetAt, fundamentalForecast, bondAssumptions } from "./research-model.mjs?v=0.15.0";
-import { selectCompositionUniverse } from "./universe.mjs?v=0.15.0";
-import { factorizeStressedCovariance } from "./factor-covariance.mjs?v=0.15.0";
-import { economicClass, exposureReport, rawCorrelation, qualifiedOpportunity, holdingsOverlap, knownFundOverlap } from "./economic-exposure.mjs?v=0.15.0";
+} from "./policy.mjs?v=0.16.0";
+import { buildReturnAnchors, bondScenarioAnnualReturn } from "./return-model.mjs?v=0.16.0";
+import { assetAt, fundamentalForecast, bondAssumptions } from "./research-model.mjs?v=0.16.0";
+import { selectCompositionUniverse } from "./universe.mjs?v=0.16.0";
+import { factorizeStressedCovariance } from "./factor-covariance.mjs?v=0.16.0";
+import { economicClass, exposureReport, rawCorrelation, qualifiedOpportunity, holdingsOverlap, knownFundOverlap } from "./economic-exposure.mjs?v=0.16.0";
 
 export const DEFAULT_COMPOSITION_RULES = {
   maxPosition: 0.2,
@@ -855,7 +855,9 @@ export function composePortfolio(
       fallback: x.conditional.fallback,
       studentNu: null,
       innovationLaw: x.conditional.dynamic
-        ? "Gaussian SPY factor + residuals; daily GJR/EWMA variance"
+        ? (x.conditional.active
+          ? "Gaussian-copula SPY factor + residuals; Student-t marginals for accepted GJR; daily GJR/EWMA variance"
+          : "Gaussian SPY factor + residuals; daily EWMA variance")
         : "Legacy Merton diffusion with EWMA initialization",
       factorMethod: x.factorCovariance.method,
       factorObservations: x.factorCovariance.observations,
