@@ -70,12 +70,40 @@ def fred_series(download, definition, cutoff, api_key, observed_at):
         raise ProviderError("Falta FRED_API_KEY")
     source_id, target_id, label, unit, description = definition
     end = dt.date.fromisoformat(cutoff)
-    body = request_json(download, "https://api.stlouisfed.org/fred/series/observations", {
-        "api_key": api_key, "file_type": "json", "series_id": source_id,
-        "observation_start": f"{end.year - 5}-01-01", "observation_end": cutoff,
-        "realtime_start": cutoff, "realtime_end": cutoff, "sort_order": "asc",
-    }, f"fred-{source_id}-{cutoff}.json")
-    return normalize_fred_series(body, definition, cutoff, observed_at, "api_realtime_period")
+    current = observation_time(observed_at).date().isoformat() == cutoff
+    params = {"api_key": api_key, "file_type": "json", "series_id": source_id,
+        "observation_start": f"{end.year - 5}-01-01", "observation_end": cutoff, "sort_order": "asc"}
+    # FRED determines its own 'today'. After UTC midnight the provider may still
+    # be on the prior calendar day. Historical requests always pin the vintage.
+    if not current:
+        params.update(realtime_start=cutoff, realtime_end=cutoff)
+    body = request_json(download, "https://api.stlouisfed.org/fred/series/observations", params,
+        f"fred-{source_id}-{cutoff}.json")
+    vintage = iso_day(body.get("realtime_start")) if isinstance(body, dict) else None
+    if current and not vintage:
+        raise ProviderError("FRED no identificó la versión actual")
+    if vintage and vintage > cutoff:
+        raise ProviderError("FRED devolvió una versión posterior al corte")
+    effective = vintage if current else cutoff
+    result = normalize_fred_series(body, definition, effective, observed_at, "api_realtime_period")
+    result["requested_as_of"] = cutoff
+    return result
+
+
+def fred_observation(download, definition, cutoff, api_key, observed_at):
+    """Recover current data via official CSV; never backfill history with it."""
+    if not api_key:
+        return fred_csv_series(download, definition, cutoff, observed_at)
+    try:
+        return fred_series(download, definition, cutoff, api_key, observed_at)
+    except ProviderError as error:
+        if observation_time(observed_at).date().isoformat() != cutoff:
+            raise
+        result = fred_csv_series(download, definition, cutoff, observed_at)
+        result["api_fallback"] = True
+        result["api_error_code"] = error.code if isinstance(error.code, int) else None
+        return result
+
 
 
 def fred_csv_series(download, definition, cutoff, observed_at):

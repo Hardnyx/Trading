@@ -17,6 +17,7 @@ import {
 } from "../research-model.mjs?v=0.14.0";
 import { dilutedEarningsBridge } from '../earnings-normalization.mjs?v=0.14.0';
 import { factorModel, factorAttribution } from "../factors.mjs?v=0.14.0";
+import { calibrationAudit } from "../calibration-audit.mjs?v=0.14.0";
 import { evaluateJournal } from "../journal.mjs?v=0.14.0";
 const objectives = {
   growth: "Crecimiento logarítmico",
@@ -846,23 +847,20 @@ export function createDecisionViews({ state = {}, data, asset }) {
         unreconciled_distributions: "Dividendos o retención sin conciliar",
         scored: "Evaluado",
       };
+    const audit=calibrationAudit(result.rows);
     return section(
       "VALIDACIÓN PROSPECTIVA",
       stats([
         ["ORÍGENES REGISTRADOS", String(result.rows.length)],
         ["PRONÓSTICOS VENCIDOS EVALUADOS", String(result.count)],
-        [
-          "BRIER · PROBABILIDAD DE PÉRDIDA",
-          fmt(result.brier, 3),
-          "Menor es mejor",
-        ],
-        [
-          "COBERTURA P05–P95",
-          pct(result.coverage),
-          "Objetivo nominal 90%; sin calibración demostrada",
-        ],
-        ["ERROR ABSOLUTO MEDIO", pct(result.mae)],
+        ["COHORTES VENCIDAS COMPARABLES", String(audit.groups.length)],
+        ["MÍNIMO SIN SOLAPE POR COHORTE", String(audit.minimum), "Regla operativa; no acredita validación"],
       ]) +
+        table(['VERSIÓN / MODELO','HORIZONTE / MONEDA','EVALUADOS / SIN SOLAPE','COBERTURA / IC 95%','MAE / SESGO / RMSE','BRIER','ESTADO'],
+          audit.groups.map(g=>[g.version+' / '+g.model,fmt(g.horizon,2)+' años / '+g.currency,
+            g.scored+' / '+g.nonoverlapping,pct(g.coverage)+' / '+pct(g.coverageLower)+'–'+pct(g.coverageUpper),
+            pct(g.mae)+' / '+pct(g.bias)+' / '+pct(g.rmse),fmt(g.brier,3),g.status==='insufficient_nonoverlapping_windows'?'Muestra insuficiente':'Diagnóstico disponible; sin validación automática'])) +
+        message(audit.groups.length?audit.note:'Sin ventanas prospectivas vencidas comparables para auditar la calibración. '+audit.note) +
         table(
           [
             "ORIGEN",

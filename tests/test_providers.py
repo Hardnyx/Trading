@@ -42,7 +42,7 @@ class ProviderInputs(unittest.TestCase):
             {"date": "2026-11-01", "value": "999"},
             None,
         ]}).encode())
-        result = providers.fred_series(request, providers.FRED_SERIES[0], CUTOFF, "test-key", OBSERVED)
+        result = providers.fred_series(request, providers.FRED_SERIES[0], CUTOFF, "test-key", "2026-10-25T18:00:00Z")
         query = urllib.parse.parse_qs(urllib.parse.urlsplit(request.call_args.args[0]).query)
         self.assertEqual(query["realtime_start"], [CUTOFF])
         self.assertEqual(query["realtime_end"], [CUTOFF])
@@ -51,6 +51,29 @@ class ProviderInputs(unittest.TestCase):
         self.assertAlmostEqual(result["yoy"], 0.02)
         self.assertEqual(result["vintage_date"], CUTOFF)
         self.assertNotIn("test-key", json.dumps(result))
+
+    def test_current_fred_uses_provider_vintage_instead_of_utc_tomorrow(self):
+        request = Mock(return_value=json.dumps({'realtime_start':'2026-10-26', 'observations':[
+            {'date':'2026-10-23','value':'4.1','realtime_start':'2026-10-26','realtime_end':'2026-10-26'}]}).encode())
+        result=providers.fred_series(request,providers.FRED_SERIES[2],'2026-10-27','secret','2026-10-27T02:00:00Z')
+        query=urllib.parse.parse_qs(urllib.parse.urlsplit(request.call_args.args[0]).query)
+        self.assertNotIn('realtime_start',query)
+        self.assertEqual(result['vintage_date'],'2026-10-26')
+        self.assertEqual(result['requested_as_of'],'2026-10-27')
+        self.assertEqual(result['value'],4.1)
+
+    def test_api_failure_recovers_current_csv_without_claiming_historical_vintage(self):
+        error=urllib.error.HTTPError('https://api.test/?api_key=secret',400,'secret',None,None)
+        request=Mock(side_effect=[error,b'observation_date,CPIAUCSL\n2026-09-01,102\n'])
+        result=providers.fred_observation(request,providers.FRED_SERIES[0],CUTOFF,'secret',OBSERVED)
+        self.assertEqual(result['vintage_mode'],'observed_current')
+        self.assertEqual(result['api_error_code'],400)
+        self.assertTrue(result['api_fallback'])
+        self.assertNotIn('secret',json.dumps(result))
+        request=Mock(side_effect=error)
+        with self.assertRaises(providers.ProviderError):
+            providers.fred_observation(request,providers.FRED_SERIES[0],'2025-01-01','secret',OBSERVED)
+        self.assertEqual(request.call_count,1)
 
     def test_consensus_revisions_compare_the_same_future_fiscal_period_and_keep_coverage(self):
         request = Mock(return_value=json.dumps([
@@ -146,7 +169,7 @@ class PublicationAndFallbacks(unittest.TestCase):
              patch.object(collector, "financials", return_value={}), \
              patch.object(collector, "filings", return_value=[]), \
              patch.object(collector, "treasury_curves", return_value=[]), \
-             patch.object(collector, "fred_csv_series", side_effect=providers.ProviderError("CSV no disponible")), \
+             patch.object(collector, "fred_observation", side_effect=providers.ProviderError("CSV no disponible")), \
              patch.object(collector, "bls_batch", return_value=[{"id": "CPI", "value": 1, "date": today}]), \
              patch.object(collector, "analyst_estimates") as estimates, \
              patch("sys.argv", ["refresh_data.py"]):

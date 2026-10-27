@@ -249,3 +249,27 @@ horaria configurada en el navegador, detectada con Intl sin geolocalización. Se
 explicita la zona y su desfase aplicable a ese instante, incluido horario de verano. Se eliminó el recorte de fecha UTC en la propuesta, que hacía aparecer
 27 de octubre para una captura realizada el 26 por la noche en Lima. Fechas
 contables y fechas de presentación permanecen como fechas de sus documentos.
+
+### Continuidad de FRED y auditoría de calibración
+
+Las consultas FRED actuales permiten que el proveedor determine su propio día de
+versión y guardan la fecha efectivamente devuelta. Los cortes históricos fijan
+explícitamente `realtime_start` y `realtime_end`. Esto evita imponer el día UTC
+siguiente al proveedor durante la noche estadounidense. No se atribuye al error
+HTTP 400 una causa única sin disponer de su diagnóstico autenticado.
+
+Si falla la API en una descarga del día, se intenta el CSV oficial. Queda marcado
+como `observed_current`, con `api_fallback` y código HTTP sanitizado; el estado del
+proveedor informa cuántas series usan cada vía. El respaldo actual está prohibido
+para reconstruir cortes históricos. Si fallan ambas vías se mantiene la incidencia
+visible y el dato anterior con su fecha. No se exportan claves ni URLs autenticadas.
+Fuente técnica: https://fred.stlouisfed.org/docs/api/fred/series_observations.html
+
+La validación prospectiva añade una auditoría separada por versión, modelo,
+horizonte, moneda y métodos de retorno/volatilidad. Selecciona ventanas sin solape
+por vencimiento más temprano, sin mirar aciertos ni rentabilidades. Presenta sesgo,
+MAE, RMSE, Brier, cobertura y un intervalo Wilson 95% descriptivo para la cobertura.
+El mínimo de 20 ventanas es una regla operativa, no un análisis de potencia.
+Sin solape no significa independencia; se necesitan pruebas fuera de muestra y
+estabilidad adicional. Este diagnóstico no promueve parámetros automáticamente ni
+convierte una muestra inmadura en evidencia de capacidad predictiva.

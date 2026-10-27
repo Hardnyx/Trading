@@ -23,13 +23,13 @@ import urllib.request
 import xml.etree.ElementTree as ET
 
 if __package__:
-    from .data_providers import FRED_SERIES, ProviderError, analyst_estimates, fred_series, fred_csv_series, retained_estimates
+    from .data_providers import FRED_SERIES, ProviderError, analyst_estimates, fred_series, fred_csv_series, fred_observation, retained_estimates
     from .universe import AUTO_CIK, expanded_universe
     from .filing_facts import extract_filing_facts
     from .etf_holdings import enrich_holdings
     from .distributions import price_distribution_index, enrich_distributions
 else:
-    from data_providers import FRED_SERIES, ProviderError, analyst_estimates, fred_series, fred_csv_series, retained_estimates
+    from data_providers import FRED_SERIES, ProviderError, analyst_estimates, fred_series, fred_csv_series, fred_observation, retained_estimates
     from universe import AUTO_CIK, expanded_universe
     from filing_facts import extract_filing_facts
     from etf_holdings import enrich_holdings
@@ -821,11 +821,15 @@ def main():
                           "checked_at": collected_at})
     fred_key = os.environ.get("FRED_API_KEY", "").strip()
     fred_success = 0
+    fred_csv_count = 0
+    fred_fallbacks = 0
     fred_enabled = bool(fred_key) or current_request
     if fred_enabled:
         for definition in FRED_SERIES:
             try:
-                fresh = fred_series(download, definition, args.as_of, fred_key, collected_at) if fred_key else fred_csv_series(download, definition, args.as_of, collected_at)
+                fresh = fred_observation(download, definition, args.as_of, fred_key, collected_at)
+                fred_csv_count += int(fresh["vintage_mode"] == "observed_current")
+                fred_fallbacks += int(fresh.get("api_fallback", False))
                 current = next((row for row in macro if row["id"] == fresh["id"]), None)
                 if not current or fresh["date"] >= current["date"]:
                     macro = [row for row in macro if row["id"] != fresh["id"]] + [fresh]
@@ -834,8 +838,8 @@ def main():
                 errors.append(f"FRED {definition[0]}: actualización fallida ({error_label(exc)})")
                 if not fred_key:
                     break
-    providers.append({"id": "fred", "name": "FRED", "status": "not_configured" if not fred_enabled else "ok" if fred_success == len(FRED_SERIES) else "partial" if fred_success else "error",
-                      "detail": f"{fred_success}/{len(FRED_SERIES)} series; " + ("API con versión al corte" if fred_key else "CSV público observado hoy") if fred_enabled else "FRED_API_KEY necesaria para cortes históricos", "checked_at": collected_at})
+    providers.append({"id": "fred", "name": "FRED", "status": "not_configured" if not fred_enabled else "ok" if fred_success == len(FRED_SERIES) and not fred_fallbacks else "partial" if fred_success else "error",
+                      "detail": f"{fred_success}/{len(FRED_SERIES)} series; " + (f"{fred_success-fred_csv_count} API con versión identificada · {fred_csv_count} CSV observados hoy · {fred_fallbacks} respaldos por fallo API") if fred_enabled else "FRED_API_KEY necesaria para cortes históricos", "checked_at": collected_at})
     fmp_key = os.environ.get("FMP_API_KEY", "").strip()
     fmp_success = 0
     fmp_allowed = fmp_execution_allowed()
