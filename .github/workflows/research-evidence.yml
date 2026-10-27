@@ -5,6 +5,8 @@ on:
     branches: [main]
     paths:
       - 'scripts/research_gate.py'
+      - 'scripts/earnings_history.py'
+      - 'scripts/earnings_growth_research.py'
       - 'scripts/run_research_audit.py'
       - 'scripts/multifactor_research.py'
       - 'scripts/tail_research.py'
@@ -17,6 +19,7 @@ on:
       - 'dist/data/market.json'
       - 'dist/data/volatility.json'
       - 'tests/test_research_gate.py'
+      - 'tests/test_earnings_history.py'
       - 'tests/test_multifactor_research.py'
       - 'tests/test_tail_research.py'
       - 'tests/test_joint_tail_research.py'
@@ -44,6 +47,8 @@ jobs:
         run: python -m pip install -r requirements-research.txt
       - name: Archive original-vintage readiness
         run: python scripts/run_research_audit.py --limit 8
+      - name: Diagnose annual EPS growth on dated reconstructed filings
+        run: python scripts/earnings_growth_research.py
       - name: Generate SEC first-seen event ledger
         run: python scripts/build_event_registry.py --limit 8
       - name: Compare multifactor residual GJR against EWMA

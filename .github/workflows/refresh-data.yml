@@ -9,6 +9,7 @@ on:
       - '.github/workflows/refresh-data.yml'
       - 'scripts/refresh_data.py'
       - 'scripts/filing_facts.py'
+      - 'scripts/earnings_history.py'
       - 'scripts/etf_holdings.py'
       - 'scripts/distributions.py'
       - 'scripts/data_providers.py'
@@ -54,6 +55,14 @@ jobs:
         run: python scripts/refresh_data.py
       - name: Calibrate conditional volatility (point-in-time)
         run: python scripts/build_volatility.py
+      - name: Audit reconstructed annual EPS growth without changing anchors
+        run: python scripts/earnings_growth_research.py
+      - name: Preserve annual EPS growth diagnostic
+        uses: actions/upload-artifact@v4
+        with:
+          name: earnings-growth-research
+          path: out/earnings-growth-research.json
+          retention-days: 30
       - name: Score sealed one-session risk forecasts on the first later session
         run: python scripts/risk_ledger.py score
       - name: Seal one-session risk forecasts per original market close

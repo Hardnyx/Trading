@@ -1,6 +1,6 @@
-import { template as t } from "./templates.mjs?v=0.18.0";
-import { pct, fmt, money, dateLabel } from "./format.mjs?v=0.18.0";
-import { finite, sum, normalizeWeights } from "../analytics.mjs?v=0.18.0";
+import { template as t } from "./templates.mjs?v=0.19.0";
+import { pct, fmt, money, dateLabel, timestampLabel } from "./format.mjs?v=0.19.0";
+import { finite, sum, normalizeWeights } from "../analytics.mjs?v=0.19.0";
 import {
   DEFAULT_MANDATE,
   DEFAULT_EXECUTION,
@@ -8,17 +8,18 @@ import {
   DEFAULT_REGIMES,
   currentAccount,
   informationDate,
-} from "../policy.mjs?v=0.18.0";
+} from "../policy.mjs?v=0.19.0";
 import {
   fundamentalForecast,
   businessQuality,
   evaluateThesis,
   bondAssumptions,
-} from "../research-model.mjs?v=0.18.0";
-import { dilutedEarningsBridge } from '../earnings-normalization.mjs?v=0.18.0';
-import { factorModel, factorAttribution } from "../factors.mjs?v=0.18.0";
-import { calibrationAudit } from "../calibration-audit.mjs?v=0.18.0";
-import { evaluateJournal } from "../journal.mjs?v=0.18.0";
+} from "../research-model.mjs?v=0.19.0";
+import { dilutedEarningsBridge } from '../earnings-normalization.mjs?v=0.19.0';
+import { growthEvidence } from '../growth-evidence.mjs?v=0.19.0';
+import { factorModel, factorAttribution } from "../factors.mjs?v=0.19.0";
+import { calibrationAudit } from "../calibration-audit.mjs?v=0.19.0";
+import { evaluateJournal } from "../journal.mjs?v=0.19.0";
 const objectives = {
   growth: "Crecimiento logarítmico",
   preservation: "Preservación · utilidad CRRA",
@@ -471,6 +472,8 @@ export function createDecisionViews({ state = {}, data, asset }) {
       q = businessQuality(a, asOf),
       thesis = evaluateThesis(a, r, asOf);
     const bridge=dilutedEarningsBridge(a,asOf);
+    const growth=f.growthEvidence||growthEvidence(a,state.overrides?.[a.symbol]||{},r,{asOf});
+    const growthMetrics=growth.metrics?.shrinkage;
     const fields = [
       select(
         "research",
@@ -626,6 +629,18 @@ export function createDecisionViews({ state = {}, data, asset }) {
           comparison +
           message(f.error || (f.warnings || []).join(" · ")),
         "La confianza se ajusta por cobertura, antigüedad y contradicciones de tesis; no equivale a precisión observada. El consenso es anual, puede interpolarse entre ejercicios y requiere base contable comparable.",
+      ) +
+      section(
+        "EVIDENCIA DEL CRECIMIENTO",
+        table(["OBSERVACIÓN", "EVIDENCIA DISPONIBLE"], [
+          ["Origen del crecimiento usado", growth.source],
+          ["Vintage del supuesto predictivo", growth.sourceVintage?timestampLabel(growth.sourceVintage):"Sin vintage predictivo verificado"],
+          ["BPA anual diluido reportado", `${growth.annualPeriods} ejercicios · ${growth.historyRecords} cifras con presentación y fuente`],
+          ["Captura de la historia SEC", timestampLabel(growth.historyObservedAt)],
+          ["Candidato contraído · investigación", finite(growth.shrinkageCandidate)?`${pct(growth.shrinkageCandidate)} · ${growth.candidateObservations} observaciones previas`:"Sin historia comparable"],
+          ["Errores anuales en reconstrucción", `${growth.reconstructedOutcomes} · MAE ${growthMetrics?fmt(growthMetrics.mae*100,1)+" pp de crecimiento":"—"}`],
+        ]),
+        "La historia conserva las versiones presentadas y compara BPA del mismo informe para evitar mezclar bases por acción. El candidato combina hasta cinco crecimientos conocidos con un prior del 6% y fuerza cinco: convenciones de investigación, sin ajuste automático del ancla. La reconstrucción desde la API actual no verifica vintages originales, no normaliza extraordinarios y no calibra retornos de inversión.",
       ) +
       section(
         "PUENTE DEL BPA DILUIDO",

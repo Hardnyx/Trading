@@ -1,7 +1,8 @@
-import { finite, metrics, valuation, scenarios, resolveAssumptions, returnDecomposition } from "./analytics.mjs?v=0.18.0";
-import { DEFAULT_RESEARCH } from "./policy.mjs?v=0.18.0";
-import { dilutedEarningsBridge } from './earnings-normalization.mjs?v=0.18.0';
-import { financialFreshness } from './financial-freshness.mjs?v=0.18.0';
+import { finite, metrics, valuation, scenarios, resolveAssumptions, returnDecomposition } from "./analytics.mjs?v=0.19.0";
+import { DEFAULT_RESEARCH } from "./policy.mjs?v=0.19.0";
+import { dilutedEarningsBridge } from './earnings-normalization.mjs?v=0.19.0';
+import { financialFreshness } from './financial-freshness.mjs?v=0.19.0';
+import { growthEvidence } from './growth-evidence.mjs?v=0.19.0';
 
 const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
 const years = (a, b) =>
@@ -31,6 +32,11 @@ export function assetAt(
           r.filed <= informationAsOf &&
           r.period_end <= informationAsOf,
       );
+    else if (["earnings_history", "growth_research"].includes(key)) {
+      const history = asset.financials?.earnings_history;
+      financials[key] = history?.observed_at?.slice(0,10) <= informationAsOf &&
+        history.through_filing_date <= informationAsOf ? row : null;
+    }
     else if (!row || typeof row !== "object") financials[key] = row;
     else
       financials[key] =
@@ -527,6 +533,8 @@ export function fundamentalForecast(
     high,
     impliedGrowth,
     equivalentGrowth,
+    growthEvidence: growthEvidence(original, assumptions, r, {asOf,
+      consensusUsed: !consensus.error, consensusObservedAt: consensus.observed_at}),
     assumptions: { ...a, growth: equivalentGrowth },
     rerating: exit.rerating,
     decomposition: returnDecomposition(model, comparableBase, asset.price),

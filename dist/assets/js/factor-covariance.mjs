@@ -1,5 +1,5 @@
-import { alignReturns } from "./analytics.mjs?v=0.18.0";
-import { cholesky, ewmaCovariance } from "./risk-math.mjs?v=0.18.0";
+import { alignReturns } from "./analytics.mjs?v=0.19.0";
+import { cholesky, ewmaCovariance } from "./risk-math.mjs?v=0.19.0";
 
 /**
  * One observed SPY factor, projected from a SINGLE joint EWMA covariance.

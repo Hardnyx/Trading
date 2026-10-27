@@ -28,12 +28,14 @@ if __package__:
     from .filing_facts import extract_filing_facts
     from .etf_holdings import enrich_holdings
     from .distributions import price_distribution_index, enrich_distributions
+    from .earnings_history import annual_eps_history, growth_replay, replay_metrics
 else:
     from data_providers import FRED_SERIES, ProviderError, analyst_estimates, fred_series, fred_csv_series, fred_observation, retained_estimates
     from universe import AUTO_CIK, expanded_universe
     from filing_facts import extract_filing_facts
     from etf_holdings import enrich_holdings
     from distributions import price_distribution_index, enrich_distributions
+    from earnings_history import annual_eps_history, growth_replay, replay_metrics
 
 ROOT = Path(__file__).resolve().parents[1]
 CACHE = ROOT / ".cache"
@@ -363,6 +365,8 @@ def financials(cik, cutoff, original_filing=None):
     result["source_url"] = f"https://www.sec.gov/edgar/browse/?CIK={cik}&owner=exclude"
     result["entity"] = body.get("entityName")
     result["observed_at"] = dt.datetime.fromtimestamp((CACHE / f"sec-{cik}.json").stat().st_mtime, UTC).isoformat() if (CACHE / f"sec-{cik}.json").exists() else None
+    history_observed = max((value for value in [result["observed_at"], (recovery or {}).get("observed_at")] if value), default=None)
+    result["earnings_history"] = annual_eps_history(facts, cik, cutoff, history_observed)
     result["refresh_status"] = "available"
     if recovery:
         result["original_filing_recovery"] = recovery
@@ -681,6 +685,10 @@ def build_asset(spec, cutoff, previous):
                                    else None for key, value in old.items()}
             if isinstance(asset["financials"].get("history"),list):
                 asset["financials"]["history"] = [r for r in asset["financials"]["history"] if r.get("filed","9999") <= cutoff and r.get("period_end","9999") <= cutoff]
+            if isinstance(old.get("earnings_history"), dict):
+                asset["financials"]["earnings_history"] = dict(old["earnings_history"], through_filing_date=cutoff,
+                    records=[r for r in old["earnings_history"].get("records", [])
+                             if r.get("filed", "9999") <= cutoff and r.get("period_end", "9999") <= cutoff])
             asset["financials"]["observed_at"] = old.get("observed_at")
             asset["financials"]["refresh_status"] = "retained_after_failure"
             errors.append(f"{symbol}: SEC no actualizada ({error_label(exc)})")
@@ -720,6 +728,12 @@ def build_asset(spec, cutoff, previous):
     inconsistent_eps = flag_inconsistent_eps(asset, cutoff)
     if inconsistent_eps:
         errors.append(inconsistent_eps)
+    if cik and isinstance(asset.get("financials", {}).get("earnings_history"), dict):
+        replay = growth_replay(asset["financials"]["earnings_history"], growth)
+        asset["financials"]["growth_research"] = {
+            key: value for key, value in replay.items() if key != "outcomes"}
+        asset["financials"]["growth_research"]["metrics"] = replay_metrics(replay["outcomes"])
+        asset["financials"]["growth_research"]["outcomes"] = len(replay["outcomes"])
     if symbol in ISSUER_URLS:
         try:
             raw = download(ISSUER_URLS[symbol], f"issuer-{symbol}.html", max_age=6 * 3600)

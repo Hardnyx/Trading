@@ -1,6 +1,6 @@
 # Trading · lo que falta
 
-Backlog actualizado el 27 de octubre de 2026 para el motor 0.18.0, corte de
+Backlog actualizado el 27 de octubre de 2026 para el motor 0.19.0, corte de
 precios examinado del 26-oct, 260 instrumentos (160 acciones, 100 ETF).
 Consultar las pruebas y los cierres en `docs/estado-validacion.md`. Cero
 incidencias publicadas o pruebas de software aprobadas no acreditan datos
@@ -31,9 +31,16 @@ Este archivo lista **solo lo que falta**. Para el funcionamiento, consultar
 - **Bloqueo del consenso privado:** licencia y entorno autorizado. La
   historia pública SEC puede prepararse sin esa licencia; no asumir nuevas
   suscripciones ni publicar datos privados.
-- **Falta:** fuente de consenso con vintage original, o historia de BPA por
-  empresa (companyfacts la tiene; hoy solo se guarda el TTM). Además, una
-  regla de contracción hacia un prior común, con incertidumbre medida.
+- **Avance en 0.19.0:** se conservan hasta doce años de BPA anual y sus
+  versiones presentadas, sin consultas SEC adicionales. Hay un candidato
+  contraído hacia un prior y un contraste secuencial frente a referencias,
+  con bandas calculadas solo con errores conocidos en cada origen. Se
+  identifican la convención del catálogo, las ediciones y el consenso.
+- **Falta:** vintages originales verificados y evidencia prospectiva. La
+  reconstrucción desde companyfacts actual no certifica lo conocido entonces;
+  el candidato y sus bandas no se promueven por generar un error histórico.
+  También falta normalización de beneficios, cobertura de pérdidas y
+  validación del crecimiento al horizonte de inversión, no solo anual.
 - **Terminado cuando:** cada ancla de crecimiento indica su fuente y vintage,
   y existe un error de previsión medido fuera de muestra.
 
