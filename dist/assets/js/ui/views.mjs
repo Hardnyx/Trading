@@ -7,7 +7,7 @@ import {
   resolveAssumptions,
   returnDecomposition,
   valuation,
-} from "../analytics.mjs?v=0.24.0";
+} from "../analytics.mjs?v=0.25.0";
 import {
   sparkline,
   portfolioChart,
@@ -16,7 +16,7 @@ import {
   scatter,
   forecastCone,
   histogram,
-} from "../charts.mjs?v=0.24.0";
+} from "../charts.mjs?v=0.25.0";
 import {
   esc,
   url,
@@ -27,16 +27,16 @@ import {
   color,
   dateLabel,
   timestampLabel,
-} from "./format.mjs?v=0.24.0";
-import { template } from "./templates.mjs?v=0.24.0";
-import { DEFAULT_COMPOSITION_RULES } from "../composer.mjs?v=0.24.0";
-import { factorModel } from "../factors.mjs?v=0.24.0";
-import { MODEL_VERSION, informationDate } from "../policy.mjs?v=0.24.0";
-import { fundamentalForecast } from "../research-model.mjs?v=0.24.0";
-import { financialFreshness } from '../financial-freshness.mjs?v=0.24.0';
-import { priceMonitor } from '../price-monitor.mjs?v=0.24.0';
+} from "./format.mjs?v=0.25.0";
+import { template } from "./templates.mjs?v=0.25.0";
+import { DEFAULT_COMPOSITION_RULES } from "../composer.mjs?v=0.25.0";
+import { factorModel } from "../factors.mjs?v=0.25.0";
+import { MODEL_VERSION, informationDate } from "../policy.mjs?v=0.25.0";
+import { fundamentalForecast } from "../research-model.mjs?v=0.25.0";
+import { financialFreshness } from '../financial-freshness.mjs?v=0.25.0';
+import { priceMonitor } from '../price-monitor.mjs?v=0.25.0';
 
-import { createDecisionViews } from "./decision-views.mjs?v=0.24.0";
+import { createDecisionViews } from "./decision-views.mjs?v=0.25.0";
 
 /**
  * Describes the process the Monte Carlo actually runs. Jumps and the GBM /
@@ -114,6 +114,12 @@ export function compositionValuationEvidence(signal) {
 export function reratingText(r,a){
   if(r?.applied)return `P/E actual ${fmt(r.current,1)} → salida ${fmt(r.effective,1)} (${pct(r.share,0)} de la brecha al sectorial ${fmt(r.reference,1)}; vida media ${fmt(r.halfLife,0)} años)`;
   return `P/E de salida ${fmt(a.multiple,1)}${r?.explicit?" fijado por ti":""}`;
+}
+/** Anchor as CAPM equilibrium plus benchmark-neutral alpha, when refined. */
+export function compositionAnchorRefinement(signal){
+  const r=signal.valuationEvidence?.refinement;
+  if(!r)return "";
+  return `Ancla ${pct(r.anchor,1)} = equilibrio ${pct(r.equilibrium,1)} (β ${fmt(r.beta,2)} frente a ${r.benchmark}) + alfa ${pct(r.alpha,1,true)} · IC ${fmt(r.ic,3)} × volatilidad residual ${pct(r.omega,0)} × puntuación ${fmt(r.score,2)}. Bloques sin ajustar ${pct(r.buildingBlock,1)}.`;
 }
 /** One-line split of the model return; the parts sum to the total. */
 export function compositionReturnSplit(signal){
@@ -1085,6 +1091,7 @@ export function createViews(context) {
             symbol:s.symbol,
             valuationEvidence: compositionValuationEvidence(s),
             returnSplit: compositionReturnSplit(s),
+            anchorRefinement: compositionAnchorRefinement(s),
             source: s.filed
               ? `BPA publicado ${money(s.eps)} · ${s.financialMethod||'método no registrado'} hasta ${dateLabel(s.financialPeriod)} · presentado ${dateLabel(s.filed)} · captura XBRL ${s.financialObservedAt?timestampLabel(s.financialObservedAt):'no registrada'}`
               : s.source+(s.bondDate?' · perfil al '+dateLabel(s.bondDate):''),

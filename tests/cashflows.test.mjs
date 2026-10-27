@@ -1,9 +1,9 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { evaluatePaths } from "../dist/assets/js/path-model.mjs?v=0.24.0";
-import { portfolioAttribution } from "../dist/assets/js/attribution.mjs?v=0.24.0";
-import { annualDistributionYield, dividendStep, cashGrowth, uniformCashGrowth } from "../dist/assets/js/cashflows.mjs?v=0.24.0";
-import { mandate } from "../dist/assets/js/policy.mjs?v=0.24.0";
+import { evaluatePaths } from "../dist/assets/js/path-model.mjs?v=0.25.0";
+import { portfolioAttribution } from "../dist/assets/js/attribution.mjs?v=0.25.0";
+import { annualDistributionYield, dividendStep, cashGrowth, uniformCashGrowth } from "../dist/assets/js/cashflows.mjs?v=0.25.0";
+import { mandate } from "../dist/assets/js/policy.mjs?v=0.25.0";
 
 function fixture(dividendPolicy="cash",dividendWithholding=0){
  const steps=12,paths=100,dt=1/12;

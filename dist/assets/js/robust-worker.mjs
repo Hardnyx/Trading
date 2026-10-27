@@ -1,4 +1,4 @@
-import {compareRobustPortfolio} from './robust-composer.mjs?v=0.24.0';
+import {compareRobustPortfolio} from './robust-composer.mjs?v=0.25.0';
 self.onmessage=({data})=>{
  const {id,snapshot,settings,overrides,rules,proposal,comparisonLabel}=data;
  try{

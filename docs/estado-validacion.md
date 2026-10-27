@@ -660,3 +660,47 @@ valorable. Su TTM combina el 10-K presentado antes del split con 10-Q
 reexpresados. Conforme a H7, no se divide mecánicamente el componente
 anterior por el ratio: quedan bloqueadas hasta contar con componentes
 publicados en la base posterior.
+
+### 0.25.0 — Anclas de acciones: equilibrio CAPM más alfa de Grinold-Kahn
+
+Al corte del 27-oct, las 147 acciones con previsión válida tenían anclas
+con dispersión transversal de 2,6 pp, frente a 4,7 pp del modelo por
+bloques sin contraer. Las elegidas por la búsqueda estaban en la cola:
+NVDA 11,9%, AMZN 10,9%, NFLX 9,9%, frente a SPY 6,2%. Ajustando
+desviación = IC × volatilidad residual × puntuación, las anclas implicaban
+un IC de 0,066 (≈0,1 en las primeras). Esto supera lo que Grinold y Kahn
+atribuyen a un gestor bueno con historial probado (0,05). La señal propia no
+tiene error fuera de muestra (pendiente 1). Elegir el máximo de una
+estimación ruidosa sobrestima su retorno: es la maldición del ganador.
+
+Cada ancla de acción se descompone ahora así, siguiendo la práctica habitual
+(Grinold-Kahn, equilibrio de Black-Litterman):
+
+- **Equilibrio:** tasa a 3 meses al corte + β × (mercado − tasa). β se
+  estima con 500 sesiones diarias frente al comparador (al menos 250), se
+  ajusta según Blume (⅔ β + ⅓) y se reescala para que el peso cubierto del
+  comparador tenga β 1. El mercado es la media por bloques de ese peso
+  cubierto. SPY conserva su ancla de 6,2%.
+- **Alfa:** IC × ω × z. z es la puntuación transversal del retorno por
+  bloques sin contraer, recortada a ±3, y ω la volatilidad residual anual.
+  El IC es una convención declarada (0,05) y escala con la confianza
+  asignada respecto de 0,6. El alfa se neutraliza frente al comparador:
+  su media ponderada es cero.
+- La banda del ancla se desplaza con ella sin cambiar su amplitud. Los
+  ETF compuestos se construyen con las anclas ajustadas, y la preselección
+  de 40 activos usa las mismas. Sin comparador con holdings, sin tasa
+  corta o con menos de 20 acciones válidas, se conserva el ancla por bloques.
+  Las tesis contradichas no se ajustan.
+
+Resultado al corte del 27-oct. Dispersión transversal de 1,5 pp, IC
+implícito 0,037. NVDA 10,2% (equilibrio 7,3% con β 1,48 + alfa 3,0 pp),
+AMZN 8,6%, NFLX 8,1%, HPQ 9,0%. Las de baja beta y baja volatilidad
+residual pierden más: PGR 8,6% → 6,4%, KMB 7,6% → 5,8%, PEP 7,8% → 5,8%.
+QQQ 6,3%, XLK 6,6%. Propuesta por defecto: antes TLT 10, LQD 35, efectivo
+5, NVDA 15, PGR 10, NKE 10, TFC 10, UPS 5 (media 6,9%, CVaR 16,7%,
+equivalente cierto USD 106.198). Ahora TLT 20, SHY 10, IGSB 15, efectivo 5,
+NVDA 20, NFLX 15, HPQ 10, GOOGL 5 (media 6,8%, CVaR 16,2%, USD 106.055).
+Un equivalente cierto menor no indica una cartera peor: deja de contar
+alfa no acreditado. La renta variable sigue en su tope del 50% con acciones
+sueltas, porque un alfa positivo justifica sobreponderar frente al índice.
+Su tamaño depende del IC declarado, hasta que exista una medición (pendiente 1).

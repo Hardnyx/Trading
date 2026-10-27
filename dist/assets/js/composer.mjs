@@ -4,16 +4,16 @@ import {
   mean,
   quantile,
   normalizeWeights,
-} from "./analytics.mjs?v=0.24.0";
-import { seededRandom } from "./random.mjs?v=0.24.0";
-import { portfolioAttribution } from "./attribution.mjs?v=0.24.0";
+} from "./analytics.mjs?v=0.25.0";
+import { seededRandom } from "./random.mjs?v=0.25.0";
+import { portfolioAttribution } from "./attribution.mjs?v=0.25.0";
 import {
   preparePaths,
   generatePaths,
   evaluatePaths,
   marginalRisk,
   centeredRegimeConditions,
-} from "./path-model.mjs?v=0.24.0";
+} from "./path-model.mjs?v=0.25.0";
 import {
   withCashAsset,
   mandate,
@@ -22,12 +22,12 @@ import {
   tradePlan,
   withdrawalSchedule,
   MODEL_VERSION,
-} from "./policy.mjs?v=0.24.0";
-import { buildReturnAnchors, constituentForecasts, holdingsAnchor } from "./return-model.mjs?v=0.24.0";
-import { assetAt, fundamentalForecast, bondAssumptions } from "./research-model.mjs?v=0.24.0";
-import { selectCompositionUniverse } from "./universe.mjs?v=0.24.0";
-import { factorizeStressedCovariance } from "./factor-covariance.mjs?v=0.24.0";
-import { economicClass, exposureReport, rawCorrelation, qualifiedOpportunity, holdingsOverlap, knownFundOverlap } from "./economic-exposure.mjs?v=0.24.0";
+} from "./policy.mjs?v=0.25.0";
+import { buildReturnAnchors, constituentForecasts, holdingsAnchor } from "./return-model.mjs?v=0.25.0";
+import { assetAt, fundamentalForecast, bondAssumptions } from "./research-model.mjs?v=0.25.0";
+import { selectCompositionUniverse } from "./universe.mjs?v=0.25.0";
+import { factorizeStressedCovariance } from "./factor-covariance.mjs?v=0.25.0";
+import { economicClass, exposureReport, rawCorrelation, qualifiedOpportunity, holdingsOverlap, knownFundOverlap } from "./economic-exposure.mjs?v=0.25.0";
 
 export const DEFAULT_COMPOSITION_RULES = {
   maxPosition: 0.2,
@@ -114,7 +114,16 @@ export function prepareComposition(
     }
     return observations >= 60 ? Math.sqrt(252 * squared / observations) : 1;
   };
-  const anchorContext = { asOf, informationAsOf: info, research: settings.research || {} };
+  const yieldCurve = Object.fromEntries(
+    (snapshot.macro || [])
+      .filter((r) => r.date <= info)
+      .map((r) => [r.id, r.value]),
+  );
+  // Same context as the simulated anchors, so preselection ranks stocks on
+  // their cross-sectionally refined anchors.
+  const anchorContext = { asOf, informationAsOf: info, research: settings.research || {},
+    yieldCurve, mandate: policy, driftMode: "fundamental",
+    informationCoefficient: settings.informationCoefficient };
   const constituents = constituentForecasts(snapshot.assets, anchorContext, overrides);
   for (const original of snapshot.assets) {
     const asset = assetAt(original, asOf, info);
@@ -135,7 +144,8 @@ export function prepareComposition(
       if (!forecast.valid) reason = forecast.error;
       else if (forecast.thesis.status === "contradicted")
         reason = "Tesis contradicha: revisar hipótesis antes de nuevas compras";
-      else forwardPriority[asset.symbol] = forecast.central -
+      else forwardPriority[asset.symbol] = forecast.central +
+        (constituents.refinement?.get(asset.symbol)?.shift ?? 0) -
         0.15 * Math.max(0, forecast.high - forecast.low) -
         0.04 * historicalVolatility(asset);
     }
@@ -206,11 +216,6 @@ export function prepareComposition(
   );
   const permissionBySymbol = new Map(
     eligible.map((asset, index) => [asset.symbol, buyAllowed[index]]),
-  );
-  const yieldCurve = Object.fromEntries(
-    (snapshot.macro || [])
-      .filter((r) => r.date <= info)
-      .map((r) => [r.id, r.value]),
   );
   const proxyRate = finite(yieldCurve.DGS3MO) ? yieldCurve.DGS3MO / 100 : 0;
   const proxyAssetAssumptions = benchmarkOnlyProxy
@@ -1069,6 +1074,7 @@ export function composePortfolio(
         rerating: anchor.forecast.rerating,
         decomposition: anchor.forecast.decomposition,
         growthEvidence: anchor.forecast.growthEvidence,
+        refinement: anchor.refinement,
       } : null,
       source: anchor.bond
         ? anchor.source + " · sensibilidad duración/convexidad por régimen; reinversión y curva completa no modeladas"

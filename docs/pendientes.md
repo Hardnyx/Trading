@@ -36,6 +36,11 @@ Este archivo lista **solo lo que falta**. Para el funcionamiento, consultar
   contraído hacia un prior y un contraste secuencial frente a referencias,
   con bandas calculadas solo con errores conocidos en cada origen. Se
   identifican la convención del catálogo, las ediciones y el consenso.
+- **Avance en 0.25.0:** el retorno por bloques ya no se usa como esperanza
+  directa. Es una señal: equilibrio CAPM más alfa = IC × volatilidad
+  residual × puntuación, neutral frente a SPY. Con IC 0,05 declarado, la
+  dispersión entre acciones baja de 2,6 a 1,5 pp. El IC es una convención:
+  medirlo con los sellos a 12 meses lo cerraría.
 - **Falta:** vintages originales verificados y evidencia prospectiva. La
   reconstrucción desde companyfacts actual no certifica lo conocido entonces;
   el candidato y sus bandas no se promueven por generar un error histórico.
