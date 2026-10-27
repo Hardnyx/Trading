@@ -285,3 +285,10 @@ además el tope de correlación entre pares de acciones del compositor. La EWMA
 se conserva como diagnóstico reciente, con su vida media y el desvío máximo
 frente a la ventana completa. No es una regularización óptima estimada ni un
 DCC; la ventana completa reduce el ruido muestral sin validar su estabilidad.
+
+**Proceso simulado visible.** Proyecciones describe el proceso que corre el
+Monte Carlo: GJR-t validado más EWMA diario, o EWMA diario, siempre sin saltos.
+El selector GBM/Merton y los parámetros de salto solo aparecen con el
+comparador legado elegido en Componer cartera, que es el único modo donde se
+aplican. Antes la página mostraba Merton con 0,35 saltos anuales aunque la
+intensidad efectiva fuese cero.

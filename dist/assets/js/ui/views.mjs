@@ -35,6 +35,35 @@ import { priceMonitor } from '../price-monitor.mjs?v=0.14.0';
 
 import { createDecisionViews } from "./decision-views.mjs?v=0.14.0";
 
+/**
+ * Describes the process the Monte Carlo actually runs. Jumps and the GBM /
+ * Merton choice only apply to the explicit legacy comparator; hybrid and EWMA
+ * modes simulate daily variance recursions without jumps.
+ */
+export function simulatedProcess(settings = {}, volatility = null) {
+  const mode = settings.volatilityMode || "hybrid";
+  if (mode === "legacy") {
+    const merton = settings.model !== "gbm";
+    return {
+      legacy: true, jumps: merton,
+      label: merton ? "Merton legado · EWMA + saltos no calibrados" : "GBM legado · covarianza EWMA",
+      subtitle: merton
+        ? "Comparador legado: difusión con covarianza EWMA y saltos genéricos de parámetros propios, no estimados."
+        : "Comparador legado: difusión lognormal con covarianza EWMA constante, sin saltos.",
+    };
+  }
+  const accepted = volatility?.accepted ?? 0;
+  const gjr = mode === "hybrid" && accepted > 0;
+  return {
+    legacy: false, jumps: false,
+    label: gjr ? `GJR-t validado (${accepted}) + EWMA diario` : "EWMA diario",
+    subtitle: (gjr
+      ? `Varianza GJR-t validada en ${accepted} activo${accepted === 1 ? "" : "s"} y recursión EWMA diaria en los demás.`
+      : "Recursión EWMA diaria sobre la covarianza total.") +
+      " Innovaciones conjuntas gaussianas; sin saltos.",
+  };
+}
+
 export function compositionValuationEvidence(signal) {
   if(!signal.filed)return "";
   const v=signal.valuationEvidence;
@@ -334,11 +363,7 @@ export function createViews(context) {
       template("forecast-panel", {
         value1: historical
           ? "Pesos constantes · base 100 · sin costos"
-          : `${f?.volatility?.accepted > 0
-              ? "Volatilidad condicional GJR-t"
-              : state.settings.model === "merton"
-                ? "Difusión con saltos genéricos"
-                : "Difusión GBM/EWMA"} · buy & hold · base 100`,
+          : `${simulatedProcess(f?.settings || state.settings, f?.volatility).label} · buy & hold · base 100`,
         value2: historical
           ? "VENTANA " + state.lookback + "D"
           : "SUPUESTOS EDITABLES",
@@ -617,8 +642,6 @@ export function createViews(context) {
       "PARÁMETROS",
       "02",
       template("forecast-controls", {
-        value1: s.model === "merton" ? "selected" : "",
-        value2: s.model === "gbm" ? "selected" : "",
         value3: s.horizon === 0.25 ? "selected" : "",
         value4: s.horizon === 0.5 ? "selected" : "",
         value5: s.horizon === 1 ? "selected" : "",
@@ -653,8 +676,16 @@ export function createViews(context) {
             }),
           )
           .join(""),
+        processField: simulatedProcess(s).legacy
+          ? template("forecast-process-select", {
+              value1: s.model === "merton" ? "selected" : "",
+              value2: s.model === "gbm" ? "selected" : "",
+            })
+          : template("forecast-process-fixed", {
+              label: simulatedProcess(s, state.forecast?.volatility).label,
+            }),
         value12:
-          s.model === "merton"
+          simulatedProcess(s).jumps
             ? template("forecast-controls-4", {
                 jumpIntensity: s.jumpIntensity,
                 value2: fmt(s.jumpMean * 100, 0),
@@ -675,7 +706,7 @@ export function createViews(context) {
       title(
         "PROYECCIONES / MONTE CARLO",
         "Simulación de cartera",
-        "GBM y difusión con saltos. Supuestos de retorno y covarianza EWMA.",
+        simulatedProcess(f?.settings || state.settings, f?.volatility).subtitle,
         template("forecasts-view-8", { downloadIcon: icon("download") }),
       ) +
       simulationMetrics() +

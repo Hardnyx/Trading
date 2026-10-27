@@ -125,17 +125,31 @@
       </div>
     </template>
 
+    <template id="forecast-process-select">
+      <div class="field">
+        <label for="model-select">PROCESO ESTOCÁSTICO · COMPARADOR LEGADO</label
+        ><select id="model-select" data-setting="model">
+          <option value="merton" {{{value1}}}>
+            Merton · difusión + saltos
+          </option>
+          <option value="gbm" {{{value2}}}>GBM · difusión lognormal</option>
+        </select>
+      </div>
+    </template>
+
+    <template id="forecast-process-fixed">
+      <div class="field">
+        <label>PROCESO ESTOCÁSTICO</label>
+        <div class="forecast-input-note">
+          <b>{{label}}</b>. Sin saltos. Se elige en Componer cartera ·
+          Volatilidad / riesgo; GBM y Merton solo existen como comparador legado.
+        </div>
+      </div>
+    </template>
+
     <template id="forecast-controls">
       <div class="forecast-controls">
-        <div class="field">
-          <label for="model-select">PROCESO ESTOCÁSTICO</label
-          ><select id="model-select" data-setting="model">
-            <option value="merton" {{{value1}}}>
-              Merton · difusión + saltos
-            </option>
-            <option value="gbm" {{{value2}}}>GBM · difusión lognormal</option>
-          </select>
-        </div>
+        {{{processField}}}
         <div class="field">
           <label for="horizon-select">HORIZONTE</label
           ><select id="horizon-select" data-setting="horizon" data-numeric>

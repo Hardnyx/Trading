@@ -343,3 +343,19 @@ test('the primary valuation and scenarios follow the reconciled continuing EPS s
  assert.ok(blocked.includes('sin conciliar'));
  assert.ok(!blocked.includes('$4.00'));
 });
+
+test("F3 names the process that is actually simulated", async () => {
+  const { simulatedProcess } = await import("../dist/assets/js/ui/views.mjs?v=0.14.0");
+  const hybrid = simulatedProcess({ volatilityMode: "hybrid", model: "merton" }, { accepted: 2 });
+  assert.equal(hybrid.jumps, false);
+  assert.equal(hybrid.legacy, false);
+  assert.match(hybrid.label, /GJR-t validado \(2\)/);
+  assert.match(hybrid.subtitle, /sin saltos/);
+  const fallback = simulatedProcess({ volatilityMode: "hybrid", model: "merton" }, { accepted: 0 });
+  assert.equal(fallback.label, "EWMA diario");
+  assert.equal(simulatedProcess({ volatilityMode: "ewma", model: "merton" }).jumps, false);
+  const legacy = simulatedProcess({ volatilityMode: "legacy", model: "merton" });
+  assert.equal(legacy.jumps, true);
+  assert.match(legacy.subtitle, /no estimados/);
+  assert.equal(simulatedProcess({ volatilityMode: "legacy", model: "gbm" }).jumps, false);
+});
