@@ -391,7 +391,18 @@ test("composition explains the exit multiple and splits the model return", async
   }});
   assert.match(text,/P\/E actual 7[,.]0 → salida 8[,.]2/);
   assert.match(text,/sectorial 16[,.]0; vida media 10 años/);
-  assert.match(text,/BPA \+4[,.]0% \+ múltiplo \+5[,.]5% \+ dividendos \+4[,.]8%/);
+  assert.doesNotMatch(text,/dividendos/);
+  const { compositionReturnSplit, rulerMarkers } = await import("../dist/assets/js/ui/views.mjs?v=0.17.0");
+  assert.match(compositionReturnSplit({valuationEvidence:{decomposition:{growth:.04,rerating:.055,dividends:.048,total:.143}}}),
+    /Modelo \+14[,.]3%\/año = BPA \+4[,.]0% · múltiplo \+5[,.]5% · dividendos \+4[,.]8%/);
+  assert.equal(compositionReturnSplit({}),"");
+  // Nearly equal price and fair value: labels open outward instead of overlapping.
+  const near=rulerMarkers(532.6,529.6);
+  assert.equal(near.priceLabelSide,"label-end");
+  assert.equal(near.modelLabelSide,"label-start");
+  const far=rulerMarkers(100,50);
+  assert.equal(far.priceLabelSide,"");
+  assert.ok(far.max>far.max7);
   const explicit = compositionValuationEvidence({filed:"2026-10-22",valuationEvidence:{
     source:"BPA y múltiplo propios",assumptions:{growth:.04,multiple:12,horizon:3},
     confidence:.5,rerating:{explicit:true,applied:false},

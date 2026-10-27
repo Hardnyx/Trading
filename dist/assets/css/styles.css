@@ -1900,6 +1900,12 @@ a.text-button,
   white-space: nowrap;
   color: var(--text);
 }
+.ruler-marker.label-start span {
+  transform: translateX(calc(-100% - 4px));
+}
+.ruler-marker.label-end span {
+  transform: translateX(4px);
+}
 .ruler-legend {
   display: flex;
   justify-content: space-between;
@@ -1938,6 +1944,25 @@ a.text-button,
 .financial-table td:nth-child(3) {
   font-size: var(--fs-xs);
   color: var(--muted);
+}
+.return-split-title {
+  font: var(--fs-xs) / 1.6 var(--mono);
+  color: var(--muted);
+  letter-spacing: 0.04em;
+}
+.return-split .financial-table {
+  margin: 4px 0 8px;
+}
+.return-split .financial-table td {
+  padding: 4px 0;
+}
+.return-split .financial-table td:last-child {
+  text-align: right;
+  font-family: var(--mono);
+}
+.return-split .financial-table tr:last-child td {
+  border-top: 1px solid var(--line);
+  color: var(--text-strong);
 }
 .macro-table .sparkline {
   width: 155px;
@@ -2737,6 +2762,15 @@ a.text-button,
   color: var(--muted);
 }
 .composition-valuation-evidence:empty {
+  display: none;
+}
+.composition-return-split {
+  display: block;
+  margin-top: 4px;
+  font: var(--fs-xs) var(--mono);
+  color: var(--soft);
+}
+.composition-return-split:empty {
   display: none;
 }
 .composition-report .composition-contributions {

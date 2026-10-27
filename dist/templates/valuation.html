@@ -15,6 +15,13 @@
       </tr>
     </template>
 
+    <template id="return-split-row">
+      <tr>
+        <td>{{label}}</td>
+        <td class="{{tone}}">{{value}}</td>
+      </tr>
+    </template>
+
     <template id="financial-table">
       <div class="table-wrap">
         <table class="financial-table">
@@ -57,7 +64,15 @@
       </div>
       <div class="assumptions">
         {{{items}}}
-        <div class="forecast-input-note assumption-note">{{reratingNote}}</div>
+        <div class="assumption-note return-split">
+          <div class="return-split-title">RETORNO ESPERADO · {{splitHorizon}} AÑOS</div>
+          <table class="financial-table">
+            <tbody>
+              {{{splitRows}}}
+            </tbody>
+          </table>
+          <div class="forecast-input-note">{{reratingNote}}</div>
+        </div>
         <div class="forecast-input-note assumption-note">
           Estos supuestos alimentan el ancla de retorno del módulo de
           proyecciones. P/FCF es un múltiplo simplificado sobre CFO − capex; no
@@ -102,9 +117,9 @@
       </div>
       <div class="valuation-ruler">
         <div class="ruler-track">
-          <i class="ruler-marker" data-marker-position="{{max}}"
+          <i class="ruler-marker {{priceLabelSide}}" data-marker-position="{{max}}"
             ><span>PRECIO</span></i
-          ><i class="ruler-marker model" data-marker-position="{{max7}}"
+          ><i class="ruler-marker model {{modelLabelSide}}" data-marker-position="{{max7}}"
             ><span>MODELO</span></i
           >
         </div>

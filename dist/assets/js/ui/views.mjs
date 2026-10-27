@@ -66,6 +66,22 @@ export function simulatedProcess(settings = {}, volatility = null) {
   };
 }
 
+/**
+ * Price and model positions on the valuation ruler. Labels that would
+ * overlap open outward, each toward its own side of the track.
+ */
+export function rulerMarkers(price, fairValue) {
+  const top = Math.max(price, fairValue),
+    place = (value) => Math.max(8, Math.min(92, (value / top) * 75)),
+    max = place(price), max7 = place(fairValue),
+    close = Math.abs(max - max7) < 12;
+  return {
+    max, max7,
+    priceLabelSide: close ? (max <= max7 ? "label-start" : "label-end") : "",
+    modelLabelSide: close ? (max <= max7 ? "label-end" : "label-start") : "",
+  };
+}
+
 /** Summary of the sealed one-session risk ledger (data/risk-forecasts). */
 export function riskCalibrationNote(summary) {
   const version = summary?.current_risk_model_version;
@@ -90,16 +106,23 @@ export function compositionValuationEvidence(signal) {
   const a=v.assumptions;
   const base=finite(v.effectiveBaseEPS)?` · BPA de partida ${money(v.effectiveBaseEPS)} (${v.earningsBasis==='continuing'?'operaciones continuadas':'base de valoración'})`:"";
   const sensitivity=v.accountingSensitivity>0?` · sensibilidad a base contable ${pct(v.accountingSensitivity)} / año`:"";
-  return `Supuestos: ${v.source}${base}${sensitivity} · crecimiento ${pct(a.growth)} · ${reratingText(v.rerating,a)} · valoración a ${fmt(a.horizon,0)} años · confianza asignada ${pct(v.confidence)}.${decompositionText(v.decomposition)} Sin calibración predictiva.`;
+  return `Supuestos: ${v.source}${base}${sensitivity} · crecimiento ${pct(a.growth)} · ${reratingText(v.rerating,a)} · valoración a ${fmt(a.horizon,0)} años · confianza asignada ${pct(v.confidence)}. Sin calibración predictiva.`;
 }
 /** Exit multiple: explicit user value or partial reversion to the sector reference. */
 export function reratingText(r,a){
   if(r?.applied)return `P/E actual ${fmt(r.current,1)} → salida ${fmt(r.effective,1)} (${pct(r.share,0)} de la brecha al sectorial ${fmt(r.reference,1)}; vida media ${fmt(r.halfLife,0)} años)`;
   return `P/E de salida ${fmt(a.multiple,1)}${r?.explicit?" fijado por ti":""}`;
 }
-export function decompositionText(d){
+/** One-line split of the model return; the parts sum to the total. */
+export function compositionReturnSplit(signal){
+  const d=signal.valuationEvidence?.decomposition;
   if(!d)return "";
-  return ` Retorno del modelo ${pct(d.total,1,true)}/año = BPA ${pct(d.growth,1,true)} + múltiplo ${pct(d.rerating,1,true)} + dividendos ${pct(d.dividends,1,true)}.`;
+  return `Modelo ${pct(d.total,1,true)}/año = BPA ${pct(d.growth,1,true)} · múltiplo ${pct(d.rerating,1,true)} · dividendos ${pct(d.dividends,1,true)}`;
+}
+export function returnSplitRows(d){
+  if(!d)return [];
+  return [["BPA",d.growth],["Múltiplo",d.rerating],["Dividendos",d.dividends],["Retorno del modelo",d.total]]
+    .map(([label,value])=>({label,value:pct(value,1,true),tone:color(value)}));
 }
 
 export function financialCoverageView(data){
@@ -985,7 +1008,7 @@ export function createViews(context) {
         "CVAR 95% · SIMULADO",
         pct(p.metrics.cvar95),
         "negative",
-        `Límite ${pct(p.rules.cvarBudget, 0)} · Colas conjuntas gaussianas sin validación externa`,
+        `Límite ${pct(p.rules.cvarBudget, 0)} · ${p.diagnostics?.volatility?.accepted > 0 ? "Marginales t en GJR aceptados; dependencia gaussiana sin validar" : "Colas conjuntas gaussianas sin validación externa"}`,
       ],
       [
         "ANÁLISIS EX ANTE",
@@ -1020,6 +1043,7 @@ export function createViews(context) {
             anchor: pct(s.anchor),
             high: pct(s.favorableAnchor),
             valuationEvidence: compositionValuationEvidence(s),
+            returnSplit: compositionReturnSplit(s),
             source: s.filed
               ? `BPA publicado ${money(s.eps)} · ${s.financialMethod||'método no registrado'} hasta ${dateLabel(s.financialPeriod)} · presentado ${dateLabel(s.filed)} · captura XBRL ${s.financialObservedAt?timestampLabel(s.financialObservedAt):'no registrada'}`
               : s.source+(s.bondDate?' · perfil al '+dateLabel(s.bondDate):''),
@@ -1402,7 +1426,10 @@ export function createViews(context) {
                 }),
               )
               .join(""),
-            reratingNote: `Valor justo con el múltiplo de referencia. Retorno esperado: ${reratingText(expected.rerating, expected)}.${expectedModel ? decompositionText(returnDecomposition(expectedModel, expectedModel.base, a.price)) : ""} Editar el múltiplo lo fija tal cual.`,
+            splitHorizon: fmt(expected.horizon, 0),
+            splitRows: returnSplitRows(expectedModel && returnDecomposition(expectedModel, expectedModel.base, a.price))
+              .map((row) => template("return-split-row", row)).join(""),
+            reratingNote: `${reratingText(expected.rerating, expected)}. El valor justo usa el múltiplo de referencia; editarlo lo fija tal cual.`,
           }),
         ),
         panel6: panel(
@@ -1418,17 +1445,7 @@ export function createViews(context) {
                   v.upside > 0
                     ? "Descuento bajo estos supuestos"
                     : "Prima bajo estos supuestos",
-                max: Math.max(
-                  8,
-                  Math.min(92, (a.price / Math.max(a.price, v.fairValue)) * 75),
-                ),
-                max7: Math.max(
-                  8,
-                  Math.min(
-                    92,
-                    (v.fairValue / Math.max(a.price, v.fairValue)) * 75,
-                  ),
-                ),
+                ...rulerMarkers(a.price, v.fairValue),
                 items: sc
                   .map((s) =>
                     template("valuation-view-7", {
