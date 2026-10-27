@@ -38,6 +38,21 @@ jobs:
       commit_sha: ${{ steps.snapshot.outputs.commit_sha }}
     steps:
       - uses: actions/checkout@v4
+      - name: Remove the retired review branch
+        if: github.event_name == 'push' && github.event.before == 'bdfc8b1a9c0e6d5c65f54e4d540481e705801c21'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          retired_branch='codex/annual-eps-growth-audit'
+          expected_head='8638becdcd437304b8e9de98240c6769b787944f'
+          actual_head="$(gh api "repos/${GITHUB_REPOSITORY}/git/ref/heads/${retired_branch}" --jq '.object.sha')"
+          if [ "$actual_head" = "$expected_head" ]; then
+            gh api --method DELETE "repos/${GITHUB_REPOSITORY}/git/refs/heads/${retired_branch}"
+            echo "Removed retired branch ${retired_branch}"
+          else
+            echo "Branch changed after review; preserving its new commits"
+          fi
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
