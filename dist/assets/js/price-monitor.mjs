@@ -1,4 +1,4 @@
-import {financialFreshness} from './financial-freshness.mjs?v=0.19.0';
+import {financialFreshness} from './financial-freshness.mjs?v=0.20.0';
 const mean=x=>x.reduce((s,v)=>s+v,0)/x.length;
 const vol=x=>{const m=mean(x);return Math.sqrt(x.reduce((s,v)=>s+(v-m)**2,0)/(x.length-1)*252);};
 

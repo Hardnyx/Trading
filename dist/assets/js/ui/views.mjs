@@ -7,7 +7,7 @@ import {
   resolveAssumptions,
   returnDecomposition,
   valuation,
-} from "../analytics.mjs?v=0.19.0";
+} from "../analytics.mjs?v=0.20.0";
 import {
   sparkline,
   portfolioChart,
@@ -16,7 +16,7 @@ import {
   scatter,
   forecastCone,
   histogram,
-} from "../charts.mjs?v=0.19.0";
+} from "../charts.mjs?v=0.20.0";
 import {
   esc,
   url,
@@ -27,16 +27,16 @@ import {
   color,
   dateLabel,
   timestampLabel,
-} from "./format.mjs?v=0.19.0";
-import { template } from "./templates.mjs?v=0.19.0";
-import { DEFAULT_COMPOSITION_RULES } from "../composer.mjs?v=0.19.0";
-import { factorModel } from "../factors.mjs?v=0.19.0";
-import { MODEL_VERSION, informationDate } from "../policy.mjs?v=0.19.0";
-import { fundamentalForecast } from "../research-model.mjs?v=0.19.0";
-import { financialFreshness } from '../financial-freshness.mjs?v=0.19.0';
-import { priceMonitor } from '../price-monitor.mjs?v=0.19.0';
+} from "./format.mjs?v=0.20.0";
+import { template } from "./templates.mjs?v=0.20.0";
+import { DEFAULT_COMPOSITION_RULES } from "../composer.mjs?v=0.20.0";
+import { factorModel } from "../factors.mjs?v=0.20.0";
+import { MODEL_VERSION, informationDate } from "../policy.mjs?v=0.20.0";
+import { fundamentalForecast } from "../research-model.mjs?v=0.20.0";
+import { financialFreshness } from '../financial-freshness.mjs?v=0.20.0';
+import { priceMonitor } from '../price-monitor.mjs?v=0.20.0';
 
-import { createDecisionViews } from "./decision-views.mjs?v=0.19.0";
+import { createDecisionViews } from "./decision-views.mjs?v=0.20.0";
 
 /**
  * Describes the process the Monte Carlo actually runs. Jumps and the GBM /
@@ -120,6 +120,35 @@ export function compositionReturnSplit(signal){
   const d=signal.valuationEvidence?.decomposition;
   if(!d)return "";
   return `Modelo ${pct(d.total,1,true)}/año = BPA ${pct(d.growth,1,true)} · múltiplo ${pct(d.rerating,1,true)} · dividendos ${pct(d.dividends,1,true)}`;
+}
+export function compositionRole(signal, proposal={}) {
+  if (signal.symbol === 'CASH') return proposal.mandate?.cashYield > 0
+    ? `Liquidez · ${pct(proposal.mandate.cashYield,1)} neto declarado`
+    : 'Liquidez sin remuneración';
+  const bonds={TLT:'Treasuries largos',IEF:'Treasuries intermedios',IEI:'Treasuries intermedios',
+    SHY:'Treasuries cortos',SHV:'Treasuries de vencimiento corto',SGOV:'Letras del Tesoro'};
+  if (bonds[signal.symbol]) return bonds[signal.symbol]+(signal.symbol==='TLT'?' · sensibilidad a tasas':'');
+  const growth=signal.valuationEvidence?.assumptions?.growth;
+  const dividend=signal.valuationEvidence?.decomposition?.dividends;
+  return finite(growth) ? (dividend>.001
+      ? `BPA ${pct(growth,0)} y dividendo ${pct(dividend,1)} · supuestos`
+      : `Acción · crecimiento BPA supuesto ${pct(growth,0)}`)
+    : 'Supuesto de retorno explícito';
+}
+export function compositionCashExplanation(proposal) {
+  const weight=proposal.positions?.find(p=>p.symbol==='CASH')?.weight||0;
+  const a=proposal.diagnostics?.cashAllocation;
+  if (!a) return `Efectivo ${pct(weight,1)}. Falta comprobar su exceso sobre la reserva exigida; volver a proponer.`;
+  const label=`Efectivo ${pct(a.cashWeight,1)} · reserva exigida ${pct(a.requiredCash,1)}`;
+  const reasons={
+    required_reserve:'Se conserva el mínimo exigido por el mandato y los retiros.',
+    allocation_step:'El excedente es menor que el tramo de 5 puntos de la búsqueda.',
+    structural_limits:'Los topes impiden las reasignaciones locales probadas.',
+    risk_or_execution_limits:'Las reasignaciones probadas incumplen límites de riesgo, costes u operativa.',
+    no_local_improvement:'Ninguna reasignación local probada mejoró el objetivo cumpliendo los límites.',
+    search_budget:'Se agotó la revisión local; este nivel de efectivo requiere más búsqueda.',
+  };
+  return `${label}. ${reasons[a.status]||'Revisión local pendiente.'}`;
 }
 export function returnSplitRows(d){
   if(!d)return [];
@@ -1013,7 +1042,7 @@ export function createViews(context) {
         "CVAR 95% · SIMULADO",
         pct(p.metrics.cvar95),
         "negative",
-        `Límite ${pct(p.rules.cvarBudget, 0)} · ${p.diagnostics?.volatility?.accepted > 0 ? "Marginales t en GJR aceptados; dependencia gaussiana sin validar" : "Colas conjuntas gaussianas sin validación externa"}`,
+        `Límite ${pct(p.rules.cvarBudget, 0)}`,
       ],
       [
         "ANÁLISIS EX ANTE",
@@ -1025,9 +1054,8 @@ export function createViews(context) {
     return template("composition-report", {
       asOf: dateLabel(p.as_of),
       sourceNotice: p.reference_id
-        ? "CONFIGURACIÓN BASE · Capital USD 100.000 · cuenta vacía · 4 escenarios originales · semilla " + p.settings.seed + ". No se modificaron tus posiciones ni supuestos."
-        : "CONFIGURACIÓN DE TU SESIÓN · " + p.account_source +
-          " · semilla " + p.settings.seed + ". Esta propuesta no se aplica automáticamente.",
+        ? "CONFIGURACIÓN BASE · Capital USD 100.000 · cuenta vacía"
+        : "TU SESIÓN · " + p.account_source + " · USD " + fmt(p.capital,0),
       notice: p.modified
         ? template("composition-notice", {
             message:
@@ -1047,14 +1075,48 @@ export function createViews(context) {
             low: pct(s.adverseAnchor),
             anchor: pct(s.anchor),
             high: pct(s.favorableAnchor),
+            role: compositionRole(s,p),
+          }),
+        )
+        .join(""),
+      valuationRows:p.signals.map(s=>template('composition-signal-detail',{
+            symbol:s.symbol,
             valuationEvidence: compositionValuationEvidence(s),
             returnSplit: compositionReturnSplit(s),
             source: s.filed
               ? `BPA publicado ${money(s.eps)} · ${s.financialMethod||'método no registrado'} hasta ${dateLabel(s.financialPeriod)} · presentado ${dateLabel(s.filed)} · captura XBRL ${s.financialObservedAt?timestampLabel(s.financialObservedAt):'no registrada'}`
               : s.source+(s.bondDate?' · perfil al '+dateLabel(s.bondDate):''),
-          }),
-        )
-        .join(""),
+          })).join(''),
+      allocationSummary:(()=>{
+        const s=p.diagnostics?.economicExposure?.sleeves;
+        const rows=s?[["Treasuries",s.treasury],["Crédito",s.credit],["Bonos mixtos",s.mixedBonds],
+          ["Acciones",s.usEquity+s.globalEquity],["Oro",s.gold],["Plata",s.silver]]:[];
+        rows.push(['Efectivo',p.positions.find(r=>r.symbol==='CASH')?.weight||0]);
+        return rows.filter(([,w])=>w>1e-8).map(([label,w])=>`${label} ${pct(w,1)}`).join(' · ');
+      })(),
+      selectionSummary:`Objetivo: ${{growth:'crecimiento logarítmico',preservation:'preservación',target:'capital objetivo'}[p.mandate?.objective]||'según mandato'}. `+
+        (p.diagnostics?.selected?.nearLimits?.length
+          ? 'Topes próximos: '+p.diagnostics.selected.nearLimits.slice(0,3)
+              .map(r=>`${r.name} ${pct(r.observed,0)} / ${pct(r.limit,0)}`).join(' · ')
+          : `Comparación local entre ${p.selection?.simulated??'—'} activos simulados.`)+
+        ` · máximo ${p.rules.maxPositions} posiciones · correlación ${fmt(p.rules.maxCorrelation,2)}`,
+      cashExplanation:compositionCashExplanation(p),
+      cashAuditSummary:(()=>{
+        const a=p.diagnostics?.cashAllocation;
+        return a?`${a.evaluated} reasignaciones evaluadas; ${a.structurallyBlocked} bloqueadas por los topes. `+
+          `Efectivo antes de la revisión ${pct(a.initialCashWeight,1)}; después ${pct(a.cashWeight,1)}. `+
+          `Mejora equivalente simulada USD ${fmt(a.improvements.reduce((n,r)=>n+r.certaintyEquivalentGain,0),0)}. `+
+          'Tramos de 5 y 10 puntos en los mismos escenarios finales: no es una validación independiente ni un óptimo global.'
+          : 'Sin comprobación de reasignación del efectivo en esta propuesta.';
+      })(),
+      cashAuditRows:(p.diagnostics?.cashAllocation?.comparisons||[]).slice(0,10).map(r=>
+        template('composition-cash-comparison',{
+          target:`${r.symbol} +${pct(r.transfer,0)}`,cash:pct(r.toCash,1),
+          median:pct(r.medianReturn,1),cvar:pct(r.cvar95,1),
+          gain:fmt(r.certaintyEquivalent-p.metrics.certaintyEquivalent,0),
+          result:r.feasible?(Math.abs(r.score-p.metrics.score)<1e-12?'Objetivo equivalente':
+            r.score>p.metrics.score?'Mejora candidata':'Menor objetivo'):r.failures.join(', '),
+        })).join(''),
       evaluated: p.search.evaluated,
       feasible: p.search.feasible,
       searchPaths: p.search.paths,
@@ -1141,6 +1203,9 @@ export function createViews(context) {
           pct(p.diagnostics.attribution.costLoss,2) +
           ". Un aporte negativo en la cola puede representar cobertura, no riesgo nulo. La porción de varianza usa la covarianza lineal inicial inducida, aproximada después de transformar las marginales."
         : (p.diagnostics?.attribution?.reason || "No se calculó una atribución compatible."),
+      attributionShort:p.diagnostics?.attribution?.available
+        ? `Aportes sobre los mismos escenarios; costes ${pct(p.diagnostics.attribution.costLoss,2)} contabilizados aparte.`
+        : 'Sin atribución disponible.',
       nearLimits: p.diagnostics?.selected?.nearLimits?.length
         ? p.diagnostics.selected.nearLimits.map((r) =>
             `${r.name} ${pct(r.observed, 1)} / ${pct(r.limit, 1)}`

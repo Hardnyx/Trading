@@ -2,7 +2,7 @@
 
 Research, composición y seguimiento de una cartera personal de acciones y ETFs de Estados Unidos.
 
-**Motor 0.19.0.** Historia anual de BPA diluido con presentaciones y fuentes, diagnóstico secuencial del crecimiento y procedencia explícita de los supuestos. El candidato de crecimiento permanece en investigación y no modifica las anclas. Se conservan las protecciones de splits, la valoración conciliada y el devengo de efectivo de 0.18.0. El modelo sigue siendo experimental. Véanse [el estado actual, las comprobaciones y los pendientes](docs/estado-validacion.md).
+**Motor 0.20.0.** Propuesta más breve, con la explicación de la mezcla y del efectivo a la vista, y fuentes y supuestos en un desplegable. La búsqueda comprueba reasignaciones locales desde el efectivo antes de cerrar la propuesta. Se conservan la historia de BPA, las protecciones contables y las anclas existentes. El modelo sigue siendo experimental. Véanse [el estado actual, las comprobaciones y los pendientes](docs/estado-validacion.md).
 
 [Abrir aplicación](https://hardnyx.github.io/Trading/)
 

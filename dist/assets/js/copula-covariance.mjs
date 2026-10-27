@@ -1,4 +1,4 @@
-import { studentMarginal } from './conditional-risk.mjs?v=0.19.0';
+import { studentMarginal } from './conditional-risk.mjs?v=0.20.0';
 
 const ORDER=25, LIMIT=8.5, STEP=.0025, projections=new Map();
 

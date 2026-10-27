@@ -188,8 +188,15 @@
         {{{notice}}}
         <p class="composition-source">{{sourceNotice}}</p>
         <div class="composition-metrics">{{{metrics}}}</div>
+        <div class="composition-brief">
+          <h3>POR QUÉ ESTA MEZCLA</h3>
+          <p>{{allocationSummary}}</p>
+          <p>{{selectionSummary}}</p>
+          <p class="composition-cash-explanation">{{cashExplanation}}</p>
+          <p class="composition-model-status">Selección experimental; depende de los supuestos y de una búsqueda limitada.</p>
+        </div>
         <div class="table-wrap">
-          <table>
+          <table class="composition-positions">
             <thead>
               <tr>
                 <th>ACTIVO</th>
@@ -197,7 +204,7 @@
                 <th>ANCLA ADVERSA / AÑO</th>
                 <th>ANCLA MODO / AÑO</th>
                 <th>ANCLA FAVORABLE / AÑO</th>
-                <th>DATO PUBLICADO / SUPUESTOS DE VALORACIÓN</th>
+                <th>FUNCIÓN EN LA MEZCLA</th>
               </tr>
             </thead>
             <tbody>
@@ -218,19 +225,33 @@
               <tbody>{{{attributionRows}}}</tbody>
             </table>
           </div>
-          <p class="composition-attribution-note">{{attributionNotice}}</p>
+          <p class="composition-attribution-note">{{attributionShort}}</p>
         </div>
-        <div class="composition-brief">
+        <details class="composition-method">
+          <summary>FUENTES, SUPUESTOS Y COMPARACIONES · VER DETALLES</summary>
+          <h3>EFECTIVO Y ALTERNATIVAS LOCALES</h3>
+          <p>{{cashAuditSummary}}</p>
+          <div class="table-wrap">
+            <table class="composition-cash-comparisons">
+              <thead><tr><th>DESDE CASH HACIA</th><th>EFECTIVO RESTANTE</th><th>RETORNO MEDIANO</th><th>CVAR 95%</th><th>CAMBIO DEL OBJETIVO · USD</th><th>RESULTADO</th></tr></thead>
+              <tbody>{{{cashAuditRows}}}</tbody>
+            </table>
+          </div>
+          <h3>VALORACIÓN Y FUENTES POR ACTIVO</h3>
+          <div class="table-wrap">
+            <table class="composition-valuation-details">
+              <thead><tr><th>ACTIVO</th><th>DATO PUBLICADO Y FUENTE</th><th>SUPUESTOS DE VALORACIÓN</th></tr></thead>
+              <tbody>{{{valuationRows}}}</tbody>
+            </table>
+          </div>
           <p>Motor {{engineVersion}} · Corte {{asOf}} · {{simulated}} activos simulados · {{verificationPaths}} escenarios de verificación.</p>
           <p><strong>EXPOSICIÓN PRINCIPAL:</strong> {{concentration}} · Restricciones próximas: {{nearLimits}}.</p>
           <p>{{globalLimitNote}}</p>
           <p>{{exposureSummary}}</p>
           <p>{{incomeSummary}}</p>
+          <p><strong>ATRIBUCIÓN:</strong> {{attributionNotice}}</p>
           <p>{{shyExplanation}}</p>
           <p><strong>RIESGO TODAVÍA NO VALIDADO:</strong> {{stochasticTail}}.</p>
-        </div>
-        <details class="composition-method">
-          <summary>SUPUESTOS, COMPARACIONES Y VALIDACIÓN · VER DETALLES</summary>
           <p><strong>CORRELACIONES OBSERVADAS · 500 SESIONES:</strong> {{overlapSummary}}.</p>
           <p>{{exposureWarning}}</p>
           <p>{{lookthroughSummary}}</p>
@@ -347,8 +368,18 @@
         <td>{{low}}</td>
         <td>{{anchor}}</td>
         <td>{{high}}</td>
-        <td>{{source}}<small class="composition-valuation-evidence">{{valuationEvidence}}</small><small class="composition-return-split">{{returnSplit}}</small></td>
+        <td class="composition-role">{{role}}</td>
       </tr>
+    </template>
+    <template id="composition-signal-detail">
+      <tr>
+        <td><button class="symbol" data-detail="{{symbol}}">{{symbol}}</button></td>
+        <td>{{source}}</td>
+        <td><span class="composition-valuation-evidence">{{valuationEvidence}}</span><span class="composition-return-split">{{returnSplit}}</span></td>
+      </tr>
+    </template>
+    <template id="composition-cash-comparison">
+      <tr><td>{{target}}</td><td>{{cash}}</td><td>{{median}}</td><td>{{cvar}}</td><td>{{gain}}</td><td>{{result}}</td></tr>
     </template>
     <template id="composition-dividend-row">
       <tr><td><button class="symbol" data-detail="{{symbol}}">{{symbol}}</button></td><td>{{exDate}}</td><td>{{payDate}}</td><td>{{amount}}</td>

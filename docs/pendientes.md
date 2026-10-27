@@ -1,6 +1,6 @@
 # Trading · lo que falta
 
-Backlog actualizado el 27 de octubre de 2026 para el motor 0.19.0, corte de
+Backlog actualizado el 27 de octubre de 2026 para el motor 0.20.0, corte de
 precios examinado del 26-oct, 260 instrumentos (160 acciones, 100 ETF).
 Consultar las pruebas y los cierres en `docs/estado-validacion.md`. Cero
 incidencias publicadas o pruebas de software aprobadas no acreditan datos
@@ -138,8 +138,13 @@ Este archivo lista **solo lo que falta**. Para el funcionamiento, consultar
 
 ## P2 · Optimización y operativa
 
-20. **Estabilidad de la propuesta.** Solo se simulan 40 activos de 260 y la
-    convergencia no está verificada. La propuesta cambia con semilla, versión
+20. **Estabilidad de la propuesta.** Se simulan 20–80 activos de 260, con 40
+    como valor inicial, y la convergencia no está verificada. En 0.20.0 se
+    comprueban reasignaciones locales desde CASH en tramos de 5 y 10 puntos,
+    con hasta cuatro rondas, y se guarda su diagnóstico. La reproducción de
+    seis posiciones y correlación máxima 0,85 redujo CASH de 15% a 5% sin
+    relajar límites. Esto corrige una omisión local, no demuestra optimalidad
+    ni estabilidad global. La propuesta cambia con semilla, versión
     y perturbaciones pequeñas (el sello del 26-oct y la propuesta actual
     difieren). Falta una métrica de estabilidad visible y desempate a favor
     de la menor rotación entre candidatas estadísticamente equivalentes.

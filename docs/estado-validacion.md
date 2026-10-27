@@ -3,7 +3,38 @@
 **Fecha del diagnóstico:** 27 de octubre de 2026, con cortes de precios publicados por el repositorio.
 **Clasificación:** investigación activa; no es asesoramiento de inversión ni certificación predictiva.
 
-## Estado actual consolidado · motor 0.19.0
+## Estado actual consolidado · motor 0.20.0
+
+### Presentación y reasignación del efectivo · 0.20.0
+
+La tabla principal conserva pesos y anclas, con una función breve por activo.
+El BPA, sus fechas, la captura, la fórmula y los límites del modelo quedan en
+un desplegable. La explicación visible identifica el objetivo, la mezcla,
+los topes próximos y la reserva exigida de efectivo, sin repetir las mismas
+advertencias en cada fila.
+
+La revisión de efectivo enumera transferencias de 5 y 10 puntos hacia cada
+activo de la muestra, comprueba todos los límites y compara el objetivo neto
+de costes sobre los mismos escenarios finales. Se repite hasta no mejorar,
+llegar al mínimo o completar cuatro rondas. No se fuerza una inversión cuando
+la alternativa falla restricciones o no mejora el objetivo. Los finalistas
+entran en las fronteras SHY y en la sensibilidad, para mantener comparaciones
+coherentes. Es una corrección de búsqueda, no validación prospectiva.
+
+La [reproducción de la cartera con 15% de CASH](diagnostico-cartera-2026-10-27.md)
+identifica una omisión concreta: con seis posiciones y correlación máxima
+0,85, había aumentos factibles de AMZN y HPQ que el muestreo aleatorio no
+exploró. En ese caso CASH baja a 5%, AMZN sube a 20% y HPQ a 15%. El CVaR
+simulado sube de 14,49% a 17,90%, por debajo del máximo de 20%. La mejora del
+equivalente cierto es pequeña (USD 82,49 sobre USD 100.000) y no demuestra
+una ventaja económica real. El criterio es crecimiento logarítmico esperado;
+la mediana puede disminuir al cambiar la distribución.
+
+**Comprobaciones de 0.20.0:** 182 pruebas JavaScript y 123 Python aprobadas,
+con versiones coherentes. Cubren mejoras locales omitidas, efectivo mínimo,
+topes, alternativas con pérdidas y empates que conservan efectivo. La prueba
+de navegador comprueba que la tabla principal es breve y que los datos
+auditables siguen accesibles en el desplegable.
 
 ### Historia y contraste del crecimiento · 0.19.0
 

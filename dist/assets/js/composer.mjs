@@ -4,15 +4,15 @@ import {
   mean,
   quantile,
   normalizeWeights,
-} from "./analytics.mjs?v=0.19.0";
-import { seededRandom } from "./random.mjs?v=0.19.0";
-import { portfolioAttribution } from "./attribution.mjs?v=0.19.0";
+} from "./analytics.mjs?v=0.20.0";
+import { seededRandom } from "./random.mjs?v=0.20.0";
+import { portfolioAttribution } from "./attribution.mjs?v=0.20.0";
 import {
   preparePaths,
   generatePaths,
   evaluatePaths,
   marginalRisk,
-} from "./path-model.mjs?v=0.19.0";
+} from "./path-model.mjs?v=0.20.0";
 import {
   withCashAsset,
   mandate,
@@ -21,12 +21,12 @@ import {
   tradePlan,
   withdrawalSchedule,
   MODEL_VERSION,
-} from "./policy.mjs?v=0.19.0";
-import { buildReturnAnchors, bondScenarioAnnualReturn } from "./return-model.mjs?v=0.19.0";
-import { assetAt, fundamentalForecast, bondAssumptions } from "./research-model.mjs?v=0.19.0";
-import { selectCompositionUniverse } from "./universe.mjs?v=0.19.0";
-import { factorizeStressedCovariance } from "./factor-covariance.mjs?v=0.19.0";
-import { economicClass, exposureReport, rawCorrelation, qualifiedOpportunity, holdingsOverlap, knownFundOverlap } from "./economic-exposure.mjs?v=0.19.0";
+} from "./policy.mjs?v=0.20.0";
+import { buildReturnAnchors, bondScenarioAnnualReturn } from "./return-model.mjs?v=0.20.0";
+import { assetAt, fundamentalForecast, bondAssumptions } from "./research-model.mjs?v=0.20.0";
+import { selectCompositionUniverse } from "./universe.mjs?v=0.20.0";
+import { factorizeStressedCovariance } from "./factor-covariance.mjs?v=0.20.0";
+import { economicClass, exposureReport, rawCorrelation, qualifiedOpportunity, holdingsOverlap, knownFundOverlap } from "./economic-exposure.mjs?v=0.20.0";
 
 export const DEFAULT_COMPOSITION_RULES = {
   maxPosition: 0.2,
@@ -475,6 +475,73 @@ function assess(w, x, sample, hold = false, passive = false) {
     kind: hold ? "hold" : passive ? "passive" : "active",
   };
 }
+
+// Complete the immediate cash neighborhood on the same finalist sample.
+// This is local search, not a new independent validation or a global optimum.
+export function reviewCashAllocation(initial, x, sample, maxRounds = 4) {
+  if (!initial) return {best: initial, finalists: [], audit: null};
+  const cash = x.assets.findIndex(a => a.symbol === 'CASH');
+  if (cash < 0) return {best: initial, finalists: [], audit: null};
+  let best = initial, finalComparisons = [], exhausted = false;
+  const finalists = [], improvements = [], assessed = new Map(), allComparisons = [];
+  let evaluated = 0, structurallyBlocked = 0;
+  for (let round = 0; round < maxRounds; round++) {
+    const available = best.weights[cash] - x.requiredCash;
+    if (available < .05 - 1e-8) break;
+    const transfers = [.05, .10].filter(amount => amount <= available + 1e-8);
+    const comparisons = [];
+    let winner = best;
+    for (const amount of transfers) for (let i = 0; i < x.assets.length; i++) {
+      if (i === cash || !x.buyAllowed[i]) continue;
+      const w = best.weights.slice();
+      w[cash] = Math.round((w[cash] - amount) * 1e12) / 1e12;
+      w[i] = Math.round((w[i] + amount) * 1e12) / 1e12;
+      if (!validWeights(w, x)) {structurallyBlocked++; continue;}
+      const key = w.map(v => v.toFixed(10)).join(',');
+      const cached = assessed.has(key);
+      const result = cached ? assessed.get(key) : assess(w, x, sample);
+      if (!cached) {assessed.set(key, result); evaluated++;}
+      const failures = [];
+      for (const [name, used, limit] of [
+        ['CVaR', result.metrics.cvar95, x.rules.cvarBudget],
+        ['Probabilidad de pérdida', result.metrics.lossProbability, x.rules.maxLossProbability],
+        ['Probabilidad de drawdown', result.metrics.drawdownProbability, x.policy.maxDrawdownProbability],
+        ['Liquidez', result.metrics.liquidityFailureProbability, x.policy.maxLiquidityFailure],
+      ]) if (used > limit) failures.push(name);
+      if (!result.feasible && !failures.length) failures.push('Mandato, costes u operativa');
+      const comparison={symbol:x.assets[i].symbol, transfer:amount,
+        fromCash:best.weights[cash], toCash:w[cash], feasible:result.feasible,
+        failures, score:result.metrics.score,
+        certaintyEquivalent:result.metrics.certaintyEquivalent,
+        medianReturn:result.metrics.medianReturn, cvar95:result.metrics.cvar95};
+      comparisons.push(comparison);
+      if (!cached) allComparisons.push(comparison);
+      if (result.feasible) {
+        if (!cached) finalists.push(result);
+        if (result.metrics.score > winner.metrics.score + 1e-12) winner = result;
+      }
+    }
+    finalComparisons = comparisons;
+    if (winner === best) break;
+    improvements.push({fromCash:best.weights[cash], toCash:winner.weights[cash],
+      transfers:x.assets.flatMap((a,i) => i !== cash && winner.weights[i] > best.weights[i] + 1e-8
+        ? [{symbol:a.symbol, weight:winner.weights[i]-best.weights[i]}] : []),
+      certaintyEquivalentGain:winner.metrics.certaintyEquivalent-best.metrics.certaintyEquivalent});
+    best = winner;
+    exhausted = round === maxRounds - 1;
+  }
+  const excess = Math.max(0, best.weights[cash] - x.requiredCash);
+  const status = excess < 1e-8 ? 'required_reserve' : excess < .05 - 1e-8
+    ? 'allocation_step' : exhausted ? 'search_budget' : !finalComparisons.length
+      ? 'structural_limits' : !finalComparisons.some(r => r.feasible)
+        ? 'risk_or_execution_limits' : 'no_local_improvement';
+  return {best, finalists, audit:{status,
+    initialCashWeight:initial.weights[cash], cashWeight:best.weights[cash],
+    minimumCash:x.policy.minimumCash, requiredCash:x.requiredCash, excessCash:excess,
+    cashYield:x.policy.cashYield, evaluated, structurallyBlocked,
+    step:.05, improvements, comparisons:allComparisons.sort((a,b)=>b.score-a.score).slice(0,32),
+    scope:'Local reallocations of 5 and 10 percentage points on the finalist simulation; not a global or prospectively validated optimum'}};
+}
 function passiveCandidates(x) {
   const market = x.assets.findIndex((a) => a.symbol === x.policy.benchmark),
     cash = x.assets.findIndex((a) => a.symbol === "CASH"),
@@ -724,11 +791,13 @@ export function composePortfolio(
     if (validWeights(proposal.weights, x) &&
         (!best || proposal.metrics.score > best.metrics.score))
       best = proposal;
+  const cashReview = reviewCashAllocation(best, x, verification);
+  best = cashReview.best;
   // The independent cap searches discover candidates in different orders.
   // Reconcile ALL verified finalists against EACH nested feasible set,
   // including the final selected portfolio. The displayed frontier must
   // measure the same opportunity set, not three unrelated random searches.
-  const pooledFinalists = [...verified, ...verifiedCapCandidates,
+  const pooledFinalists = [...verified, ...verifiedCapCandidates, ...cashReview.finalists,
     ...(best ? [best] : [])];
   let previousFrontierScore = -Infinity;
   for (const row of capAlternatives) {
@@ -832,6 +901,7 @@ export function composePortfolio(
     x.assets, best.weights, verification,
     best.plan.total, x.current.capital) : {available:false};
   const diagnostics = {
+    cashAllocation: cashReview.audit,
     selected: riskDiagnostics(best),
     attribution,
     economicExposure: exposure,
@@ -905,6 +975,7 @@ export function composePortfolio(
       reserveTiltsEvaluated: initialTilts.length,
       method: "reserve-tilts-random-local-exchanges-with-capped-challengers",
       capChallengersExamined: capAlternatives.reduce((total,row)=>total+row.compared,0),
+      cashReallocationsEvaluated: cashReview.audit?.evaluated || 0,
       exhaustive: false,
     },
     verification: {
@@ -1052,7 +1123,7 @@ export function composePortfolio(
       anchors: buildReturnAnchors(x.assets, options, changedOverrides),
     };
     const draws = generatePaths(altered, Math.min(paths, 600), seed, 12);
-    const choices = [...ranked.slice(0, 20), { weights: current }]
+    const choices = [...ranked.slice(0, 20), {weights:best.weights}, { weights: current }]
       .map((r) => assess(r.weights, altered, draws, r.weights === current))
       .filter((r) => r.feasible)
       .sort((a, b) => b.metrics.score - a.metrics.score);

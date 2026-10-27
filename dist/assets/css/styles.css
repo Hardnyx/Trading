@@ -2799,6 +2799,32 @@ a.text-button,
 .composition-report .composition-brief p:last-child {
   margin-bottom: 0;
 }
+.composition-report .composition-brief h3 {
+  margin: 0 0 8px;
+  font: 600 var(--fs-sm) var(--sans);
+  letter-spacing: 0.04em;
+}
+.composition-report .composition-brief .composition-model-status {
+  font-size: var(--fs-xs);
+}
+.composition-report .composition-method h3 {
+  margin: var(--pad) 0 8px;
+  font: 600 var(--fs-sm) var(--sans);
+}
+.composition-valuation-details {
+  min-width: 850px;
+}
+.composition-valuation-details td:not(:first-child) {
+  min-width: 240px;
+  max-width: 640px;
+  white-space: normal;
+  text-align: left;
+  font: var(--fs-sm) / 1.5 var(--sans);
+  color: var(--muted);
+}
+.composition-cash-comparisons {
+  min-width: 800px;
+}
 .composition-report details.composition-method {
   border-top: 1px solid var(--line);
   padding: 0 var(--pad);

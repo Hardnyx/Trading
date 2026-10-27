@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {robustTransition} from '../dist/assets/js/robust-transition.mjs?v=0.19.0';
+import {robustTransition} from '../dist/assets/js/robust-transition.mjs?v=0.20.0';
 
 const assets=[{symbol:'AAA',price:100},{symbol:'BBB',price:50},{symbol:'CASH',price:1}];
 const close=(a,b)=>assert.ok(Math.abs(a-b)<1e-5,`${a} != ${b}`);
