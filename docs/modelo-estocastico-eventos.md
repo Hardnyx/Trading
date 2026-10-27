@@ -10,9 +10,9 @@ Se propone un sistema predictivo para carteras multiactivo que distingue entre (
 
 **Palabras clave:** cálculo estocástico, GJR-GARCH, efectos asimétricos, regímenes, datos *point-in-time*, eventos, riesgo de cartera, CVaR.
 
-### Estado de implementación (25 de octubre de 2026)
+### Estado de implementación (27 de octubre de 2026 · motor 0.18.0)
 
-La versión 0.7.0 descompone una única matriz EWMA común en factor SPY y residuo PSD, actualiza GJR y EWMA diariamente, y elimina un factor radial Student-t universal no calibrado. **No** equivale aún al modelo factorial-GARCH completo: GJR se estima sobre retornos totales y la estimación de residuos por régimen/sector sigue siendo diagnóstica. La dependencia de cola, GARCH residual, GARCH-X, DCC y saltos informativos continúan pendientes de validación.
+El motor 0.18.0 factoriza una matriz EWMA conjunta con SPY y residuo PSD; actualiza GJR en activos aceptados y EWMA en los demás. Los primeros utilizan marginales Student-t mediante una cópula gaussiana. Se distingue su covarianza lineal inicial inducida de la matriz latente. El registro diario evalúa referencias estadísticas, cuyo centro y EWMA difieren del simulador, y no valida por sí solo el CVaR de cartera. Se protegen las bases de BPA tras splits y se concilian los flujos de caja modelados. **No** equivale al modelo factorial-GARCH completo: GJR sigue estimado sobre retornos totales; GJR residual, GARCH-X, DCC, saltos informativos, cobertura extrema y rentabilidad económica continúan pendientes de validación. El [estado consolidado](estado-validacion.md) separa implementación y evidencia.
 
 ## 1. Problema y pregunta de investigación
 
@@ -300,11 +300,11 @@ Un candidato experimental no modifica composición ni señales. Su promoción ex
 | Fase | Contenido | Estado del objetivo |
 |---|---|---|
 | 0 | Este artículo; contratos de datos, supuestos y pruebas de aceptación | Documento |
-| 1 | GJR-GARCH-t en módulo aislado, referencia EWMA, validación *walk-forward*, reporte de calibración y anomalías | Primera implementación experimental |
+| 1 | GJR-GARCH-t, referencia EWMA, validación *walk-forward*, reporte de calibración y anomalías | Implementado sobre retornos totales; 19 aceptados de 260 en el corte examinado; evidencia prospectiva acumulándose |
 | 2 | Registro de eventos point-in-time y prueba incremental de GARCH-X sin texto generativo como verdad | Pendiente |
-| 3 | Modelo factorial dinámico; volatilidades por factor y correlaciones residuales regularizadas | Pendiente |
+| 3 | Modelo factorial dinámico; volatilidades por factor y correlaciones residuales regularizadas | SPY y residuo PSD en el motor; DCC y factores estocásticos de tasas/crédito/USD pendientes |
 | 4 | Saltos y probabilidades condicionales con diagnóstico de doble conteo | Pendiente |
-| 5 | Integración aprobada a simulación y optimización, pruebas de decisiones netas de costos | Pendiente |
+| 5 | Integración aprobada a simulación y optimización, pruebas de decisiones netas de costos | Integración de software disponible; superioridad económica, estabilidad y calibración de retornos pendientes |
 
 Se almacenarán capturas **raw** y normalizadas, pronósticos inmutables, versión de código y parámetros. Los archivos públicos jamás contendrán claves, suscripciones privadas o contenido restringido de Bloomberg.
 

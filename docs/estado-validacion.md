@@ -1,7 +1,29 @@
 # Estado de validación de Trading
 
-**Fecha del diagnóstico:** 26 de octubre de 2026, con cortes de precios publicados por el repositorio.
+**Fecha del diagnóstico:** 27 de octubre de 2026, con cortes de precios publicados por el repositorio.
 **Clasificación:** investigación activa; no es asesoramiento de inversión ni certificación predictiva.
+
+## Estado actual consolidado · motor 0.18.0
+
+El universo contiene 260 instrumentos (160 acciones y 100 ETF). Los tickers y los indicadores de cálculo del commit definitivo `f43efeb` se conservan. El [backlog actualizado](pendientes.md) aplica los criterios de cierre proporcionados. Las correcciones de integridad de la auditoría se implementan así:
+
+| Hallazgo | Estado de implementación | Límite que permanece |
+|---|---|---|
+| H7 · BPA mezclado tras un split | Comprobación por componente, independiente del beneficio neto y de la ruta de recuperación; también se aplica al cargar snapshots anteriores | BKNG se bloquea hasta contar con una base conciliada; no se inventa un BPA nuevo |
+| H1 · Valor presente con BPA continuado | Valor presente, escenario base y fórmula usan el mismo múltiplo de referencia | La reversión parcial sigue siendo una convención para el retorno esperado |
+| H3 · Intereses y retiros | El efectivo cobra desde cada pago y deja de cobrar al retirarse; se comparte el tratamiento con atribución y robustez | Los dividendos sin calendario mantienen su aproximación uniforme dentro del intervalo |
+| H4 · Realización de intereses | Sin intereses de cuenta observados, el resultado permanece sin conciliar | Una tasa declarada no sustituye al rendimiento realizado |
+| H2 · Alcance del registro de riesgo | Identifica referencias estadísticas y deja de atribuir su cobertura al simulador exacto | Validación de la distribución exacta y del CVaR de cartera pendiente |
+| H5 · Covarianza después de marginales t | Registra matrices latente e inducida por separado; las porciones de varianza inicial usan la segunda | Aproximación numérica PSD; dependencia extrema y covarianza de todo el horizonte sin validar |
+| H6 · Resultados ausentes | Registros de completado por instrumento, con hash del sello y de la fuente; no se reescriben resultados previos | Hace falta que se recupere una observación comparable |
+
+La matriz inducida utiliza una expansión de Hermite de orden 25 y cuadratura sobre la transformación efectivamente simulada. Se informa su resto de proyección; no constituye una recalibración empírica. Referencia metodológica: [correlaciones y cópula gaussiana mediante Hermite](https://arxiv.org/abs/1608.00738).
+
+Los puntos 24 y 25 del backlog se cierran: la prueba del navegador cubre cualquier cambio de `dist/**`, incluida toda plantilla y CSS, y se actualizan README, estado consolidado y tabla del documento técnico. Las secciones posteriores conservan la historia de implementación y sus fechas.
+
+**Prioridades todavía abiertas:** historia de BPA y calibración de crecimiento con información disponible al corte; anclas económicas de ETF con cobertura trazable; crédito/TIPS y tasas reales; observaciones prospectivas maduras; dependencia conjunta; eventos verificados; estabilidad del optimizador y conciliación real de cuenta. No se promueve ninguno de esos modelos por haber aprobado pruebas de software.
+
+**Comprobaciones de 0.18.0:** 174 pruebas JavaScript y 114 Python aprobadas, versiones de fuentes consistentes y sin errores de formato del diff. Incluyen el BPA mezclado con beneficio neto ausente, la igualdad numérica de la fórmula de valoración, varios retiros dentro de un intervalo, intereses desde la fecha de pago, conciliación pendiente de intereses no observados, matriz inducida PSD y completado inmutable de resultados recuperados. Estas comprobaciones corresponden al software y no sustituyen validación económica.
 
 ## 1. Qué significa «implementado»
 

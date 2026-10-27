@@ -1,7 +1,7 @@
-import { finite, mean, normalizeWeights, sum } from "./analytics.mjs?v=0.17.0";
-import { adjustedReturn } from "./factors.mjs?v=0.17.0";
-import { MODEL_VERSION } from "./policy.mjs?v=0.17.0";
-import { reconcilePortfolioDistributions } from "./distribution-ledger.mjs?v=0.17.0";
+import { finite, mean, normalizeWeights, sum } from "./analytics.mjs?v=0.18.0";
+import { adjustedReturn } from "./factors.mjs?v=0.18.0";
+import { MODEL_VERSION } from "./policy.mjs?v=0.18.0";
+import { reconcilePortfolioDistributions } from "./distribution-ledger.mjs?v=0.18.0";
 const clone = (value) => JSON.parse(JSON.stringify(value));
 function hash(value) {
   let h = 2166136261;
@@ -163,12 +163,12 @@ export function evaluateJournal(journal, snapshot) {
     const maturity = dates.find((d) =>
       selected.every((a) => a.history.some((r) => r.date === d)),
     );
-    const needsLedger=policy?.dividendPolicy==="cash" || (policy?.dividendWithholding||0)>0;
+    const needsLedger=policy?.dividendPolicy==="cash" || (policy?.dividendWithholding||0)>0 || (policy?.cashYield||0)>0;
     const reconciliation=needsLedger && maturity
       ? reconcilePortfolioDistributions(snapshot.assets,origin.positions,origin.price_as_of,maturity,policy)
       : null;
     if(needsLedger && maturity && !reconciliation.available)
-      return {...entry,status:"unreconciled_distributions",reconciliation_reason:reconciliation.reason};
+      return {...entry,status:reconciliation.code==='missing_cash_interest'?'unreconciled_cash_interest':"unreconciled_distributions",reconciliation_reason:reconciliation.reason};
     const grossReturn = reconciliation?.available ? reconciliation.return : maturity
       ? sum(
           origin.positions.map((p, i) => {

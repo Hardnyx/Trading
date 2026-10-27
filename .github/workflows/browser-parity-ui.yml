@@ -5,10 +5,8 @@ on:
     branches: [main]
     paths:
       - 'scripts/test_browser_parity.mjs'
-      - 'dist/assets/js/**'
-      - 'dist/templates/portfolio.html'
-      - 'dist/templates/composition.html'
-      - 'dist/templates/layout.html'
+      - 'dist/**'
+      - 'package.json'
       - '.github/workflows/browser-parity-ui.yml'
 permissions:
   contents: read

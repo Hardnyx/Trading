@@ -1,6 +1,6 @@
-import { alignReturns, covariance, variance, mean, finite } from "./analytics.mjs?v=0.17.0";
-import { SECTOR_PROXIES } from "./policy.mjs?v=0.17.0";
-import { ewmaCovariance } from "./risk-math.mjs?v=0.17.0";
+import { alignReturns, covariance, variance, mean, finite } from "./analytics.mjs?v=0.18.0";
+import { SECTOR_PROXIES } from "./policy.mjs?v=0.18.0";
+import { ewmaCovariance } from "./risk-math.mjs?v=0.18.0";
 
 const clamp = (x, low, high) => Math.max(low, Math.min(high, x));
 const toCorrelation = (matrix) => matrix.map((row, i) =>
@@ -141,6 +141,6 @@ export function estimateResidualDependence(assets, positions, asOf, lookback = 5
     available: true, asOf, inputEnd: aligned.dates.at(-1),
     observations: n, regimeCounts,
     method: "trailing-63d-SPY-bull-bear-sector-OLS-equal-weight",
-    note: `Correlación residual equiponderada en ${n} sesiones, tras regresión con betas SPY por régimen definido con 63 sesiones PREVIAS, más proxy sectorial ortogonal al mercado. La EWMA reciente (vida media ${(Math.log(.5) / Math.log(lambda)).toFixed(0)} sesiones) se conserva solo como diagnóstico. No elimina riesgo sistémico ni equivale a causalidad. Covarianza total intacta para Monte Carlo.`,
+    note: `Correlación residual equiponderada en ${n} sesiones, tras regresión con betas SPY por régimen definido con 63 sesiones PREVIAS, más proxy sectorial ortogonal al mercado. La EWMA reciente (vida media ${(Math.log(.5) / Math.log(lambda)).toFixed(0)} sesiones) se conserva solo como diagnóstico. No elimina riesgo sistémico ni equivale a causalidad. La covarianza total alimenta el espacio gaussiano latente; las marginales Student-t modifican sus correlaciones lineales.`,
   };
 }

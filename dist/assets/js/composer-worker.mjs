@@ -1,4 +1,4 @@
-import { composePortfolio } from "./composer.mjs?v=0.17.0";
+import { composePortfolio } from "./composer.mjs?v=0.18.0";
 
 self.onmessage = (event) => {
   const { id, snapshot, settings, overrides, rules } = event.data;

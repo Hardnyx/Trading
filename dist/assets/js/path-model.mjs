@@ -5,21 +5,23 @@ import {
   quantile,
   sum,
   normalizeWeights,
-} from "./analytics.mjs?v=0.17.0";
-import { seededRandom, normalGenerator, poisson } from "./random.mjs?v=0.17.0";
-import { ewmaCovariance, cholesky } from "./risk-math.mjs?v=0.17.0";
-import { buildReturnAnchors, sampleDrifts, bondScenarioAnnualReturn } from "./return-model.mjs?v=0.17.0";
-import { distributionAccounting } from "./distribution-ledger.mjs?v=0.17.0";
-import { assetAt } from "./research-model.mjs?v=0.17.0";
-import { factorModel } from "./factors.mjs?v=0.17.0";
-import { conditionalRisk, updateGjrVariance, updateEwmaVariance, studentMarginal } from "./conditional-risk.mjs?v=0.17.0";
-import { marketFactorCovariance, conditionalFactorization } from "./factor-covariance.mjs?v=0.17.0";
+} from "./analytics.mjs?v=0.18.0";
+import { seededRandom, normalGenerator, poisson } from "./random.mjs?v=0.18.0";
+import { ewmaCovariance, cholesky } from "./risk-math.mjs?v=0.18.0";
+import { buildReturnAnchors, sampleDrifts, bondScenarioAnnualReturn } from "./return-model.mjs?v=0.18.0";
+import { distributionAccounting } from "./distribution-ledger.mjs?v=0.18.0";
+import { cashGrowth, uniformCashGrowth } from "./cashflows.mjs?v=0.18.0";
+import { copulaInnovationCovariance } from './copula-covariance.mjs?v=0.18.0';
+import { assetAt } from "./research-model.mjs?v=0.18.0";
+import { factorModel } from "./factors.mjs?v=0.18.0";
+import { conditionalRisk, updateGjrVariance, updateEwmaVariance, studentMarginal } from "./conditional-risk.mjs?v=0.18.0";
+import { marketFactorCovariance, conditionalFactorization } from "./factor-covariance.mjs?v=0.18.0";
 import {
   mandate,
   regimes,
   withdrawalSchedule,
   DEFAULT_REGIMES,
-} from "./policy.mjs?v=0.17.0";
+} from "./policy.mjs?v=0.18.0";
 
 export const BASE_REGIME = {
   id: "base",
@@ -91,6 +93,7 @@ export function preparePaths(assets, options = {}, overrides = {}, references = 
     { ...settings, asOf });
   const covariance = conditional.covariance,
     factorization = conditionalFactorization(riskFactor, conditional.multipliers);
+  const innovationMoments=copulaInnovationCovariance(covariance,conditional.dynamic?conditional.fits:[]);
   const exposures = factorModel(
     clean,
     clean.map((a) => ({ symbol: a.symbol, weight: 1 / clean.length })),
@@ -108,6 +111,8 @@ export function preparePaths(assets, options = {}, overrides = {}, references = 
     assets: clean,
     options: { ...settings, asOf, marketLoadings },
     covariance,
+    innovationCovariance:innovationMoments.covariance,
+    innovationMoments,
     factorization,
     factorCovariance: {
       available: !!factorization,
@@ -186,8 +191,9 @@ export function generatePaths(inputs, paths, seed, stepsPerYear = 52) {
     conditional = inputs.conditional,
     dynamic = conditional?.dynamic === true,
     factorization = inputs.factorization;
-  // Preserve total covariance and correlation: only the conditional diagonal
-  // dynamics change. Every shocked return still carries systematic exposure.
+  // Factorize the latent Gaussian covariance. Student-t marginal transforms
+  // change linear correlations; innovationCovariance reports their initial
+  // induced moments separately. Systematic exposure is never removed.
   const correlation = dynamic
     ? covariance.map((row, i) => row.map((v, j) =>
         covariance[i][i] > 0 && covariance[j][j] > 0
@@ -397,12 +403,14 @@ export function evaluatePaths(weights, sample, options = {}) {
     gamma = policy.riskAversion,
     distributions=distributionAccounting(sample),
     cashDividends=policy.dividendPolicy==="cash",
-    withholding=policy.dividendWithholding || 0;
+    withholding=policy.dividendWithholding || 0,
+    cashStepGrowth=cashGrowth(policy.cashYield,dt),cashDepositGrowth=uniformCashGrowth(policy.cashYield,dt);
   let distributionGrossSum=0, distributionNetSum=0, reinvestedSum=0, withheldSum=0,
-    receivableSum=0, paidGrossSum=0;
+    receivableSum=0, paidGrossSum=0, cashInterestSum=0;
   for (let p = 0; p < paths; p++) {
     let previous = initial,
       cashWithdrawn = 0,
+      nominalWithdrawn = 0,
       nav = initial / capital,
       peak = 1,
       worst = nav - 1,
@@ -414,14 +422,14 @@ export function evaluatePaths(weights, sample, options = {}) {
       dividendsGross=0,
       dividendsNet=0,
       reinvested=0,
-      withheld=0;
+      withheld=0,uniformPaidPrincipal=0,paidCash=0;
     const uniformCash=new Float64Array(assets.length);
     const path = options.details && p < 12 ? [nav * 100] : null;
     if (observations) observations[0].push(nav * 100);
     for (let t = 1; t <= steps; t++) {
       const offset = p * (steps + 1) + t;
-      const cashGross = cashIndex >= 0 ? gross[cashIndex][offset] : 1;
-      let total = 0,paidCash=0,uniformPrior=0,uniformStep=0;
+      let total = 0,uniformPrior=0,uniformStep=0;
+      paidCash=0;
       for(const {w,i} of selected) {
         const view=distributions[i];
         if(view.dated){
@@ -430,7 +438,8 @@ export function evaluatePaths(weights, sample, options = {}) {
         }else{
           const dist=view.factors,value=w*gross[i][offset]*initial;
           const net=value*dist.netCash[t];
-          uniformPrior+=uniformCash[i];uniformStep+=net;uniformCash[i]+=net;
+          uniformPrior+=uniformCash[i];uniformStep+=net;uniformPaidPrincipal+=net;
+          uniformCash[i]=uniformCash[i]*cashStepGrowth+net*cashDepositGrowth;
           total+=value*dist.marketValue[t]+uniformCash[i];
           paidCash+=uniformCash[i];
           dividendsGross+=value*dist.grossDistribution[t];
@@ -438,7 +447,8 @@ export function evaluatePaths(weights, sample, options = {}) {
           withheld+=value*dist.withheld[t];
         }
       }
-      dividendsNet=paidCash;
+      const priorWithdrawals=cashWithdrawn;
+      cashWithdrawn*=cashStepGrowth;
       total-=cashWithdrawn;
       const priorFX = fx[offset - 1],
         currentFX = fx[offset];
@@ -455,18 +465,25 @@ export function evaluatePaths(weights, sample, options = {}) {
       } else run = 0;
       if (total * currentFX < policy.capitalFloor) floorBroken = true;
       let withdrawal=0;
+      const currentWithdrawals=[];
       for(const row of flows[t]){
         const u=Math.max(0,Math.min(steps,row.year/dt)),lo=Math.floor(u),hi=Math.min(steps,lo+1);
         const base=p*(steps+1),loFX=fx[base+lo],hiFX=fx[base+hi];
         const withdrawalFX=Math.exp(Math.log(loFX)+(Math.log(hiFX)-Math.log(loFX))*(u-lo));
         const due=row.amount/withdrawalFX;
-        const fraction=Math.max(0,Math.min(1,(row.year-(t-1)*dt)/dt));
+        const elapsed=Math.max(0,Math.min(dt,row.year-(t-1)*dt));
         const datedCash=selected.reduce((s,{w,i})=>s+(distributions[i].dated
           ?w*initial*distributions[i].cashAt(p,row.year):0),0);
-        const cash=(cashIndex>=0?weights[cashIndex]*cashGross*initial:0)+
-          uniformPrior+uniformStep*fraction+datedCash-cashWithdrawn;
+        const cashLevel=cashIndex>=0?Math.exp(Math.log(gross[cashIndex][base+lo])+
+          (Math.log(gross[cashIndex][base+hi])-Math.log(gross[cashIndex][base+lo]))*(u-lo)):0;
+        const previousInStep=currentWithdrawals.reduce((s,r)=>s+r.due*cashGrowth(policy.cashYield,row.year-r.year),0);
+        const cash=(cashIndex>=0?weights[cashIndex]*cashLevel*initial:0)+
+          uniformPrior*cashGrowth(policy.cashYield,elapsed)+uniformStep*uniformCashGrowth(policy.cashYield,elapsed,dt)+
+          datedCash-priorWithdrawals*cashGrowth(policy.cashYield,elapsed)-previousInStep;
         if(cash+1e-8<due || total-withdrawal+1e-8<due)failed=true;
-        cashWithdrawn+=due;withdrawal+=due;
+        const dueAtEnd=due*cashGrowth(policy.cashYield,t*dt-row.year);
+        cashWithdrawn+=dueAtEnd;withdrawal+=dueAtEnd;nominalWithdrawn+=due;
+        currentWithdrawals.push({year:row.year,due});
       }
       previous = Math.max(0, total-withdrawal);
       if (previous * currentFX < policy.capitalFloor) floorBroken = true;
@@ -474,18 +491,21 @@ export function evaluatePaths(weights, sample, options = {}) {
       if (path) path.push(nav * 100);
     }
     let receivable=0,paidGross=cashDividends?dividendsGross:0;
+    dividendsNet=uniformPaidPrincipal;
     for(const {w,i} of selected){
       const view=distributions[i];if(!view.dated)continue;
       dividendsGross+=w*initial*view.grossIncome[p];
       withheld+=w*initial*view.tax[p];reinvested+=w*initial*view.reinvested[p];
       receivable+=w*initial*view.receivables[p*(steps+1)+steps];
-      if(cashDividends)paidGross+=w*initial*view.paidGross[p];
+      if(cashDividends){paidGross+=w*initial*view.paidGross[p];dividendsNet+=w*initial*view.paidGross[p]*(1-withholding);}
     }
     receivableSum+=receivable;paidGrossSum+=paidGross;
     distributionGrossSum+=dividendsGross;
     distributionNetSum+=dividendsNet;
     reinvestedSum+=reinvested;
     withheldSum+=withheld;
+    const initialCashInterest=cashIndex>=0?weights[cashIndex]*initial*(gross[cashIndex][p*(steps+1)+steps]-1):0;
+    cashInterestSum+=initialCashInterest+paidCash-dividendsNet-(cashWithdrawn-nominalWithdrawn);
     const remaining = previous * fx[p * (steps + 1) + steps],
       ratio = nav;
     returns.push(ratio - 1);
@@ -531,6 +551,8 @@ export function evaluatePaths(weights, sample, options = {}) {
     certaintyEquivalent,
     dividendPolicy:policy.dividendPolicy,
     dividendWithholding:withholding,
+    cashYield:policy.cashYield||0,
+    expectedCashInterest:cashInterestSum/paths,
     expectedGrossDistributions:distributionGrossSum/paths,
     expectedNetDistributions:(distributionGrossSum-withheldSum)/paths,
     expectedDividendWithholding:withheldSum/paths,

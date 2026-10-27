@@ -1,11 +1,35 @@
 from pathlib import Path
 import unittest
 import json
+from copy import deepcopy
+from unittest.mock import patch
 
 from scripts import refresh_data as module
 
 
 class FinancialPeriods(unittest.TestCase):
+    def test_missing_net_income_cannot_bypass_split_basis_recovery_and_block(self):
+        eps = {"value": 167.95, "period_end": "2026-06-30", "filed": "2026-08-04",
+               "method": "TTM", "components": [
+                   {"filed": "2026-02-18", "val": 165.57},
+                   {"filed": "2026-08-04", "val": 3.88},
+                   {"filed": "2026-08-04", "val": 1.5}]}
+        prices = {"price": 153.14, "price_date": "2026-10-26", "source_url": "https://example.test/",
+                  "history": [{"date": "2026-10-26", "close": 153.14, "adj_close": 153.14}],
+                  "splits": [{"date": "2026-04-06", "ratio": 25}]}
+        report = {"form": "10-Q", "filing_date": "2026-08-04", "report_date": "2026-06-30"}
+        with patch.object(module, "prices", return_value=prices), \
+             patch.object(module, "financials", side_effect=lambda *a, **k: {"eps": deepcopy(eps), "net_income": None, "refresh_status": "available"}) as fetch, \
+             patch.object(module, "filings", return_value=[report]):
+            asset, errors = module.build_asset(("TEST", "Example", "Industrial", 1, .05, 20), "2026-10-26", {})
+        self.assertEqual(fetch.call_count, 2)
+        self.assertIsNone(asset["financials"]["eps"])
+        self.assertEqual(asset["financials"]["eps_unverified"]["value"], 167.95)
+        self.assertTrue(any("base por acción" in e for e in errors))
+        for row in eps["components"]:
+            row["filed"] = "2026-08-04"
+        self.assertIsNone(module.eps_split_basis_problem({"symbol": "TEST", "splits": prices["splits"], "financials": {"eps": eps}}, "2026-10-26"))
+
     def test_submission_keeps_reporting_period_separate_from_filing_date(self):
         body = {"filings": {"recent": {"form": ["10-Q"], "filingDate": ["2026-10-23"],
             "reportDate": ["2026-09-30"], "accessionNumber": ["0000000001-26-000001"],

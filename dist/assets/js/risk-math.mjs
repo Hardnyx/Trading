@@ -1,4 +1,4 @@
-import { covariance } from "./analytics.mjs?v=0.17.0";
+import { covariance } from "./analytics.mjs?v=0.18.0";
 export function ewmaCovariance(columns, lambda = 0.94) {
   if (!columns.length || columns[0].length < 20 || !(lambda > 0 && lambda < 1))
     throw new Error("Historia insuficiente para EWMA.");

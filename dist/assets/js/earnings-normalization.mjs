@@ -1,4 +1,5 @@
-import { finite } from './analytics.mjs?v=0.17.0';
+import { finite } from './analytics.mjs?v=0.18.0';
+import { earningsShareBasis } from './financial-freshness.mjs?v=0.18.0';
 
 // An accounting bridge, not a claim that continuing earnings are recurring.
 // Missing discontinued earnings cannot be interpreted as zero.
@@ -9,6 +10,8 @@ export function dilutedEarningsBridge(asset, asOf=asset.price_date){
  const failure=reason=>({available:false,reason,reported:finite(reported)?reported:null});
  if(!records.every(r=>finite(r?.value)&&r.filed&&r.filed<=asOf&&r.period_end&&r.period_end<=asOf))
   return failure('Faltan BPA total, continuado y discontinuado publicados al corte');
+ if(records.some(r=>earningsShareBasis(asset,asOf,r).blocked))
+  return failure('La base por acción no está reconciliada alrededor de un split');
  if(!records.every(r=>r.period_end===records[0].period_end&&r.method===records[0].method))
   return failure('Los tres BPA no comparten periodo y método');
  const components=records.map(r=>r.components||[]);

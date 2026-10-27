@@ -5,10 +5,10 @@
 import { readFileSync, existsSync, mkdirSync, writeFileSync, readdirSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { resolve, join, dirname } from "node:path";
-import { composePortfolio } from "../dist/assets/js/composer.mjs?v=0.17.0";
-import { referenceRequest } from "../dist/assets/js/reference-preset.mjs?v=0.17.0";
-import { adjustedReturn } from "../dist/assets/js/factors.mjs?v=0.17.0";
-import { reconcilePortfolioDistributions } from "../dist/assets/js/distribution-ledger.mjs?v=0.17.0";
+import { composePortfolio } from "../dist/assets/js/composer.mjs?v=0.18.0";
+import { referenceRequest } from "../dist/assets/js/reference-preset.mjs?v=0.18.0";
+import { adjustedReturn } from "../dist/assets/js/factors.mjs?v=0.18.0";
+import { reconcilePortfolioDistributions } from "../dist/assets/js/distribution-ledger.mjs?v=0.18.0";
 
 export function nextSessionStart(cutDate){
   if(!/^\d{4}-\d{2}-\d{2}$/.test(cutDate))throw Error("Invalid market cut");
@@ -89,9 +89,11 @@ export function buildSealedOrigin(snapshot, volatility, marketBytes, volatilityB
 export function maturityCheck(origin,market){
   if(market.price_as_of<origin.maturity_date)return {status:"immature"};
   const relevant=(origin.positions||[]).filter(p=>p.weight>0&&p.symbol!=="CASH");
-  if(!relevant.length)return {status:"mature_without_risky_positions",realized:0};
   const policy=origin.model_settings?.mandate;
-  const needsLedger=policy?.dividendPolicy==="cash" || (policy?.dividendWithholding||0)>0;
+  if(policy?.cashYield>0 && (origin.positions||[]).some(p=>p.weight>0&&p.symbol==='CASH'))
+    return {status:'unreconciled_cash_interest',warning:'Observed account interest is required; declared yield is not an outcome.'};
+  if(!relevant.length)return {status:"mature_without_risky_positions",realized:0};
+  const needsLedger=policy?.dividendPolicy==="cash" || (policy?.dividendWithholding||0)>0 || (policy?.cashYield||0)>0;
   // Fail closed before selecting a maturity session if there is no dividend
   // ledger at all. Ex-post adjusted prices alone cannot supply payment dates.
   if(needsLedger && relevant.some(p=>!market.assets.find(a=>a.symbol===p.symbol)?.distribution_index))
@@ -118,7 +120,7 @@ export function maturityCheck(origin,market){
     ? reconcilePortfolioDistributions(market.assets,origin.positions,origin.original_price_as_of,common,policy)
     : null;
   if(needsLedger && !reconciliation.available)
-    return {status:"unreconciled_distributions",warning:reconciliation.reason};
+    return {status:reconciliation.code==='missing_cash_interest'?'unreconciled_cash_interest':"unreconciled_distributions",warning:reconciliation.reason};
   let sum=0;
   for(const row of relevant){
     const asset=assets.get(row.symbol);

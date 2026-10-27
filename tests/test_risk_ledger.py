@@ -2,6 +2,12 @@
 from datetime import date, timedelta
 import math
 import unittest
+import contextlib
+import io
+import json
+from pathlib import Path
+from tempfile import TemporaryDirectory
+from unittest.mock import patch
 
 import numpy as np
 from scipy.integrate import quad
@@ -11,6 +17,7 @@ from scripts.risk_ledger import (
     RISK_MODEL_VERSION, build_seal, christoffersen, kupiec, next_session_start,
     prospective_eligibility, score_seal, summarize, tail_block,
 )
+from scripts import risk_ledger as ledger_module
 
 
 def history(n=560, end="2026-10-23", seed=7):
@@ -78,12 +85,13 @@ class RiskLedgerTests(unittest.TestCase):
         self.assertEqual(set(seal["instruments"]), {"AAA"})
         self.assertIn("BBB", seal["skipped"])  # stale close is not sealed
         aaa = seal["instruments"]["AAA"]
-        self.assertEqual(aaa["production"], "gjr")
+        self.assertEqual(aaa["selected_reference"], "gjr")
+        self.assertEqual(seal["model_scope"], "statistical-references-not-page-engine")
         self.assertAlmostEqual(aaa["gjr"]["variance_pct2"], 1.44)
         self.assertGreater(aaa["ewma"]["variance_pct2"], 0)
         research = build_seal(snap, volatility(status="research_only"), b"m", b"v",
                               "2026-10-24T12:00:00Z")
-        self.assertEqual(research["instruments"]["AAA"]["production"], "ewma")
+        self.assertEqual(research["instruments"]["AAA"]["selected_reference"], "ewma")
 
     def test_scores_first_later_session_and_keeps_missing_outcomes(self):
         rows = history()
@@ -121,9 +129,49 @@ class RiskLedgerTests(unittest.TestCase):
         version = summary["versions"]["9.9.9"]
         self.assertEqual(version["status"], "accumulating")
         self.assertEqual(version["pending"], ["2026-10-26"])
-        self.assertEqual(version["models"]["production"]["var95_exceptions"], 1)
+        self.assertEqual(version["models"]["hybrid_reference"]["var95_exceptions"], 1)
         self.assertAlmostEqual(version["models"]["gjr"]["es95_realized_ratio"], 1.0)
         self.assertAlmostEqual(version["paired_qlike_ewma_minus_gjr"]["mean"], .3)
+
+    def test_transient_missing_outcomes_can_complete_without_rewriting_seals_or_scores(self):
+        block = tail_block(0, 1, None)
+        seal = {"original_price_as_of": "2026-10-23", "risk_model_version": "1.0.0",
+                "instruments": {"AAA": {"production": "ewma", "ewma": block}}}
+        with TemporaryDirectory() as temp:
+            root = Path(temp) / "ledger"
+            root.mkdir()
+            seal_file = root / "2026-10-23.json"
+            seal_file.write_text(json.dumps(seal))
+            original_seal = seal_file.read_bytes()
+            market = Path(temp) / "market.json"
+            def run(history):
+                market.write_text(json.dumps({"price_as_of": "2026-10-26", "assets": [
+                    {"symbol": "AAA", "history": history}]}))
+                with patch.object(ledger_module, "LEDGER", root), \
+                     patch("sys.argv", ["risk_ledger.py", "score", "--snapshot", str(market)]), \
+                     contextlib.redirect_stdout(io.StringIO()):
+                    ledger_module.main()
+            start = [{"date": "2026-10-23", "adj_close": 100}]
+            run(start)
+            base = root / "scores/2026-10-23.json"
+            original_score = base.read_bytes()
+            before = ledger_module.read_scores(root / "scores")
+            pending = summarize({"2026-10-23": seal}, before, "now")["versions"]["1.0.0"]
+            self.assertEqual(pending["scored_sessions"], 0)
+            self.assertEqual(pending["pending_instruments"], 1)
+            run(start + [{"date": "2026-10-26", "adj_close": 99}])
+            after = ledger_module.read_scores(root / "scores")
+            row = after["2026-10-23"]["instruments"]["AAA"]
+            self.assertEqual(row["status"], "scored")
+            self.assertAlmostEqual(row["return_pct"], 100 * math.log(.99))
+            run(start + [{"date": "2026-10-26", "adj_close": 90}])
+            self.assertEqual(ledger_module.read_scores(root / "scores")["2026-10-23"]["instruments"]["AAA"], row)
+            self.assertEqual(seal_file.read_bytes(), original_seal)
+            self.assertEqual(base.read_bytes(), original_score)
+            self.assertEqual(len(list((root / "scores/completions").glob("*/*.json"))), 1)
+            done = summarize({"2026-10-23": seal}, after, "now")["versions"]["1.0.0"]
+            self.assertEqual(done["fully_scored_sessions"], 1)
+            self.assertEqual(done["pending_instruments"], 0)
 
 
 if __name__ == "__main__":

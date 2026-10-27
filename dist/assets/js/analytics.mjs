@@ -1,3 +1,5 @@
+import { earningsShareBasis } from './financial-freshness.mjs?v=0.18.0';
+
 export const TRADING_DAYS = 252;
 export const finite = (x) => typeof x === "number" && Number.isFinite(x);
 export const sum = (xs) => xs.reduce((a, b) => a + b, 0);
@@ -163,7 +165,7 @@ export function portfolioAnalysis(
 export function metrics(asset) {
   const f = asset.financials || {},
     value = (key) => f[key]?.value ?? null;
-  const eps = value("eps"),
+  const eps = earningsShareBasis(asset).blocked ? null : value("eps"),
     shares = value("shares"),
     revenue = value("revenue"),
     op = value("operating_income");

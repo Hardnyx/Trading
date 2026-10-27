@@ -118,8 +118,9 @@ def instrument_forecast(asset: dict, cut: str, record: dict | None,
                **tail_block(record["mean_pct"], record["variance_next_pct2"], record["nu"]),
                "nu": record["nu"]}
     return {"ewma": ewma, "gjr": gjr,
-            # The model the page's hybrid mode uses for this instrument.
-            "production": "gjr" if gjr and gjr["status"] == "accepted" else "ewma"}
+            # This selects a statistical reference, not the page's drift,
+            # uncentred EWMA, variance caps or portfolio distribution.
+            "selected_reference": "gjr" if gjr and gjr["status"] == "accepted" else "ewma"}
 
 
 def _sha256(data: bytes) -> str:
@@ -149,6 +150,7 @@ def build_seal(snapshot: dict, volatility: dict, market_bytes: bytes,
         "ledger": "daily-one-session-risk",
         "risk_model_version": RISK_MODEL_VERSION,
         "research_only": True,
+        "model_scope": "statistical-references-not-page-engine",
         "issued_at": issued_at,
         "original_price_as_of": cut,
         "market_collected_at": snapshot["generated_at"],
@@ -188,7 +190,7 @@ def score_seal(seal: dict, snapshot: dict) -> dict | None:
             continue
         observed = 100 * math.log(ratio)
         row = {"status": "scored", "session": after["date"], "return_pct": observed,
-               "production": forecast["production"]}
+               "selected_reference": forecast.get("selected_reference", forecast.get("production"))}
         for model in ("ewma", "gjr"):
             block = forecast.get(model)
             if not block:
@@ -272,21 +274,36 @@ def summarize(seals: dict[str, dict], scores: dict[str, dict], generated_at: str
     for cut, seal in sorted(seals.items()):
         entry = versions.setdefault(seal["risk_model_version"], {
             "sealed_sessions": 0, "scored_sessions": 0, "pending": [],
-            "rows": {"ewma": [], "gjr": [], "production": []}, "paired": []})
+            "partial_sessions": 0, "fully_scored_sessions": 0, "pending_instruments": 0,
+            "rows": {"ewma": [], "gjr": [], "hybrid_reference": []}, "paired": []})
         entry["sealed_sessions"] += 1
         score = scores.get(cut)
         if not score:
             entry["pending"].append(cut)
+            entry["pending_instruments"] += len(seal.get("instruments", {}))
             continue
-        entry["scored_sessions"] += 1
+        expected = set(seal.get("instruments", {})) or set(score["instruments"])
+        completed = {symbol for symbol, row in score["instruments"].items()
+                     if row.get("status") == "scored" and symbol in expected}
+        if completed:
+            entry["scored_sessions"] += 1
+        missing = expected - completed
+        if missing:
+            entry["pending"].append(cut)
+            entry["pending_instruments"] += len(missing)
+            if completed:
+                entry["partial_sessions"] += 1
+        elif completed:
+            entry["fully_scored_sessions"] += 1
         for symbol, row in score["instruments"].items():
             if row.get("status") != "scored":
                 continue
             for model in ("ewma", "gjr"):
                 if model in row:
                     entry["rows"][model].append((cut, symbol, row[model], row["return_pct"]))
-            entry["rows"]["production"].append(
-                (cut, symbol, row[row["production"]], row["return_pct"]))
+            reference = row.get("selected_reference", row.get("production"))
+            entry["rows"]["hybrid_reference"].append(
+                (cut, symbol, row[reference], row["return_pct"]))
             if "gjr" in row:
                 entry["paired"].append(row["ewma"]["qlike"] - row["gjr"]["qlike"])
     result = {}
@@ -294,11 +311,14 @@ def summarize(seals: dict[str, dict], scores: dict[str, dict], generated_at: str
         paired = entry["paired"]
         models = {name: _model_summary(rows) for name, rows in entry["rows"].items()}
         enough = (entry["scored_sessions"] >= MINIMUM_SESSIONS and
-                  models["production"]["observations"] >= MINIMUM_OBSERVATIONS)
+                  models["hybrid_reference"]["observations"] >= MINIMUM_OBSERVATIONS)
         result[version] = {
             "status": "evaluable" if enough else "accumulating",
             "sealed_sessions": entry["sealed_sessions"],
             "scored_sessions": entry["scored_sessions"],
+            "fully_scored_sessions": entry["fully_scored_sessions"],
+            "partial_sessions": entry["partial_sessions"],
+            "pending_instruments": entry["pending_instruments"],
             "pending": entry["pending"],
             "models": models,
             "paired_qlike_ewma_minus_gjr": {
@@ -310,11 +330,12 @@ def summarize(seals: dict[str, dict], scores: dict[str, dict], generated_at: str
         "schema_version": 1,
         "generated_at": generated_at,
         "current_risk_model_version": RISK_MODEL_VERSION,
+        "model_scope": "statistical-references-not-page-engine",
         "minimum_sessions": MINIMUM_SESSIONS,
         "minimum_observations": MINIMUM_OBSERVATIONS,
         "tail": TAIL,
         "versions": result,
-        "warning": "Prospective one-session diagnostics. Pooled tests treat instruments as independent, which they are not; thresholds are operational rules, not power analyses. Nothing here promotes parameters automatically.",
+        "warning": "Prospective one-session statistical reference diagnostics, not validation of the page's exact simulation or portfolio CVaR. Pooled tests treat instruments as independent, which they are not; thresholds are operational rules, not power analyses. Nothing here promotes parameters automatically.",
     }
 
 
@@ -330,6 +351,30 @@ def _write_once(path: Path, payload: dict) -> None:
     with path.open("x", encoding="utf-8") as handle:
         handle.write(json.dumps(payload, ensure_ascii=False, separators=(",", ":"),
                                 allow_nan=False) + "\n")
+
+
+def read_scores(directory: Path) -> dict[str, dict]:
+    """Merge immutable late observations into incomplete legacy score files.
+
+    A completed outcome and the original seal are never replaced. Each late
+    instrument has one content-linked completion record, written exactly once.
+    """
+    scores = _read_directory(directory)
+    for path in sorted((directory / "completions").glob("*/*.json")):
+        record = json.loads(path.read_text(encoding="utf-8"))
+        cut, symbol = record["seal_cut"], record["symbol"]
+        base = scores.get(cut)
+        seal_path = directory.parent / f"{cut}.json"
+        if (not base or record["seal_sha256"] != _sha256(seal_path.read_bytes()) or
+                record["risk_model_version"] != base["risk_model_version"] or
+                record["outcome"].get("status") != "scored"):
+            raise ValueError("Invalid risk completion provenance")
+        previous = base["instruments"].get(symbol)
+        if previous is None or previous.get("status") == "scored":
+            raise ValueError("A risk completion cannot replace a scored outcome")
+        base["instruments"][symbol] = record["outcome"]
+        base.setdefault("completion_records", {})[symbol] = str(path.relative_to(directory))
+    return scores
 
 
 def main():
@@ -357,9 +402,12 @@ def main():
         _write_once(location, seal)
         print(f"Sealed one-session risk for {len(seal['instruments'])} instruments:", location)
     elif args.action == "score":
+        existing = read_scores(LEDGER / "scores")
         for cut, seal in _read_directory(LEDGER).items():
             location = LEDGER / "scores" / f"{cut}.json"
-            if location.exists():
+            prior = existing.get(cut)
+            if prior and all(prior["instruments"].get(s, {}).get("status") == "scored"
+                             for s in seal["instruments"]):
                 continue
             score = score_seal(seal, snapshot)
             if score is None:
@@ -367,11 +415,26 @@ def main():
                 continue
             score["scored_at"] = now
             score["seal_sha256"] = _sha256((LEDGER / f"{cut}.json").read_bytes())
-            _write_once(location, score)
-            print("Scored risk seal", cut)
+            if not prior:
+                _write_once(location, score)
+                print("Scored risk seal", cut)
+            else:
+                for symbol, outcome in score["instruments"].items():
+                    if (outcome["status"] != "scored" or
+                            prior["instruments"].get(symbol, {}).get("status") == "scored"):
+                        continue
+                    completion = {"schema_version": 1, "seal_cut": cut, "symbol": symbol,
+                                  "risk_model_version": seal["risk_model_version"],
+                                  "scored_at": now, "seal_sha256": score["seal_sha256"],
+                                  "source_market_sha256": _sha256(market_bytes),
+                                  "source_market_generated_at": snapshot.get("generated_at"),
+                                  "outcome": outcome}
+                    path = LEDGER / "scores/completions" / cut / (_sha256(symbol.encode()) + ".json")
+                    _write_once(path, completion)
+                    print("Completed missing risk outcome", cut, symbol)
     else:
         summary = summarize(_read_directory(LEDGER),
-                            _read_directory(LEDGER / "scores"), now)
+                            read_scores(LEDGER / "scores"), now)
         SUMMARY.parent.mkdir(parents=True, exist_ok=True)
         SUMMARY.write_text(json.dumps(summary, ensure_ascii=False,
                                       separators=(",", ":"), allow_nan=False),

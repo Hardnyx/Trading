@@ -1,9 +1,9 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { evaluatePaths } from "../dist/assets/js/path-model.mjs?v=0.17.0";
-import { portfolioAttribution } from "../dist/assets/js/attribution.mjs?v=0.17.0";
-import { annualDistributionYield, dividendStep } from "../dist/assets/js/cashflows.mjs?v=0.17.0";
-import { mandate } from "../dist/assets/js/policy.mjs?v=0.17.0";
+import { evaluatePaths } from "../dist/assets/js/path-model.mjs?v=0.18.0";
+import { portfolioAttribution } from "../dist/assets/js/attribution.mjs?v=0.18.0";
+import { annualDistributionYield, dividendStep, cashGrowth, uniformCashGrowth } from "../dist/assets/js/cashflows.mjs?v=0.18.0";
+import { mandate } from "../dist/assets/js/policy.mjs?v=0.18.0";
 
 function fixture(dividendPolicy="cash",dividendWithholding=0){
  const steps=12,paths=100,dt=1/12;
@@ -19,6 +19,29 @@ function fixture(dividendPolicy="cash",dividendWithholding=0){
    policy:mandate({dividendPolicy,dividendWithholding}),
    asOf:"2026-10-23"};
 }
+
+test('cash yield accrues only until each withdrawal, including two flows within one grid step',()=>{
+ const s=fixture();s.asOf='2025-10-27';
+ s.policy=mandate({cashYield:.05,withdrawals:[{date:'2026-04-27',amount:1000},{date:'2026-04-28',amount:200}]});
+ for(let p=0;p<s.paths;p++)for(let t=0;t<=s.steps;t++)s.gross[1][p*(s.steps+1)+t]=cashGrowth(.05,t*s.dt);
+ const r=evaluatePaths([0,1],s,{capital:10000});
+ const year=day=>(Date.parse(day+'T12:00:00Z')-Date.parse(s.asOf+'T12:00:00Z'))/(365.25*86400000);
+ const expected=10500-1000*cashGrowth(.05,1-year('2026-04-27'))-200*cashGrowth(.05,1-year('2026-04-28'));
+ assert.ok(Math.abs(r.medianTerminalWealth-expected)<1e-8);
+ assert.ok(Math.abs(r.meanReturn-.05)<1e-10);
+ assert.ok(Math.abs(r.expectedCashInterest-(expected-8800))<1e-8);
+ assert.equal(r.liquidityFailureProbability,0);
+});
+
+test('uniform dividend cash earns interest with the same accounting in valuation and attribution',()=>{
+ const s=fixture();s.policy=mandate({cashYield:.05,dividendPolicy:'cash'});
+ const r=evaluatePaths([1,0],s,{capital:10000});
+ assert.ok(r.expectedCashInterest>0);
+ assert.ok(r.meanReturn>evaluatePaths([1,0],fixture(),{capital:10000}).meanReturn);
+ const attr=portfolioAttribution(s.assets,[1,0],s,0,10000);
+ assert.ok(Math.abs(attr.meanReturn-r.meanReturn)<1e-10);
+ assert.equal(uniformCashGrowth(.05,0,1),0);
+});
 test("Paid dividends are moved from total-return-adjusted shares to cash, never added twice",()=>{
  const cash=fixture("cash"),reinvest=fixture("reinvest");
  const w=[.5,.5];

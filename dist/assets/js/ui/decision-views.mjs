@@ -1,6 +1,6 @@
-import { template as t } from "./templates.mjs?v=0.17.0";
-import { pct, fmt, money, dateLabel } from "./format.mjs?v=0.17.0";
-import { finite, sum, normalizeWeights } from "../analytics.mjs?v=0.17.0";
+import { template as t } from "./templates.mjs?v=0.18.0";
+import { pct, fmt, money, dateLabel } from "./format.mjs?v=0.18.0";
+import { finite, sum, normalizeWeights } from "../analytics.mjs?v=0.18.0";
 import {
   DEFAULT_MANDATE,
   DEFAULT_EXECUTION,
@@ -8,17 +8,17 @@ import {
   DEFAULT_REGIMES,
   currentAccount,
   informationDate,
-} from "../policy.mjs?v=0.17.0";
+} from "../policy.mjs?v=0.18.0";
 import {
   fundamentalForecast,
   businessQuality,
   evaluateThesis,
   bondAssumptions,
-} from "../research-model.mjs?v=0.17.0";
-import { dilutedEarningsBridge } from '../earnings-normalization.mjs?v=0.17.0';
-import { factorModel, factorAttribution } from "../factors.mjs?v=0.17.0";
-import { calibrationAudit } from "../calibration-audit.mjs?v=0.17.0";
-import { evaluateJournal } from "../journal.mjs?v=0.17.0";
+} from "../research-model.mjs?v=0.18.0";
+import { dilutedEarningsBridge } from '../earnings-normalization.mjs?v=0.18.0';
+import { factorModel, factorAttribution } from "../factors.mjs?v=0.18.0";
+import { calibrationAudit } from "../calibration-audit.mjs?v=0.18.0";
+import { evaluateJournal } from "../journal.mjs?v=0.18.0";
 const objectives = {
   growth: "Crecimiento logarítmico",
   preservation: "Preservación · utilidad CRRA",
@@ -864,6 +864,7 @@ export function createDecisionViews({ state = {}, data, asset }) {
         missing_fx: "Falta historia FX",
         unreconciled_flows: "Retiros sin realización conciliada",
         unreconciled_distributions: "Dividendos o retención sin conciliar",
+        unreconciled_cash_interest: "Intereses de cuenta sin conciliar",
         scored: "Evaluado",
       };
     const audit=calibrationAudit(result.rows);

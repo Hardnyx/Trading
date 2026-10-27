@@ -7,7 +7,7 @@ import {
   resolveAssumptions,
   returnDecomposition,
   valuation,
-} from "../analytics.mjs?v=0.17.0";
+} from "../analytics.mjs?v=0.18.0";
 import {
   sparkline,
   portfolioChart,
@@ -16,7 +16,7 @@ import {
   scatter,
   forecastCone,
   histogram,
-} from "../charts.mjs?v=0.17.0";
+} from "../charts.mjs?v=0.18.0";
 import {
   esc,
   url,
@@ -27,16 +27,16 @@ import {
   color,
   dateLabel,
   timestampLabel,
-} from "./format.mjs?v=0.17.0";
-import { template } from "./templates.mjs?v=0.17.0";
-import { DEFAULT_COMPOSITION_RULES } from "../composer.mjs?v=0.17.0";
-import { factorModel } from "../factors.mjs?v=0.17.0";
-import { MODEL_VERSION, informationDate } from "../policy.mjs?v=0.17.0";
-import { fundamentalForecast } from "../research-model.mjs?v=0.17.0";
-import { financialFreshness } from '../financial-freshness.mjs?v=0.17.0';
-import { priceMonitor } from '../price-monitor.mjs?v=0.17.0';
+} from "./format.mjs?v=0.18.0";
+import { template } from "./templates.mjs?v=0.18.0";
+import { DEFAULT_COMPOSITION_RULES } from "../composer.mjs?v=0.18.0";
+import { factorModel } from "../factors.mjs?v=0.18.0";
+import { MODEL_VERSION, informationDate } from "../policy.mjs?v=0.18.0";
+import { fundamentalForecast } from "../research-model.mjs?v=0.18.0";
+import { financialFreshness } from '../financial-freshness.mjs?v=0.18.0';
+import { priceMonitor } from '../price-monitor.mjs?v=0.18.0';
 
-import { createDecisionViews } from "./decision-views.mjs?v=0.17.0";
+import { createDecisionViews } from "./decision-views.mjs?v=0.18.0";
 
 /**
  * Describes the process the Monte Carlo actually runs. Jumps and the GBM /
@@ -87,13 +87,14 @@ export function riskCalibrationNote(summary) {
   const version = summary?.current_risk_model_version;
   const v = summary?.versions?.[version];
   if (!v) return "Registro diario sellado de riesgo: todavía sin sesiones selladas.";
-  const used = v.models?.production || {};
+  const used = v.models?.hybrid_reference || v.models?.production || {};
   const p = (x) => finite(x) ? fmt(x, 2) : "—";
   const paired = v.paired_qlike_ewma_minus_gjr || {};
   return `Registro diario sellado · modelo de riesgo ${version}: ${v.scored_sessions} de ${v.sealed_sessions} sesiones puntuadas, ${used.observations || 0} activo-días. ` +
     (used.observations
-      ? `Excepciones VaR95 del modelo en uso ${pct(used.var95_exception_rate, 1)} (esperado 5%; Kupiec p=${p(used.kupiec?.p_value)}; agrupamiento Christoffersen p=${p(used.christoffersen?.p_value)}). QLIKE EWMA − GJR ${p(paired.mean)} en ${paired.observations || 0} pares. `
+      ? `Excepciones VaR95 de la referencia estadística híbrida ${pct(used.var95_exception_rate, 1)} (esperado 5%; Kupiec p=${p(used.kupiec?.p_value)}; agrupamiento Christoffersen p=${p(used.christoffersen?.p_value)}). QLIKE EWMA − GJR ${p(paired.mean)} en ${paired.observations || 0} pares. `
       : "") +
+    `Sesiones completas ${v.fully_scored_sessions??v.scored_sessions}, parciales ${v.partial_sessions||0}; resultados pendientes ${v.pending_instruments||0}. EWMA centrada y GJR sin los límites del simulador: este registro no valida el motor exacto ni el CVaR de la cartera. `+
     (v.status === "evaluable"
       ? "Evaluable con cautelas: activos no independientes; no promueve parámetros."
       : `Acumulando: se interpreta desde ${summary.minimum_sessions} sesiones y ${summary.minimum_observations} observaciones.`);
@@ -129,7 +130,7 @@ export function financialCoverageView(data){
  const asOf=data.generated_at?informationDate(data):data.price_as_of;
  const rows=data.assets.filter(a=>a.type==='stock').map(a=>({a,f:financialFreshness(a,asOf)}));
  const gaps=rows.filter(r=>r.f.status==='newer_report').length;
- const missing=rows.filter(r=>r.f.status==='missing').length;
+ const missing=rows.filter(r=>['missing','split_basis_unverified'].includes(r.f.status)).length;
  return template('financial-coverage',{
   gaps,missing,total:rows.length,
   rows:rows.sort((x,y)=>Number(y.f.blocked)-Number(x.f.blocked)||x.a.symbol.localeCompare(y.a.symbol))
@@ -1105,9 +1106,10 @@ export function createViews(context) {
           ? "Holdings incompletas o no utilizables al corte: " + d.unknownHoldings.join(", ") + ". Composiciones de más de 120 días se excluyen del desglose; su parte desconocida limita las compras."
           : "No hay exposición accionaria con holdings desconocidas entre las posiciones seleccionadas.";
       })(),
-      incomeSummary: p.metrics?.dividendPolicy==="cash"
+      incomeSummary: (p.metrics?.dividendPolicy==="cash"
         ? `Dividendos netos estimados disponibles en efectivo USD ${fmt(p.metrics.expectedNetDividendCash,0)}; brutos cobrados USD ${fmt(p.metrics.expectedGrossDividendCash,0)}; pendientes de pago al final USD ${fmt(p.metrics.expectedDividendReceivable||0,0)}. Retención supuesta ${pct(p.metrics.dividendWithholding,0)}. Importes futuros no declarados estimados desde los últimos 12 meses.`
-        : `Distribuciones netas estimadas reinvertidas USD ${fmt(p.metrics.expectedNetReinvestedDividends||0,0)}; retención estimada USD ${fmt(p.metrics.expectedDividendWithholding||0,0)} (${pct(p.metrics.dividendWithholding||0,0)}). La reinversión no deja efectivo disponible para retiros.`,
+        : `Distribuciones netas estimadas reinvertidas USD ${fmt(p.metrics.expectedNetReinvestedDividends||0,0)}; retención estimada USD ${fmt(p.metrics.expectedDividendWithholding||0,0)} (${pct(p.metrics.dividendWithholding||0,0)}). La reinversión no deja efectivo disponible para retiros.`)+
+          (p.metrics?.cashYield>0?` Intereses de caja modelados USD ${fmt(p.metrics.expectedCashInterest||0,0)} al ${pct(p.metrics.cashYield)} neto declarado; devengo desde cada cobro y hasta cada retiro.`:''),
       dividendCalendarSummary:(()=>{
         const rows=p.metrics?.dividendTiming||[],dated=rows.filter(r=>r.mode==="issuer-calendar");
         const capped=rows.reduce((n,r)=>n+(r.cappedEvents||0),0);
@@ -1136,7 +1138,7 @@ export function createViews(context) {
       attributionNotice: p.diagnostics?.attribution?.available
         ? "Aportes condicionados a los mismos escenarios de verificación. Los costes se contabilizan aparte: " +
           pct(p.diagnostics.attribution.costLoss,2) +
-          ". Un aporte negativo en la cola puede representar cobertura, no riesgo nulo."
+          ". Un aporte negativo en la cola puede representar cobertura, no riesgo nulo. La porción de varianza usa la covarianza lineal inicial inducida, aproximada después de transformar las marginales."
         : (p.diagnostics?.attribution?.reason || "No se calculó una atribución compatible."),
       nearLimits: p.diagnostics?.selected?.nearLimits?.length
         ? p.diagnostics.selected.nearLimits.map((r) =>
@@ -1174,7 +1176,8 @@ export function createViews(context) {
       volatilityAccepted: p.diagnostics?.volatility?.accepted ?? 0,
       volatilityFallback: p.diagnostics?.volatility?.fallback ?? 0,
       volatilityNote: (p.diagnostics?.volatility?.reason || "Sin calibración disponible") +
-        " · Covarianza: " + (p.diagnostics?.volatility?.factorMethod || "total"),
+        " · Factorización latente: " + (p.diagnostics?.volatility?.factorMethod || "total")+
+        (p.diagnostics?.volatility?.accepted>0?` · Cambio máximo de correlación lineal inicial tras las marginales: ${fmt(p.diagnostics.volatility.maxLinearCorrelationShift||0,3)}. La matriz latente y la inducida se registran por separado.`:''),
       stochasticTail: p.diagnostics?.volatility?.accepted > 0
         ? "Marginales Student-t en GJR aceptados, gaussianas en los demás; dependencia por cópula gaussiana sin cola conjunta validada"
         : p.diagnostics?.volatility?.additionalMertonJumps
@@ -1361,7 +1364,7 @@ export function createViews(context) {
         {asOf:informationDate(data),priceAsOf:data.price_as_of}) : null,
       valuationAsset = useContinuing && forecast.valid ? {...a,financials:{...a.financials,
         eps:{...a.financials.eps,value:forecast.effectiveBaseEPS}}} : a,
-      v = useContinuing ? (forecast.valid ? forecast.model : null) : model(a, state.method),
+      v = useContinuing ? (forecast.valid ? valuation(valuationAsset,override(a.symbol),state.method) : null) : model(a, state.method),
       ass = { ...a.assumptions, ...override(a.symbol) },
       expected = resolveAssumptions(valuationAsset, override(a.symbol), state.method),
       expectedModel = v && valuation(valuationAsset, expected, state.method),

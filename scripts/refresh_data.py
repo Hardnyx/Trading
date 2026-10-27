@@ -597,6 +597,21 @@ def classify_corporate_actions(asset, window_days=200):
         asset.pop("price_adjustments", None)
 
 
+def eps_split_basis_problem(asset, cutoff):
+    """Require a common post-split publication basis independently of NI."""
+    eps = (asset.get("financials") or {}).get("eps")
+    splits = [s for s in (asset.get("splits") or []) if s.get("date") and
+              s["date"] <= cutoff and number(s.get("ratio")) not in (None, 0, 1)]
+    if not eps or not splits:
+        return None
+    latest = max(s["date"] for s in splits)
+    components = eps.get("components")
+    if (not isinstance(components, list) or not components or
+            any(not c.get("filed") or c["filed"] < latest for c in components)):
+        return f"{asset['symbol']}: BPA sin base por acción conciliada tras el split {latest}"
+    return None
+
+
 def flag_inconsistent_eps(asset, cutoff):
     """Do not value an apparent pre-split or mismatched EPS as a current share."""
     facts = asset.get("financials")
@@ -680,7 +695,7 @@ def build_asset(spec, cutoff, previous):
         latest = max(reports, key=lambda r: (r["report_date"], r["filing_date"]), default=None)
         eps = asset["financials"].get("eps") or {}
         probe = dict(asset, financials=dict(asset["financials"]), quality_flags=[])
-        inconsistent = flag_inconsistent_eps(probe, cutoff)
+        inconsistent = eps_split_basis_problem(asset, cutoff) or flag_inconsistent_eps(probe, cutoff)
         if latest and (not eps or inconsistent or latest["report_date"] > eps.get("period_end", "")) and asset["financials"].get("refresh_status") == "available":
             try:
                 asset["financials"] = financials(cik, cutoff, original_filing=latest)
@@ -696,18 +711,12 @@ def build_asset(spec, cutoff, previous):
                 row["shares"] = row["shares_unadjusted"] * factor
                 row["shares_split_adjusted"] = True
                 row["split_source"] = asset["source_url"]
-    recovered = (asset.get("financials") or {}).get("original_filing_recovery") or {}
-    recovered_eps = (asset.get("financials") or {}).get("eps") or {}
-    components = recovered_eps.get("components") or []
-    if recovered.get("accession") and components and any(
-        min(r["end"] for r in components) < split["date"] <= cutoff for split in asset.get("splits", [])
-    ) and any(r.get("accn") != recovered["accession"] for r in components):
-        # Mixed filing vintages across a split can silently add EPS expressed on
-        # different share bases. The broad NI/share ratio check cannot prove it.
-        asset["financials"]["eps_unverified"] = recovered_eps
+    basis_problem = eps_split_basis_problem(asset, cutoff)
+    if basis_problem:
+        asset["financials"]["eps_unverified"] = asset["financials"]["eps"]
         asset["financials"]["eps"] = None
         asset.setdefault("quality_flags", []).append("original_eps_split_vintage_unverified")
-        errors.append(f"{symbol}: BPA de informes distintos alrededor de un split; base por acción sin reconciliar")
+        errors.append(basis_problem)
     inconsistent_eps = flag_inconsistent_eps(asset, cutoff)
     if inconsistent_eps:
         errors.append(inconsistent_eps)

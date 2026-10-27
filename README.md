@@ -2,7 +2,7 @@
 
 Research, composición y seguimiento de una cartera personal de acciones y ETFs de Estados Unidos.
 
-**Motor 0.9.0.** Calendario de distribuciones del emisor, cuentas por cobrar separadas de efectivo y reinversión al pago. Continúan los topes por exposición directa e indirecta y la distinción entre datos observados y supuestos. El modelo sigue siendo experimental. Véanse [las comprobaciones y pendientes](docs/estado-validacion.md).
+**Motor 0.18.0.** BPA protegido frente a bases incompatibles tras splits, valoración y fórmula coherentes, efectivo remunerado hasta cada retiro y evidencia de riesgo identificada por su alcance. Se mantienen los calendarios de distribuciones, los límites de exposición y los cambios visuales recientes. El modelo sigue siendo experimental. Véanse [el estado actual, las comprobaciones y los pendientes](docs/estado-validacion.md).
 
 [Abrir aplicación](https://hardnyx.github.io/Trading/)
 
@@ -22,7 +22,9 @@ El modelo de producción y sus pronósticos **siguen siendo experimentales**. La
 
 [**Estado de validación, resultados, límites y comandos reproducibles**](docs/estado-validacion.md)
 
-Cada corte sella además, antes de la apertura siguiente, la varianza, el VaR95 y el ES95 a una sesión de cada instrumento (`data/risk-forecasts/`), y los puntúa al publicarse la sesión siguiente; Riesgo muestra la cobertura acumulada por versión del modelo de riesgo. GitHub Actions conserva diagnósticos como artefactos en **Research evidence (shadow)**; la actualización de datos intenta sellar un pronóstico independiente una sola vez por corte de mercado en `data/forecasts/` y guardará su resultado al madurar. Eso **no incluye tu cartera personal**, que permanece en el navegador. No se ha demostrado todavía calidad predictiva a doce meses ni ventaja frente a portafolios sencillos netos de costos.
+[Pendientes priorizados y criterios de cierre](docs/pendientes.md)
+
+Cada corte sella además, antes de la apertura siguiente, la varianza, el VaR95 y el ES95 a una sesión de referencias estadísticas por instrumento (`data/risk-forecasts/`). Su EWMA centrada y sus GJR sin límites de escalado difieren del simulador: no validan el motor exacto ni el CVaR de cartera. Los resultados ausentes se completan con registros nuevos e inmutables; Riesgo distingue sesiones completas y parciales. GitHub Actions conserva diagnósticos como artefactos en **Research evidence (shadow)**; la actualización de datos intenta sellar un pronóstico independiente una sola vez por corte de mercado en `data/forecasts/` y guardará su resultado al madurar. Eso **no incluye tu cartera personal**, que permanece en el navegador. No se ha demostrado todavía calidad predictiva a doce meses ni ventaja frente a portafolios sencillos netos de costos.
 
 ## Método
 
@@ -50,7 +52,7 @@ Comisión por orden, comisión variable, medio spread completo por lado, desliza
 
 **Versión e integridad de propuestas (0.7.0).** El encabezado muestra la versión real del motor. Toda propuesta guardada se invalida si difiere la versión de cálculo, la fecha de precios o el identificador del corte; también se invalida al importar un snapshot distinto. Los pesos reales y supuestos del usuario se conservan, pero no se presentan métricas históricas como nuevas. Para cargar la versión vigente tras un despliegue, abrir `https://hardnyx.github.io/Trading/?build=0.7.0` y usar Proponer cartera.
 
-**Riesgo estocástico (motor 0.7.0).** Las calibraciones GJR-GARCH-t públicas se ajustan todavía sobre retornos totales; por tanto, no son estimaciones de GARCH residual. En la simulación se descompone la covarianza EWMA conjunta con SPY en un factor común y el complemento residual PSD (identidad de Schur), con la misma historia y corte temporal. La recomposición conserva la covarianza total de partida. Sin 126 sesiones comunes o con una matriz inválida se usa la covarianza total. Los sectores/betas bull-bear siguen siendo diagnósticos, no factores estocásticos separados.
+**Riesgo estocástico (motor 0.7.0).** Las calibraciones GJR-GARCH-t públicas se ajustan todavía sobre retornos totales; por tanto, no son estimaciones de GARCH residual. En la simulación se descompone la covarianza EWMA conjunta con SPY en un factor común y el complemento residual PSD (identidad de Schur), con la misma historia y corte temporal. La recomposición conserva la matriz gaussiana latente. Las marginales Student-t cambian sus correlaciones lineales: se registra por separado una aproximación PSD de la covarianza inicial inducida y se utiliza para las porciones de varianza inicial. Sin 126 sesiones comunes o con una matriz inválida se usa la covarianza total. Los sectores/betas bull-bear siguen siendo diagnósticos, no factores estocásticos separados.
 
 Cuando hay al menos un GJR validado, la varianza de **cada** activo se actualiza diariamente: GJR asimétrico para los aceptados y EWMA para los demás. Los shocks comunes y residuales se generan correlacionados con una cópula gaussiana; cada activo con GJR aceptado transforma su shock al cuantil de su Student-t estandarizada (la ley con que se estimó y aceptó), y los demás conservan innovaciones gaussianas. Se mantiene eliminada la Student-t radial global que imponía colas simultáneas sin calibración: la cópula gaussiana no añade dependencia de cola. Sin GJR aceptado, el modo híbrido aplica EWMA diario sin activar saltos Merton silenciosamente. Merton legado queda como comparador explícito con shocks no calibrados a noticias.
 

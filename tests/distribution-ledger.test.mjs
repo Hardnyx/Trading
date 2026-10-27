@@ -1,11 +1,11 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {projectionCalendar,distributionAccounting,reconcileDistributionReturn,yearFraction}
-  from "../dist/assets/js/distribution-ledger.mjs?v=0.17.0";
-import {evaluatePaths} from "../dist/assets/js/path-model.mjs?v=0.17.0";
-import {portfolioAttribution} from "../dist/assets/js/attribution.mjs?v=0.17.0";
-import {mandate} from "../dist/assets/js/policy.mjs?v=0.17.0";
-import {journalOrigin,appendForecast,evaluateJournal,freezeMaturedOutcomes} from "../dist/assets/js/journal.mjs?v=0.17.0";
+  from "../dist/assets/js/distribution-ledger.mjs?v=0.18.0";
+import {evaluatePaths} from "../dist/assets/js/path-model.mjs?v=0.18.0";
+import {portfolioAttribution} from "../dist/assets/js/attribution.mjs?v=0.18.0";
+import {mandate} from "../dist/assets/js/policy.mjs?v=0.18.0";
+import {journalOrigin,appendForecast,evaluateJournal,freezeMaturedOutcomes} from "../dist/assets/js/journal.mjs?v=0.18.0";
 import {maturityCheck} from "../scripts/seal_forecast.mjs";
 
 function sample(mode="cash",tax=0,level=1){
@@ -31,6 +31,30 @@ test("issuer dates require original observation and full horizon coverage",()=>{
  assert.equal(projectionCalendar(s.assets[0],s.asOf,"2026-10-21",1).available,false);
  s.assets[0].distribution_calendar.coverage_end="2027-01-01";
  assert.equal(projectionCalendar(s.assets[0],s.asOf,s.asOf,1).available,false);
+});
+
+test('dated dividend cash starts earning interest on pay-date and pending claims earn none',()=>{
+ const s=sample();s.policy.cashYield=.05;
+ const ledger=distributionAccounting(s)[0],pay=yearFraction(s.asOf,'2026-11-05');
+ assert.equal(ledger.cashAt(0,pay-1e-5),0);
+ assert.ok(Math.abs(ledger.cashAt(0,pay)-.04)<1e-10);
+ const r=evaluatePaths([1,0],s,{capital:10000});
+ const interest=400*((1.05)**(1-pay)-1);
+ assert.ok(Math.abs(r.medianTerminalWealth-(10000+interest))<1e-8);
+ assert.ok(Math.abs(r.expectedCashInterest-interest)<1e-8);
+ assert.ok(Math.abs(r.expectedNetDividendCash-400)<1e-8);
+ assert.ok(Math.abs(portfolioAttribution(s.assets,[1,0],s,0,10000).meanReturn-r.meanReturn)<1e-10);
+});
+
+test('declared cash interest is not scored as an observed zero or as an observed contractual return',()=>{
+ const cash={symbol:'CASH',type:'cash',history:[{date:'2025-10-27',adj_close:1},{date:'2026-10-27',adj_close:1}]};
+ const policy={cashYield:.05,dividendPolicy:'cash'};
+ assert.equal(reconcileDistributionReturn(cash,'2025-10-27','2026-10-27',policy).code,'missing_cash_interest');
+ const entry={origin:{prospective:true,price_as_of:'2025-10-27',positions:[{symbol:'CASH',weight:1}],settings:{mandate:policy}},
+  target_date:'2026-10-27',prediction:{mean:.05,p05:.05,p95:.05,lossProbability:0}};
+ const result=evaluateJournal([entry],{price_as_of:'2026-10-27',assets:[cash]});
+ assert.equal(result.count,0);assert.equal(result.rows[0].status,'unreconciled_cash_interest');
+ assert.equal(freezeMaturedOutcomes([entry],{price_as_of:'2026-10-27',assets:[cash]})[0].outcome,undefined);
 });
 test("a right to a dividend preserves NAV at ex-date but cannot fund a withdrawal before pay-date",()=>{
  for(const [date,failure] of [["2026-11-03",1],["2026-11-06",0]]){

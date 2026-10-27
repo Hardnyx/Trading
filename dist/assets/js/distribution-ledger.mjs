@@ -1,4 +1,4 @@
-import { annualDistributionYield, distributionFactors } from "./cashflows.mjs?v=0.17.0";
+import { annualDistributionYield, distributionFactors, cashGrowth, uniformCashGrowth } from "./cashflows.mjs?v=0.18.0";
 
 const DAY=86400000, YEAR=365.25*DAY, cache=new WeakMap();
 export const yearFraction=(start,end)=>(Date.parse(end+"T12:00:00Z")-Date.parse(start+"T12:00:00Z"))/YEAR;
@@ -62,7 +62,7 @@ function datedAccounting(asset,column,sample,calendar){
   const withholding=policy.dividendWithholding||0,toCash=policy.dividendPolicy==="cash";
   let capped=0;
   for(let p=0;p<paths;p++){
-    let shares=1,divisor=1,pending=0,balance=0,next=0;
+    let shares=1,divisor=1,pending=0,balance=0,next=0,lastPayment=0;
     const entitlements=new Float64Array(events.length);
     const grossEntitlements=new Float64Array(events.length);
     for(let t=0;t<=steps;t++){
@@ -86,21 +86,21 @@ function datedAccounting(asset,column,sample,calendar){
         }else{
           const amount=entitlements[a.index];pending=Math.max(0,pending-amount);
           paidGross[p]+=grossEntitlements[a.index];
-          if(toCash)balance+=amount;
+          if(toCash){balance=balance*cashGrowth(policy.cashYield,a.year-lastPayment)+amount;lastPayment=a.year;}
           else {shares+=amount/(g/divisor);reinvested[p]+=amount;}
           payments[p*events.length+payRank.get(a.index)]=balance;
         }
       }
       const k=p*(steps+1)+t;
       values[k]=shares*column[k]/divisor+pending;
-      cash[k]=balance;receivables[k]=pending;
+      cash[k]=balance*cashGrowth(policy.cashYield,t*dt-lastPayment);receivables[k]=pending;
     }
   }
   return {dated:true,calendar,values,cash,receivables,grossIncome,netIncome,tax,reinvested,paidGross,capped,
     cashAt(p,year){
       let lo=0,hi=payOrder.length;
       while(lo<hi){const mid=(lo+hi)>>1;if(payOrder[mid].year<=year+1e-10)lo=mid+1;else hi=mid;}
-      return lo?payments[p*events.length+lo-1]:0;
+      return lo?payments[p*events.length+lo-1]*cashGrowth(policy.cashYield,year-payOrder[lo-1].year):0;
     }};
 }
 
@@ -121,7 +121,10 @@ export function distributionTerminalValue(view,sample,i,p){
   const offset=p*(sample.steps+1)+sample.steps;
   if(view.dated)return view.values[offset]+view.cash[offset];
   let cash=0;
-  for(let t=1;t<=sample.steps;t++)cash+=sample.gross[i][p*(sample.steps+1)+t]*view.factors.netCash[t];
+  const dt=sample.dt??(sample.policy.horizon||1)/sample.steps,rate=sample.policy.cashYield||0;
+  const stepGrowth=cashGrowth(rate,dt),depositGrowth=uniformCashGrowth(rate,dt);
+  for(let t=1;t<=sample.steps;t++)cash=cash*stepGrowth+
+    sample.gross[i][p*(sample.steps+1)+t]*view.factors.netCash[t]*depositGrowth;
   return sample.gross[i][offset]*view.factors.marketValue[sample.steps]+cash;
 }
 
@@ -129,7 +132,9 @@ export function distributionTerminalValue(view,sample,i,p){
 export function reconcileDistributionReturn(asset,start,end,policy={}){
   if(!validDay(start) || !validDay(end) || end<start)
     return {available:false,reason:"Intervalo de conciliación inválido"};
-  if(asset.type==="cash")return {available:true,return:0,basis:"synthetic-cash"};
+  if(asset.type==="cash")return policy.cashYield>0
+    ? {available:false,code:"missing_cash_interest",reason:"Faltan intereses de cuenta observados; la tasa declarada es un supuesto"}
+    : {available:true,return:0,basis:"synthetic-cash"};
   const rate=policy.dividendWithholding??0;
   if(!Number.isFinite(rate) || rate<0 || rate>1 ||
      (policy.dividendPolicy && !["cash","reinvest"].includes(policy.dividendPolicy)))
@@ -219,7 +224,7 @@ export function reconcileDistributionReturn(asset,start,end,policy={}){
     source_sha256:issuer?.source_sha256||null};
 }
 
-export function reconcilePortfolioDistributions(assets,positions,start,end,policy){
+export function reconcilePortfolioDistributions(assets,positions,start,end,policy={}){
   const lookup=new Map(assets.map(a=>[a.symbol,a])),evidence=[];
   let realized=0;
   for(const p of positions){
@@ -228,6 +233,9 @@ export function reconcilePortfolioDistributions(assets,positions,start,end,polic
     if(!asset)return {available:false,reason:"Activo ausente: "+p.symbol};
     const r=reconcileDistributionReturn(asset,start,end,policy);
     if(!r.available)return {...r,symbol:p.symbol};
+    if(policy.cashYield>0 && r.cash>0)
+      return {available:false,code:"missing_cash_interest",symbol:p.symbol,
+        reason:"Faltan intereses observados del efectivo procedente de dividendos"};
     realized+=p.weight*r.return;evidence.push({symbol:p.symbol,weight:p.weight,...r});
   }
   return {available:true,return:realized,evidence,

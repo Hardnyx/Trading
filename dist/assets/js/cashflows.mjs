@@ -11,6 +11,15 @@ export function annualDistributionYield(asset) {
   return dividend / asset.price;
 }
 
+// Effective annual account yield, compounded only while a cash flow is held.
+export const cashGrowth = (rate, years) => rate ? Math.exp(Math.log1p(rate) * years) : 1;
+export function uniformCashGrowth(rate, duration, fullStep=duration) {
+  if (!(duration > 0)) return 0;
+  if(!rate)return duration/fullStep;
+  const exponent = Math.log1p(rate || 0) * duration;
+  return duration / fullStep * (Math.abs(exponent) < 1e-12 ? 1 : Math.expm1(exponent) / exponent);
+}
+
 export function dividendStep(priorTotalGross, totalGross, annualYield, t, dt, withholding = 0) {
   if (!annualYield) return {priceGross: totalGross, grossCash: 0, netCash: 0};
   const factor = Math.pow(1 + annualYield, dt);

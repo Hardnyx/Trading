@@ -5,12 +5,12 @@ import {
   currentAccount,
   tradePlan,
   withCashAsset,
-} from "../dist/assets/js/policy.mjs?v=0.17.0";
+} from "../dist/assets/js/policy.mjs?v=0.18.0";
 import {
   fundamentalForecast,
   consensusAt,
   evaluateThesis,
-} from "../dist/assets/js/research-model.mjs?v=0.17.0";
+} from "../dist/assets/js/research-model.mjs?v=0.18.0";
 import {
   valuation,
   correlation,
@@ -18,28 +18,28 @@ import {
   resolveAssumptions,
   returnDecomposition,
   RERATING_HALF_LIFE_YEARS,
-} from "../dist/assets/js/analytics.mjs?v=0.17.0";
-import { sampleDrifts, bondScenarioAnnualReturn } from "../dist/assets/js/return-model.mjs?v=0.17.0";
+} from "../dist/assets/js/analytics.mjs?v=0.18.0";
+import { sampleDrifts, bondScenarioAnnualReturn } from "../dist/assets/js/return-model.mjs?v=0.18.0";
 import {
   seededRandom,
   normalGenerator,
-} from "../dist/assets/js/random.mjs?v=0.17.0";
+} from "../dist/assets/js/random.mjs?v=0.18.0";
 import {
   generatePaths,
   evaluatePaths,
   BASE_REGIME,
   jumpParameters,
-} from "../dist/assets/js/path-model.mjs?v=0.17.0";
+} from "../dist/assets/js/path-model.mjs?v=0.18.0";
 import {
   journalOrigin,
   appendForecast,
   evaluateJournal,
   freezeMaturedOutcomes,
-} from "../dist/assets/js/journal.mjs?v=0.17.0";
+} from "../dist/assets/js/journal.mjs?v=0.18.0";
 import {
   reviewPortfolio,
   registerPortfolio,
-} from "../dist/assets/js/monitor.mjs?v=0.17.0";
+} from "../dist/assets/js/monitor.mjs?v=0.18.0";
 
 const near = (a, b, tol = 1e-8) =>
   assert.ok(Math.abs(a - b) < tol, `${a} != ${b}`);

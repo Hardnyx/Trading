@@ -1,8 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { conditionalRisk, studentScale, updateGjrVariance, studentMarginal, studentUpperTail, normalUpperTail } from "../dist/assets/js/conditional-risk.mjs";
-import { preparePaths, generatePaths } from "../dist/assets/js/path-model.mjs?v=0.17.0";
-import { seededRandom, normalGenerator } from "../dist/assets/js/random.mjs?v=0.17.0";
+import { preparePaths, generatePaths } from "../dist/assets/js/path-model.mjs?v=0.18.0";
+import { seededRandom, normalGenerator } from "../dist/assets/js/random.mjs?v=0.18.0";
 
 const DATE="2026-10-23";
 function accepted(symbol,variance=1.8) {
@@ -172,8 +172,8 @@ test("accepted GJR instruments get fat-tailed daily innovations; fallback stays 
     const v=r.reduce((a,b)=>a+(b-m)**2,0)/r.length;
     return r.reduce((a,b)=>a+(b-m)**4,0)/r.length/v/v;
   };
-  // Constant GJR variance isolates the innovation law: t(4.5) has infinite
-  // theoretical kurtosis. The EWMA fallback is Gaussian but its variance
+  // Constant GJR variance isolates the innovation law: t(4.5) has theoretical
+  // kurtosis 15. The EWMA fallback is Gaussian but its variance
   // clusters, so its kurtosis exceeds 3 for a different reason.
   const fat4=kurtosis(0), fallback4=kurtosis(1);
   assert.ok(fat4>7,`accepted kurtosis ${fat4}`);

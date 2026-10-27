@@ -5,12 +5,12 @@ import {
   finite,
   normalizeWeights,
   alignReturns,
-} from "./analytics.mjs?v=0.17.0";
-import { ewmaCovariance } from "./risk-math.mjs?v=0.17.0";
-import { preparePaths, generatePaths, evaluatePaths } from "./path-model.mjs?v=0.17.0";
-import { factorModel } from "./factors.mjs?v=0.17.0";
-export { seededRandom, normalGenerator, poisson } from "./random.mjs?v=0.17.0";
-export { ewmaCovariance, cholesky } from "./risk-math.mjs?v=0.17.0";
+} from "./analytics.mjs?v=0.18.0";
+import { ewmaCovariance } from "./risk-math.mjs?v=0.18.0";
+import { preparePaths, generatePaths, evaluatePaths } from "./path-model.mjs?v=0.18.0";
+import { factorModel } from "./factors.mjs?v=0.18.0";
+export { seededRandom, normalGenerator, poisson } from "./random.mjs?v=0.18.0";
+export { ewmaCovariance, cholesky } from "./risk-math.mjs?v=0.18.0";
 
 export function simulateForecast(
   assets,
@@ -89,6 +89,8 @@ export function simulateForecast(
           : "Gaussian common-market plus residual innovations")
         : "Legacy covariance/Merton",
       factorMethod: inputs.factorCovariance.method,
+      maxLinearCorrelationShift: inputs.innovationMoments.maxCorrelationShift,
+      covarianceBasis: inputs.innovationMoments.method,
       residualGarchValidated: false,
       additionalMertonJumps: !inputs.conditional.dynamic && inputs.options.model==="merton",
     },
@@ -98,7 +100,8 @@ export function simulateForecast(
         .filter((p, i) => inputs.anchors[i].fundamental)
         .map((p) => p.weight),
     ),
-    covariance: inputs.covariance,
+    covariance: inputs.innovationCovariance,
+    latentGaussianCovariance: inputs.covariance,
     residualCorrelation: inputs.residualCorrelation,
     dependence: inputs.dependence,
     histogram: bins.map((count, i) => ({
