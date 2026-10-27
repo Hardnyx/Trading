@@ -232,6 +232,21 @@ try {
   await page.locator('#capital-input').dispatchEvent('change');
   await page.getByText('Comparación robusta desactualizada:',{exact:false}).waitFor({state:'visible',timeout:15000});
   if(await page.locator('[data-action="use-robust-weights"]').count())throw Error('Stale robust weights remain applicable');
+  await page.locator('[data-view="valuation"]').click();
+  await page.locator('#valuation-asset').selectOption('AAPL');
+  const growthPanel=page.locator('.decision-section').filter({has:
+    page.getByRole('heading',{name:'EVIDENCIA DEL CRECIMIENTO',exact:true})});
+  await growthPanel.waitFor({state:'visible'});
+  const growthText=await growthPanel.innerText();
+  const history=snapshot.assets.find(a=>a.symbol==='AAPL').financials?.earnings_history;
+  const periods=new Set((history?.records||[]).map(r=>r.period_end)).size;
+  if(!growthText.includes(`${periods} ejercicios`)||
+     !growthText.includes('Sin vintage predictivo verificado')||
+     !growthText.includes('sin ajuste automático del ancla'))
+    throw Error('Annual EPS evidence lost coverage, provenance or research status');
+  if(await growthPanel.evaluate(panel=>panel.scrollWidth>panel.clientWidth+3))
+    throw Error('Growth evidence overflows its panel');
+  await growthPanel.screenshot({path:'out/browser-growth-evidence.png'});
   if(issues.length)throw Error("Errores del navegador: "+issues.join("; "));
   console.log(JSON.stringify({
     browserParity:"PASS",

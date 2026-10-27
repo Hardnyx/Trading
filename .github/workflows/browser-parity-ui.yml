@@ -1,6 +1,12 @@
 name: Validate real browser composition
 on:
   workflow_dispatch:
+  pull_request:
+    paths:
+      - 'scripts/test_browser_parity.mjs'
+      - 'dist/**'
+      - 'package.json'
+      - '.github/workflows/browser-parity-ui.yml'
   push:
     branches: [main]
     paths:
@@ -42,4 +48,5 @@ jobs:
           path: |
             out/browser-parity.png
             out/browser-robustness.png
+            out/browser-growth-evidence.png
           retention-days: 14
