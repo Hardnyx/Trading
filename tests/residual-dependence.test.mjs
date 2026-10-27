@@ -98,3 +98,32 @@ test("regime classification is prefix-only: later observations cannot change the
   assert.deepEqual(first.regimeCounts,second.regimeCounts);
   assert.deepEqual(first.residualCorrelation,second.residualCorrelation);
 });
+
+test("a short recent co-movement stays a diagnostic, not the residual matrix",()=>{
+  const data=synthetic();
+  const burst=new Set(["AAA","BBB"]);
+  const shocked=data.map(asset=>{
+    if(!burst.has(asset.symbol))return asset;
+    const history=asset.history.map(r=>({...r}));
+    let factor=1;
+    for(let t=1;t<history.length;t++){
+      // The same idiosyncratic shock hits both names only in the last 20 sessions.
+      if(t>=history.length-20)factor*=Math.exp(.004*Math.sin(t*3.1));
+      history[t].adj_close*=factor;
+      history[t].close=history[t].adj_close;
+    }
+    return {...asset,history,price:history.at(-1).close};
+  });
+  const assets=shocked.filter(a=>burst.has(a.symbol));
+  const result=estimateResidualDependence(assets,assets.map(a=>({symbol:a.symbol,weight:.5})),
+    assets[0].price_date,500,.94,shocked);
+  const ids=result.rows.map(r=>r.symbol), i=ids.indexOf("AAA"), j=ids.indexOf("BBB");
+  const full=correlation(result.rows[i].residual,result.rows[j].residual);
+  assert.ok(Math.abs(result.residualCorrelation[i][j]-full)<1e-9,
+    "residual matrix must be the equally weighted window correlation");
+  assert.ok(result.recentResidualCorrelation[i][j]-result.residualCorrelation[i][j]>.5,
+    "the recent EWMA must reveal the burst: "+result.recentResidualCorrelation[i][j]);
+  assert.ok(result.recentDivergence>=result.recentResidualCorrelation[i][j]-result.residualCorrelation[i][j]-1e-12);
+  assert.ok(result.recentHalfLife>10&&result.recentHalfLife<12);
+  assert.match(result.note,/equiponderada/);
+});

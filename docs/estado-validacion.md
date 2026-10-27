@@ -273,3 +273,15 @@ El mínimo de 20 ventanas es una regla operativa, no un análisis de potencia.
 Sin solape no significa independencia; se necesitan pruebas fuera de muestra y
 estabilidad adicional. Este diagnóstico no promueve parámetros automáticamente ni
 convierte una muestra inmadura en evidencia de capacidad predictiva.
+
+### 0.15.0 — Coherencia de riesgo y evidencia diaria
+
+**Correlación residual comparable.** La matriz residual usa ahora la misma
+ventana equiponderada que la correlación total (252 o 500 sesiones según la
+vista). Antes se calculaba con EWMA λ=0,94, cuya muestra efectiva ronda 32
+sesiones (vida media ≈11): en el corte del 26 de octubre mostraba TLT–AMZN
+−0,67 frente a −0,13 con 500 sesiones equiponderadas. Esa matriz alimentaba
+además el tope de correlación entre pares de acciones del compositor. La EWMA
+se conserva como diagnóstico reciente, con su vida media y el desvío máximo
+frente a la ventana completa. No es una regularización óptima estimada ni un
+DCC; la ventana completa reduce el ruido muestral sin validar su estabilidad.
