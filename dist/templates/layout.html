@@ -91,7 +91,13 @@
           </button>
         </div>
       </header>
-      <div class="ticker-strip">{{{items}}}</div>
+      <div
+        class="ticker-strip"
+        role="group"
+        aria-label="Referencias de mercado · cierre diario"
+      >
+        <div class="ticker-track">{{{items}}}</div>
+      </div>
       <div class="workspace">
         <main id="workspace-main" class="main-area" tabindex="-1">
           <div class="function-bar" {{{busy}}}>

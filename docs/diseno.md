@@ -41,6 +41,10 @@ Superficies y bordes usan una escala neutra (`--panel`, `--surface`, `--raised`;
 - Escala de tamaños: 10, 11, 12, 14, 18, 24 y 32 px (`--fs-xs` a `--fs-3xl`). No se usan tamaños menores de 10 px.
 - Espaciado en múltiplos de 4 px. Los paneles tienen un relleno interior de 12 px y una separación de 12 px entre ellos. Controles y botones miden 28 px de alto.
 
+## Cinta de mercado
+
+La cinta superior muestra referencias fijas (SPY, QQQ, IWM, TLT, GLD, SHY) con el último cierre y la variación entre cierres; no son precios en tiempo real. Si todas caben, la cinta permanece estática. Si no caben (móvil o tablet), se reparten en filas equilibradas que giran hacia arriba cada 5 segundos. El giro se detiene con el puntero encima, con el foco del teclado dentro de la cinta y con la pestaña oculta; el foco en una referencia oculta muestra su fila. Con `prefers-reduced-motion` no hay giro: la cinta queda en una fila desplazable a mano.
+
 ## Trabajo en curso
 
 Los cálculos largos se señalan sin bloquear la página: el botón que trabaja muestra un indicador giratorio (`aria-busy="true"`), la barra de funciones y el panel de robustez llevan una barra de progreso indeterminada, y los textos "Calculando…" pulsan con su propio indicador. Con `prefers-reduced-motion` las animaciones se sustituyen por indicadores estáticos.

@@ -20,6 +20,7 @@ import { fmt, pct, money, dateLabel } from "./ui/format.mjs?v=0.24.0";
 import { createViews, NAV } from "./ui/views.mjs?v=0.24.0";
 import { loadTemplates } from "./ui/templates.mjs?v=0.24.0";
 import { applyVisualValues, showStartupError } from "./ui/dom.mjs?v=0.24.0";
+import { createTickerRotation } from "./ui/ticker-rotation.mjs?v=0.24.0";
 import { DEFAULT_COMPOSITION_RULES } from "./composer.mjs?v=0.24.0";
 
 import {
@@ -311,6 +312,7 @@ function filteredAssets() {
     });
 }
 
+const tickers = createTickerRotation();
 function render() {
   if (!data) return;
   const editing = document.activeElement;
@@ -329,6 +331,7 @@ function render() {
   const page = (ui[state.view] || ui.overview)();
   $("#app").innerHTML = ui.shell(page);
   applyVisualValues($("#app"));
+  tickers.attach($("#app"));
   if (preserve) {
     const input = preserve.id
       ? document.getElementById(preserve.id)

@@ -906,15 +906,29 @@ a:hover {
   width: auto;
   min-width: 48px;
 }
+/* Market strip: one row when every reference fits; otherwise balanced rows
+   that rotate upwards (ticker-rotation.mjs sets the row size and index). */
 .ticker-strip {
-  height: 28px;
-  display: flex;
+  --ticker-height: 28px;
+  --ticker-min-width: 156px;
+  height: var(--ticker-height);
   overflow: hidden;
   background: var(--panel);
   border-bottom: 1px solid var(--line-strong);
 }
+.ticker-track {
+  display: flex;
+  flex-wrap: wrap;
+  transform: translateY(calc(var(--ticker-row, 0) * -1 * var(--ticker-height)));
+  transition: transform 0.4s ease;
+}
+.ticker-track.is-snapping {
+  transition: none;
+}
 .ticker-item {
-  flex: 1;
+  flex: 0 0 calc(100% / var(--ticker-per-row, 6));
+  height: var(--ticker-height);
+  min-width: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -923,7 +937,6 @@ a:hover {
   white-space: nowrap;
   border-right: 1px solid var(--line);
   font: var(--fs-sm) var(--mono);
-  min-width: 156px;
 }
 .ticker-item .ticker-symbol {
   font-weight: 600;
@@ -2277,8 +2290,10 @@ a.text-button,
   .top-right .icon-button:last-of-type {
     display: none;
   }
+  .ticker-strip {
+    --ticker-min-width: 150px;
+  }
   .ticker-item {
-    min-width: 150px;
     font-size: var(--fs-xs);
   }
   .function-bar {
@@ -3046,6 +3061,17 @@ button.symbol:hover {
   animation: dots 1.2s steps(4, end) infinite;
 }
 @media (prefers-reduced-motion: reduce) {
+  .ticker-strip {
+    overflow-x: auto;
+  }
+  .ticker-track {
+    flex-wrap: nowrap;
+    transform: none;
+    transition: none;
+  }
+  .ticker-item {
+    flex: 1 0 var(--ticker-min-width);
+  }
   .loading,
   .loading::before,
   .button[aria-busy="true"]::before,
