@@ -37,7 +37,7 @@ Superficies y bordes usan una escala neutra (`--panel`, `--surface`, `--raised`;
 
 ## Tipografía y espaciado
 
-- IBM Plex Sans para interfaz y textos explicativos; IBM Plex Mono para cifras, etiquetas, tablas y códigos. Ambas se sirven desde `dist/assets/fonts` (SIL Open Font License), sin depender de fuentes del sistema ni de servicios externos.
+- IBM Plex Sans para interfaz y textos explicativos; IBM Plex Mono para cifras, etiquetas, tablas y códigos. Ambas se sirven desde `dist/assets/fonts` con los archivos divididos oficiales de IBM, sin modificar (SIL Open Font License): latín, latín extendido, griego (en Sans) y símbolos, cada uno con su `unicode-range`, para que flechas, letras griegas y operadores no caigan en fuentes del sistema. Plex Sans actúa como respaldo de Plex Mono para el griego. Los índices de las fórmulas usan `<sub>`/`<sup>` y la dirección en la cinta de precios se dibuja con CSS, porque Plex no incluye esos glifos.
 - Escala de tamaños: 10, 11, 12, 14, 18, 24 y 32 px (`--fs-xs` a `--fs-3xl`). No se usan tamaños menores de 10 px.
 - Espaciado en múltiplos de 4 px. Los paneles tienen un relleno interior de 12 px y una separación de 12 px entre ellos. Controles y botones miden 28 px de alto.
 
