@@ -3186,6 +3186,10 @@ tbody tr:hover {
 :is(.financial-coverage,.price-monitor) > p { margin: 12px 0; line-height: 1.5; }
 :is(.financial-coverage,.price-monitor) .table-wrap { overflow-x: auto; max-height: 400px; }
 .financial-coverage table { min-width: 1100px; }
+.financial-coverage td small { display: block; margin-top: 4px; color: var(--muted); }
+.financial-coverage td small:empty { display: none; }
+.financial-coverage :is(th,td):nth-child(5) { white-space: normal; min-width: 230px; max-width: 270px; }
+.financial-coverage :is(th,td):nth-child(7) { white-space: normal; min-width: 280px; max-width: 340px; }
 .price-monitor select { margin: 10px 0 12px 8px; }
 .price-monitor .table-wrap { margin-top: 8px; }
 .price-monitor table { min-width: 1500px; }

@@ -51,7 +51,8 @@ export function financialCoverageView(data){
   rows:rows.sort((x,y)=>Number(y.f.blocked)-Number(x.f.blocked)||x.a.symbol.localeCompare(y.a.symbol))
    .map(({a,f})=>template('financial-coverage-row',{
     symbol:a.symbol,period:dateLabel(f.period),filed:dateLabel(f.filed),method:f.method||'—',
-    observed:(f.observedAt?f.observedAt.replace('T',' ').slice(0,19)+' UTC':'No registrada')+(f.originalRecovery?.observed_at?' · Informe original: '+f.originalRecovery.observed_at.replace('T',' ').slice(0,19)+' UTC':''),
+    observed:f.observedAt?f.observedAt.replace('T',' ').slice(0,19)+' UTC':'No registrada',
+    originalObserved:f.originalRecovery?.observed_at?'Informe original: '+f.originalRecovery.observed_at.replace('T',' ').slice(0,19)+' UTC':'',
     latest:f.latestReport?f.latestReport.form+' · '+dateLabel(f.latestReport.filing_date):'Sin documento registrado',
     status:f.reason+(f.originalEps?' · BPA usa XBRL del informe original':f.originalRecovery?' · Recuperación del informe original sin BPA reconciliado':'')+(f.refreshStatus==='retained_after_failure'?' · Se conservó la captura previa por fallo de actualización':''),
     sourceUrl:url(f.latestReport?.url||a.financials?.source_url||'https://www.sec.gov/edgar/search/')
