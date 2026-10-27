@@ -194,6 +194,7 @@
   --info-text: #a5d0ec;
   --heat-positive: 238, 145, 53;
   --heat-negative: 59, 165, 205;
+  --backdrop: rgb(0 0 0 / 0.72);
   --mono: "IBM Plex Mono", "IBM Plex Sans", Consolas, "Liberation Mono", Menlo,
     monospace;
   --sans: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
@@ -1042,6 +1043,7 @@ sup {
 }
 .content {
   padding: var(--pad);
+  view-transition-name: workspace;
 }
 .page-title {
   display: flex;
@@ -2026,7 +2028,8 @@ a.text-button,
 .modal-backdrop {
   position: fixed;
   inset: 0;
-  background: var(--bg);
+  background: var(--backdrop);
+  animation: fade-in 0.16s ease-out;
   z-index: 100;
   display: flex;
   align-items: center;
@@ -2154,6 +2157,9 @@ a.text-button,
   z-index: 200;
   opacity: 0;
   pointer-events: none;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
 }
 .asset-picker {
   display: flex;
@@ -3085,6 +3091,80 @@ button.symbol:hover {
   .panel.is-busy > .panel-header::after {
     animation: none;
     background: var(--orange-line);
+  }
+}
+
+/* Transitions: dialogs rise in and sink out, the workspace crossfades
+   between functions and recalculated values glow briefly. */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes fade-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+@keyframes sink-out {
+  to {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+@keyframes value-glow {
+  from {
+    background-color: var(--orange-tint);
+    box-shadow: 0 0 0 4px var(--orange-tint);
+  }
+}
+.modal-backdrop .modal {
+  animation: rise-in 0.18s ease-out;
+}
+.modal-backdrop.is-swap {
+  animation: none;
+}
+.modal-backdrop.is-closing {
+  pointer-events: none;
+  animation: fade-out 0.15s ease-in forwards;
+}
+.modal-backdrop.is-closing .modal {
+  animation: sink-out 0.15s ease-in forwards;
+}
+::view-transition-old(root),
+::view-transition-new(root),
+::view-transition-group(workspace) {
+  animation: none;
+}
+::view-transition-old(workspace),
+::view-transition-new(workspace) {
+  height: auto;
+  object-fit: none;
+  object-position: top;
+}
+::view-transition-old(workspace) {
+  animation: fade-out 0.09s ease-in both;
+}
+::view-transition-new(workspace) {
+  animation: rise-in 0.18s ease-out both;
+}
+.value-changed {
+  width: fit-content;
+  animation: value-glow 1.2s ease-out;
+}
+@media (prefers-reduced-motion: reduce) {
+  #toast {
+    transition: none;
+  }
+  .modal-backdrop,
+  .modal-backdrop .modal {
+    animation: none;
   }
 }
 

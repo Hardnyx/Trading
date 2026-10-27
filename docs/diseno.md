@@ -41,6 +41,10 @@ Superficies y bordes usan una escala neutra (`--panel`, `--surface`, `--raised`;
 - Escala de tamaños: 10, 11, 12, 14, 18, 24 y 32 px (`--fs-xs` a `--fs-3xl`). No se usan tamaños menores de 10 px.
 - Espaciado en múltiplos de 4 px. Los paneles tienen un relleno interior de 12 px y una separación de 12 px entre ellos. Controles y botones miden 28 px de alto.
 
+## Movimiento
+
+El movimiento señala cambios, nunca decora. Los diálogos aparecen con un fundido del fondo y un leve ascenso, y salen a la inversa; reemplazar un diálogo por otro no vuelve a oscurecer el fondo. Los avisos entran y salen deslizándose. Al cambiar de función (F1–F8) sólo el área de trabajo hace un fundido corto; el encabezado y la pestaña activa cambian al instante. Las cifras calculadas (métricas, propuesta, decisión, simulación) que cambian tras un recálculo se iluminan en ámbar durante 1,2 s; el destello es neutro porque en métricas de riesgo subir no es bueno, y no se aplica a valores que se editan directamente, como los deslizadores de valoración. Como la interfaz se redibuja por completo en cada cambio de estado, ninguna animación depende del redibujado: los destellos continúan donde iban. Con `prefers-reduced-motion` no hay transiciones de vista ni de diálogos.
+
 ## Cinta de mercado
 
 La cinta superior muestra referencias fijas (SPY, QQQ, IWM, TLT, GLD, SHY) con el último cierre y la variación entre cierres; no son precios en tiempo real. Si todas caben, la cinta permanece estática. Si no caben (móvil o tablet), se reparten en filas equilibradas que giran hacia arriba cada 5 segundos. El giro se detiene con el puntero encima, con el foco del teclado dentro de la cinta y con la pestaña oculta; el foco en una referencia oculta muestra su fila. Con `prefers-reduced-motion` no hay giro: la cinta queda en una fila desplazable a mano.

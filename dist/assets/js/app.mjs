@@ -21,6 +21,7 @@ import { createViews, NAV } from "./ui/views.mjs?v=0.25.0";
 import { loadTemplates } from "./ui/templates.mjs?v=0.25.0";
 import { applyVisualValues, showStartupError } from "./ui/dom.mjs?v=0.25.0";
 import { createTickerRotation } from "./ui/ticker-rotation.mjs?v=0.25.0";
+import { createValueFlash } from "./ui/value-flash.mjs?v=0.25.0";
 import { DEFAULT_COMPOSITION_RULES } from "./composer.mjs?v=0.25.0";
 
 import {
@@ -313,6 +314,8 @@ function filteredAssets() {
 }
 
 const tickers = createTickerRotation();
+const valueFlash = createValueFlash();
+const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
 function render() {
   if (!data) return;
   const editing = document.activeElement;
@@ -332,6 +335,7 @@ function render() {
   $("#app").innerHTML = ui.shell(page);
   applyVisualValues($("#app"));
   tickers.attach($("#app"));
+  valueFlash.apply($("#app"), state.view);
   if (preserve) {
     const input = preserve.id
       ? document.getElementById(preserve.id)
@@ -351,10 +355,19 @@ function render() {
 }
 function navigate(view) {
   if (!NAV.some((n) => n[0] === view)) return;
+  const changed = view !== state.view;
   state.view = view;
   history.replaceState(null, "", "#" + view);
-  render();
-  window.scrollTo({ top: 0, behavior: "instant" });
+  const update = () => {
+    render();
+    window.scrollTo({ top: 0, behavior: "instant" });
+  };
+  // Switching function crossfades the workspace; re-rendering the same view
+  // and browsers without view transitions update immediately.
+  if (changed && document.startViewTransition && !reducedMotion.matches)
+    // A newer switch skips the running transition; that is expected.
+    document.startViewTransition(update).ready.catch(() => {});
+  else update();
 }
 function calculationOptions(forComposition = false) {
   const policy = mandate({ ...state.mandate, horizon: state.settings.horizon });
@@ -599,13 +612,24 @@ function toggleAsset(symbol) {
   changePositions();
 }
 function showModal(heading, content, wide = false) {
-  lastFocus = document.activeElement;
+  const replacing = !!$("#modal-root").firstElementChild;
+  if (!replacing) lastFocus = document.activeElement;
   $("#modal-root").innerHTML = views().modal(heading, content, wide);
+  // Swapping one dialog for another keeps the backdrop instead of fading it in again.
+  if (replacing) $("#modal-root .modal-backdrop")?.classList.add("is-swap");
   document.body.classList.add("modal-open");
   applyVisualValues($("#modal-root"));
-  $('.modal [data-action="close-modal"]').focus();
+  $('#modal-root .modal [data-action="close-modal"]').focus();
 }
 function closeModal() {
+  const backdrop = $("#modal-root .modal-backdrop");
+  // The closing dialog leaves #modal-root inert, so a new one can open at once.
+  if (backdrop && !reducedMotion.matches) {
+    backdrop.inert = true;
+    backdrop.classList.add("is-closing");
+    document.body.append(backdrop);
+    setTimeout(() => backdrop.remove(), 150);
+  }
   $("#modal-root").innerHTML = "";
   document.body.classList.remove("modal-open");
   lastFocus?.isConnected && lastFocus.focus();
@@ -1551,7 +1575,7 @@ document.addEventListener("change", async (event) => {
   }
 });
 document.addEventListener("keydown", (event) => {
-  const modal = $(".modal");
+  const modal = $("#modal-root .modal");
   if (event.key === "Escape") {
     closeModal();
     $("#command-results")?.setAttribute("hidden", "");
