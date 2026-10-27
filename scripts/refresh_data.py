@@ -550,6 +550,53 @@ def bls_series(series_id, label, cutoff, cpi=False):
                   "índice" if cpi else "%", "IPC desestacionalizado" if cpi else "Tasa de desempleo desestacionalizada")
     return bls_batch([definition], cutoff)[0]
 
+def simple_ratio(ratio, max_denominator=10, tolerance=0.002):
+    """Share splits are small integer ratios (2:1, 3:2, 5:4, 1:10)."""
+    return any(round(ratio * q) >= 1 and abs(ratio * q - round(ratio * q)) <= tolerance * q
+               for q in range(1, max_denominator + 1))
+
+
+def classify_corporate_actions(asset, window_days=200):
+    """Keep share splits; move provider 'splits' that are spin-off price
+    adjustments (FedEx Freight, GE Vernova...) out of the per-share basis.
+
+    A split must change the reported shares outstanding by its ratio. Without
+    cover-page observations on both sides, only a simple ratio is accepted.
+    """
+    splits = asset.get("splits")
+    if not isinstance(splits, list):
+        return
+    history = sorted((row for row in ((asset.get("financials") or {}).get("history") or [])
+                      if number(row.get("shares_unadjusted")) and row.get("period_end")),
+                     key=lambda row: row["period_end"])
+    kept, adjustments = [], []
+    for split in splits:
+        ratio = number(split.get("ratio"))
+        if ratio is None or ratio <= 0 or not split.get("date"):
+            continue
+        before = [row for row in history if row["period_end"] < split["date"]
+                  and (date(split["date"]) - date(row["period_end"])).days <= window_days]
+        after = [row for row in history if row["period_end"] >= split["date"]
+                 and (date(row["period_end"]) - date(split["date"])).days <= window_days]
+        observed = (after[0]["shares_unadjusted"] / before[-1]["shares_unadjusted"]
+                    if before and after else None)
+        # The observed change must match the declared ratio AND be closer to it
+        # than to "no change": a 1.061 adjustment is within 10% of 1.001 too.
+        is_split = (abs(observed / ratio - 1) <= 0.10 and
+                    abs(math.log(observed / ratio)) < abs(math.log(observed))
+                    if observed is not None and observed > 0 else simple_ratio(ratio))
+        if is_split:
+            kept.append(split)
+        else:
+            adjustments.append(dict(split, classification="price_adjustment_not_share_split",
+                                    observed_share_ratio=observed))
+    asset["splits"] = kept
+    if adjustments:
+        asset["price_adjustments"] = adjustments
+    else:
+        asset.pop("price_adjustments", None)
+
+
 def flag_inconsistent_eps(asset, cutoff):
     """Do not value an apparent pre-split or mismatched EPS as a current share."""
     facts = asset.get("financials")
@@ -598,7 +645,13 @@ def build_asset(spec, cutoff, previous):
         rows = [row for row in old["history"] if row["date"] <= cutoff]
         if len(rows) < 2:
             return None, [f"{symbol}: precios anteriores al corte no disponibles ({error_label(exc)})"]
-        asset.update({k: old.get(k) for k in ["history", "price", "price_date", "price_observed_at", "change", "dividend_per_share", "currency", "source_url", "distribution_index", "splits"]})
+        asset.update({k: old.get(k) for k in ["history", "price", "price_date", "price_observed_at", "change", "dividend_per_share", "currency", "source_url", "distribution_index", "splits", "price_adjustments"]})
+        if old.get("price_adjustments"):
+            # A retained snapshot was already classified; restore the full
+            # provider event list so the classification is recomputed.
+            asset["splits"] = sorted((asset.get("splits") or []) + [
+                {k: v for k, v in row.items() if k in ("date", "ratio")} for row in old["price_adjustments"]],
+                key=lambda row: row["date"])
         asset.update(history=rows, price=rows[-1]["close"], price_date=rows[-1]["date"], change=rows[-1]["close"] / rows[-2]["close"] - 1)
         if old.get("price_date", "9999") > cutoff:
             asset["dividend_per_share"] = None
@@ -616,6 +669,7 @@ def build_asset(spec, cutoff, previous):
             asset["financials"]["observed_at"] = old.get("observed_at")
             asset["financials"]["refresh_status"] = "retained_after_failure"
             errors.append(f"{symbol}: SEC no actualizada ({error_label(exc)})")
+        classify_corporate_actions(asset)
         try:
             asset["filings"] = filings(cik, cutoff)
         except Exception as exc:

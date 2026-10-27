@@ -44,6 +44,36 @@ class FinancialPeriods(unittest.TestCase):
         self.assertFalse(module.periodic_form("DEF 14A"))
         self.assertTrue(module.periodic_form(None))  # original iXBRL rows carry their own form check
 
+    def test_provider_spin_off_adjustments_are_not_share_splits(self):
+        history = [
+            {"period_end": "2026-04-30", "shares_unadjusted": 238_600_000},
+            {"period_end": "2026-07-16", "shares_unadjusted": 236_600_000},
+            {"period_end": "2024-03-31", "shares_unadjusted": 2_460_000_000},
+            {"period_end": "2024-07-28", "shares_unadjusted": 24_530_000_000},
+        ]
+        asset = {"splits": [
+            {"date": "2026-06-01", "ratio": 1.241},   # FedEx Freight spin-off
+            {"date": "2024-06-10", "ratio": 10.0},    # genuine 10:1 split
+            {"date": "2021-11-02", "ratio": 1.973},   # no share observations, not a simple ratio
+            {"date": "2023-02-08", "ratio": 1.5},     # no share observations, simple 3:2
+        ], "financials": {"history": history}}
+        module.classify_corporate_actions(asset)
+        self.assertEqual([(r["date"], r["ratio"]) for r in asset["splits"]],
+                         [("2024-06-10", 10.0), ("2023-02-08", 1.5)])
+        adjustments = {r["date"]: r for r in asset["price_adjustments"]}
+        self.assertAlmostEqual(adjustments["2026-06-01"]["observed_share_ratio"], 236.6 / 238.6)
+        self.assertIsNone(adjustments["2021-11-02"]["observed_share_ratio"])
+        self.assertEqual(adjustments["2026-06-01"]["classification"], "price_adjustment_not_share_split")
+
+    def test_adjustment_close_to_one_is_not_confirmed_by_unchanged_shares(self):
+        asset = {"splits": [{"date": "2025-10-30", "ratio": 1.061}], "financials": {"history": [
+            {"period_end": "2025-09-30", "shares_unadjusted": 634_900_000},
+            {"period_end": "2025-12-31", "shares_unadjusted": 635_700_000}]}}
+        module.classify_corporate_actions(asset)
+        self.assertEqual(asset["splits"], [])
+        self.assertTrue(module.simple_ratio(1.25) and module.simple_ratio(0.1))
+        self.assertFalse(module.simple_ratio(1.057))
+
     def test_future_filing_is_not_available_at_cutoff(self):
         facts = {"EPS": {"units": {"USD/shares": [
             {"start": "2025-01-01", "end": "2025-12-31", "filed": "2026-02-01", "val": 10},

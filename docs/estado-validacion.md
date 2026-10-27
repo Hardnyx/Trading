@@ -398,3 +398,22 @@ las cinco empresas concilian beneficio neto ≈ BPA × acciones con ratios
 entre 0,94 y 1,01. La comprobación de conciliación sigue activa. Las dos
 incidencias restantes (SPGI, BKNG) son BPA de informes distintos alrededor de
 un split y siguen bloqueadas a propósito.
+
+### Splits frente a ajustes por escisión
+
+Yahoo publica como «splits» los ajustes de precio de escisiones: FDX 1,241
+(FedEx Freight), GE 1,253 (GE Vernova), HON 1,061, BDX 1,272, SPGI 1,057,
+CMCSA 1,067, IBM 1,046, DELL 1,973, entre otros. Tratados como splits,
+inflaban el historial de acciones anterior (dilución ficticia del 24% en FDX),
+bloqueaban el BPA de SPGI por «informes distintos alrededor de un split» e
+impedían el puente de BPA continuado. Un split debe cambiar las acciones en
+circulación declaradas en la portada del 10-Q/10-K en su proporción, y el
+cambio observado debe quedar más cerca del ratio declarado que de 1. Sin
+observaciones a ambos lados (por ejemplo, los ETF), solo se acepta un ratio
+p/q sencillo con q ≤ 10. El resto se conserva en `price_adjustments`, sin
+alterar bases por acción. Los precios ajustados del proveedor siguen
+incluyendo el valor distribuido.
+
+Observación sin resolver: HON declara 633,7 M acciones al 31-mar-2026 y
+316,9 M al 30-jun-2026, mientras el proveedor indica un ajuste de 0,9535. No
+se reinterpreta como contrasplit sin un documento que lo acredite.
