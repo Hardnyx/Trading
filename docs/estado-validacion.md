@@ -3,7 +3,28 @@
 **Fecha del diagnóstico:** 27 de octubre de 2026, con cortes de precios publicados por el repositorio.
 **Clasificación:** investigación activa; no es asesoramiento de inversión ni certificación predictiva.
 
-## Estado actual consolidado · motor 0.20.0
+## Estado actual consolidado · motor 0.24.0
+
+### Revisión del repositorio al corte del 27-oct · 0.24.0
+
+La [revisión del modelo y la propuesta](revision-modelo-2026-10-27.md) recoge
+los cambios de 0.21.0–0.24.0 y los contrasta con el código de `a138878`.
+Con seis posiciones y correlación máxima 0,85, el corte nuevo reproduce
+IGSB 35%, NVDA 20%, PGR 20%, SHV 10%, CI 10% y CASH 5%; media 7,08%, mediana
+5,87% y CVaR95 12,91%. La captura de 0.20.0 al 26-oct ya no describe el
+estado corriente. No se interpreta el cambio de propuesta como rendimiento
+real ni como superioridad económica.
+
+La revisión encuentra tres pendientes concretos: una sustitución factible
+CI → NFLX omitida por la búsqueda, centrado macro incorrecto para horizontes
+distintos de un año y ausencia de control de primera observación en la nueva
+ancla por holdings. Se conservan cifras y límites de las comprobaciones en
+el informe. No se modifican los parámetros ni el motor en esta revisión.
+
+**Comprobaciones actuales:** 193 pruebas JavaScript, 126 Python y
+`npm run check` aprobados; validación, navegador y despliegue de `a138878`
+en verde. Las pruebas de software no detectaban los casos adversariales
+documentados ni acreditan calibración predictiva.
 
 ### Presentación y reasignación del efectivo · 0.20.0
 

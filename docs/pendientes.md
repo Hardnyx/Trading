@@ -1,7 +1,7 @@
 # Trading · lo que falta
 
-Backlog actualizado el 27 de octubre de 2026 para el motor 0.20.0, corte de
-precios examinado del 26-oct, 260 instrumentos (160 acciones, 100 ETF).
+Backlog actualizado el 27 de octubre de 2026 para el motor 0.24.0, corte de
+precios examinado del 27-oct, 260 instrumentos (160 acciones, 100 ETF).
 Consultar las pruebas y los cierres en `docs/estado-validacion.md`. Cero
 incidencias publicadas o pruebas de software aprobadas no acreditan datos
 conciliados ni validez predictiva: BKNG volvió a mezclar bases tras su split
@@ -56,6 +56,10 @@ Este archivo lista **solo lo que falta**. Para el funcionamiento, consultar
   Faltan ratios de gastos fechados, que hoy no se descuentan. La banda supone
   errores perfectamente correlacionados entre constituyentes; falta medir su
   diversificación. El umbral de 70% es operativo.
+- **Defecto temporal medido en 0.24.0:** `holdingsAnchor` acepta una
+  composición cuya primera observación es posterior al corte; no comparte
+  los controles de `actualHoldings`. Falta exigir primera observación y
+  validación estructural, incluidos duplicados, antes de habilitar el ancla.
 - **Terminado cuando:** todo ETF de renta variable comprable tiene ancla con
   fuente y fecha, neta de gastos, o queda en observación con el motivo.
 
@@ -74,9 +78,10 @@ Este archivo lista **solo lo que falta**. Para el funcionamiento, consultar
 
 ### 4. Validación prospectiva sin observaciones maduras
 - **Evidencia al corte examinado:** registro diario de referencias
-  estadísticas con 1 sesión sellada y 0 puntuadas. No replica el centro,
+  estadísticas con 2 sesiones selladas y 1 puntuada (260 activo-días).
+  No replica el centro,
   EWMA ni los límites exactos del simulador: falta validar también esa
-  distribución y el CVaR de cartera. Pronósticos a 12 meses: 2 sellados y
+  distribución y el CVaR de cartera. Pronósticos a 12 meses: 3 sellados y
   0 vencidos. Eventos verificados: 0.
 - **Falta (mientras se acumula):** gráfico de cobertura y QLIKE acumulados
   en Riesgo, alertas cuando Kupiec o Christoffersen rechacen, y una regla
@@ -84,6 +89,18 @@ Este archivo lista **solo lo que falta**. Para el funcionamiento, consultar
   Puntuación por horizonte semanal y mensual, no solo a una sesión.
 - **Terminado cuando:** el estado pasa a `evaluable` (≥ 20 sesiones y ≥ 500
   activo-días) y existe una decisión documentada sobre GJR frente a EWMA.
+
+### Centrado macro incompleto fuera del horizonte de un año
+
+- **Evidencia en 0.24.0:** se centra `exp(c)` pero se simula `exp(H*c)`.
+  Con los escenarios predeterminados y BPA al 12%, el multiplicador medio
+  por escenarios es 0,991240 a tres meses y 1,016724 a cinco años; debe ser
+  uno bajo la convención declarada. A un año sí se cumple.
+- **Falta:** normalizar la condición anual con la media bruta del horizonte
+  completo y comprobar 3/6 meses y 1/2/3/5 años, también para bonos.
+- **Terminado cuando:** la identidad ponderada se cumple por horizonte y la
+  simulación y las fichas usan la misma función. Véase la
+  [revisión reproducida](revision-modelo-2026-10-27.md).
 
 ## P1 · Modelo frente al documento técnico (`docs/modelo-estocastico-eventos.md`)
 
@@ -158,12 +175,19 @@ Este archivo lista **solo lo que falta**. Para el funcionamiento, consultar
     y perturbaciones pequeñas (el sello del 26-oct y la propuesta actual
     difieren). Falta una métrica de estabilidad visible y desempate a favor
     de la menor rotación entre candidatas estadísticamente equivalentes.
+    La revisión de 0.24.0 al 27-oct encuentra además una sustitución simple
+    omitida (CI 10% → NFLX 10%): mejora el equivalente cierto USD 224,96
+    sobre los mismos escenarios y USD 259,96/275,07 en dos muestras nuevas,
+    sin relajar límites. Falta revisar sistemáticamente intercambios entre
+    instrumentos y sustituciones completas; revisar solo CASH no lo cubre.
+    Estas muestras comprueban el simulador, no resultados reales.
 21. **Comparación robusta** limitada a crecimiento en USD sin retiros, suelo
     ni meta. Falta extenderla a los demás mandatos.
 22. **Topes prudenciales sin validar** (Treasury 60 %, renta variable 50 %,
     35 % por instrumento) y efectivo al 0 % por defecto. Con los anclajes
-    actuales, los topes empujan ~35 % a acciones. Falta un análisis de
-    sensibilidad de los topes, o que el usuario los confirme explícitamente.
+    del 27-oct, la reproducción con seis posiciones alcanza 50% en acciones.
+    Falta un análisis de sensibilidad de los topes, o que el usuario los
+    confirme explícitamente.
 23. **Operativa.** Faltan lotes enteros y precios ejecutables, conciliación
     con el broker, una política integrada de salida/reentrada por tesis
     invalidada y deshacer cambios de composición.
