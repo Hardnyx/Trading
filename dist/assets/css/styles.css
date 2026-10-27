@@ -454,6 +454,7 @@ input[type="number"] {
 }
 .brand-cursor {
   color: var(--orange);
+  animation: blink 1s steps(2, start) infinite;
 }
 .icon-button:hover {
   border-color: var(--orange);
@@ -622,10 +623,6 @@ th button:hover {
 .coverage-table {
   font-size: var(--fs-xs);
 }
-.coverage-table td,
-.coverage-table th {
-  padding: 12px 16px;
-}
 .empty-state {
   padding: 56px 20px;
   text-align: center;
@@ -633,7 +630,7 @@ th button:hover {
   color: var(--dim);
   line-height: 1.6;
 }
-.empty-state .button {
+.empty-state > .button {
   margin-top: 20px;
 }
 .empty-chart {
@@ -1299,10 +1296,6 @@ h1 {
 .allocation-table {
   font-size: var(--fs-md);
 }
-.allocation-table td,
-.allocation-table th {
-  padding: 8px 12px;
-}
 .allocation-table th {
   font-size: var(--fs-xs);
 }
@@ -1913,10 +1906,6 @@ a.text-button,
 .scenario-table {
   border-top: 1px solid var(--line-strong);
 }
-.scenario-table td,
-.scenario-table th {
-  padding: 12px 12px;
-}
 .scenario-table td:first-child {
   color: var(--soft);
 }
@@ -1931,9 +1920,6 @@ a.text-button,
 .equation strong {
   font-weight: 400;
   color: var(--text);
-}
-.financial-table td {
-  padding: 12px 12px;
 }
 .financial-table td:first-child {
   color: var(--soft);
@@ -2012,7 +1998,6 @@ a.text-button,
 }
 .coverage-table td {
   font-size: var(--fs-sm);
-  padding: 8px 12px;
 }
 .methodology-list {
   padding: 20px 24px 20px 36px;
@@ -2502,7 +2487,6 @@ a.text-button,
   }
   .scenario-table td,
   .scenario-table th {
-    padding: 12px;
     font-size: var(--fs-sm);
   }
   .macro-table .sparkline {
@@ -2651,7 +2635,7 @@ a.text-button,
 }
 .decision-stats {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(144px, 1fr));
   border-bottom: 1px solid var(--line);
 }
 .decision-stats > div {
@@ -2662,6 +2646,10 @@ a.text-button,
   display: block;
   font: var(--fs-xs) / 1.6 var(--mono);
   color: var(--muted);
+}
+/* Two label lines are reserved so every value sits on the same baseline. */
+.decision-stats label {
+  min-height: 3.2em;
 }
 .decision-stats strong {
   display: block;
@@ -2768,13 +2756,18 @@ a.text-button,
 .composition-report .composition-contributions {
   border-top: 1px solid var(--line);
 }
-.composition-report .composition-contributions h3 {
-  margin: 0;
-  padding: var(--pad);
+.composition-report .composition-contributions h3,
+.composition-report .composition-brief h3,
+.composition-report .composition-method h3,
+.robustness-weights h3 {
   font: 600 var(--fs-sm) var(--sans);
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--text);
+}
+.composition-report .composition-contributions h3 {
+  margin: 0;
+  padding: var(--pad);
 }
 .composition-report .composition-contributions table {
   min-width: 760px;
@@ -2801,15 +2794,12 @@ a.text-button,
 }
 .composition-report .composition-brief h3 {
   margin: 0 0 8px;
-  font: 600 var(--fs-sm) var(--sans);
-  letter-spacing: 0.04em;
 }
 .composition-report .composition-brief .composition-model-status {
   font-size: var(--fs-xs);
 }
 .composition-report .composition-method h3 {
   margin: var(--pad) 0 8px;
-  font: 600 var(--fs-sm) var(--sans);
 }
 .composition-valuation-details {
   min-width: 850px;
@@ -2819,7 +2809,7 @@ a.text-button,
   max-width: 640px;
   white-space: normal;
   text-align: left;
-  font: var(--fs-sm) / 1.5 var(--sans);
+  font: var(--fs-sm) / 1.4 var(--sans);
   color: var(--muted);
 }
 .composition-cash-comparisons {
@@ -2924,10 +2914,6 @@ a.text-button,
 .robustness-weights h3 {
   flex-basis: 100%;
   margin: 0;
-  font: 600 var(--fs-sm) var(--sans);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--text);
 }
 .robustness-scenarios {
   min-width: 840px;
@@ -3058,9 +3044,6 @@ button.symbol:hover {
   vertical-align: bottom;
   text-align: left;
   animation: dots 1.2s steps(4, end) infinite;
-}
-.brand-cursor {
-  animation: blink 1s steps(2, start) infinite;
 }
 @media (prefers-reduced-motion: reduce) {
   .loading,
