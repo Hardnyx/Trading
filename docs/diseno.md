@@ -33,6 +33,14 @@ Herramienta personal para componer una cartera con los datos del corte disponibl
 
 Contrastes calculados para la paleta principal sobre `#080808`: texto `#dedede`, 14.89:1; texto secundario `#ababab`, 8.72:1; enlaces `#82c3ff`, 10.68:1; verde, 10.23:1; rojo, 7.58:1. Negro sobre el naranja de encabezado: 10.21:1.
 
+Superficies y bordes usan una escala neutra (`--panel`, `--surface`, `--raised`; `--line-soft`, `--line`, `--line-strong`). Los paneles tienen encabezado oscuro con título naranja; el naranja sólido se reserva para la función activa, la acción principal y la línea superior de las métricas.
+
+## Tipografía y espaciado
+
+- IBM Plex Sans para interfaz y textos explicativos; IBM Plex Mono para cifras, etiquetas, tablas y códigos. Ambas se sirven desde `dist/assets/fonts` (SIL Open Font License), sin depender de fuentes del sistema ni de servicios externos.
+- Escala de tamaños: 10, 11, 12, 14, 18, 24 y 32 px (`--fs-xs` a `--fs-3xl`). No se usan tamaños menores de 10 px.
+- Espaciado en múltiplos de 4 px. Los paneles tienen un relleno interior de 12 px y una separación de 12 px entre ellos. Controles y botones miden 28 px de alto.
+
 Se incluyen foco visible, etiquetas de campos, enlace para saltar al contenido, navegación por teclado y diálogos con control del foco. Las tablas conservan sus columnas y permiten desplazamiento horizontal en pantallas estrechas. No se afirma una auditoría integral de conformidad WCAG.
 
 ## Referencias
