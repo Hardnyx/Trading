@@ -28,7 +28,8 @@ import {
 import { template } from "./templates.mjs?v=0.14.0";
 import { DEFAULT_COMPOSITION_RULES } from "../composer.mjs?v=0.14.0";
 import { factorModel } from "../factors.mjs?v=0.14.0";
-import { MODEL_VERSION } from "../policy.mjs?v=0.14.0";
+import { MODEL_VERSION, informationDate } from "../policy.mjs?v=0.14.0";
+import { fundamentalForecast } from "../research-model.mjs?v=0.14.0";
 import { financialFreshness } from '../financial-freshness.mjs?v=0.14.0';
 import { priceMonitor } from '../price-monitor.mjs?v=0.14.0';
 
@@ -45,7 +46,7 @@ export function compositionValuationEvidence(signal) {
 }
 
 export function financialCoverageView(data){
- const asOf=(data.generated_at||data.price_as_of).slice(0,10);
+ const asOf=data.generated_at?informationDate(data):data.price_as_of;
  const rows=data.assets.filter(a=>a.type==='stock').map(a=>({a,f:financialFreshness(a,asOf)}));
  const gaps=rows.filter(r=>r.f.status==='newer_report').length;
  const missing=rows.filter(r=>r.f.status==='missing').length;
@@ -1267,9 +1268,14 @@ export function createViews(context) {
   function valuationView() {
     const a = asset(state.selected) || data.assets[0],
       m = metrics(a),
-      v = model(a, state.method),
+      useContinuing = a.type === 'stock' && state.method === 'pe' && state.research?.[a.symbol]?.earningsBasis === 'continuing',
+      forecast = useContinuing ? fundamentalForecast(a,override(a.symbol),state.research[a.symbol],
+        {asOf:informationDate(data),priceAsOf:data.price_as_of}) : null,
+      valuationAsset = useContinuing && forecast.valid ? {...a,financials:{...a.financials,
+        eps:{...a.financials.eps,value:forecast.effectiveBaseEPS}}} : a,
+      v = useContinuing ? (forecast.valid ? forecast.model : null) : model(a, state.method),
       ass = { ...a.assumptions, ...override(a.symbol) },
-      sc = scenarios(a, override(a.symbol), state.method);
+      sc = useContinuing && !forecast.valid ? [] : scenarios(valuationAsset, override(a.symbol), state.method);
     return (
       title(
         "VALORACIÓN / SUPUESTOS",
@@ -1336,7 +1342,7 @@ export function createViews(context) {
           }),
         ),
         panel6: panel(
-          "VALOR PRESENTE DEL MODELO",
+          useContinuing ? "VALOR PRESENTE · BPA CONTINUADO" : "VALOR PRESENTE DEL MODELO",
           "02",
           v
             ? template("valuation-view-6", {
@@ -1371,7 +1377,7 @@ export function createViews(context) {
                     }),
                   )
                   .join(""),
-                value9: state.method === "pe" ? "BPA" : "FCF/acción",
+                value9: state.method === "pe" ? (useContinuing ? "BPA continuado" : "BPA total reportado") : "FCF/acción",
                 base: money(v.base),
                 growth: pct(ass.growth, 0),
                 horizon: ass.horizon,
@@ -1380,7 +1386,7 @@ export function createViews(context) {
                 discount: pct(ass.discount, 0),
                 fairValue16: money(v.fairValue),
               })
-            : template("valuation-view-5"),
+            : useContinuing ? template('composition-notice',{message:forecast.error}) : template("valuation-view-5"),
         ),
         panel7: panel(
           "BASE FINANCIERA",

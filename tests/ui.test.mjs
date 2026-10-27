@@ -324,3 +324,22 @@ test('price monitor renders empty filters and keeps descriptive price data separ
  assert.match(html,/no suministra retornos esperados/);
  assert.match(priceMonitorView(snapshot,[],'held'),/Sin activos para este filtro/);
 });
+
+test('the primary valuation and scenarios follow the reconciled continuing EPS selection',()=>{
+ const row=value=>({value,period_end:'2026-06-30',filed:'2026-08-01',method:'TTM',components:[
+  {start:'2025-07-01',end:'2026-06-30',filed:'2026-08-01',val:value,accn:'one'}]});
+ const a={symbol:'AAA',name:'Example',type:'stock',sector:'Industrial',price:100,price_date:'2026-10-26',history:[],
+  assumptions:{growth:.05,multiple:15,discount:.1,horizon:3},financials:{eps:row(10),continuing_eps:row(4),discontinued_eps:row(6)}};
+ const state={selected:'AAA',method:'pe',research:{AAA:{earningsBasis:'continuing'}},overrides:{}};
+ const views=createViews({state,data:{price_as_of:a.price_date,generated_at:'2026-10-26T23:00:00Z',assets:[a]},
+  asset:()=>a,override:()=>({}),model:()=>valuation(a)});
+ const html=views.valuation();
+ assert.ok(html.includes('VALOR PRESENTE · BPA CONTINUADO'));
+ assert.ok(html.includes('$4.00'));
+ state.research.AAA.earningsBasis='reported';
+ assert.ok(!views.valuation().includes('$4.00'));
+ state.research.AAA.earningsBasis='continuing';a.financials.discontinued_eps=null;
+ const blocked=views.valuation();
+ assert.ok(blocked.includes('sin conciliar'));
+ assert.ok(!blocked.includes('$4.00'));
+});
