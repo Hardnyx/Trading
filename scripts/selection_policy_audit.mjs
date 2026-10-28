@@ -11,12 +11,16 @@ import {tradePlan,MODEL_VERSION} from '../dist/assets/js/policy.mjs?v=0.35.0';
 const value=(flag,fallback)=>{const i=process.argv.indexOf(flag);return i<0?fallback:process.argv[i+1];};
 const marketPath=value('--market','dist/data/market.json'),volPath=value('--volatility','dist/data/volatility.json'),
   poolPath=value('--pool','out/reliability-canonical.json'),out=value('--output','out/selection-policy-audit.json'),
-  bytes=readFileSync(marketPath),market=JSON.parse(bytes),volatility=JSON.parse(readFileSync(volPath)),
-  proposal=JSON.parse(readFileSync(poolPath)),request=referenceRequest({...market,volatility}),
-  x=prepareComposition(market,request.settings,{},request.rules),paths=Number(value('--paths','3000')),
+  bytes=readFileSync(marketPath),rawMarket=JSON.parse(bytes),
+  market={...rawMarket,generated_at:rawMarket.generated_at??rawMarket.collected_at},volatility=JSON.parse(readFileSync(volPath)),
+  proposal=JSON.parse(readFileSync(poolPath)),paths=Number(value('--paths','3000')),
   seed=0x28ac1379,hash=buffer=>createHash('sha256').update(buffer).digest('hex');
+if(market.assets.some(a=>!Array.isArray(a.history)))
+  throw Error('Archived metadata omits price histories; use the published dist/data/market.json from its original Git commit');
 if(market.generated_at!==proposal.snapshot_generated_at||volatility.source_market_generated_at!==market.generated_at)
   throw Error('Frozen proposal, market and variance vintages differ');
+const request=referenceRequest({...market,volatility}),
+  x=prepareComposition(market,request.settings,{},request.rules);
 const candidates=proposal.diagnostics.reliableSelection.candidates.filter(r=>r.feasible&&!r.positions.every(p=>p.symbol==='CASH')),
   rows=candidates.map(c=>{
     if(c.positions.some(p=>!x.assets.some(a=>a.symbol===p.symbol)))throw Error('Candidate universe differs');

@@ -1,6 +1,6 @@
 # Estado de validación de Trading
 
-**Actualizado:** 28 de octubre de 2026 · motor 0.35.0 · precios al 27-oct.
+**Actualizado:** 28 de octubre de 2026 · motor 0.35.0 · precios al 28-oct.
 **Estado:** escenarios condicionales de investigación; capacidad predictiva y
 ventaja económica sin acreditar. El [historial hasta 0.32.0](historial-validacion-hasta-0.32.md)
 conserva los cambios y cifras anteriores.
@@ -10,8 +10,9 @@ conserva los cambios y cifras anteriores.
 | Medida | Resultado | Alcance |
 |---|---|---|
 | GJR-t aceptados | 20/260; 65 ajustes con ν en 4,0 | Cribado histórico de riesgo; no valida la cartera ni convierte los ajustes en el borde en aceptados |
-| Registro diario | 2 sesiones selladas; 1 puntuada; 260 activo-días | Referencias estadísticas; aún no evaluable (20 sesiones y 500 activo-días) |
-| Pronósticos a doce meses | 3 sellados; ninguno vencido | No hay una rentabilidad prospectiva madura |
+| Registro diario | 3 sesiones selladas; 2 puntuadas; 520 activo-días | Referencias estadísticas; aún no evaluable (20 sesiones y 500 activo-días) |
+| Pronósticos a doce meses | 4 sellados; ninguno vencido | No hay una rentabilidad prospectiva madura |
+| Núcleo de precios exacto 1.0.0 | 2 sellos; 0 orígenes maduros a 1/5/21 sesiones | No se suma la evidencia de otros modelos ni se cuentan activos correlacionados como orígenes independientes |
 | Eventos verificados | 0 | GARCH-X y saltos informativos siguen bloqueados |
 | IC reconstruido del proxy anual | 0,037 a 252 sesiones; 36 orígenes | Intervalo por bloques [−0,082; 0,082]; no valida el IC declarado de 0,05 |
 | Candidato de oro con factores rezagados | 34 orígenes; R² fuera de muestra −0,057 frente a media histórica | Empeora el MSE un 5,7%; permanece en sombra |
@@ -75,6 +76,18 @@ Una sensibilidad del mismo conjunto elige 35% de acciones en el modelo base,
 modelo declara prima accionaria e IC cero. La interfaz lo hace explícito;
 el resultado defensivo depende de esa convención, no de evidencia de que
 las acciones vayan a perder. No se elimina un modelo para forzar compras.
+
+Con el mismo código y datos del cierre siguiente, la propuesta desde efectivo
+pasó a SPY 35%, LQD 35%, TIP 25%, CASH 5%: reasignación del 70%. Al comparar
+ambas cestas fijas con 3.000 escenarios comunes por modelo, la mejora en el
+peor modelo es USD 16,67 con el corte anterior y USD 1,97 con el nuevo; sus
+intervalos aproximados incluyen pérdidas y ganancias de más de USD 500.
+No se ha demostrado que nueva información justifique ese giro. Una cuenta
+hipotética ya invertida en la cesta anterior rechaza la transición con el
+control de producción; ningún modelo supera el umbral con su cota inferior.
+La propuesta inicial y una decisión de rebalanceo son preguntas distintas.
+Los pesos siguen poco identificados. La atribución detallada y los hashes
+quedan en [el contraste de cierres](auditorias/allocation-cuts-0.35.0.json).
 
 El contraste cronológico de precios abarca orígenes desde abril de 2022
 hasta septiembre de 2026, a 1/5/21 sesiones, con tres variantes de varianza,
@@ -152,9 +165,9 @@ cestas conjuntas estáticas, frente a EWMA sin retorno económico supuesto.
 Puntúa CRPS aproximado, cobertura, QLIKE y residuo de ES. Se separan activos
 y carteras, orígenes superpuestos y cohortes con cambios de núcleo.
 
-Este registro empieza con la publicación de 0.34.0; no contiene resultados
-maduros del núcleo nuevo. Los registros diarios anteriores son comparadores,
-no evidencia de esta ley de precios. Alcanzar 20 orígenes no superpuestos y
+Este registro empieza con la publicación de 0.34.0; conserva dos sellos y
+ningún resultado maduro del núcleo nuevo. Los registros diarios anteriores
+son comparadores, no evidencia de esta ley de precios. Alcanzar 20 orígenes no superpuestos y
 500 observaciones habilita una revisión diagnóstica, **no** una declaración
 de validez predictiva. Faltan precisión, mejora frente a referencias,
 consistencia por periodos y resultados económicos netos maduros.

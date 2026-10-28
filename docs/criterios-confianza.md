@@ -36,8 +36,8 @@ Estas cotas no contienen toda la incertidumbre de parámetros o del mercado.
 Se maximiza la utilidad del mandato en el peor modelo declarado. La
 incertidumbre del ranking no permite cambiar ese objetivo por mínimo riesgo.
 Desde 0.35.0, favorecer menor rotación exige que la **cota superior** de la
-pérdida de oportunidad frente a la mejor candidata quede dentro del umbral
-económico del mandato (USD 100 en la configuración base). Si dos alternativas
+pérdida de oportunidad frente al líder estimado en la selección quede dentro
+del umbral económico del mandato (USD 100 en la configuración base). Si dos alternativas
 tienen la misma rotación, se conserva la mayor utilidad en el peor modelo.
 
 Se contrastan todas las parejas de modelos porque `min(a) − min(b)` no es
@@ -46,6 +46,8 @@ incluyen la multiplicidad de candidatas y modelos y convierten utilidad a
 un equivalente monetario aproximado. No representan incertidumbre total de
 parámetros ni confianza predictiva. Se siguen mostrando alternativas cuyo
 ranking no queda resuelto, aunque no sean empates económicos demostrados.
+La pérdida por ese desempate no es una cota de distancia al mejor candidato
+verdadero ni al óptimo global; elegir el propio líder da cero por identidad.
 No se fija la cartera anterior y una mejora respaldada puede justificar
 un cambio importante.
 
@@ -91,3 +93,10 @@ esa evidencia ni acreditan el IC, el re-rating o una prima de renta variable.
 Un cambio grande debe quedar explicado por datos nuevos, una corrección
 matemática, un cambio explícito del mandato o una mejora robusta medible.
 La versión, los datos y el protocolo permiten revisar cuál fue la causa.
+
+Una propuesta para una cuenta nueva en efectivo no es una instrucción para
+rotar una cuenta ya invertida. Ambas deben compararse con el mismo mandato
+y datos. En el contraste 27–28-oct de 0.35.0 cambió el 70% de los pesos sin
+una mejora resuelta entre las cestas fijas; el control rechazó esa transición
+para la cuenta hipotética anterior. Es evidencia de indeterminación de
+pesos, no prueba de que conservar tenga capacidad predictiva acreditada.

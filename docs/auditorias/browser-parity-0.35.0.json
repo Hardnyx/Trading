@@ -1,0 +1,23 @@
+{
+  "source_commit": "83aeeca36216dec8a3d1134762e433fa1b925a58",
+  "price_cut": "2026-10-27",
+  "workflow_run_id": 40777903996,
+  "job_id": 123131843306,
+  "engine": "0.35.0",
+  "parity": "PASS",
+  "gate": "passed",
+  "expected": {
+    "SGOV": 35,
+    "CASH": 5,
+    "IGSB": 35,
+    "TIP": 25
+  },
+  "rendered": {
+    "SGOV": 35,
+    "CASH": 5,
+    "IGSB": 35,
+    "TIP": 25
+  },
+  "retained_user_settings": true,
+  "scope": "Software parity on the frozen published cut; not predictive validation or a broker order"
+}

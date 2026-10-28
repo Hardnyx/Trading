@@ -1,7 +1,7 @@
 # Trading · lo que falta
 
 Backlog actualizado el 28 de octubre de 2026 para el motor 0.35.0, corte de
-precios examinado del 27-oct, 260 instrumentos (160 acciones, 100 ETF).
+precios examinado del 28-oct, 260 instrumentos (160 acciones, 100 ETF).
 Consultar las pruebas y los cierres en `docs/estado-validacion.md`. Cero
 incidencias publicadas o pruebas de software aprobadas no acreditan datos
 conciliados ni validez predictiva: BKNG volvió a mezclar bases tras su split
@@ -107,15 +107,16 @@ Este archivo lista **solo lo que falta**. Para el funcionamiento, consultar
 
 ### 4. Validación prospectiva sin observaciones maduras
 - **Evidencia al corte examinado:** registro diario de referencias
-  estadísticas con 2 sesiones selladas y 1 puntuada (260 activo-días).
+  estadísticas con 3 sesiones selladas y 2 puntuadas (520 activo-días).
   No replica el centro,
   EWMA ni los límites exactos del simulador: falta validar también esa
-  distribución y el CVaR de cartera. Pronósticos a 12 meses: 3 sellados y
+  distribución y el CVaR de cartera. Pronósticos a 12 meses: 4 sellados y
   0 vencidos. Eventos verificados: 0.
 - **Avance 0.34.0:** registro del núcleo exacto 1.0.0 a 1/5/21 sesiones,
   con origen futuro, cestas conjuntas y puntuación CRPS/QLIKE/cobertura/ES
   frente a EWMA. No se reutilizan cohortes anteriores como evidencia de la
-  nueva ley de precios. No hay observaciones maduras del núcleo nuevo.
+  nueva ley de precios. Hay dos sellos y ninguna observación madura del núcleo
+  nuevo a 1/5/21 sesiones.
 - **Contraste 0.35.0:** reconstrucción cronológica del fallback frente a
   EWMA plano y dinámico. La cesta actual tiene 38 intervalos mensuales no
   superpuestos y dos excepciones; no hay superioridad resuelta en CRPS ni
@@ -206,8 +207,17 @@ Este archivo lista **solo lo que falta**. Para el funcionamiento, consultar
     En 0.35.0, la rotación solo desempata si la cota de pérdida económica
     frente al líder queda dentro del umbral del mandato. No se sustituye
     crecimiento por mínimo riesgo cuando el ranking es incierto.
+    **Evidencia nueva:** entre cierres 27 y 28-oct, el mismo motor 0.35.0
+    reasigna el 70% de una propuesta desde efectivo. En 3.000 escenarios
+    comunes por modelo, la diferencia en el peor caso es USD 16,67 y USD 1,97
+    según el corte, con intervalos aproximados que abarcan cero. La cuenta
+    hipotética ya invertida rechaza esa transición. No se ha demostrado que
+    nueva información económica justifique el giro; los pesos siguen poco
+    determinados. Véase `auditorias/allocation-cuts-0.35.0.json`.
     **Falta:** contrastar universos, cortes nuevos, supuestos y cobertura de
-    la búsqueda finita, y atribuir cada cambio importante a datos, corrección
+    la búsqueda finita. La cota del desempate compara con el líder estimado,
+    no con el verdadero mejor candidato: falta acotar esa incertidumbre.
+    También falta atribuir cada cambio importante a datos, corrección
     o evidencia. La coincidencia de semillas con la política nueva no prueba
     que los pesos estén identificados ni que generen mejores retornos.
 21. **Comparación robusta.** La selección ordinaria evalúa todas las

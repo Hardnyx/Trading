@@ -1,0 +1,541 @@
+{
+ "engine": "0.35.0",
+ "method": "two-cut-fixed-allocation-paired-attribution-v1",
+ "paths": 3000,
+ "seed": 684712849,
+ "symbols": [
+  "CASH",
+  "IGSB",
+  "LQD",
+  "SGOV",
+  "SPY",
+  "TIP"
+ ],
+ "targets": {
+  "earlier": [
+   {
+    "symbol": "SGOV",
+    "weight": 0.35
+   },
+   {
+    "symbol": "CASH",
+    "weight": 0.05
+   },
+   {
+    "symbol": "IGSB",
+    "weight": 0.35
+   },
+   {
+    "symbol": "TIP",
+    "weight": 0.25
+   }
+  ],
+  "later": [
+   {
+    "symbol": "SPY",
+    "weight": 0.35
+   },
+   {
+    "symbol": "LQD",
+    "weight": 0.35
+   },
+   {
+    "symbol": "CASH",
+    "weight": 0.05
+   },
+   {
+    "symbol": "TIP",
+    "weight": 0.25
+   }
+  ]
+ },
+ "capital_reallocated": 0.7,
+ "cases": [
+  {
+   "label": "earlier",
+   "price_cut": "2026-10-27",
+   "market_collected_at": "2026-10-28T19:04:45.339804+00:00",
+   "market_sha256": "19c712df448af2f972ef8af7290c275fdbbfdb464ceeab0b4d0aa975bdecc836",
+   "volatility_sha256": "10119be7ba38c72c5cb9d1ca97f552ead1c75eaa546ac78347d84ff9f7d267e6",
+   "anchors": [
+    {
+     "symbol": "CASH",
+     "annual": 0,
+     "source": "Efectivo USD sin remuneraci\u00f3n (0% declarado en el mandato)"
+    },
+    {
+     "symbol": "IGSB",
+     "annual": 0.0518,
+     "source": "iShares: TIR bruta menos gastos y p\u00e9rdida esperada de cr\u00e9dito 0.25% (convenci\u00f3n); diferencial por escenario"
+    },
+    {
+     "symbol": "LQD",
+     "annual": 0.055799999999999995,
+     "source": "iShares: TIR bruta menos gastos y p\u00e9rdida esperada de cr\u00e9dito 0.25% (convenci\u00f3n); diferencial por escenario"
+    },
+    {
+     "symbol": "SGOV",
+     "annual": 0.039400000000000004,
+     "source": "iShares: TIR bruta menos gastos"
+    },
+    {
+     "symbol": "SPY",
+     "annual": 0.061194131640324695,
+     "source": "Holdings al 2026-10-26: 72% del peso con ancla propia de 147 acciones; resto con prior 6% \u00b115 pp; gastos del fondo 0.09% descontados"
+    },
+    {
+     "symbol": "TIP",
+     "annual": 0.048339299999999995,
+     "source": "iShares: rendimiento real m\u00e1s inflaci\u00f3n impl\u00edcita a 10 a\u00f1os al corte, menos gastos; la tasa real y la inflaci\u00f3n cambian por escenario"
+    }
+   ],
+   "risk_free": 0.042199999999999994,
+   "comparison": {
+    "gain": 16.6699311711709,
+    "lowerGain": -533.1971589867462,
+    "upperGain": 569.4537990969402,
+    "lowerUtilityGain": -0.005130517323546222,
+    "upperUtilityGain": 0.005450472244077312,
+    "familySize": 50,
+    "scope": "Paired cross-model Monte Carlo approximation with plug-in certainty-equivalent conversion; not predictive confidence"
+   },
+   "perModel": [
+    {
+     "id": "original",
+     "earlier": 104286.30421830241,
+     "later": 104992.54996425957,
+     "evidence": {
+      "meanUtilityGain": 0.006749352959967664,
+      "standardError": 0.0013338649255662401,
+      "z": 3.8989492070408103,
+      "familySize": 50,
+      "alpha": 0.025,
+      "paths": 3000,
+      "gain": 706.2457459571451,
+      "lowerGain": 161.6313815350877
+     }
+    },
+    {
+     "id": "no_rerating",
+     "earlier": 104286.30421830241,
+     "later": 104924.34245616908,
+     "evidence": {
+      "meanUtilityGain": 0.00609950044257937,
+      "standardError": 0.0013140875707238556,
+      "z": 3.8989492070408103,
+      "familySize": 50,
+      "alpha": 0.025,
+      "paths": 3000,
+      "gain": 638.0382378666545,
+      "lowerGain": 101.82683008612366
+     }
+    },
+    {
+     "id": "margin_stress",
+     "earlier": 104193.41432502327,
+     "later": 104782.27167639931,
+     "evidence": {
+      "meanUtilityGain": 0.005635669117200237,
+      "standardError": 0.0013696600287206016,
+      "z": 3.8989492070408103,
+      "familySize": 50,
+      "alpha": 0.025,
+      "paths": 3000,
+      "gain": 588.8573513760493,
+      "lowerGain": 30.786849101350526
+     }
+    },
+    {
+     "id": "combined",
+     "earlier": 104193.41432502327,
+     "later": 104404.22005383811,
+     "evidence": {
+      "meanUtilityGain": 0.0020211715363572134,
+      "standardError": 0.0013403518920825158,
+      "z": 3.8989492070408103,
+      "familySize": 50,
+      "alpha": 0.025,
+      "paths": 3000,
+      "gain": 210.80572881487024,
+      "lowerGain": -333.3837652255461
+     }
+    },
+    {
+     "id": "low_conviction",
+     "earlier": 104193.41432502327,
+     "later": 104210.08425619444,
+     "evidence": {
+      "meanUtilityGain": 0.00015997746026554484,
+      "standardError": 0.0013569027199067053,
+      "z": 3.8989492070408103,
+      "familySize": 50,
+      "alpha": 0.025,
+      "paths": 3000,
+      "gain": 16.6699311711709,
+      "lowerGain": -533.1971589867462
+     }
+    }
+   ],
+   "hypotheticalHold": null
+  },
+  {
+   "label": "later",
+   "price_cut": "2026-10-28",
+   "market_collected_at": "2026-10-28T22:15:31.474601+00:00",
+   "market_sha256": "46c9e4d47b119a78569aaf30f93ac2c43a11947c3b08ddcb3deddf5c84bc719e",
+   "volatility_sha256": "c73d17d76fddc2e51b707856642c9d1912520a7cfa7fec40fa9674ba118e89b8",
+   "anchors": [
+    {
+     "symbol": "CASH",
+     "annual": 0,
+     "source": "Efectivo USD sin remuneraci\u00f3n (0% declarado en el mandato)"
+    },
+    {
+     "symbol": "IGSB",
+     "annual": 0.0518,
+     "source": "iShares: TIR bruta menos gastos y p\u00e9rdida esperada de cr\u00e9dito 0.25% (convenci\u00f3n); diferencial por escenario"
+    },
+    {
+     "symbol": "LQD",
+     "annual": 0.055799999999999995,
+     "source": "iShares: TIR bruta menos gastos y p\u00e9rdida esperada de cr\u00e9dito 0.25% (convenci\u00f3n); diferencial por escenario"
+    },
+    {
+     "symbol": "SGOV",
+     "annual": 0.039400000000000004,
+     "source": "iShares: TIR bruta menos gastos"
+    },
+    {
+     "symbol": "SPY",
+     "annual": 0.06130860953816018,
+     "source": "Holdings al 2026-10-26: 72% del peso con ancla propia de 147 acciones; resto con prior 6% \u00b115 pp; gastos del fondo 0.09% descontados"
+    },
+    {
+     "symbol": "TIP",
+     "annual": 0.048639299999999996,
+     "source": "iShares: rendimiento real m\u00e1s inflaci\u00f3n impl\u00edcita a 10 a\u00f1os al corte, menos gastos; la tasa real y la inflaci\u00f3n cambian por escenario"
+    }
+   ],
+   "risk_free": 0.0418,
+   "comparison": {
+    "gain": 1.97379850577272,
+    "lowerGain": -544.9055708297383,
+    "upperGain": 551.738486891074,
+    "lowerUtilityGain": -0.0052431583696126854,
+    "upperUtilityGain": 0.00528104294170067,
+    "familySize": 50,
+    "scope": "Paired cross-model Monte Carlo approximation with plug-in certainty-equivalent conversion; not predictive confidence"
+   },
+   "perModel": [
+    {
+     "id": "original",
+     "earlier": 104292.64331773116,
+     "later": 105002.01387828933,
+     "evidence": {
+      "meanUtilityGain": 0.006778704114160408,
+      "standardError": 0.0013268627686521591,
+      "z": 3.8989492070408103,
+      "familySize": 50,
+      "alpha": 0.025,
+      "paths": 3000,
+      "gain": 709.3705605581781,
+      "lowerGain": 167.55893989975448
+     }
+    },
+    {
+     "id": "no_rerating",
+     "earlier": 104292.64331773116,
+     "later": 104930.07084419492,
+     "evidence": {
+      "meanUtilityGain": 0.0060933106736497985,
+      "standardError": 0.0013066971714368926,
+      "z": 3.8989492070408103,
+      "familySize": 50,
+      "alpha": 0.025,
+      "paths": 3000,
+      "gain": 637.427526463769,
+      "lowerGain": 104.1949737816758
+     }
+    },
+    {
+     "id": "margin_stress",
+     "earlier": 104199.66244349479,
+     "later": 104791.25024638585,
+     "evidence": {
+      "meanUtilityGain": 0.005661388577842983,
+      "standardError": 0.0013632015815877798,
+      "z": 3.8989492070408103,
+      "familySize": 50,
+      "alpha": 0.025,
+      "paths": 3000,
+      "gain": 591.5878028910665,
+      "lowerGain": 36.09422468263074
+     }
+    },
+    {
+     "id": "combined",
+     "earlier": 104199.66244349479,
+     "later": 104408.78252954593,
+     "evidence": {
+      "meanUtilityGain": 0.0020049059483401538,
+      "standardError": 0.0013331619768184855,
+      "z": 3.8989492070408103,
+      "familySize": 50,
+      "alpha": 0.025,
+      "paths": 3000,
+      "gain": 209.12008605114534,
+      "lowerGain": -332.18150096351746
+     }
+    },
+    {
+     "id": "low_conviction",
+     "earlier": 104199.66244349479,
+     "later": 104201.63624200056,
+     "evidence": {
+      "meanUtilityGain": 1.8942286043992274e-05,
+      "standardError": 0.001349620212070026,
+      "z": 3.8989492070408103,
+      "familySize": 50,
+      "alpha": 0.025,
+      "paths": 3000,
+      "gain": 1.97379850577272,
+      "lowerGain": -544.9055708297383
+     }
+    }
+   ],
+   "hypotheticalHold": {
+    "status": "rejected",
+    "hurdle": 125.97449016574123,
+    "minimumLowerGain": -652.3168009838555,
+    "maximumTurnover": 1,
+    "plan": {
+     "rows": [
+      {
+       "symbol": "SGOV",
+       "side": "sell",
+       "from": 0.35,
+       "to": 0,
+       "delta": -0.35,
+       "notional": 35000,
+       "quantity": 347.567041139038,
+       "commission": 0,
+       "spread": 8.75,
+       "slippage": 7,
+       "tax": 0,
+       "cost": 15.75,
+       "small": false
+      },
+      {
+       "symbol": "IGSB",
+       "side": "sell",
+       "from": 0.35,
+       "to": 0,
+       "delta": -0.35,
+       "notional": 35000,
+       "quantity": 679.8756798756799,
+       "commission": 0,
+       "spread": 8.75,
+       "slippage": 7,
+       "tax": 0,
+       "cost": 15.75,
+       "small": false
+      },
+      {
+       "symbol": "TIP",
+       "side": "sell",
+       "from": 0.25,
+       "to": 0.25,
+       "delta": -0.0001574681127084841,
+       "notional": 15.746811270848411,
+       "quantity": 0.14819133234016324,
+       "commission": 0,
+       "spread": 0.003936702817712103,
+       "slippage": 0.0031493622541696824,
+       "tax": 0,
+       "cost": 0.007086065071881786,
+       "small": true
+      },
+      {
+       "symbol": "SPY",
+       "side": "buy",
+       "from": 0,
+       "to": 0.35,
+       "delta": 0.3497795446422081,
+       "notional": 34977.95446422081,
+       "quantity": 45.29004487162008,
+       "commission": 0,
+       "spread": 8.744488616055204,
+       "slippage": 6.995590892844163,
+       "tax": 0,
+       "cost": 15.740079508899367,
+       "small": false
+      },
+      {
+       "symbol": "LQD",
+       "side": "buy",
+       "from": 0,
+       "to": 0.35,
+       "delta": 0.3497795446422081,
+       "notional": 34977.95446422081,
+       "quantity": 336.10026390142036,
+       "commission": 0,
+       "spread": 8.744488616055204,
+       "slippage": 6.995590892844163,
+       "tax": 0,
+       "cost": 15.740079508899367,
+       "small": false
+      }
+     ],
+     "total": 62.987245082870615,
+     "turnover": 0.6998740255098331,
+     "taxComplete": true,
+     "investableCapital": 99937.0127549166,
+     "ending": [
+      {
+       "symbol": "SPY",
+       "weight": 0.35,
+       "value": 34977.95446422081
+      },
+      {
+       "symbol": "LQD",
+       "weight": 0.35,
+       "value": 34977.95446422081
+      },
+      {
+       "symbol": "CASH",
+       "weight": 0.05,
+       "value": 4996.850637745831
+      },
+      {
+       "symbol": "TIP",
+       "weight": 0.25,
+       "value": 24984.25318872915
+      }
+     ],
+     "budgetResidual": -5.231370892033738e-10,
+     "complete": true,
+     "smallTrades": 1,
+     "assumptions": {
+      "commissionFixed": 0,
+      "commissionBps": 0,
+      "spreadBps": 5,
+      "slippageBps": 2,
+      "capitalGainsTax": 0,
+      "maxTurnover": 1,
+      "minTrade": 25,
+      "minBenefit": 100,
+      "benefitCostRatio": 2
+     }
+    },
+    "allModelsBeatHolding": false,
+    "currentViolatesRisk": false,
+    "tailStress": {
+     "required": true,
+     "role": "risk-only",
+     "passes": true,
+     "cvar95": 0.11075807915796018,
+     "riskEvidence": {
+      "alpha": 0.0008333333333333334,
+      "familySize": 30,
+      "z": 3.7656544811695327,
+      "rows": [
+       {
+        "id": "CVaR",
+        "value": 0.11075807915796018,
+        "limit": 0.2,
+        "upper": 0.12900186064440725,
+        "method": "asymptotic-tail-influence"
+       },
+       {
+        "id": "P\u00e9rdida",
+        "value": 0.296,
+        "limit": 0.45,
+        "upper": 0.3521041575058562,
+        "method": "binomial-KL-upper"
+       },
+       {
+        "id": "Drawdown",
+        "value": 0,
+        "limit": 0.25,
+        "upper": 0.0070650015379346886,
+        "method": "binomial-KL-upper"
+       },
+       {
+        "id": "Liquidez",
+        "value": 0,
+        "limit": 0.02,
+        "upper": 0,
+        "method": "analytic-model-structure"
+       }
+      ],
+      "failures": [],
+      "scope": "Monte Carlo uncertainty only; CVaR interval is approximate, predictive calibration is unverified"
+     },
+     "holdFailures": [],
+     "note": "Student-t price stress: fitted nu or declared stress nu=4 for fallback assets. No economic mean, utility or return forecasts are reported"
+    },
+    "models": [
+     {
+      "id": "original",
+      "gain": 843.5799039164849,
+      "lowerGain": 74.67444483336294,
+      "economicPass": false,
+      "failures": [
+       "Costes u operativa"
+      ],
+      "holdFailures": [],
+      "passes": false
+     },
+     {
+      "id": "no_rerating",
+      "gain": 776.7896015262377,
+      "lowerGain": 19.806845737912226,
+      "economicPass": false,
+      "failures": [
+       "Costes u operativa"
+      ],
+      "holdFailures": [],
+      "passes": false
+     },
+     {
+      "id": "margin_stress",
+      "gain": 720.9658800624748,
+      "lowerGain": -67.44972033887461,
+      "economicPass": false,
+      "failures": [
+       "Costes u operativa"
+      ],
+      "holdFailures": [],
+      "passes": false
+     },
+     {
+      "id": "combined",
+      "gain": 342.9106972169102,
+      "lowerGain": -425.7608624376444,
+      "economicPass": false,
+      "failures": [
+       "Costes u operativa"
+      ],
+      "holdFailures": [],
+      "passes": false
+     },
+     {
+      "id": "low_conviction",
+      "gain": 124.25177554362745,
+      "lowerGain": -652.3168009838555,
+      "economicPass": false,
+      "failures": [
+       "Costes u operativa"
+      ],
+      "holdFailures": [],
+      "passes": false
+     }
+    ],
+    "scope": "Hypothetical holdings, not user brokerage positions; purchase basis is assumed at the current close."
+   }
+  }
+ ],
+ "prospective": false,
+ "production_eligible": false,
+ "scope": "Fixed portfolios, original full-universe anchors, same relevant covariance submatrix and named random streams across cuts. Hypothetical hold uses the full production universe. No reoptimization or strategy backtest; conditional MC evidence is not market forecasting skill."
+}
