@@ -183,6 +183,10 @@ Este archivo lista **solo lo que falta**. Para el funcionamiento, consultar
     presupuesto de búsqueda con el universo elegible. En 0.31.0, añadir tres
     índices a la muestra hizo que las búsquedas no reencontraran una cartera
     USD 161 mejor (z 1,88), sin que ninguno de los índices fuera elegido.
+    Doblar el presupuesto a 600 candidatas por búsqueda recuperó esa
+    familia de carteras (+USD 217 en escenarios comunes), pero no mejoró el
+    corte publicado (−USD 24, ruido) y cuesta 25–50% más de tiempo: no se
+    cambió el valor por defecto.
 21. **Comparación robusta** limitada a crecimiento en USD sin retiros, suelo
     ni meta. Falta extenderla a los demás mandatos.
 22. **Topes prudenciales sin validar** (Treasury 60 %, renta variable 50 %,
