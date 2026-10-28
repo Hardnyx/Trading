@@ -29,3 +29,18 @@ class BondProfiles(unittest.TestCase):
         p = parse_profile(self.html(), 'IEF', '2026-10-23', '2026-10-24T00:00:00Z', source_url=source)
         self.assertEqual(p['source_url'], source)
         self.assertNotIn('IEF', ISSUER_URLS)
+
+    def test_inflation_linked_profile_takes_the_real_yield(self):
+        components = [{"containersByNameMap":{"default":{"dataPointsByNameMap":{
+            "modelOad":{"value":6.7,"asOfDate":20261026,"label":"Effective Duration"},
+            "realYield":{"value":2.65614,"asOfDate":20261026,"label":"Real Yield"},
+            "weightedAvgYieldToMaturity":{"value":4.87,"asOfDate":20261026,"label":"Weighted Avg YTM"},
+        }}}},{"feeDataPoints":{"expr":{"formattedValue":"0.18%"}}}]
+        html = "".join(f'<walrus-render-on-client componentprops="{escape(json.dumps(c), quote=True)}"></walrus-render-on-client>' for c in components)
+        p = parse_profile(html, "TIP", "2026-10-27", "2026-10-28T00:00:00Z", source_url="x")
+        self.assertAlmostEqual(p["realYield"], .0265614)
+        self.assertTrue(p["inflationLinked"])
+        self.assertNotIn("yieldToMaturity", p)
+        # A nominal fund still requires its nominal yield.
+        with self.assertRaises(ValueError):
+            parse_profile(html, "HYG", "2026-10-27", "2026-10-28T00:00:00Z", source_url="x")

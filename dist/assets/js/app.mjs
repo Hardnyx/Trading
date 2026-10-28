@@ -9,20 +9,20 @@ import {
   alignReturns,
   returnStats,
   validateSnapshot,
-} from "./analytics.mjs?v=0.28.0";
+} from "./analytics.mjs?v=0.29.0";
 import {
   registerPortfolio,
   reviewPortfolio,
   DEFAULT_RULES,
-} from "./monitor.mjs?v=0.28.0";
+} from "./monitor.mjs?v=0.29.0";
 
-import { fmt, pct, money, dateLabel } from "./ui/format.mjs?v=0.28.0";
-import { createViews, NAV } from "./ui/views.mjs?v=0.28.0";
-import { loadTemplates } from "./ui/templates.mjs?v=0.28.0";
-import { applyVisualValues, showStartupError } from "./ui/dom.mjs?v=0.28.0";
-import { createTickerRotation } from "./ui/ticker-rotation.mjs?v=0.28.0";
-import { createValueFlash } from "./ui/value-flash.mjs?v=0.28.0";
-import { DEFAULT_COMPOSITION_RULES, MULTI_START_COUNT, startSeeds } from "./composer.mjs?v=0.28.0";
+import { fmt, pct, money, dateLabel } from "./ui/format.mjs?v=0.29.0";
+import { createViews, NAV } from "./ui/views.mjs?v=0.29.0";
+import { loadTemplates } from "./ui/templates.mjs?v=0.29.0";
+import { applyVisualValues, showStartupError } from "./ui/dom.mjs?v=0.29.0";
+import { createTickerRotation } from "./ui/ticker-rotation.mjs?v=0.29.0";
+import { createValueFlash } from "./ui/value-flash.mjs?v=0.29.0";
+import { DEFAULT_COMPOSITION_RULES, MULTI_START_COUNT, startSeeds } from "./composer.mjs?v=0.29.0";
 
 import {
   DEFAULT_MANDATE,
@@ -34,23 +34,24 @@ import {
   withCashAsset,
   currentAccount,
   informationDate,
+  effectiveRegimes,
   MODEL_VERSION,
-} from "./policy.mjs?v=0.28.0";
-import { validateResearch } from "./research-model.mjs?v=0.28.0";
+} from "./policy.mjs?v=0.29.0";
+import { validateResearch } from "./research-model.mjs?v=0.29.0";
 import {
   journalOrigin,
   appendForecast,
   freezeMaturedOutcomes,
-} from "./journal.mjs?v=0.28.0";
+} from "./journal.mjs?v=0.29.0";
 
-import { openJournal, saveJournal } from "./journal-store.mjs?v=0.28.0";
+import { openJournal, saveJournal } from "./journal-store.mjs?v=0.29.0";
 
 let journalDBReady = false,
   storageErrorShown = false;
 
 const $ = (s, root = document) => root.querySelector(s);
 
-import { referenceRequest, REFERENCE_ID } from "./reference-preset.mjs?v=0.28.0";
+import { referenceRequest, REFERENCE_ID } from "./reference-preset.mjs?v=0.29.0";
 
 let saved = {};
 try {
@@ -89,6 +90,7 @@ const state = {
   research: {},
   assetAssumptions: {},
   macroRegimes: structuredClone(DEFAULT_REGIMES),
+  regimeProbabilities: "curve",
   journal: [],
   settings: {
     model: "merton",
@@ -144,7 +146,13 @@ state.assetAssumptions ||= {};
 state.macroRegimes ||= structuredClone(DEFAULT_REGIMES);
 // Older sessions predate the credit spread scenario: show its default.
 state.macroRegimes = state.macroRegimes.map((row) => ({
-  spreadShift: DEFAULT_REGIMES.find((d) => d.id === row.id)?.spreadShift ?? 0, ...row }));
+  spreadShift: DEFAULT_REGIMES.find((d) => d.id === row.id)?.spreadShift ?? 0,
+  inflationShift: DEFAULT_REGIMES.find((d) => d.id === row.id)?.inflationShift ?? 0,
+  spreadJumpBps: DEFAULT_REGIMES.find((d) => d.id === row.id)?.spreadJumpBps ?? 0, ...row }));
+// Sessions saved before curve conditioning keep hand-edited probabilities.
+state.regimeProbabilities ??= state.macroRegimes.some((row) =>
+  row.probability !== DEFAULT_REGIMES.find((d) => d.id === row.id)?.probability)
+  ? "manual" : "curve";
 state.journal = Array.isArray(state.journal) ? state.journal : [];
 state.acknowledged = Array.isArray(state.acknowledged)
   ? state.acknowledged
@@ -217,6 +225,7 @@ function persist() {
         research: state.research,
         assetAssumptions: state.assetAssumptions,
         macroRegimes: state.macroRegimes,
+        regimeProbabilities: state.regimeProbabilities,
         ...(journalDBReady ? {} : { journal: state.journal }),
       }),
     );
@@ -369,6 +378,11 @@ function navigate(view) {
     document.startViewTransition(update).ready.catch(() => {});
   else update();
 }
+/** Scenarios the engine uses: curve-conditioned unless fixed by hand. */
+function currentRegimes() {
+  return effectiveRegimes(regimes(state.macroRegimes), state.regimeProbabilities,
+    data?.macro || [], data ? informationDate(data) : undefined);
+}
 function calculationOptions(forComposition = false) {
   const policy = mandate({ ...state.mandate, horizon: state.settings.horizon });
   return {
@@ -377,7 +391,8 @@ function calculationOptions(forComposition = false) {
     informationAsOf: informationDate(data),
     mandate: policy,
     execution: execution(state.execution),
-    macroRegimes: regimes(state.macroRegimes),
+    macroRegimes: currentRegimes().rows,
+    regimeProbabilities: state.regimeProbabilities,
     capital: state.capital,
     research: state.research,
     assetAssumptions: state.assetAssumptions,
@@ -423,7 +438,7 @@ function runForecast() {
       state.research,
     );
     worker ||= new Worker(
-      new URL("./forecast-worker.mjs?v=0.28.0", import.meta.url),
+      new URL("./forecast-worker.mjs?v=0.29.0", import.meta.url),
       {
         type: "module",
       },
@@ -481,6 +496,7 @@ function proposalSignature() {
     research: state.research,
     assetAssumptions: state.assetAssumptions,
     macroRegimes: state.macroRegimes,
+    regimeProbabilities: state.regimeProbabilities,
   });
 }
 
@@ -557,7 +573,7 @@ function compositionPool() {
     (navigator.hardwareConcurrency || 2) - 1));
   while (compositionWorkers.length < size)
     compositionWorkers.push(new Worker(
-      new URL("./composer-worker.mjs?v=0.28.0", import.meta.url),
+      new URL("./composer-worker.mjs?v=0.29.0", import.meta.url),
       { type: "module" },
     ));
   return compositionWorkers;
@@ -595,7 +611,7 @@ function runRobustness(){
  }
  state.robustnessBusy=true;state.robustnessError=null;state.robustnessProgress='Preparando comparación';render();
  try{
-  robustWorker??=new Worker(new URL('./robust-worker.mjs?v=0.28.0',import.meta.url),{type:'module'});
+  robustWorker??=new Worker(new URL('./robust-worker.mjs?v=0.29.0',import.meta.url),{type:'module'});
   robustWorker.onmessage=({data:message})=>{
    if(message.id!==robustJob)return;
    if(proposalSignature()!==signature){
@@ -690,6 +706,7 @@ function portfolioExport() {
         research: state.research,
         assetAssumptions: state.assetAssumptions,
         macroRegimes: state.macroRegimes,
+        regimeProbabilities: state.regimeProbabilities,
         journal: state.journal,
       },
       null,
@@ -997,6 +1014,11 @@ document.addEventListener("click", async (event) => {
     return;
   }
   if (action === "close-modal") closeModal();
+  if (action === "regimes-curve") {
+    state.regimeProbabilities = "curve";
+    persist();
+    render();
+  }
   if (action === "compose") {
     runComposition();
     return;
@@ -1237,10 +1259,16 @@ document.addEventListener("change", async (event) => {
           ...state.assetAssumptions[symbol],
           [key]: value,
         };
-      else if (scope === "regime")
+      else if (scope === "regime") {
+        // Editing a probability fixes all of them, starting from those in use.
+        if (key === "probability" && state.regimeProbabilities !== "manual") {
+          state.macroRegimes = currentRegimes().rows;
+          state.regimeProbabilities = "manual";
+        }
         state.macroRegimes = state.macroRegimes.map((r) =>
           r.id === symbol ? { ...r, [key]: value } : r,
         );
+      }
       else if (scope === "setting") state.settings[key] = value;
       else if (scope === "mandate" && key === "withdrawalsText") {
         const withdrawals = String(value)
@@ -1407,8 +1435,10 @@ document.addEventListener("change", async (event) => {
         }));
         if (input.mandate) state.mandate = mandate(input.mandate);
         if (input.execution) state.execution = execution(input.execution);
-        if (input.macroRegimes)
+        if (input.macroRegimes) {
           state.macroRegimes = regimes(input.macroRegimes);
+          state.regimeProbabilities = input.regimeProbabilities === "curve" ? "curve" : "manual";
+        }
         if (input.research) {
           for (const value of Object.values(input.research))
             validateResearch(value);

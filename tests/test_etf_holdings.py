@@ -27,6 +27,18 @@ class HoldingsTests(unittest.TestCase):
             lambda *_:json.dumps(self.payload).encode("utf-8"))
         self.assertEqual(result["downloaded"],1)
         self.assertEqual(assets[0]["holdings"]["observed_at"],old["observed_at"])
+    def test_expense_ratio_is_kept_in_decimal_and_a_change_is_a_new_observation(self):
+        r=parse_fund({**self.payload,"expense_ratio":0.0945,"expense_ratio_source":"market_data"},
+                     "SPY","2026-10-23","2026-10-26T09:00:00Z")
+        self.assertAlmostEqual(r["expense_ratio"],.000945)
+        self.assertEqual(r["expense_ratio_source"],"market_data")
+        self.assertIsNone(parse_fund({**self.payload,"expense_ratio":"0.09"},"SPY","2026-10-23","2026-10-26T09:00:00Z")["expense_ratio"])
+        self.assertIsNone(parse_fund({**self.payload,"expense_ratio":7},"SPY","2026-10-23","2026-10-26T09:00:00Z")["expense_ratio"])
+        old=parse_fund(self.payload,"SPY","2026-10-23","2026-10-25T01:00:00Z")
+        assets=[{"symbol":"SPY","type":"etf"}]
+        enrich_holdings(assets,{"SPY":{"holdings":old}},"2026-10-23","2026-10-26T01:00:00Z",
+            lambda *_:json.dumps({**self.payload,"expense_ratio":0.09}).encode("utf-8"))
+        self.assertEqual(assets[0]["holdings"]["observed_at"],"2026-10-26T01:00:00Z")
     def test_small_short_cash_line_does_not_hide_long_equity_positions(self):
         p={**self.payload,"holdings":{**self.payload["holdings"],"CASH":-.2}}
         r=parse_fund(p,"SPY","2026-10-23","2026-10-26T09:00:00Z")

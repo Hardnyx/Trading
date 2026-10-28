@@ -51,6 +51,9 @@ def parse_fund(raw, ticker, price_cut, observed_at, depth=5000):
     total=sum(weight for _,weight in weights)
     if total<.65 or total>1.05 or negative_exposure>.05:
         raise ValueError("Unverified gross holdings or meaningful short exposure")
+    # Provider's net expense ratio in percent; dated by this observation.
+    expense=raw.get("expense_ratio")
+    expense=round(expense/100,8) if type(expense) in (float,int) and 0<=expense<=3 else None
     weights.sort(key=lambda row:(-row[1],row[0]))
     positions=[{"symbol":s,"weight":round(w,9)} for s,w in weights[:depth]]
     return {"as_of":date,"observed_at":observed_at,
@@ -60,6 +63,8 @@ def parse_fund(raw, ticker, price_cut, observed_at, depth=5000):
             "all_equity_weight":round(total,9),
             "unmatched_non_numeric":non_numeric,
             "excluded_short_weight":round(negative_exposure,9),
+            "expense_ratio":expense,
+            "expense_ratio_source":raw.get("expense_ratio_source") if expense is not None else None,
             "gross_exposure_above_100_percent":total>1.000001,
             "source_layer":raw["source_layer"],
             "source_url":API.format(symbol=ticker.lower()),
@@ -93,6 +98,7 @@ def enrich_holdings(assets, old_assets, price_cut, observed_at, fetch,
                 raise ValueError("Provider holdings regressed; retained newer dated record")
             if (old and old.get("as_of")==result["as_of"] and
                 old.get("positions")==result["positions"] and
+                old.get("expense_ratio")==result["expense_ratio"] and
                 old.get("source_layer")==result["source_layer"]):
                 result["observed_at"]=old["observed_at"]
             if archive_dir is not None:

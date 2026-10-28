@@ -1,6 +1,7 @@
-import { finite, normalizeWeights, sum } from "./analytics.mjs?v=0.28.0";
+import { finite, normalizeWeights, sum } from "./analytics.mjs?v=0.29.0";
+import { normalCDF } from "./random.mjs?v=0.29.0";
 
-export const MODEL_VERSION = "0.28.0";
+export const MODEL_VERSION = "0.29.0";
 export function informationDate(snapshot) {
   const parts = Object.fromEntries(
     new Intl.DateTimeFormat("en-US", {
@@ -74,6 +75,11 @@ export const DEFAULT_RESEARCH = {
 };
 // spreadShift: change of the credit spread over the horizon (decimal). A
 // stated convention: IG spreads widened roughly 1-4 pp in recent recessions.
+// inflationShift: realized inflation minus the breakeven at the cut; it moves
+// the real yield and the principal accrual of inflation-linked funds.
+// spreadJumpBps: widening of the investment-grade spread in a market jump
+// (stated convention; IG widened roughly 50-200 bp in 2011, 2015-16, 2020
+// and 2022). Each credit fund takes it times its spread beta.
 export const DEFAULT_REGIMES = [
   {
     id: "base",
@@ -83,7 +89,9 @@ export const DEFAULT_REGIMES = [
     multipleShift: 0,
     rateShift: 0,
     spreadShift: 0,
+    inflationShift: 0,
     rateJumpBps: -40,
+    spreadJumpBps: 75,
   },
   {
     id: "recession",
@@ -93,7 +101,9 @@ export const DEFAULT_REGIMES = [
     multipleShift: -0.12,
     rateShift: -0.015,
     spreadShift: 0.015,
+    inflationShift: -0.01,
     rateJumpBps: -80,
+    spreadJumpBps: 150,
   },
   {
     id: "inflation",
@@ -103,7 +113,9 @@ export const DEFAULT_REGIMES = [
     multipleShift: -0.15,
     rateShift: 0.015,
     spreadShift: 0.0025,
+    inflationShift: 0.015,
     rateJumpBps: 60,
+    spreadJumpBps: 75,
   },
   {
     id: "expansion",
@@ -113,7 +125,9 @@ export const DEFAULT_REGIMES = [
     multipleShift: 0.05,
     rateShift: 0.005,
     spreadShift: -0.0025,
+    inflationShift: 0.0025,
     rateJumpBps: -20,
+    spreadJumpBps: 40,
   },
 ];
 export const SECTOR_PROXIES = {
@@ -214,6 +228,10 @@ export function regimes(input = DEFAULT_REGIMES) {
     ...row,
     spreadShift: row.spreadShift ??
       DEFAULT_REGIMES.find((d) => d.id === row.id)?.spreadShift ?? 0,
+    inflationShift: row.inflationShift ??
+      DEFAULT_REGIMES.find((d) => d.id === row.id)?.inflationShift ?? 0,
+    spreadJumpBps: row.spreadJumpBps ??
+      DEFAULT_REGIMES.find((d) => d.id === row.id)?.spreadJumpBps ?? 0,
   }));
   for (const row of result) {
     range(row.probability, 0, 1, "la probabilidad del escenario");
@@ -222,10 +240,48 @@ export function regimes(input = DEFAULT_REGIMES) {
     range(row.rateShift, -0.1, 0.1, "el cambio de tasa");
     range(row.rateJumpBps, -500, 500, "el shock de tasas");
     range(row.spreadShift, -0.05, 0.1, "el cambio del diferencial de crédito");
+    range(row.inflationShift, -0.1, 0.1, "el cambio de inflación");
+    range(row.spreadJumpBps, -200, 1000, "el salto del diferencial de crédito");
   }
   if (Math.abs(sum(result.map((row) => row.probability)) - 1) > 1e-6)
     throw new Error("Las probabilidades macro deben sumar 100%.");
   return result;
+}
+// Federal Reserve Bank of New York yield-curve model (Estrella and Trubin,
+// 2006): P(recession within 12 months) = Phi(-0.5333 - 0.6330 x spread), with
+// the 10-year minus 3-month Treasury spread averaged over about a month.
+// Published coefficients, not refitted here; constant-maturity 3M stands in
+// for the bond-equivalent bill rate.
+export const CURVE_RECESSION_MODEL = { intercept: -0.5333, slope: -0.633, window: 21, minimum: 15 };
+export function curveRecessionProbability(macro = [], asOf) {
+  const series = (id) => new Map((macro.find((s) => s.id === id)?.history || [])
+    .filter((r) => r.date <= asOf && finite(r.value)).map((r) => [r.date, r.value]));
+  const long = series("DGS10"), short = series("DGS3MO");
+  const days = [...long.keys()].filter((d) => short.has(d)).sort()
+    .slice(-CURVE_RECESSION_MODEL.window);
+  if (!asOf || days.length < CURVE_RECESSION_MODEL.minimum) return null;
+  const spread = days.reduce((total, d) => total + long.get(d) - short.get(d), 0) / days.length;
+  return {
+    probability: normalCDF(CURVE_RECESSION_MODEL.intercept + CURVE_RECESSION_MODEL.slope * spread),
+    spread, observations: days.length, from: days[0], to: days.at(-1),
+    method: "NY Fed yield-curve probit, 10Y-3M average spread",
+  };
+}
+/**
+ * Recession probability from the curve; the other scenarios keep their
+ * relative weights. Idempotent. Bounded so no scenario disappears.
+ */
+export function conditionedRegimes(rows, curve) {
+  const k = rows.findIndex((r) => r.id === "recession");
+  if (!curve || k < 0) return rows;
+  const p = Math.min(0.9, Math.max(0.01, curve.probability)), rest = 1 - rows[k].probability;
+  return rows.map((r, i) => ({ ...r, probability: i === k ? p
+    : rest > 0 ? r.probability * (1 - p) / rest : (1 - p) / (rows.length - 1) }));
+}
+/** Scenarios used by the engine: curve-conditioned unless the user fixed them. */
+export function effectiveRegimes(rows = DEFAULT_REGIMES, source = "curve", macro = [], asOf) {
+  const curve = source === "manual" ? null : curveRecessionProbability(macro, asOf);
+  return { rows: curve ? conditionedRegimes(rows, curve) : rows, curve, source: curve ? "curve" : "manual" };
 }
 export function withCashAsset(snapshot) {
   if (snapshot.assets.some((asset) => asset.symbol === "CASH")) return snapshot;

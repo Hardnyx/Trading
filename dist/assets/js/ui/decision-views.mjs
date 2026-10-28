@@ -1,6 +1,6 @@
-import { template as t } from "./templates.mjs?v=0.28.0";
-import { pct, fmt, money, dateLabel, timestampLabel } from "./format.mjs?v=0.28.0";
-import { finite, sum, normalizeWeights } from "../analytics.mjs?v=0.28.0";
+import { template as t } from "./templates.mjs?v=0.29.0";
+import { pct, fmt, money, dateLabel, timestampLabel } from "./format.mjs?v=0.29.0";
+import { finite, sum, normalizeWeights } from "../analytics.mjs?v=0.29.0";
 import {
   DEFAULT_MANDATE,
   DEFAULT_EXECUTION,
@@ -8,18 +8,20 @@ import {
   DEFAULT_REGIMES,
   currentAccount,
   informationDate,
-} from "../policy.mjs?v=0.28.0";
+  effectiveRegimes,
+  curveRecessionProbability,
+} from "../policy.mjs?v=0.29.0";
 import {
   fundamentalForecast,
   businessQuality,
   evaluateThesis,
   bondAssumptions,
-} from "../research-model.mjs?v=0.28.0";
-import { dilutedEarningsBridge } from '../earnings-normalization.mjs?v=0.28.0';
-import { growthEvidence } from '../growth-evidence.mjs?v=0.28.0';
-import { factorModel, factorAttribution } from "../factors.mjs?v=0.28.0";
-import { calibrationAudit } from "../calibration-audit.mjs?v=0.28.0";
-import { evaluateJournal } from "../journal.mjs?v=0.28.0";
+} from "../research-model.mjs?v=0.29.0";
+import { dilutedEarningsBridge } from '../earnings-normalization.mjs?v=0.29.0';
+import { growthEvidence } from '../growth-evidence.mjs?v=0.29.0';
+import { factorModel, factorAttribution } from "../factors.mjs?v=0.29.0";
+import { calibrationAudit } from "../calibration-audit.mjs?v=0.29.0";
+import { evaluateJournal } from "../journal.mjs?v=0.29.0";
 const objectives = {
   growth: "Crecimiento logarítmico",
   preservation: "Preservación · utilidad CRRA",
@@ -127,6 +129,12 @@ function text(scope, key, label, value, symbol = "", rows = 3) {
     symbol,
     rows,
   });
+}
+/** Where the scenario probabilities come from, in one sentence or two. */
+export function regimeProbabilityNote(macro, total) {
+  if (macro.source === "curve")
+    return `Recesión ${pct(macro.curve.probability, 0)} según la curva al corte: modelo probit de la Fed de Nueva York con el diferencial 10A − 3M medio de ${fmt(macro.curve.spread, 2)} pp (${macro.curve.observations} sesiones hasta ${dateLabel(macro.curve.to)}). Los demás escenarios conservan su peso relativo. Editar una probabilidad las fija a mano.`;
+  return `Probabilidades fijadas a mano: suma ${pct(total, 0)}; deben sumar 100%.`;
 }
 export function createDecisionViews({ state = {}, data, asset }) {
   const policy = { ...DEFAULT_MANDATE, ...state.mandate },
@@ -327,7 +335,9 @@ export function createDecisionViews({ state = {}, data, asset }) {
           .join(""),
       }),
     });
-    const scenarioFields = (state.macroRegimes || DEFAULT_REGIMES)
+    const macro = effectiveRegimes(state.macroRegimes || DEFAULT_REGIMES,
+      state.regimeProbabilities, data.macro || [], informationDate(data));
+    const scenarioFields = macro.rows
       .map((row) =>
         section(
           row.label,
@@ -343,7 +353,9 @@ export function createDecisionViews({ state = {}, data, asset }) {
               ["multipleShift", "CAMBIO DEL MÚLTIPLO AL HORIZONTE", 100, "%"],
               ["rateShift", "CAMBIO DE TASA AL HORIZONTE", 100, "pp"],
               ["spreadShift", "CAMBIO DEL DIFERENCIAL DE CRÉDITO", 100, "pp"],
+              ["inflationShift", "INFLACIÓN SOBRE LA IMPLÍCITA", 100, "pp"],
               ["rateJumpBps", "SHOCK DE TASA EN UN EVENTO SISTÉMICO", 1, "pb"],
+              ["spreadJumpBps", "AMPLIACIÓN DEL DIFERENCIAL IG EN EL EVENTO", 1, "pb"],
             ].map(([key, label, scale, unit]) =>
               field("regime", key, label, row[key], {
                 scale,
@@ -400,8 +412,10 @@ export function createDecisionViews({ state = {}, data, asset }) {
       ) +
       section(
         "ESCENARIOS MACRO CONDICIONALES",
-        scenarioFields,
-        `Probabilidades supuestas, editables: suma ${pct(sum((state.macroRegimes || DEFAULT_REGIMES).map((r) => r.probability)), 0)}. Deben sumar 100%. Beneficios y múltiplos afectan renta variable; tasas y duración afectan bonos. La covarianza histórica y estos escenarios se superponen como incertidumbre del modelo.`,
+        scenarioFields + (macro.source === "manual" && curveRecessionProbability(data.macro || [], informationDate(data))
+          ? '<button class="button" data-action="regimes-curve">Condicionar la recesión a la curva</button>' : ""),
+        regimeProbabilityNote(macro, sum(macro.rows.map((r) => r.probability))) +
+          " Beneficios y múltiplos afectan renta variable; tasas, diferenciales y duración afectan bonos. Los escenarios se aplican centrados: añaden dispersión y colas, no mueven el retorno esperado.",
       ) +
       t("decision-actions", {
         composeBusy: state.compositionBusy ? 'aria-busy="true"' : "",

@@ -1,8 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {prepareComposition,reviewSubstitutions,validWeights,SUBSTITUTION_Z,weightOverlap,reconcileStarts,startSeeds} from '../dist/assets/js/composer.mjs?v=0.28.0';
-import {generatePaths,evaluatePaths,BASE_REGIME} from '../dist/assets/js/path-model.mjs?v=0.28.0';
-import {tradePlan} from '../dist/assets/js/policy.mjs?v=0.28.0';
+import {prepareComposition,reviewSubstitutions,validWeights,SUBSTITUTION_Z,weightOverlap,reconcileStarts,startSeeds} from '../dist/assets/js/composer.mjs?v=0.29.0';
+import {generatePaths,evaluatePaths,BASE_REGIME} from '../dist/assets/js/path-model.mjs?v=0.29.0';
+import {tradePlan} from '../dist/assets/js/policy.mjs?v=0.29.0';
 
 // Two stocks, at most two positions (cash + one): improving needs a full
 // substitution, which reallocating cash alone cannot find.

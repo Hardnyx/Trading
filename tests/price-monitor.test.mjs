@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {priceObservation,priceMonitor} from '../dist/assets/js/price-monitor.mjs?v=0.28.0';
+import {priceObservation,priceMonitor} from '../dist/assets/js/price-monitor.mjs?v=0.29.0';
 const asset=()=>{
  const history=Array.from({length:300},(_,i)=>({date:new Date(Date.UTC(2025,0,1+i)).toISOString().slice(0,10),adj_close:100*Math.exp(i*.001),close:100*Math.exp(i*.001)}));
  return {symbol:'AAA',type:'stock',price:history.at(-1).close,price_date:history.at(-1).date,history};

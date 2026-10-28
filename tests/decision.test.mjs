@@ -7,14 +7,14 @@ import {
   withCashAsset,
   regimes,
   DEFAULT_REGIMES,
-} from "../dist/assets/js/policy.mjs?v=0.28.0";
+} from "../dist/assets/js/policy.mjs?v=0.29.0";
 import {
   fundamentalForecast,
   consensusAt,
   evaluateThesis,
   bondAssumptions,
   CREDIT_CONVENTIONS,
-} from "../dist/assets/js/research-model.mjs?v=0.28.0";
+} from "../dist/assets/js/research-model.mjs?v=0.29.0";
 import {
   valuation,
   correlation,
@@ -22,12 +22,12 @@ import {
   resolveAssumptions,
   returnDecomposition,
   RERATING_HALF_LIFE_YEARS,
-} from "../dist/assets/js/analytics.mjs?v=0.28.0";
-import { sampleDrifts, bondScenarioAnnualReturn, buildReturnAnchors, holdingsAnchor, constituentForecasts, HOLDINGS_ANCHOR_MIN_COVERAGE, centeredTriangularQuantile, bondRegimeShift } from "../dist/assets/js/return-model.mjs?v=0.28.0";
+} from "../dist/assets/js/analytics.mjs?v=0.29.0";
+import { sampleDrifts, bondScenarioAnnualReturn, buildReturnAnchors, holdingsAnchor, constituentForecasts, HOLDINGS_ANCHOR_MIN_COVERAGE, centeredTriangularQuantile, bondRegimeShift } from "../dist/assets/js/return-model.mjs?v=0.29.0";
 import {
   seededRandom,
   normalGenerator,
-} from "../dist/assets/js/random.mjs?v=0.28.0";
+} from "../dist/assets/js/random.mjs?v=0.29.0";
 import {
   generatePaths,
   evaluatePaths,
@@ -35,17 +35,17 @@ import {
   jumpParameters,
   regimeCondition,
   centeredRegimeConditions,
-} from "../dist/assets/js/path-model.mjs?v=0.28.0";
+} from "../dist/assets/js/path-model.mjs?v=0.29.0";
 import {
   journalOrigin,
   appendForecast,
   evaluateJournal,
   freezeMaturedOutcomes,
-} from "../dist/assets/js/journal.mjs?v=0.28.0";
+} from "../dist/assets/js/journal.mjs?v=0.29.0";
 import {
   reviewPortfolio,
   registerPortfolio,
-} from "../dist/assets/js/monitor.mjs?v=0.28.0";
+} from "../dist/assets/js/monitor.mjs?v=0.29.0";
 
 const near = (a, b, tol = 1e-8) =>
   assert.ok(Math.abs(a - b) < tol, `${a} != ${b}`);
@@ -704,6 +704,12 @@ test("equity ETFs take a building-block anchor from dated holdings", () => {
   const [built] = buildReturnAnchors([fund], settings, {}, universe);
   assert.ok(Math.abs(built.annual - (.9 * fa.central + .1 * .06)) < 1e-12);
   assert.equal(built.holdingsCoverage, .9);
+  // A net expense ratio observed with the holdings is deducted from the anchor.
+  const charged = { ...fund, holdings: { ...fund.holdings, expense_ratio: .002 } };
+  const [net] = buildReturnAnchors([charged], settings, {}, universe);
+  assert.ok(Math.abs(net.annual - (built.annual - .002)) < 1e-12);
+  assert.match(holdingsAnchor(charged, lookup, settings).source, /gastos del fondo 0[.,]20% descontados/);
+  assert.match(holdingsAnchor(fund, lookup, settings).source, /no publicados: no descontados/);
   const [own] = buildReturnAnchors([fund], { ...settings, assetAssumptions: { FFF: { expectedReturn: .03, uncertainty: .05 } } }, {}, universe);
   assert.equal(own.annual, .03);
   assert.equal(own.holdingsCoverage, null);

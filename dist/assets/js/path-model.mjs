@@ -5,23 +5,23 @@ import {
   quantile,
   sum,
   normalizeWeights,
-} from "./analytics.mjs?v=0.28.0";
-import { seededRandom, normalGenerator, poisson } from "./random.mjs?v=0.28.0";
-import { ewmaCovariance, cholesky } from "./risk-math.mjs?v=0.28.0";
-import { buildReturnAnchors, sampleDrifts, bondScenarioAnnualReturn, bondRegimeShift } from "./return-model.mjs?v=0.28.0";
-import { distributionAccounting } from "./distribution-ledger.mjs?v=0.28.0";
-import { cashGrowth, uniformCashGrowth } from "./cashflows.mjs?v=0.28.0";
-import { copulaInnovationCovariance } from './copula-covariance.mjs?v=0.28.0';
-import { assetAt } from "./research-model.mjs?v=0.28.0";
-import { factorModel } from "./factors.mjs?v=0.28.0";
-import { conditionalRisk, updateGjrVariance, updateEwmaVariance, updateTargetedVariance, studentMarginal, HORIZON_PERSISTENCE } from "./conditional-risk.mjs?v=0.28.0";
-import { marketFactorCovariance, conditionalFactorization } from "./factor-covariance.mjs?v=0.28.0";
+} from "./analytics.mjs?v=0.29.0";
+import { seededRandom, normalGenerator, poisson } from "./random.mjs?v=0.29.0";
+import { ewmaCovariance, cholesky } from "./risk-math.mjs?v=0.29.0";
+import { buildReturnAnchors, sampleDrifts, bondScenarioAnnualReturn, bondRegimeShift } from "./return-model.mjs?v=0.29.0";
+import { distributionAccounting } from "./distribution-ledger.mjs?v=0.29.0";
+import { cashGrowth, uniformCashGrowth } from "./cashflows.mjs?v=0.29.0";
+import { copulaInnovationCovariance } from './copula-covariance.mjs?v=0.29.0';
+import { assetAt } from "./research-model.mjs?v=0.29.0";
+import { factorModel } from "./factors.mjs?v=0.29.0";
+import { conditionalRisk, updateGjrVariance, updateEwmaVariance, updateTargetedVariance, studentMarginal, HORIZON_PERSISTENCE } from "./conditional-risk.mjs?v=0.29.0";
+import { marketFactorCovariance, conditionalFactorization } from "./factor-covariance.mjs?v=0.29.0";
 import {
   mandate,
   regimes,
   withdrawalSchedule,
   DEFAULT_REGIMES,
-} from "./policy.mjs?v=0.28.0";
+} from "./policy.mjs?v=0.29.0";
 
 export const BASE_REGIME = {
   id: "base",
@@ -176,7 +176,9 @@ export function regimeCondition(asset, anchor, regime, H) {
   const bond = anchor.bond;
   if (bond)
     return Math.log1p(bondScenarioAnnualReturn(bond, bondRegimeShift(bond, regime), H)) -
-      Math.log1p(finite(bond.carry) ? bond.carry : 0);
+      Math.log1p(finite(bond.carry) ? bond.carry : 0) +
+      // Realized inflation above or below the breakeven accrues to principal.
+      (bond.inflationLinked ? Math.log1p(regime.inflationShift || 0) : 0);
   if (asset.symbol === "GLD") return -regime.rateShift * 0.5;
   const baseGrowth = anchor.forecast?.equivalentGrowth ?? 0;
   return Math.log(Math.max(0.01, 1 + baseGrowth + regime.earningsShift) / (1 + baseGrowth)) +
@@ -200,10 +202,14 @@ export function jumpParameters(asset, anchor, options, regime) {
   const supplied = options.assetAssumptions?.[asset.symbol]?.jumpLoading;
   let jumpMean, jumpVol;
   if (anchor.bond) {
-    jumpMean = (-anchor.bond.duration * regime.rateJumpBps) / 1e4;
+    // In a market jump, credit spreads widen with the fund's spread beta while
+    // Treasury yields fall: credit is not a flight-to-quality asset.
+    const bps = regime.rateJumpBps +
+      (anchor.bond.inflationLinked ? 0 : (anchor.bond.spreadBeta || 0) * (regime.spreadJumpBps || 0));
+    jumpMean = (-anchor.bond.duration * bps) / 1e4;
     jumpVol =
       Math.sign(jumpMean / (options.jumpMean || -0.12)) *
-      ((anchor.bond.duration * Math.abs(regime.rateJumpBps)) / 1e4) *
+      ((anchor.bond.duration * Math.abs(bps)) / 1e4) *
       0.35;
   } else {
     const loading = finite(supplied)

@@ -81,3 +81,14 @@ class ObservationArchive(unittest.TestCase):
             data['generated_at'] = '2026-10-24T23:30:00'
             with self.assertRaises(ValueError):
                 module.archive_observation(data, directory)
+
+
+class NewYorkCalendar(unittest.TestCase):
+    def test_evening_utc_runs_belong_to_the_new_york_session(self):
+        import datetime as dt
+        from scripts.refresh_data import new_york_date
+        self.assertEqual(new_york_date("2026-10-28T00:12:18.56+00:00"), "2026-10-27")
+        self.assertEqual(new_york_date("2026-10-28T04:00:00Z"), "2026-10-28")
+        self.assertEqual(new_york_date("2026-01-15T04:59:00Z"), "2026-01-14")
+        with self.assertRaises(ValueError):
+            new_york_date(dt.datetime(2026, 10, 28))

@@ -4,16 +4,16 @@ import {
   mean,
   quantile,
   normalizeWeights,
-} from "./analytics.mjs?v=0.28.0";
-import { seededRandom } from "./random.mjs?v=0.28.0";
-import { portfolioAttribution } from "./attribution.mjs?v=0.28.0";
+} from "./analytics.mjs?v=0.29.0";
+import { seededRandom } from "./random.mjs?v=0.29.0";
+import { portfolioAttribution } from "./attribution.mjs?v=0.29.0";
 import {
   preparePaths,
   generatePaths,
   evaluatePaths,
   marginalRisk,
   centeredRegimeConditions,
-} from "./path-model.mjs?v=0.28.0";
+} from "./path-model.mjs?v=0.29.0";
 import {
   withCashAsset,
   mandate,
@@ -21,13 +21,15 @@ import {
   currentAccount,
   tradePlan,
   withdrawalSchedule,
+  effectiveRegimes,
+  DEFAULT_REGIMES,
   MODEL_VERSION,
-} from "./policy.mjs?v=0.28.0";
-import { buildReturnAnchors, constituentForecasts, holdingsAnchor } from "./return-model.mjs?v=0.28.0";
-import { assetAt, fundamentalForecast, bondAssumptions } from "./research-model.mjs?v=0.28.0";
-import { selectCompositionUniverse } from "./universe.mjs?v=0.28.0";
-import { factorizeStressedCovariance } from "./factor-covariance.mjs?v=0.28.0";
-import { economicClass, exposureReport, rawCorrelation, qualifiedOpportunity, holdingsOverlap, knownFundOverlap } from "./economic-exposure.mjs?v=0.28.0";
+} from "./policy.mjs?v=0.29.0";
+import { buildReturnAnchors, constituentForecasts, holdingsAnchor, valuationAnchor } from "./return-model.mjs?v=0.29.0";
+import { assetAt, fundamentalForecast, bondAssumptions } from "./research-model.mjs?v=0.29.0";
+import { selectCompositionUniverse } from "./universe.mjs?v=0.29.0";
+import { factorizeStressedCovariance } from "./factor-covariance.mjs?v=0.29.0";
+import { economicClass, exposureReport, rawCorrelation, qualifiedOpportunity, holdingsOverlap, knownFundOverlap } from "./economic-exposure.mjs?v=0.29.0";
 
 export const DEFAULT_COMPOSITION_RULES = {
   maxPosition: 0.2,
@@ -162,9 +164,10 @@ export function prepareComposition(
           .map((row) => [row.id, row.value])),
       });
       const composite = !reason && !isBondPriced && !hasExplicitReturn
-        ? holdingsAnchor(asset, constituents, anchorContext) : null;
+        ? holdingsAnchor(asset, constituents, anchorContext) ??
+          valuationAnchor(asset, anchorContext) : null;
       if (!reason && !isBondPriced && !hasExplicitReturn && !composite)
-        reason = "ETF sin retorno esperado fundamentado: holdings insuficientes o antiguas para un ancla compuesta y sin expectativa explícita. Introduce una expectativa y una incertidumbre explícitas.";
+        reason = "ETF sin retorno esperado fundamentado: holdings insuficientes o antiguas para un ancla compuesta, sin valoración fechada del emisor y sin expectativa explícita. Introduce una expectativa y una incertidumbre explícitas.";
       else if (!reason && composite)
         forwardPriority[asset.symbol] = composite.annual -
           0.15 * Math.max(0, composite.high - composite.low) -
@@ -228,6 +231,10 @@ export function prepareComposition(
         },
       }
     : settings.assetAssumptions;
+  // Scenario probabilities: recession from the yield curve known at the
+  // information cut, unless the user fixed them by hand.
+  const macro = effectiveRegimes(settings.macroRegimes || DEFAULT_REGIMES,
+    settings.regimeProbabilities, snapshot.macro, info);
   const options = {
     ...settings,
     assetAssumptions: proxyAssetAssumptions,
@@ -238,6 +245,7 @@ export function prepareComposition(
     informationAsOf: info,
     yieldCurve,
     mandate: policy,
+    macroRegimes: macro.rows,
   };
   const paths = preparePaths(sampled.assets, options, overrides, snapshot.assets);
   const requiredCash = Math.max(
@@ -280,6 +288,8 @@ export function prepareComposition(
         })),
     },
     requiredCash,
+    regimeProbabilities: { source: macro.source, curve: macro.curve,
+      probabilities: Object.fromEntries(macro.rows.map((r) => [r.id, r.probability])) },
     snapshotGeneratedAt: snapshot.generated_at,
     riskFree: yieldCurve.DGS3MO / 100,
   };
@@ -1077,6 +1087,7 @@ export function composePortfolio(
     x.assets, best.weights, verification,
     best.plan.total, x.current.capital) : {available:false};
   const diagnostics = {
+    regimeProbabilities: x.regimeProbabilities,
     cashAllocation: cashReview.audit,
     substitutions: substitutionReview.audit,
     selected: riskDiagnostics(best),
@@ -1222,6 +1233,7 @@ export function composePortfolio(
       financialObservedAt: a.financials?.observed_at ?? null,
       bondDate: anchor.bond?.date ?? a.bond_profile?.date ?? null,
       holdingsCoverage: anchor.holdingsCoverage ?? null,
+      valuationDate: anchor.valuationDate ?? null,
       anchor: anchor.annual,
       adverseAnchor: anchor.bond ? Math.min(...bondScenarioAnchors(a, anchor)) : anchor.low,
       favorableAnchor: anchor.bond ? Math.max(...bondScenarioAnchors(a, anchor)) : anchor.high,

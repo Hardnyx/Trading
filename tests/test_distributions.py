@@ -150,12 +150,10 @@ class DistributionFacts(unittest.TestCase):
 
 
 class CreditProfileFunds(unittest.TestCase):
-    def test_investment_grade_credit_profiles_are_collected_but_not_high_yield(self):
+    def test_credit_and_inflation_linked_profiles_are_collected(self):
         from scripts.distributions import PROFILE_FUNDS, DISTRIBUTION_URLS
-        self.assertTrue({"AGG", "LQD", "IGSB"} <= PROFILE_FUNDS)
+        self.assertTrue({"AGG", "LQD", "IGSB", "HYG", "EMB", "TIP"} <= PROFILE_FUNDS)
         self.assertTrue(PROFILE_FUNDS <= set(DISTRIBUTION_URLS))
-        # No return model yet for high yield, EM debt or inflation-linked funds.
-        self.assertFalse({"HYG", "EMB", "TIP"} & PROFILE_FUNDS)
 
 
 if __name__ == "__main__":

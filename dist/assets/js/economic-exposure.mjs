@@ -1,3 +1,4 @@
+import { observedBy } from "./observation.mjs?v=0.29.0";
 /* Economic ETF exposure. Never invent missing issuer holdings. */
 export const TREASURY=new Set(["SHY","SGOV","BIL","IEI","IEF","TLT","TIP","VGSH","VGIT","VGLT","SHV"]);
 const CREDIT=new Set(["LQD","HYG","EMB","IGSB","VCIT","VCSH","JNK","BKLN"]);
@@ -41,7 +42,7 @@ export function actualHoldings(a,asOf,informationAsOf=asOf){
     !h.positions.length || !validDate(h.as_of) || h.as_of>asOf ||
     !/^\d{4}-\d\d-\d\dT.*(?:Z|[+-]\d\d:\d\d)$/.test(h.observed_at||"") ||
     !Number.isFinite(Date.parse(h.observed_at)) ||
-    h.observed_at.slice(0,10)>informationAsOf)return null;
+    !observedBy(h.observed_at,informationAsOf))return null;
  const ageDays=(Date.parse(informationAsOf)-Date.parse(h.as_of))/86400000;
  if(!Number.isFinite(ageDays) || ageDays<0 || ageDays>HOLDINGS_MAX_AGE_DAYS)return null;
  let coverage=0;const seen=new Set();

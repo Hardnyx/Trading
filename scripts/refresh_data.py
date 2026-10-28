@@ -21,6 +21,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 import xml.etree.ElementTree as ET
+from zoneinfo import ZoneInfo
 
 if __package__:
     from .data_providers import FRED_SERIES, ProviderError, analyst_estimates, fred_series, fred_csv_series, fred_observation, retained_estimates
@@ -28,6 +29,7 @@ if __package__:
     from .filing_facts import extract_filing_facts
     from .etf_holdings import enrich_holdings
     from .distributions import price_distribution_index, enrich_distributions
+    from .equity_valuation import enrich_equity_valuations
     from .earnings_history import annual_eps_history, growth_replay, replay_metrics
 else:
     from data_providers import FRED_SERIES, ProviderError, analyst_estimates, fred_series, fred_csv_series, fred_observation, retained_estimates
@@ -35,6 +37,7 @@ else:
     from filing_facts import extract_filing_facts
     from etf_holdings import enrich_holdings
     from distributions import price_distribution_index, enrich_distributions
+    from equity_valuation import enrich_equity_valuations
     from earnings_history import annual_eps_history, growth_replay, replay_metrics
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -410,7 +413,7 @@ def prices(symbol, cutoff):
     rows = []
     for i, timestamp in enumerate(response["timestamp"]):
         day = dt.datetime.fromtimestamp(timestamp, UTC).date().isoformat()
-        if day > cutoff or (day == dt.datetime.now(UTC).date().isoformat() and now < regular_end):
+        if day > cutoff or (day == new_york_date() and now < regular_end):
             continue
         close = number(quote["close"][i])
         adj = number(adjusted[i])
@@ -747,6 +750,22 @@ def build_asset(spec, cutoff, previous):
     return asset, errors
 
 
+NEW_YORK = ZoneInfo("America/New_York")
+
+
+def new_york_date(moment=None):
+    """Calendar date of a moment in New York: the convention of information cuts.
+
+    An evening run at 00:12 UTC on the 28th belongs to the 27th's session.
+    """
+    moment = moment or dt.datetime.now(UTC)
+    if isinstance(moment, str):
+        moment = dt.datetime.fromisoformat(moment.replace("Z", "+00:00"))
+    if moment.tzinfo is None:
+        raise ValueError("A New York date needs a timezone-aware moment")
+    return moment.astimezone(NEW_YORK).date().isoformat()
+
+
 def common_price_cutoff(assets):
     """Use the modal available closing date; a single stale ETF cannot backdate everyone."""
     counts = {}
@@ -784,7 +803,7 @@ def archive_observation(snapshot, directory=None, include_research=False):
         'collected_at': snapshot['generated_at'],
         'requested_as_of': snapshot['requested_as_of'],
         'price_as_of': snapshot['price_as_of'],
-        'collection_mode': 'current' if snapshot['requested_as_of'] == collected.date().isoformat() else 'historical_request',
+        'collection_mode': 'current' if snapshot['requested_as_of'] == new_york_date(collected) else 'historical_request',
         'source_snapshot_sha256': hashlib.sha256(source.encode('utf-8')).hexdigest(),
         'assets': [dict({k: v for k, v in asset.items() if k != 'history'},
                         quote=asset['history'][-1] if asset.get('history') else None)
@@ -846,7 +865,7 @@ def previous_snapshot():
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--as-of", default=dt.datetime.now(UTC).date().isoformat(), help="Corte máximo YYYY-MM-DD")
+    parser.add_argument("--as-of", default=new_york_date(), help="Corte máximo YYYY-MM-DD (calendario de Nueva York)")
     args = parser.parse_args()
     date(args.as_of)
     previous = previous_snapshot()
@@ -874,7 +893,7 @@ def main():
                       "detail": f"{sec_success}/{sec_total} consultas actualizadas", "checked_at": collected_at})
     macro = []
     old_macro = {s["id"]: s for s in previous.get("macro", [])}
-    current_request = args.as_of == collected_at[:10]
+    current_request = args.as_of == new_york_date(collected_at)
     macro_tasks = [("Treasury", lambda: treasury_curves(args.as_of))]
     for name, task in macro_tasks:
         try:
@@ -950,7 +969,7 @@ def main():
     for key, record in old_macro.items():
         if (record.get('date', '9999') <= args.as_of and
                 (not record.get('vintage_date') or record['vintage_date'] <= args.as_of) and
-                (not record.get('observed_at') or record['observed_at'][:10] <= args.as_of) and
+                (not record.get('observed_at') or new_york_date(record['observed_at']) <= args.as_of) and
                 not any(row['id'] == key for row in macro)):
             macro.append(record)
     if not assets:
@@ -1016,6 +1035,13 @@ def main():
             "detail":f'{distributions["calendar_funds"]} calendarios mensuales; {distributions["histories"]}/{distributions["requested_histories"]} historiales con importes y pagos; {distributions["profiles"]} perfiles Treasury',
             "checked_at":dt.datetime.now(UTC).isoformat()})
         errors.extend("Distribuciones: "+message for message in distributions["errors"])
+        valuations = enrich_equity_valuations(assets, old_assets, args.as_of, dt.datetime.now(UTC).isoformat(),
+            lambda url, key: download(url, key, max_age=3600))
+        providers.append({"id":"equity_valuation", "name":"iShares · valoración de índices",
+            "status":"ok" if not valuations["errors"] else "partial" if valuations["found"] else "error",
+            "detail":f'{valuations["found"]}/{valuations["requested"]} P/E fechados de fondos internacionales',
+            "checked_at":dt.datetime.now(UTC).isoformat()})
+        errors.extend("Valoración: "+message for message in valuations["errors"])
     snapshot["methodology"]["distributions"] = "Fechas previstas y cantidades declaradas separadas. El importe futuro no declarado es una hipótesis. El índice de ex-dates de Yahoo no confirma una fecha de pago."
     snapshot["sources"].append({"name":"iShares · calendario de distribuciones",
         "kind":"Documento del emisor", "url":"https://www.ishares.com/us/literature/shareholder-letters/isharesandblackrocketfsdistributionschedule.pdf",

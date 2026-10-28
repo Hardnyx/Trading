@@ -1,8 +1,9 @@
-import { finite, metrics, valuation, scenarios, resolveAssumptions, returnDecomposition } from "./analytics.mjs?v=0.28.0";
-import { DEFAULT_RESEARCH } from "./policy.mjs?v=0.28.0";
-import { dilutedEarningsBridge } from './earnings-normalization.mjs?v=0.28.0';
-import { financialFreshness } from './financial-freshness.mjs?v=0.28.0';
-import { growthEvidence } from './growth-evidence.mjs?v=0.28.0';
+import { observedBy } from "./observation.mjs?v=0.29.0";
+import { finite, metrics, valuation, scenarios, resolveAssumptions, returnDecomposition } from "./analytics.mjs?v=0.29.0";
+import { DEFAULT_RESEARCH } from "./policy.mjs?v=0.29.0";
+import { dilutedEarningsBridge } from './earnings-normalization.mjs?v=0.29.0';
+import { financialFreshness } from './financial-freshness.mjs?v=0.29.0';
+import { growthEvidence } from './growth-evidence.mjs?v=0.29.0';
 
 const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
 const years = (a, b) =>
@@ -34,8 +35,8 @@ export function assetAt(
       );
     else if (["earnings_history", "growth_research"].includes(key)) {
       const history = asset.financials?.earnings_history;
-      financials[key] = history?.observed_at?.slice(0,10) <= informationAsOf &&
-        history.through_filing_date <= informationAsOf ? row : null;
+      // The observation time bounds the filings the history can contain.
+      financials[key] = observedBy(history?.observed_at, informationAsOf) ? row : null;
     }
     else if (!row || typeof row !== "object") financials[key] = row;
     else
@@ -61,7 +62,7 @@ export function assetAt(
     dividend_per_share: asset.price_date<=informationAsOf
       ? asset.dividend_per_share : null,
     analyst_estimates:
-      asset.analyst_estimates?.observed_at?.slice(0, 10) <= informationAsOf
+      observedBy(asset.analyst_estimates?.observed_at, informationAsOf)
         ? asset.analyst_estimates
         : null,
   };
@@ -261,7 +262,7 @@ export function evaluateThesis(
 }
 export function consensusAt(asset, targetDate, asOf, research) {
   const raw = asset.analyst_estimates;
-  if (!raw?.observed_at || raw.observed_at.slice(0, 10) > asOf)
+  if (!observedBy(raw?.observed_at, asOf))
     return { error: "Sin consenso observado al corte" };
   if (!research.consensusComparable || !(research.comparableEPS > 0))
     return {
@@ -559,13 +560,18 @@ export const INITIAL_BOND_PROFILES = {
       "https://www.ishares.com/us/products/239454/ishares-20-year-treasury-bond-etf",
   },
 };
-// Investment-grade credit funds: expected annual credit loss and spread beta
-// (share of duration exposed to corporate spreads). Stated conventions, not
-// estimates. AGG is mostly Treasuries and agency MBS.
+// Credit funds: expected annual credit loss and spread beta (change of the
+// fund's spread per unit of the scenario's investment-grade spread change).
+// Stated conventions, not estimates. AGG is mostly Treasuries and agency MBS.
+// High yield: about 3.3% annual default of a BB-B index times 60% loss given
+// default; its spreads widened about three times IG's in past recessions.
+// USD EM sovereigns: lower default frequency with partial recovery.
 export const CREDIT_CONVENTIONS = {
   LQD: { expectedLoss: 0.0025, spreadBeta: 1, label: "Crédito corporativo grado de inversión" },
   IGSB: { expectedLoss: 0.0025, spreadBeta: 1, label: "Crédito corporativo grado de inversión corto" },
   AGG: { expectedLoss: 0.0008, spreadBeta: 0.35, label: "Bonos agregados (Treasuries, MBS y crédito)" },
+  HYG: { expectedLoss: 0.02, spreadBeta: 3, label: "Crédito corporativo de alto rendimiento" },
+  EMB: { expectedLoss: 0.0075, spreadBeta: 1.5, label: "Deuda soberana emergente en USD" },
 };
 export function bondAssumptions(asset, settings = {}) {
   const supplied = settings.assetAssumptions?.[asset.symbol] || {},
@@ -578,6 +584,22 @@ export function bondAssumptions(asset, settings = {}) {
   const credit = CREDIT_CONVENTIONS[asset.symbol] || null;
   // A Treasury curve point is no proxy for a credit fund's yield.
   if (credit && !finite(supplied.yieldToMaturity) && (!usable || stale)) return null;
+  // Inflation-linked: real yield plus the inflation expected at the cut
+  // (10-year breakeven). Its scenarios move the real yield, and realized
+  // inflation accrues to principal.
+  if (usable?.inflationLinked && !finite(supplied.yieldToMaturity)) {
+    const breakeven = finite(curve.T10YIE) ? curve.T10YIE / 100 : null;
+    const real = usable.realYield, d = usable.duration, fee = usable.expenseRatio;
+    if (stale || !finite(breakeven) || !finite(real) || real < -0.05 || real > 0.2 ||
+        !finite(d) || d < 0 || d > 40 || !finite(fee) || fee < 0 || fee > 0.1) return null;
+    return {
+      yieldToMaturity: real + breakeven, realYield: real, breakeven, inflationLinked: true,
+      duration: d, expenseRatio: fee, expectedLoss: 0, spreadBeta: 0,
+      carry: real + breakeven - fee, date: usable.date,
+      source: "iShares: rendimiento real más inflación implícita a 10 años al corte, menos gastos; la tasa real y la inflación cambian por escenario",
+      stale: false, source_url: usable.source_url || null,
+    };
+  }
   const yieldRate = finite(supplied.yieldToMaturity)
     ? supplied.yieldToMaturity
     : finite(proxy) && (!usable || stale)

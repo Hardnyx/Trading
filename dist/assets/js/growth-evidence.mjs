@@ -1,11 +1,12 @@
-import { finite } from './analytics.mjs?v=0.28.0';
+import { observedBy } from "./observation.mjs?v=0.29.0";
+import { finite } from './analytics.mjs?v=0.29.0';
 
 // Observing filing dates today does not establish original historical vintages.
 export function growthEvidence(asset, assumptions={}, research={}, context={}) {
  const asOf=context.asOf||asset.price_date;
  const history=asset.financials?.earnings_history;
- const known=history?.observed_at&&history.observed_at.slice(0,10)<=asOf&&
-  history.through_filing_date<=asOf;
+ // The observation time bounds the filings the history can contain.
+ const known=observedBy(history?.observed_at,asOf);
  const replay=known?asset.financials?.growth_research:null;
  const consensusUsed=context.consensusUsed&&['consensus','blend'].includes(research.basis);
  const manual=Object.hasOwn(assumptions,'growth')&&finite(assumptions.growth);

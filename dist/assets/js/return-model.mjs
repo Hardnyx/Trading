@@ -1,8 +1,9 @@
-import { finite } from "./analytics.mjs?v=0.28.0";
-import { fundamentalForecast, bondAssumptions, assetAt } from "./research-model.mjs?v=0.28.0";
-import { DEFAULT_RESEARCH } from "./policy.mjs?v=0.28.0";
-import { normalCDF, normalGenerator } from "./random.mjs?v=0.28.0";
-import { actualHoldings } from "./economic-exposure.mjs?v=0.28.0";
+import { observedBy } from "./observation.mjs?v=0.29.0";
+import { finite } from "./analytics.mjs?v=0.29.0";
+import { fundamentalForecast, bondAssumptions, assetAt } from "./research-model.mjs?v=0.29.0";
+import { DEFAULT_RESEARCH } from "./policy.mjs?v=0.29.0";
+import { normalCDF, normalGenerator } from "./random.mjs?v=0.29.0";
+import { actualHoldings } from "./economic-exposure.mjs?v=0.29.0";
 
 /**
  * Annualized scenario return for a bond ETF under a parallel yield change.
@@ -22,8 +23,12 @@ export function bondScenarioAnnualReturn(bond, yieldShift = 0, horizon = 1) {
     Math.log(priceMultiplier) / horizon);
 }
 
-/** Yield change a bond fund faces in a scenario: rates plus its spread share. */
+/**
+ * Yield change a bond fund faces in a scenario: rates plus its spread share;
+ * for an inflation-linked fund, the real-yield change (rates minus inflation).
+ */
 export function bondRegimeShift(bond, regime) {
+  if (bond?.inflationLinked) return (regime?.rateShift || 0) - (regime?.inflationShift || 0);
   return (regime?.rateShift || 0) + (bond?.spreadBeta || 0) * (regime?.spreadShift || 0);
 }
 const bounded = (x) => Math.max(-0.85, Math.min(2, x));
@@ -205,15 +210,49 @@ export function holdingsAnchor(asset, lookup, settings = {}) {
   if (!(covered >= HOLDINGS_ANCHOR_MIN_COVERAGE) || covered > 1.05) return null;
   const share = Math.min(1, covered), rest = 1 - share,
     prior = settings.research?.[asset.symbol]?.priorReturn ?? DEFAULT_RESEARCH.priorReturn;
+  // Net expense ratio observed with the same holdings record.
+  const fee = asset.holdings.expense_ratio,
+    expense = finite(fee) && fee >= 0 && fee <= 0.03 ? fee : null;
   return {
-    annual: (mode / covered) * share + prior * rest,
-    low: (low / covered) * share + (prior - HOLDINGS_UNCOVERED_BAND) * rest,
-    high: (high / covered) * share + (prior + HOLDINGS_UNCOVERED_BAND) * rest,
-    coverage: share, constituents: count, holdingsAsOf: h.asOf,
-    source: `Holdings al ${h.asOf}: ${Math.round(share * 100)}% del peso con ancla propia de ${count} acciones; resto con prior ${(prior * 100).toFixed(0)}% ±${HOLDINGS_UNCOVERED_BAND * 100} pp; gastos del fondo no descontados`,
+    annual: (mode / covered) * share + prior * rest - (expense ?? 0),
+    low: (low / covered) * share + (prior - HOLDINGS_UNCOVERED_BAND) * rest - (expense ?? 0),
+    high: (high / covered) * share + (prior + HOLDINGS_UNCOVERED_BAND) * rest - (expense ?? 0),
+    coverage: share, constituents: count, holdingsAsOf: h.asOf, expenseRatio: expense,
+    source: `Holdings al ${h.asOf}: ${Math.round(share * 100)}% del peso con ancla propia de ${count} acciones; resto con prior ${(prior * 100).toFixed(0)}% ±${HOLDINGS_UNCOVERED_BAND * 100} pp; ` +
+      (expense !== null ? `gastos del fondo ${(expense * 100).toFixed(2)}% descontados` : "gastos del fondo no publicados: no descontados"),
   };
 }
 
+/**
+ * International equity funds whose constituents are outside the universe:
+ * earnings-yield building block. The real return of an index is about its
+ * earnings yield (trailing issuer P/E); the nominal USD return adds the
+ * 10-year breakeven at the cut, with relative purchasing-power parity for the
+ * currency. Shrunk toward the common prior with the stock forecasts'
+ * confidence, net of the issuer's expense ratio, with the wide band of an
+ * uncovered holding. A building block, not a calibrated forecast.
+ */
+export const VALUATION_MAX_AGE_DAYS = 45;
+export function valuationAnchor(asset, settings = {}) {
+  const v = asset.equity_valuation, info = settings.informationAsOf || settings.asOf,
+    breakeven = settings.yieldCurve?.T10YIE;
+  if (asset.type !== "etf" || !v || !info || !finite(breakeven) || !finite(v.priceEarnings) ||
+      v.priceEarnings < 3 || v.priceEarnings > 80 || !finite(v.expenseRatio) ||
+      v.expenseRatio < 0 || v.expenseRatio > 0.03 || !(v.date <= info) ||
+      !observedBy(v.observed_at, info)) return null;
+  const age = (Date.parse(info + "T12:00:00Z") - Date.parse(v.date + "T12:00:00Z")) / 86400000;
+  if (!(age <= VALUATION_MAX_AGE_DAYS)) return null;
+  const research = settings.research?.[asset.symbol] || {},
+    prior = research.priorReturn ?? DEFAULT_RESEARCH.priorReturn,
+    confidence = research.confidence ?? DEFAULT_RESEARCH.confidence,
+    earningsYield = 1 / v.priceEarnings, inflation = breakeven / 100;
+  const annual = prior + confidence * (earningsYield + inflation - prior) - v.expenseRatio;
+  return {
+    annual, low: annual - HOLDINGS_UNCOVERED_BAND, high: annual + HOLDINGS_UNCOVERED_BAND,
+    earningsYield, inflation, expenseRatio: v.expenseRatio, date: v.date,
+    source: `iShares, P/E ${v.priceEarnings.toFixed(1)} al ${v.date}: rendimiento de beneficios ${(earningsYield * 100).toFixed(1)}% + inflación implícita ${(inflation * 100).toFixed(1)}% (paridad de poder adquisitivo para la divisa), contraído al prior ${(prior * 100).toFixed(0)}% con confianza ${(confidence * 100).toFixed(0)}%; gastos ${(v.expenseRatio * 100).toFixed(2)}% descontados; banda ±${HOLDINGS_UNCOVERED_BAND * 100} pp`,
+  };
+}
 export function buildReturnAnchors(assets, settings = {}, overrides = {}, universe = assets) {
   const lookup = constituentForecasts(universe, settings, overrides);
   return assets.map((asset) => {
@@ -227,6 +266,7 @@ export function buildReturnAnchors(assets, settings = {}, overrides = {}, univer
           })
         : null;
     let holdings = null,
+      valuation = null,
       refinement = null,
       annual,
       low,
@@ -271,6 +311,11 @@ export function buildReturnAnchors(assets, settings = {}, overrides = {}, univer
                (holdings = holdingsAnchor(asset, lookup, settings))) {
       ({ annual, low, high, source } = holdings);
       fundamental = true;
+    } else if (settings.driftMode !== "manual" && asset.type === "etf" &&
+               !finite(settings.assetAssumptions?.[asset.symbol]?.expectedReturn) &&
+               (valuation = valuationAnchor(asset, settings))) {
+      ({ annual, low, high, source } = valuation);
+      fundamental = true;
     } else {
       const own = settings.assetAssumptions?.[asset.symbol] || {};
       annual = finite(own.expectedReturn)
@@ -308,6 +353,7 @@ export function buildReturnAnchors(assets, settings = {}, overrides = {}, univer
       source,
       forecast,
       holdingsCoverage: holdings?.coverage ?? null,
+      valuationDate: valuation?.date ?? null,
       refinement,
       confidence: forecast?.confidence ?? null,
     };

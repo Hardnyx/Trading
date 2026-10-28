@@ -33,7 +33,7 @@ DISTRIBUTION_URLS = {
 
 # Funds whose dated yield/duration profile feeds a return model. Credit funds
 # use the credit conventions in research-model.mjs on top of the profile.
-PROFILE_FUNDS = {"SHY", "TLT", "IEF", "IEI", "SGOV", "SHV", "AGG", "LQD", "IGSB"}
+PROFILE_FUNDS = {"SHY", "TLT", "IEF", "IEI", "SGOV", "SHV", "AGG", "LQD", "IGSB", "HYG", "EMB", "TIP"}
 
 
 def _date(value):
@@ -210,8 +210,8 @@ def enrich_distributions(assets, old_assets, cutoff, observed_at, fetch, archive
                     dest.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n")
             asset["issuer_distributions"] = result
             histories += 1
-            # Treasury and investment-grade credit profiles. High yield, EM and
-            # inflation-linked funds still need their own return model.
+            # Treasury, credit (investment grade, high yield, EM sovereign) and
+            # inflation-linked profiles; each has its return model in research-model.
             if symbol in PROFILE_FUNDS:
                 try:
                     asset["bond_profile"] = parse_profile(html, symbol, cutoff, received_at(),

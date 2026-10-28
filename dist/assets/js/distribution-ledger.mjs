@@ -1,11 +1,11 @@
-import { annualDistributionYield, distributionFactors, cashGrowth, uniformCashGrowth } from "./cashflows.mjs?v=0.28.0";
+import { observedBy } from "./observation.mjs?v=0.29.0";
+import { annualDistributionYield, distributionFactors, cashGrowth, uniformCashGrowth } from "./cashflows.mjs?v=0.29.0";
 
 const DAY=86400000, YEAR=365.25*DAY, cache=new WeakMap();
 export const yearFraction=(start,end)=>(Date.parse(end+"T12:00:00Z")-Date.parse(start+"T12:00:00Z"))/YEAR;
 const validDay=s=>/^\d{4}-\d\d-\d\d$/.test(s||"") &&
   Number.isFinite(Date.parse(s)) && new Date(s).toISOString().slice(0,10)===s;
-const knownAt=(record,cut)=>typeof record?.observed_at==="string" &&
-  Number.isFinite(Date.parse(record.observed_at)) && record.observed_at.slice(0,10)<=cut;
+const knownAt=(record,cut)=>typeof record?.observed_at==="string" && observedBy(record.observed_at,cut);
 
 export function projectionCalendar(asset,asOf,informationAsOf,horizon){
   if(!validDay(asOf) || !validDay(informationAsOf) || !(horizon>0))

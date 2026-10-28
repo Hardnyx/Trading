@@ -1,6 +1,6 @@
 # Trading · lo que falta
 
-Backlog actualizado el 28 de octubre de 2026 para el motor 0.28.0, corte de
+Backlog actualizado el 28 de octubre de 2026 para el motor 0.29.0, corte de
 precios examinado del 27-oct, 260 instrumentos (160 acciones, 100 ETF).
 Consultar las pruebas y los cierres en `docs/estado-validacion.md`. Cero
 incidencias publicadas o pruebas de software aprobadas no acreditan datos
@@ -54,12 +54,17 @@ Este archivo lista **solo lo que falta**. Para el funcionamiento, consultar
   fechadas de 120 días o menos y al menos 70% del peso en constituyentes con
   ancla obtienen un ancla compuesta (SPY, QQQ, DIA, XLK, VUG, QUAL, VIG,
   DGRO, SCHD…). SPY deja de ser solo comparador.
-- **Falta:** internacionales y emergentes (VEA, VWO, EFA, EEM, países) tienen
-  0% de cobertura: sus constituyentes no están en el universo; requieren un
-  ancla por bloques a nivel de índice (rendimiento, crecimiento, valoración,
-  divisa). IWM, XLRE, XBI, KRE, IBB, XLB, RSP y SPLV quedan bajo el 70%.
-  Faltan ratios de gastos fechados, que hoy no se descuentan. La banda supone
-  errores perfectamente correlacionados entre constituyentes; falta medir su
+- **Avance en 0.29.0:** los gastos netos que publica TickerInside junto a
+  los holdings se descuentan del ancla compuesta, fechados con esa misma
+  observación. EFA y EEM obtienen un ancla por rendimiento de beneficios
+  (P/E fechado del emisor + inflación implícita, contraído al prior, neto
+  de gastos).
+- **Falta:** VEA, VWO, VXUS y los fondos país no tienen URL de emisor
+  verificada para su P/E y siguen en observación. IWM, XLRE, XBI, KRE, IBB,
+  XLB, RSP y SPLV quedan bajo el 70%. Los gastos provienen de un
+  agregador, no del folleto. El bloque de beneficios no distingue
+  crecimiento ni ciclo de márgenes por región. La banda supone errores
+  perfectamente correlacionados entre constituyentes; falta medir su
   diversificación. El umbral de 70% es operativo.
 - **Terminado cuando:** todo ETF de renta variable comprable tiene ancla con
   fuente y fecha, neta de gastos, o queda en observación con el motivo.
@@ -69,10 +74,16 @@ Este archivo lista **solo lo que falta**. Para el funcionamiento, consultar
   ancla: TIR − gastos − pérdida esperada de crédito (convención: 0,25%/año
   corporativo IG y 0,08% AGG). Un choque de diferencial por escenario, con
   beta por fondo, se suma al de tasas.
-- **Falta:** HYG (pérdida por impago y diferencial de alto rendimiento), EMB
-  (riesgo soberano emergente) y TIP (tasa real; falta descargar DFII10).
-  BND no es iShares y no tiene perfil. Las convenciones de pérdida, beta y
-  ampliación en recesión no están calibradas con historia de diferenciales.
+- **Avance en 0.29.0:** HYG (pérdida esperada 2%/año, beta de diferencial
+  3) y EMB (0,75%, beta 1,5) tienen perfil del emisor y ancla. TIP usa su
+  rendimiento real publicado más la inflación implícita a 10 años; sus
+  escenarios mueven la tasa real (tasa − inflación) y la inflación realizada
+  se devenga al principal.
+- **Falta:** JNK, BKLN, BND, VCIT y VCSH no son iShares y no tienen perfil.
+  Las convenciones de pérdida, beta, ampliación en recesión y cambio de
+  inflación no están calibradas con historia de diferenciales, impagos e
+  inflación. Los saltos de tasas de HYG y TIP usan la misma regla que los
+  Treasuries.
 - **Terminado cuando:** cada fondo de renta fija comprable separa carry,
   efecto de tasas, diferencial y pérdida esperada con fuente y fecha, y las
   convenciones se contrastan con historia de diferenciales e impagos.
@@ -116,11 +127,12 @@ Este archivo lista **solo lo que falta**. Para el funcionamiento, consultar
     tasas. Falta un modelo con tasas reales (DFII10) y dólar (DTWEXBGS); hoy
     no se descarga ninguna de las dos series.
 11. **Regímenes macro.** Desde 0.23.0 se aplican centrados: añaden
-    dispersión y colas, pero no mueven el retorno esperado. Sus
-    probabilidades y magnitudes siguen fijas a mano (base 0,55; recesión
-    0,20; inflación 0,15; expansión 0,10) y las 14 series macro no las
-    informan. Falta condicionarlas al corte, o declararlas sensibilidad pura
-    en la interfaz, y contrastar la dispersión que generan con la historia.
+    dispersión y colas, pero no mueven el retorno esperado. Desde 0.29.0 la
+    probabilidad de recesión sale de la curva al corte (probit de la Fed de
+    Nueva York sobre 10A − 3M; 13% al 27-oct). Falta: las de inflación y
+    expansión siguen proporcionales a una convención; las magnitudes siguen
+    fijas a mano. También falta contrastar la dispersión generada con la
+    historia.
 12. **Convenciones sin calibrar.** La vida media de 10 años del re-rating,
     el prior del 6 % y la confianza subjetiva por empresa. Falta medir su
     error con vintages, o al menos mostrar la sensibilidad de la propuesta a
@@ -169,7 +181,9 @@ Este archivo lista **solo lo que falta**. Para el funcionamiento, consultar
     35 % por instrumento) y efectivo al 0 % por defecto. Con los anclajes
     del 27-oct, la reproducción con seis posiciones alcanza 50% en acciones.
     Falta un análisis de sensibilidad de los topes, o que el usuario los
-    confirme explícitamente.
+    confirme explícitamente. Desde 0.29.0 la propuesta lleva EMB a su tope de
+    35%: no hay un límite por tipo de crédito (alto rendimiento, emergente)
+    ni por riesgo país.
 23. **Operativa.** Faltan lotes enteros y precios ejecutables, conciliación
     con el broker, una política integrada de salida/reentrada por tesis
     invalidada y deshacer cambios de composición.

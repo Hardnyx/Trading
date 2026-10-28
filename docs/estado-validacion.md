@@ -801,3 +801,65 @@ el resto de nombres no.
 describen como crédito con TIR neta de pérdida esperada, en lugar de
 «supuesto de retorno explícito». En la valoración, «modo ajustado» pasa a
 «contraído al prior», previo al ajuste transversal.
+
+### 0.29.0 — Escenarios condicionados a la curva, más instrumentos y gastos
+
+**Probabilidad de recesión al corte.** Antes estaba fija en 20%. Ahora
+sale del probit publicado por la Fed de Nueva York (Estrella y Trubin,
+2006): Φ(−0,5333 − 0,6330 × diferencial), con el diferencial 10A − 3M
+promedio de 21 sesiones conocidas al corte de información. Al 27-oct, con
+el diferencial en 0,93 pp, la probabilidad es 13%. Con la curva plana de
+2025, el mismo modelo daba 27–30%. Los demás escenarios conservan su
+peso relativo: base 59,8%, inflación 16,3%, expansión 10,9%. Si el
+usuario edita una probabilidad, todas quedan fijadas a mano; un botón
+devuelve el condicionamiento. La propuesta registra la fuente. La
+comparación robusta, el pronóstico por activo y el sello usan el mismo
+condicionamiento. Como los escenarios están centrados, cambiar la
+probabilidad modifica dispersión y colas, no el retorno esperado.
+
+**Nuevos instrumentos con ancla.** Todas son convenciones declaradas,
+sin calibrar:
+- **HYG:** TIR del emisor − gastos − pérdida esperada de 2%/año (impago de
+  ~3,3% de un índice BB-B × pérdida del 60%). Beta de diferencial 3: sus
+  diferenciales se ampliaron unas tres veces los IG en recesiones
+  pasadas. Al 26-oct: TIR 7,91%, ancla 5,4%.
+- **EMB:** pérdida de 0,75%/año y beta 1,5. TIR 7,11%, ancla 6,0%.
+- **TIP:** rendimiento real del emisor (2,66%) + inflación implícita a 10
+  años al corte (2,35%) − gastos = 4,8%. Un campo nuevo por escenario,
+  inflación sobre la implícita (recesión −1 pp, inflación +1,5 pp,
+  expansión +0,25 pp), mueve su tasa real (tasa − inflación) y se
+  devenga al principal.
+- **EFA y EEM:** ancla por rendimiento de beneficios. P/E fechado del
+  emisor (18,8 y 18,3) más inflación implícita, por paridad de poder
+  adquisitivo para la divisa, contraído al prior con la confianza de las
+  acciones y neto de gastos: 6,7% y 6,4%, frente a 6,2% de SPY. El mismo
+  bloque aplicado a EE. UU. (P/E 28) da 5,9%, cerca del 6,2% de sus
+  constituyentes. ACWX quedó fuera: la URL supuesta era la de ACWI, y la
+  comprobación de identidad lo detectó.
+
+**Gastos de ETF.** Los gastos netos publicados con los holdings se
+descuentan del ancla compuesta (SPY 0,09%, QQQ 0,18%), fechados con esa
+observación. Un cambio de gasto cuenta como observación nueva.
+
+**Saltos de crédito.** En un evento de salto, los fondos de crédito
+recibían el salto de tasa de los Treasuries y subían cuando caían las
+acciones. Ahora suman la ampliación del diferencial IG del evento (base
+75 pb, recesión 150, inflación 75, expansión 40, editable) por su beta.
+Afecta solo al comparador Merton heredado: la simulación vigente no tiene
+saltos.
+
+**Fechas de observación.** Las observaciones (holdings, valoraciones,
+historia SEC, consenso, distribuciones) se comparaban por su fecha UTC
+contra el corte de información, que es una fecha de Nueva York. Una
+captura nocturna, por ejemplo a las 00:12 UTC del 28 (20:12 del 27 en
+Nueva York), quedaba fuera del corte del 27. Ahora se comparan en el
+mismo calendario.
+
+**Efecto en la propuesta** (simulado con los datos que traerá la próxima
+actualización). Por defecto: EMB 35, IGSB 10, efectivo 5, NVDA 15, AMZN
+10, NFLX 15, HPQ 10; media 6,9%, CVaR 16,0%, estabilidad media (las tres
+búsquedas comparten al menos 70%). Las tres ganadoras eligen EMB en su
+tope del 35%: es el instrumento con mejor carry neto por unidad de
+volatilidad histórica. Esa volatilidad se mide en dos años sin crisis
+emergentes y con cópula gaussiana. La concentración en deuda soberana
+emergente es la principal advertencia de esta versión (pendientes 7 y 22).
