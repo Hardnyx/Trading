@@ -4,17 +4,17 @@ import {
   mean,
   quantile,
   normalizeWeights,
-} from "./analytics.mjs?v=0.33.0";
-import { seededRandom } from "./random.mjs?v=0.33.0";
-import { portfolioAttribution } from "./attribution.mjs?v=0.33.0";
-import { reviewRobustDecision, DECISION_MODEL_LABELS } from "./robust-decision.mjs?v=0.33.0";
+} from "./analytics.mjs?v=0.33.1";
+import { seededRandom } from "./random.mjs?v=0.33.1";
+import { portfolioAttribution } from "./attribution.mjs?v=0.33.1";
+import { reviewRobustDecision, DECISION_MODEL_LABELS } from "./robust-decision.mjs?v=0.33.1";
 import {
   preparePaths,
   generatePaths,
   evaluatePaths,
   marginalRisk,
   centeredRegimeConditions,
-} from "./path-model.mjs?v=0.33.0";
+} from "./path-model.mjs?v=0.33.1";
 import {
   withCashAsset,
   mandate,
@@ -25,12 +25,12 @@ import {
   effectiveRegimes,
   DEFAULT_REGIMES,
   MODEL_VERSION,
-} from "./policy.mjs?v=0.33.0";
-import { buildReturnAnchors, constituentForecasts, holdingsAnchor, valuationAnchor } from "./return-model.mjs?v=0.33.0";
-import { assetAt, fundamentalForecast, bondAssumptions } from "./research-model.mjs?v=0.33.0";
-import { selectCompositionUniverse } from "./universe.mjs?v=0.33.0";
-import { factorizeStressedCovariance } from "./factor-covariance.mjs?v=0.33.0";
-import { economicClass, outsideUS, exposureReport, rawCorrelation, qualifiedOpportunity, holdingsOverlap, knownFundOverlap } from "./economic-exposure.mjs?v=0.33.0";
+} from "./policy.mjs?v=0.33.1";
+import { buildReturnAnchors, constituentForecasts, holdingsAnchor, valuationAnchor } from "./return-model.mjs?v=0.33.1";
+import { assetAt, fundamentalForecast, bondAssumptions } from "./research-model.mjs?v=0.33.1";
+import { selectCompositionUniverse } from "./universe.mjs?v=0.33.1";
+import { factorizeStressedCovariance } from "./factor-covariance.mjs?v=0.33.1";
+import { economicClass, outsideUS, exposureReport, rawCorrelation, qualifiedOpportunity, holdingsOverlap, knownFundOverlap } from "./economic-exposure.mjs?v=0.33.1";
 
 export const DEFAULT_COMPOSITION_RULES = {
   maxPosition: 0.2,
@@ -704,7 +704,8 @@ export function finalizeCompositionDecision(proposal, inputs, paths = 1000) {
   return { ...proposal, status: 'hold', diagnostics: { ...diagnostics, attribution: null, cashAllocation: null },
     reason: (audit.status === 'incomplete'
       ? `Mantener: faltan anclas fundamentadas o expectativas explícitas para ${audit.unanchoredIncumbents.join(', ')}. Completar Research antes de evaluar una transición.`
-      : `Mantener: la transición no supera el umbral neto en todos los modelos (${audit.failingModels.map(id => DECISION_MODEL_LABELS[id]).join(', ')}).`) +
+      : `Mantener: transición descartada en ${audit.models.filter(r => !r.passes)
+          .map(r => `${DECISION_MODEL_LABELS[r.id]} (${r.failures.length ? r.failures.join(', ') : 'mejora insuficiente'})`).join('; ')}.`) +
       (audit.currentViolatesRisk ? ' La cartera actual también excede límites: requiere revisión del mandato o del riesgo.' : ''),
     candidate_review: { positions: proposal.positions, metrics: proposal.metrics, benefit: proposal.benefit,
       trade_plan: proposal.trade_plan },

@@ -1,8 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {prepareComposition,reviewCashAllocation,validWeights} from '../dist/assets/js/composer.mjs?v=0.33.0';
-import {generatePaths,evaluatePaths,BASE_REGIME} from '../dist/assets/js/path-model.mjs?v=0.33.0';
-import {tradePlan} from '../dist/assets/js/policy.mjs?v=0.33.0';
+import {prepareComposition,reviewCashAllocation,validWeights} from '../dist/assets/js/composer.mjs?v=0.33.1';
+import {generatePaths,evaluatePaths,BASE_REGIME} from '../dist/assets/js/path-model.mjs?v=0.33.1';
+import {tradePlan} from '../dist/assets/js/policy.mjs?v=0.33.1';
 
 function fixture(minimumCash=.05) {
  const asOf='2026-10-23';

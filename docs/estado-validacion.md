@@ -1,6 +1,6 @@
 # Estado de validación de Trading
 
-**Actualizado:** 28 de octubre de 2026 · motor 0.33.0 · precios al 27-oct.
+**Actualizado:** 28 de octubre de 2026 · motor 0.33.1 · precios al 27-oct.
 **Estado:** escenarios condicionales de investigación; capacidad predictiva y
 ventaja económica sin acreditar. El [historial hasta 0.32.0](historial-validacion-hasta-0.32.md)
 conserva los cambios y cifras anteriores.
@@ -58,9 +58,17 @@ Sobre los escenarios pareados de verificación:
 | Combinado | USD 194 | USD −703 |
 | Baja convicción | USD −652 | USD −1.554 |
 
-Desde una cuenta inicialmente en efectivo, el candidato sí supera los
-cinco modelos: la menor cota de mejora es USD 2.324 sobre USD 100.000. Son
-comprobaciones del criterio, no evidencia de rentabilidad futura.
+Con la captura anterior (información del 27-oct), el candidato desde efectivo
+superaba los cinco modelos: menor cota de mejora USD 2.324 sobre USD 100.000.
+La captura nueva del 28-oct a las 12:27 UTC, con los mismos precios del
+27-oct y VTI ya elegible, cambia la familia hallada por la búsqueda base.
+La candidata supera el umbral económico, pero su CVaR es 20,42% en Combinado
+y 21,17% en Baja convicción, frente al límite de 20%. La decisión vigente
+es **mantener el 100% del efectivo inicial**, sin operaciones. No significa
+que no exista una alternativa robusta: solo que esta candidata no cumple;
+la búsqueda sigue optimizando el modelo base. La interfaz distingue el
+rechazo por riesgo de una mejora insuficiente. Estas comprobaciones no son
+evidencia de rentabilidad futura.
 
 ## VTI y oro
 
@@ -138,7 +146,7 @@ python scripts/gold_research.py
 python scripts/build_volatility.py
 ```
 
-**Verificación local:** 217 pruebas JavaScript, 137 Python y `npm run check` aprobados.
+**Verificación local:** 218 pruebas JavaScript, 137 Python y `npm run check` aprobados.
 
 Las pruebas cubren rechazo de mejoras aparentes bajo otro modelo, costes
 cero al mantener, mandato completo, anclas ausentes, constituyentes fuera de

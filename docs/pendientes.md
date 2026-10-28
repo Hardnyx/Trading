@@ -1,6 +1,6 @@
 # Trading · lo que falta
 
-Backlog actualizado el 28 de octubre de 2026 para el motor 0.33.0, corte de
+Backlog actualizado el 28 de octubre de 2026 para el motor 0.33.1, corte de
 precios examinado del 27-oct, 260 instrumentos (160 acciones, 100 ETF).
 Consultar las pruebas y los cierres en `docs/estado-validacion.md`. Cero
 incidencias publicadas o pruebas de software aprobadas no acreditan datos
@@ -208,6 +208,10 @@ Este archivo lista **solo lo que falta**. Para el funcionamiento, consultar
     y mantiene si alguno falla, incluidos costes, retiros, suelo y FX. Falta
     extender la búsqueda robusta global y validar el conjunto de supuestos,
     que hoy no cubre toda la incertidumbre de parámetros ni de cola.
+    En la captura del 28-oct a las 12:27 UTC, la candidata base desde efectivo
+    incumple CVaR en dos modelos (20,42% y 21,17%, límite 20%) y se conserva
+    el efectivo. Falta buscar una alternativa admisible cuando esa candidata
+    se rechaza; conservar no demuestra que no haya otra mezcla robusta.
 22. **Topes prudenciales sin validar** (Treasury 60 %, renta variable 50 %,
     35 % por instrumento) y efectivo al 0 % por defecto. Con los anclajes
     del 27-oct, la reproducción con seis posiciones alcanza 50% en acciones.

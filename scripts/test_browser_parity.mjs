@@ -1,9 +1,9 @@
 import { chromium } from "playwright";
 import { spawn } from "node:child_process";
 import { readFileSync, mkdirSync } from "node:fs";
-import { composeMultiStart } from "../dist/assets/js/composer.mjs?v=0.33.0";
-import { referenceRequest } from "../dist/assets/js/reference-preset.mjs?v=0.33.0";
-import { exposureReport } from "../dist/assets/js/economic-exposure.mjs?v=0.33.0";
+import { composeMultiStart } from "../dist/assets/js/composer.mjs?v=0.33.1";
+import { referenceRequest } from "../dist/assets/js/reference-preset.mjs?v=0.33.1";
+import { exposureReport } from "../dist/assets/js/economic-exposure.mjs?v=0.33.1";
 
 const market=JSON.parse(readFileSync("dist/data/market.json","utf8"));
 const volatility=JSON.parse(readFileSync("dist/data/volatility.json","utf8"));
@@ -11,9 +11,11 @@ const snapshot={...market,volatility};
 const {settings,overrides,rules}=referenceRequest(snapshot);
 const expected=composeMultiStart(snapshot,settings,overrides,rules,
   {candidates:300,paths:600,finalPaths:3000});
-if(expected.status!=="proposed")throw Error("La referencia no produjo una cartera");
-if(expected.diagnostics?.robustDecision?.status!=="passed"||expected.diagnostics.robustDecision.models.length!==5)
+if(!['proposed','hold'].includes(expected.status))throw Error("La referencia no produjo una decisión");
+if(expected.status==='proposed'&&expected.diagnostics?.robustDecision?.status!=='passed')
   throw Error('The canonical proposal bypassed the ordinary model-uncertainty decision');
+if(expected.diagnostics?.robustDecision&&expected.diagnostics.robustDecision.models.length!==5)
+  throw Error('The canonical model comparison is incomplete');
 const economicWeights=new Map(expected.positions.map(p=>[p.symbol,p.weight]));
 const economic=exposureReport(expected.model_inputs.assets,
   expected.model_inputs.assets.map(a=>economicWeights.get(a.symbol)||0),expected.as_of,
@@ -49,7 +51,7 @@ try {
   const issues=[];
   page.on("pageerror",e=>issues.push(e.message));
   page.on("console",e=>{if(e.type()==="error")issues.push(e.text())});
-  await page.goto("http://127.0.0.1:8813/?build=0.33.0#portfolio",
+  await page.goto("http://127.0.0.1:8813/?build=0.33.1#portfolio",
     {waitUntil:"networkidle",timeout:60000});
   const button=page.locator('[data-action="compose-reference"]');
   await button.waitFor({state:"visible",timeout:45000});
@@ -77,7 +79,7 @@ try {
     throw Error('Financial coverage does not include the stock universe');
   await page.locator('.financial-coverage > summary').click();
   const actualFooter=await page.locator(".footer-right").innerText();
-  if(!actualFooter.includes("v0.33.0") || actualFooter.includes("v0.6.0"))
+  if(!actualFooter.includes("v0.33.1") || actualFooter.includes("v0.6.0"))
     throw Error("La etiqueta de versión del pie de página no corresponde al motor: "+
       actualFooter);
 
@@ -86,7 +88,7 @@ try {
   await page.evaluate(()=>{
     const key="trading-workspace-v1";
     const stored=JSON.parse(localStorage.getItem(key)||"{}");
-    stored.workspaceVersion="0.33.0";
+    stored.workspaceVersion="0.33.1";
     stored.positions=[{symbol:"NVDA",weight:1}];
     stored.settings={...stored.settings,seed:20261025,volatilityMode:"ewma"};
     stored.compositionRules={...stored.compositionRules,reserveCap:0.1,
@@ -108,78 +110,105 @@ try {
       mandate:state.mandate||null};
   });
   await button.click();
-  await page.locator(".composition-report").waitFor({state:"visible",timeout:480000});
-  const rendered=await page.locator(".composition-positions tbody tr").evaluateAll(rows=>
-    rows.map(row=>({
-      symbol:row.querySelector("td")?.textContent?.trim(),
-      weight:row.querySelectorAll("td")[1]?.textContent?.trim(),
-    })));
-  const result=Object.fromEntries(rendered.map(row=>[
-    row.symbol, Number(row.weight.replace("%","").replace(",",".").trim())]));
-  const source=await page.locator(".composition-source").innerText();
-  const report=await page.locator(".composition-report").innerText();
-  if(!(await page.locator('body').innerText()).includes('MEJORA MÍNIMA · CINCO MODELOS'))
-    throw Error('The ordinary decision omits model-uncertainty evidence');
-  const roles=await page.locator('.composition-positions .composition-role').allTextContents();
-  if(roles.length!==expected.positions.length||roles.some(t=>t.length>95||t.includes('captura XBRL')||t.includes('Supuestos:')))
-    throw Error('The primary allocation table is no longer concise');
-  if(!(await page.locator('.composition-cash-explanation').innerText()).includes('reserva exigida'))
-    throw Error('The report does not explain the cash allocation');
-  const layout=await page.locator(".composition-report").evaluate(panel=>{
-    const source=panel.querySelector(":scope > .composition-source");
-    const contributions=panel.querySelector(".composition-contributions");
-    const brief=panel.querySelector(".composition-brief");
-    const methods=panel.querySelector("details.composition-method");
-    const style=e=>e?getComputedStyle(e):null;
-    return {
-      sourcePadding:Number.parseFloat(style(source)?.paddingLeft||"0"),
-      // Tables run edge to edge; what must keep its inset is the content:
-      // container padding plus the heading's and first cell's own padding.
-      contributionsPadding:Number.parseFloat(style(contributions)?.paddingLeft||"0")+
-        Math.min(...[contributions?.querySelector("h3"),contributions?.querySelector("th, td")]
-          .map(e=>Number.parseFloat(style(e)?.paddingLeft||"0"))),
-      briefPadding:Number.parseFloat(style(brief)?.paddingLeft||"0"),
-      technicalOpen:methods?.open,
-      hasGlobalCap:panel.textContent?.includes("Límite global"),
-      cashDividendSummary:panel.textContent?.includes("Dividendos netos"),
-      issuerSummary:panel.textContent?.includes("Emisores conocidos (directo + ETF)"),
-    };
+  const decision=page.locator('.decision-section').filter({has:
+    page.getByRole('heading',{name:'DECISIÓN DESDE LA CARTERA ACTUAL',exact:true})});
+  await decision.waitFor({state:'visible',timeout:480000});
+  const observed=await page.evaluate(()=>{
+    const p=JSON.parse(localStorage.getItem('trading-workspace-v1')).proposal;
+    return {status:p.status,positions:p.positions,reason:p.reason,cost:p.trade_plan?.total,
+      gate:p.diagnostics?.robustDecision?.status};
   });
-  if(layout.sourcePadding<8 || layout.contributionsPadding<8 ||
-     layout.briefPadding<8 || layout.technicalOpen===true ||
-     !layout.hasGlobalCap || !layout.cashDividendSummary || !layout.issuerSummary)
-    throw Error("La composición perdió espacios o faltan controles de concentración/ingresos: "+JSON.stringify(layout));
+  if(observed.status!==expected.status||observed.gate!==expected.diagnostics?.robustDecision?.status)
+    throw Error('The browser decision differs from the canonical model gate');
+  let result,source,report,calendarRows=0;
+  const expectedDividendRows=expected.status==='proposed'?(expected.metrics?.dividendTiming||[])
+    .filter(r=>r.mode==='issuer-calendar').reduce((n,r)=>n+Math.min(6,r.events.length),0):0;
+  if(expected.status==='proposed') {
+    await page.locator('.composition-report').waitFor({state:'visible'});
+    const rendered=await page.locator(".composition-positions tbody tr").evaluateAll(rows=>
+      rows.map(row=>({
+        symbol:row.querySelector("td")?.textContent?.trim(),
+        weight:row.querySelectorAll("td")[1]?.textContent?.trim(),
+      })));
+    result=Object.fromEntries(rendered.map(row=>[
+      row.symbol, Number(row.weight.replace("%","").replace(",",".").trim())]));
+    source=await page.locator(".composition-source").innerText();
+    report=await page.locator(".composition-report").innerText();
+    if(!(await page.locator('body').innerText()).includes('MEJORA MÍNIMA · CINCO MODELOS'))
+      throw Error('The ordinary decision omits model-uncertainty evidence');
+    const roles=await page.locator('.composition-positions .composition-role').allTextContents();
+    if(roles.length!==expected.positions.length||roles.some(t=>t.length>95||t.includes('captura XBRL')||t.includes('Supuestos:')))
+      throw Error('The primary allocation table is no longer concise');
+    if(!(await page.locator('.composition-cash-explanation').innerText()).includes('reserva exigida'))
+      throw Error('The report does not explain the cash allocation');
+    const layout=await page.locator(".composition-report").evaluate(panel=>{
+      const source=panel.querySelector(":scope > .composition-source");
+      const contributions=panel.querySelector(".composition-contributions");
+      const brief=panel.querySelector(".composition-brief");
+      const methods=panel.querySelector("details.composition-method");
+      const style=e=>e?getComputedStyle(e):null;
+      return {
+        sourcePadding:Number.parseFloat(style(source)?.paddingLeft||"0"),
+        // Tables run edge to edge; what must keep its inset is the content:
+        // container padding plus the heading's and first cell's own padding.
+        contributionsPadding:Number.parseFloat(style(contributions)?.paddingLeft||"0")+
+          Math.min(...[contributions?.querySelector("h3"),contributions?.querySelector("th, td")]
+            .map(e=>Number.parseFloat(style(e)?.paddingLeft||"0"))),
+        briefPadding:Number.parseFloat(style(brief)?.paddingLeft||"0"),
+        technicalOpen:methods?.open,
+        hasGlobalCap:panel.textContent?.includes("Límite global"),
+        cashDividendSummary:panel.textContent?.includes("Dividendos netos"),
+        issuerSummary:panel.textContent?.includes("Emisores conocidos (directo + ETF)"),
+      };
+    });
+    if(layout.sourcePadding<8 || layout.contributionsPadding<8 ||
+       layout.briefPadding<8 || layout.technicalOpen===true ||
+       !layout.hasGlobalCap || !layout.cashDividendSummary || !layout.issuerSummary)
+      throw Error("La composición perdió espacios o faltan controles de concentración/ingresos: "+JSON.stringify(layout));
 
-  // The ETF look-through table must remain tucked inside the technical panel,
-  // with a horizontal scroll container rather than overflowing the workspace.
-  await page.locator(".composition-report details.composition-method > summary").click();
-  const lookthrough=await page.locator(".composition-etf-holdings").evaluate(table=>{
-    const wrapper=table.closest(".table-wrap"),panel=table.closest(".composition-report");
-    return {rows:table.querySelectorAll("tbody tr").length,
-      inset:parseFloat(getComputedStyle(wrapper).paddingLeft)||0,
-      width:table.scrollWidth,wrapperWidth:wrapper.clientWidth,
-      parentOverflows:panel.scrollWidth>panel.clientWidth+3,
-      sourceLinks:[...table.querySelectorAll("a")].every(a=>
-        a.href.startsWith("https://")&&a.target==="_blank"),
-    };
-  });
-  const expectedFunds=expected.diagnostics?.economicExposure?.funds?.length||0;
-  const stockAssumptions=await page.locator('.composition-valuation-details .composition-valuation-evidence')
-    .allTextContents();
-  if(stockAssumptions.filter(t=>t.includes('Supuestos:')).length!==
-      expected.signals.filter(s=>s.filed&&s.valuationEvidence).length ||
-     stockAssumptions.some(t=>t.includes('Supuestos:')&&
-       (!/P\/E (de salida|actual [\d.,]+ → salida)/.test(t)||!t.includes('Sin calibración predictiva'))))
-    throw Error('La composición oculta los supuestos de valoración');
-  if(lookthrough.rows!==expectedFunds || lookthrough.parentOverflows ||
-     !lookthrough.sourceLinks)
-    throw Error("ETF holdings report geometry or provenance failed: "+
-      JSON.stringify({lookthrough,expectedFunds}));
-  const expectedDividendRows=(expected.metrics?.dividendTiming||[])
-    .filter(r=>r.mode==="issuer-calendar").reduce((n,r)=>n+Math.min(6,r.events.length),0);
-  const calendarRows=await page.locator('.composition-dividend-calendar tbody tr').count();
-  if(calendarRows!==expectedDividendRows)
-    throw Error("Calendario de dividendos distinto entre motor y pantalla");
+    // The ETF look-through table must remain tucked inside the technical panel,
+    // with a horizontal scroll container rather than overflowing the workspace.
+    await page.locator(".composition-report details.composition-method > summary").click();
+    const lookthrough=await page.locator(".composition-etf-holdings").evaluate(table=>{
+      const wrapper=table.closest(".table-wrap"),panel=table.closest(".composition-report");
+      return {rows:table.querySelectorAll("tbody tr").length,
+        inset:parseFloat(getComputedStyle(wrapper).paddingLeft)||0,
+        width:table.scrollWidth,wrapperWidth:wrapper.clientWidth,
+        parentOverflows:panel.scrollWidth>panel.clientWidth+3,
+        sourceLinks:[...table.querySelectorAll("a")].every(a=>
+          a.href.startsWith("https://")&&a.target==="_blank"),
+      };
+    });
+    const expectedFunds=expected.diagnostics?.economicExposure?.funds?.length||0;
+    const stockAssumptions=await page.locator('.composition-valuation-details .composition-valuation-evidence')
+      .allTextContents();
+    if(stockAssumptions.filter(t=>t.includes('Supuestos:')).length!==
+        expected.signals.filter(s=>s.filed&&s.valuationEvidence).length ||
+       stockAssumptions.some(t=>t.includes('Supuestos:')&&
+         (!/P\/E (de salida|actual [\d.,]+ → salida)/.test(t)||!t.includes('Sin calibración predictiva'))))
+      throw Error('La composición oculta los supuestos de valoración');
+    if(lookthrough.rows!==expectedFunds || lookthrough.parentOverflows ||
+       !lookthrough.sourceLinks)
+      throw Error("ETF holdings report geometry or provenance failed: "+
+        JSON.stringify({lookthrough,expectedFunds}));
+    calendarRows=await page.locator('.composition-dividend-calendar tbody tr').count();
+    if(calendarRows!==expectedDividendRows)
+      throw Error("Calendario de dividendos distinto entre motor y pantalla");
+  } else {
+    result=Object.fromEntries(observed.positions.map(p=>[p.symbol,Math.round(p.weight*1000)/10]));
+    source=await page.locator('.notice').filter({hasText:expected.reason}).innerText();
+    report=await decision.innerText();
+    if(observed.cost!==0||!report.includes('Mantener')||!report.includes(expected.reason)||
+       !await page.locator('[data-action="apply-proposal"]').isDisabled()||
+       await page.locator('.composition-report').count())
+      throw Error('Holding must preserve positions, zero operations and a visible reason');
+    const audit=expected.diagnostics?.robustDecision;
+    if(audit) {
+      if(!report.includes('MEJORA MÍNIMA · CINCO MODELOS'))throw Error('Holding hides its model comparison');
+      for(const row of audit.models)for(const failure of row.failures)
+        if(!report.includes(`No · ${row.failures.join(', ')}`))throw Error('Holding hides a model risk rejection: '+failure);
+    }
+  }
   mkdirSync("out",{recursive:true});
   await page.screenshot({path:"out/browser-parity.png",fullPage:true});
   if(!source.includes("CONFIGURACIÓN BASE"))
@@ -204,9 +233,9 @@ try {
      baselineStorage.compositionRules.reserveCap!==0.1 ||
      baselineStorage.account.positions[0].symbol!=="NVDA")
     throw Error("La prueba no restauró realmente la sesión personalizada");
-  const detailedReport=await page.locator('.composition-report').innerText();
-  if(!detailedReport.includes("MOTOR 0.33.0") && !detailedReport.includes("Motor 0.33.0"))
-    throw Error("El informe no identifica el motor 0.33.0");
+  const detailedReport=await page.locator('body').innerText();
+  if(!detailedReport.includes("MOTOR 0.33.1") && !detailedReport.includes("Motor 0.33.1"))
+    throw Error("El informe no identifica el motor 0.33.1");
   // The real worker must compare the preserved session and keep all account
   // quantities, settings and working weights unchanged.
   await page.locator('[data-action="compare-robustness"]').click();
@@ -260,6 +289,7 @@ try {
   if(issues.length)throw Error("Errores del navegador: "+issues.join("; "));
   console.log(JSON.stringify({
     browserParity:"PASS",
+    decision:observed.status,gate:observed.gate,
     browserVersion:browser.version(),
     browserChannel:process.env.PLAYWRIGHT_CHANNEL||"bundled-chromium",
     calendarRows,expectedDividendRows,

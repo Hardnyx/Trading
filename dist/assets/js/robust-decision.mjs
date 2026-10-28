@@ -1,6 +1,6 @@
-import { generatePaths, evaluatePaths, utilityCertaintyEquivalent } from './path-model.mjs?v=0.33.0';
-import { MODEL_VARIANTS, variantInputs } from './robust-core.mjs?v=0.33.0';
-import { tradePlan } from './policy.mjs?v=0.33.0';
+import { generatePaths, evaluatePaths, utilityCertaintyEquivalent } from './path-model.mjs?v=0.33.1';
+import { MODEL_VARIANTS, variantInputs } from './robust-core.mjs?v=0.33.1';
+import { tradePlan } from './policy.mjs?v=0.33.1';
 
 export const DECISION_MODEL_LABELS = { original: 'Base', no_rerating: 'Sin re-rating',
   margin_stress: 'Margen y crédito', combined: 'Combinado', low_conviction: 'Baja convicción' };

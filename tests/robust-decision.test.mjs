@@ -1,8 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { pairedDecisionEvidence, reviewRobustDecision } from '../dist/assets/js/robust-decision.mjs?v=0.33.0';
-import { prepareComposition, finalizeCompositionDecision } from '../dist/assets/js/composer.mjs?v=0.33.0';
-import { DEFAULT_MANDATE } from '../dist/assets/js/policy.mjs?v=0.33.0';
+import { pairedDecisionEvidence, reviewRobustDecision } from '../dist/assets/js/robust-decision.mjs?v=0.33.1';
+import { prepareComposition, finalizeCompositionDecision } from '../dist/assets/js/composer.mjs?v=0.33.1';
+import { DEFAULT_MANDATE } from '../dist/assets/js/policy.mjs?v=0.33.1';
 
 test('decision evidence uses the mandate utility rather than a log-return shortcut', () => {
   const growth = { ...DEFAULT_MANDATE };
@@ -50,6 +50,7 @@ test('a base-model winner is rejected when no-rerating loses to the real incumbe
   const result = finalizeCompositionDecision({ status: 'proposed', positions: target,
     metrics: {}, trade_plan: {}, diagnostics: {} }, x, 100);
   assert.equal(result.status, 'hold');
+  assert.match(result.reason, /transición descartada.*Composición/);
   assert.deepEqual(result.positions, x.current.positions);
   assert.equal(result.trade_plan.total, 0);
   assert.deepEqual(result.candidate_review.positions, target);
