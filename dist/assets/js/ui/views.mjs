@@ -7,7 +7,7 @@ import {
   resolveAssumptions,
   returnDecomposition,
   valuation,
-} from "../analytics.mjs?v=0.34.0";
+} from "../analytics.mjs?v=0.34.1";
 import {
   sparkline,
   portfolioChart,
@@ -16,7 +16,7 @@ import {
   scatter,
   forecastCone,
   histogram,
-} from "../charts.mjs?v=0.34.0";
+} from "../charts.mjs?v=0.34.1";
 import {
   esc,
   url,
@@ -27,16 +27,16 @@ import {
   color,
   dateLabel,
   timestampLabel,
-} from "./format.mjs?v=0.34.0";
-import { template } from "./templates.mjs?v=0.34.0";
-import { DEFAULT_COMPOSITION_RULES } from "../composer.mjs?v=0.34.0";
-import { factorModel } from "../factors.mjs?v=0.34.0";
-import { MODEL_VERSION, informationDate } from "../policy.mjs?v=0.34.0";
-import { fundamentalForecast } from "../research-model.mjs?v=0.34.0";
-import { financialFreshness } from '../financial-freshness.mjs?v=0.34.0';
-import { priceMonitor } from '../price-monitor.mjs?v=0.34.0';
+} from "./format.mjs?v=0.34.1";
+import { template } from "./templates.mjs?v=0.34.1";
+import { DEFAULT_COMPOSITION_RULES } from "../composer.mjs?v=0.34.1";
+import { factorModel } from "../factors.mjs?v=0.34.1";
+import { MODEL_VERSION, informationDate } from "../policy.mjs?v=0.34.1";
+import { fundamentalForecast } from "../research-model.mjs?v=0.34.1";
+import { financialFreshness } from '../financial-freshness.mjs?v=0.34.1';
+import { priceMonitor } from '../price-monitor.mjs?v=0.34.1';
 
-import { createDecisionViews } from "./decision-views.mjs?v=0.34.0";
+import { createDecisionViews } from "./decision-views.mjs?v=0.34.1";
 
 /**
  * Describes the process the Monte Carlo actually runs. Jumps and the GBM /

@@ -1,6 +1,6 @@
 # Estado de validación de Trading
 
-**Actualizado:** 28 de octubre de 2026 · motor 0.34.0 · precios al 27-oct.
+**Actualizado:** 28 de octubre de 2026 · motor 0.34.1 · precios al 27-oct.
 **Estado:** escenarios condicionales de investigación; capacidad predictiva y
 ventaja económica sin acreditar. El [historial hasta 0.32.0](historial-validacion-hasta-0.32.md)
 conserva los cambios y cifras anteriores.
@@ -48,6 +48,15 @@ El [protocolo de confianza](criterios-confianza.md) distingue corrección del
 software, admisibilidad condicional de una decisión y evidencia predictiva.
 **La tercera sigue sin acreditar.** La auditoría detallada de esta versión
 queda en [`auditoria-fiabilidad-0.34.md`](auditoria-fiabilidad-0.34.md).
+
+### Comprobación adicional en 0.34.1
+
+El comparador legado podía dejar inactivo el estrés Student y conservar su
+ley gaussiana/Merton mientras la etiqueta decía Student. Ese contraste
+separado fuerza ahora su proceso diario con Student también en ese caso;
+una prueba verifica la ley ejecutada y que no pueda usarse como retorno
+económico. La cartera canónica y los registros del núcleo 1.0.0 usan el modo
+diario, por lo que la corrección no cambia sus cifras auditadas en 0.34.0.
 
 ## Decisión de operar
 
@@ -193,7 +202,7 @@ python scripts/build_volatility.py
 node scripts/reliability_audit.mjs --full
 ```
 
-**Verificación local:** 235 pruebas JavaScript, 137 Python y `npm run check` aprobados.
+**Verificación local:** 236 pruebas JavaScript, 137 Python y `npm run check` aprobados.
 
 Las pruebas cubren rechazo de mejoras aparentes bajo otro modelo, costes
 cero al mantener, mandato completo, anclas ausentes, constituyentes fuera de

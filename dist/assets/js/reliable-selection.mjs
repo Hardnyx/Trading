@@ -1,8 +1,8 @@
-import { generatePaths, evaluatePaths } from './path-model.mjs?v=0.34.0';
-import { MODEL_VARIANTS, variantInputs } from './robust-core.mjs?v=0.34.0';
-import { pairedDecisionEvidence, reviewRobustDecision, tailStressInputs, DECISION_EXPERIMENT_SEEDS } from './robust-decision.mjs?v=0.34.0';
-import { riskSamplingEvidence } from './simulation-evidence.mjs?v=0.34.0';
-import { tradePlan } from './policy.mjs?v=0.34.0';
+import { generatePaths, evaluatePaths } from './path-model.mjs?v=0.34.1';
+import { MODEL_VARIANTS, variantInputs } from './robust-core.mjs?v=0.34.1';
+import { pairedDecisionEvidence, reviewRobustDecision, tailStressInputs, DECISION_EXPERIMENT_SEEDS } from './robust-decision.mjs?v=0.34.1';
+import { riskSamplingEvidence } from './simulation-evidence.mjs?v=0.34.1';
+import { tradePlan } from './policy.mjs?v=0.34.1';
 
 const overlap = (a,b) => a.reduce((s,w,i)=>s+Math.min(w,b[i]),0);
 const positions = (x,w) => x.assets.flatMap((a,i)=>w[i]>1e-9?[{symbol:a.symbol,weight:w[i]}]:[]);

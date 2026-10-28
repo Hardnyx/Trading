@@ -1,8 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { economicClass, exposureReport, actualHoldings, rawCorrelation, qualifiedOpportunity, holdingsOverlap, knownFundOverlap } from "../dist/assets/js/economic-exposure.mjs?v=0.34.0";
+import { economicClass, exposureReport, actualHoldings, rawCorrelation, qualifiedOpportunity, holdingsOverlap, knownFundOverlap } from "../dist/assets/js/economic-exposure.mjs?v=0.34.1";
 import { readFileSync } from "node:fs";
-import { validWeights, DEFAULT_COMPOSITION_RULES } from "../dist/assets/js/composer.mjs?v=0.34.0";
+import { validWeights, DEFAULT_COMPOSITION_RULES } from "../dist/assets/js/composer.mjs?v=0.34.1";
 
 test("Treasury funds aggregate despite having different tickers",()=>{
  const assets=[
@@ -196,8 +196,8 @@ test("holdings overlap is observed shared issuer weight, distinct from correlati
 });
 
 test("high-yield and EM debt form a capped sub-sleeve of credit", async () => {
-  const { exposureReport, RISKY_CREDIT } = await import("../dist/assets/js/economic-exposure.mjs?v=0.34.0");
-  const { DEFAULT_COMPOSITION_RULES } = await import("../dist/assets/js/composer.mjs?v=0.34.0");
+  const { exposureReport, RISKY_CREDIT } = await import("../dist/assets/js/economic-exposure.mjs?v=0.34.1");
+  const { DEFAULT_COMPOSITION_RULES } = await import("../dist/assets/js/composer.mjs?v=0.34.1");
   const fund = (symbol) => ({ symbol, type: "etf" });
   const report = exposureReport([fund("EMB"), fund("HYG"), fund("LQD")], [.15, .1, .2], "2026-10-27");
   assert.ok(Math.abs(report.sleeves.riskyCredit - .25) < 1e-12);
@@ -207,8 +207,8 @@ test("high-yield and EM debt form a capped sub-sleeve of credit", async () => {
 });
 
 test("a US-only mandate keeps international equity and foreign debt out of purchases", async () => {
-  const { outsideUS } = await import("../dist/assets/js/economic-exposure.mjs?v=0.34.0");
-  const { mandate, DEFAULT_MANDATE } = await import("../dist/assets/js/policy.mjs?v=0.34.0");
+  const { outsideUS } = await import("../dist/assets/js/economic-exposure.mjs?v=0.34.1");
+  const { mandate, DEFAULT_MANDATE } = await import("../dist/assets/js/policy.mjs?v=0.34.1");
   const etf = (symbol) => ({ symbol, type: "etf" });
   for (const s of ["EFA", "EEM", "ACWX", "VXUS", "EWJ", "ACWI", "VT", "EMB", "BNDX"]) assert.equal(outsideUS(etf(s)), true, s);
   for (const s of ["SPY", "IJH", "IJR", "LQD", "HYG", "TIP", "TLT", "AGG", "GLD"]) assert.equal(outsideUS(etf(s)), false, s);

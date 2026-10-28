@@ -1,6 +1,6 @@
 # Trading · lo que falta
 
-Backlog actualizado el 28 de octubre de 2026 para el motor 0.34.0, corte de
+Backlog actualizado el 28 de octubre de 2026 para el motor 0.34.1, corte de
 precios examinado del 27-oct, 260 instrumentos (160 acciones, 100 ETF).
 Consultar las pruebas y los cierres en `docs/estado-validacion.md`. Cero
 incidencias publicadas o pruebas de software aprobadas no acreditan datos

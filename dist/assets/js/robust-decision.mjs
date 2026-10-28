@@ -1,7 +1,7 @@
-import { generatePaths, evaluatePaths, utilityCertaintyEquivalent } from './path-model.mjs?v=0.34.0';
-import { MODEL_VARIANTS, variantInputs } from './robust-core.mjs?v=0.34.0';
-import { tradePlan } from './policy.mjs?v=0.34.0';
-import { riskSamplingEvidence } from './simulation-evidence.mjs?v=0.34.0';
+import { generatePaths, evaluatePaths, utilityCertaintyEquivalent } from './path-model.mjs?v=0.34.1';
+import { MODEL_VARIANTS, variantInputs } from './robust-core.mjs?v=0.34.1';
+import { tradePlan } from './policy.mjs?v=0.34.1';
+import { riskSamplingEvidence } from './simulation-evidence.mjs?v=0.34.1';
 
 // Discovery seeds never reroll the evidence for a fixed transition. These
 // experiments are independent inside a run, not unseen future market data.
@@ -10,7 +10,10 @@ export const DECISION_EXPERIMENT_SEEDS = Object.freeze({ screen: 0x31b749a5,
 
 export function tailStressInputs(x) {
   const altered = variantInputs(x, MODEL_VARIANTS.find(v => v.id === 'low_conviction'));
-  return {...altered,options:{...altered.options,innovationLaw:'student-t-research',researchShadowMode:true}};
+  // This separate risk stress must actually use the daily Student law even
+  // when the economic experiment explicitly selected the legacy comparator.
+  return {...altered,conditional:{...altered.conditional,dynamic:true},
+    options:{...altered.options,innovationLaw:'student-t-research',researchShadowMode:true}};
 }
 
 export const DECISION_MODEL_LABELS = { original: 'Base', no_rerating: 'Sin re-rating',

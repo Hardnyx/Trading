@@ -6,9 +6,9 @@ import {
   terminalScenarios,
   evaluateWeights,
   DEFAULT_COMPOSITION_RULES,
-} from "../dist/assets/js/composer.mjs?v=0.34.0";
-import { triangularQuantile, buildReturnAnchors } from "../dist/assets/js/return-model.mjs?v=0.34.0";
-import { mandate } from "../dist/assets/js/policy.mjs?v=0.34.0";
+} from "../dist/assets/js/composer.mjs?v=0.34.1";
+import { triangularQuantile, buildReturnAnchors } from "../dist/assets/js/return-model.mjs?v=0.34.1";
+import { mandate } from "../dist/assets/js/policy.mjs?v=0.34.1";
 
 function snapshot() {
   const asOf = "2026-10-23";

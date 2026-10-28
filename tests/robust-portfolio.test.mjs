@@ -91,8 +91,8 @@ test('variants retain user growth and valuation overrides and never raise a lowe
 
 test('shared browser comparison preserves its inputs and reports the same fixed universe in every model',async()=>{
  const {readFileSync}=await import('node:fs');
- const {compareRobustPortfolio}=await import('../dist/assets/js/robust-composer.mjs?v=0.34.0');
- const {referenceRequest}=await import('../dist/assets/js/reference-preset.mjs?v=0.34.0');
+ const {compareRobustPortfolio}=await import('../dist/assets/js/robust-composer.mjs?v=0.34.1');
+ const {referenceRequest}=await import('../dist/assets/js/reference-preset.mjs?v=0.34.1');
  const market=JSON.parse(readFileSync(new URL('../dist/data/market.json',import.meta.url)));
  market.volatility=JSON.parse(readFileSync(new URL('../dist/data/volatility.json',import.meta.url)));
  const p=referenceRequest(market),before=JSON.stringify(p);

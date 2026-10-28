@@ -1,8 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { pairedDecisionEvidence, reviewRobustDecision } from '../dist/assets/js/robust-decision.mjs?v=0.34.0';
-import { prepareComposition, finalizeCompositionDecision } from '../dist/assets/js/composer.mjs?v=0.34.0';
-import { DEFAULT_MANDATE } from '../dist/assets/js/policy.mjs?v=0.34.0';
+import { pairedDecisionEvidence, reviewRobustDecision, tailStressInputs } from '../dist/assets/js/robust-decision.mjs?v=0.34.1';
+import {generatePaths,evaluatePaths} from '../dist/assets/js/path-model.mjs?v=0.34.1';
+import { prepareComposition, finalizeCompositionDecision } from '../dist/assets/js/composer.mjs?v=0.34.1';
+import { DEFAULT_MANDATE } from '../dist/assets/js/policy.mjs?v=0.34.1';
 
 test('decision evidence uses the mandate utility rather than a log-return shortcut', () => {
   const growth = { ...DEFAULT_MANDATE };
@@ -91,4 +92,15 @@ test('a missing observed short rate makes the economic comparison incomplete',()
   const r=reviewRobustDecision(x,x.current.positions,{paths:1000});
   assert.equal(r.status,'incomplete');assert.deepEqual(r.models,[]);
   assert.match(r.missingEconomicInputs[0],/DGS3MO/);
+});
+test('the separate Student risk stress runs its actual law when economics uses the legacy comparator',()=>{
+  const x=fixture(),before=JSON.stringify(x),tail=tailStressInputs(x),
+    sample=generatePaths(tail,100,23,52);
+  assert.equal(x.conditional.dynamic,false);
+  assert.equal(tail.conditional.dynamic,true);
+  assert.equal(sample.meanPreservingPriceInnovations,false);
+  const weights=tail.assets.map(a=>a.symbol==='SHY'?.95:a.symbol==='CASH'?.05:0);
+  assert.throws(()=>evaluatePaths(weights,sample),/solo estrés/);
+  assert.ok(Number.isFinite(evaluatePaths(weights,sample,{riskOnly:true}).cvar95));
+  assert.equal(JSON.stringify(x),before);
 });

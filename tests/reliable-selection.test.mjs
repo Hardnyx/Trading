@@ -1,8 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {prepareComposition,validWeights} from '../dist/assets/js/composer.mjs?v=0.34.0';
-import {selectReliableCandidate} from '../dist/assets/js/reliable-selection.mjs?v=0.34.0';
-import {reviewRobustDecision,DECISION_EXPERIMENT_SEEDS} from '../dist/assets/js/robust-decision.mjs?v=0.34.0';
+import {prepareComposition,validWeights} from '../dist/assets/js/composer.mjs?v=0.34.1';
+import {selectReliableCandidate} from '../dist/assets/js/reliable-selection.mjs?v=0.34.1';
+import {reviewRobustDecision,DECISION_EXPERIMENT_SEEDS} from '../dist/assets/js/robust-decision.mjs?v=0.34.1';
 
 function fixture(){
   const cut='2026-10-23',history=Array.from({length:300},(_,k)=>({

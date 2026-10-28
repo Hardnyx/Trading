@@ -5,7 +5,7 @@ import {tmpdir} from 'node:os';
 import {resolve} from 'node:path';
 import {buildKernelForecast,scoreKernelForecast,scoreDistribution,distributionSummary,
   summarizeKernelValidation,updateKernelLedger} from '../scripts/simulator_validation.mjs';
-import {PRICE_KERNEL_VERSION} from '../dist/assets/js/path-model.mjs?v=0.34.0';
+import {PRICE_KERNEL_VERSION} from '../dist/assets/js/path-model.mjs?v=0.34.1';
 
 const constant=value=>distributionSummary(Array(100).fill(value));
 function origin(issue='2026-10-23'){

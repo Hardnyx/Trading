@@ -1,7 +1,7 @@
 /** Declared sensitivity models shared by the decision gate and research search. */
-import { assetAt } from './research-model.mjs?v=0.34.0';
-import { resolveAssumptions } from './analytics.mjs?v=0.34.0';
-import { buildReturnAnchors } from './return-model.mjs?v=0.34.0';
+import { assetAt } from './research-model.mjs?v=0.34.1';
+import { resolveAssumptions } from './analytics.mjs?v=0.34.1';
+import { buildReturnAnchors } from './return-model.mjs?v=0.34.1';
 
 export function operatingMarginStress(original, priceAsOf, informationAsOf) {
   const asset=assetAt(original,priceAsOf,informationAsOf),f=asset.financials||{};

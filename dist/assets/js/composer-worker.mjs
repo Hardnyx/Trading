@@ -1,4 +1,4 @@
-import { composePortfolio, reconcileStarts } from "./composer.mjs?v=0.34.0";
+import { composePortfolio, reconcileStarts } from "./composer.mjs?v=0.34.1";
 
 // One independent search per message, or the reconciliation of their winners
 // on common paths (multi-start, see reconcileStarts).
