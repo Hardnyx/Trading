@@ -9,20 +9,20 @@ import {
   alignReturns,
   returnStats,
   validateSnapshot,
-} from "./analytics.mjs?v=0.27.0";
+} from "./analytics.mjs?v=0.28.0";
 import {
   registerPortfolio,
   reviewPortfolio,
   DEFAULT_RULES,
-} from "./monitor.mjs?v=0.27.0";
+} from "./monitor.mjs?v=0.28.0";
 
-import { fmt, pct, money, dateLabel } from "./ui/format.mjs?v=0.27.0";
-import { createViews, NAV } from "./ui/views.mjs?v=0.27.0";
-import { loadTemplates } from "./ui/templates.mjs?v=0.27.0";
-import { applyVisualValues, showStartupError } from "./ui/dom.mjs?v=0.27.0";
-import { createTickerRotation } from "./ui/ticker-rotation.mjs?v=0.27.0";
-import { createValueFlash } from "./ui/value-flash.mjs?v=0.27.0";
-import { DEFAULT_COMPOSITION_RULES } from "./composer.mjs?v=0.27.0";
+import { fmt, pct, money, dateLabel } from "./ui/format.mjs?v=0.28.0";
+import { createViews, NAV } from "./ui/views.mjs?v=0.28.0";
+import { loadTemplates } from "./ui/templates.mjs?v=0.28.0";
+import { applyVisualValues, showStartupError } from "./ui/dom.mjs?v=0.28.0";
+import { createTickerRotation } from "./ui/ticker-rotation.mjs?v=0.28.0";
+import { createValueFlash } from "./ui/value-flash.mjs?v=0.28.0";
+import { DEFAULT_COMPOSITION_RULES, MULTI_START_COUNT, startSeeds } from "./composer.mjs?v=0.28.0";
 
 import {
   DEFAULT_MANDATE,
@@ -35,22 +35,22 @@ import {
   currentAccount,
   informationDate,
   MODEL_VERSION,
-} from "./policy.mjs?v=0.27.0";
-import { validateResearch } from "./research-model.mjs?v=0.27.0";
+} from "./policy.mjs?v=0.28.0";
+import { validateResearch } from "./research-model.mjs?v=0.28.0";
 import {
   journalOrigin,
   appendForecast,
   freezeMaturedOutcomes,
-} from "./journal.mjs?v=0.27.0";
+} from "./journal.mjs?v=0.28.0";
 
-import { openJournal, saveJournal } from "./journal-store.mjs?v=0.27.0";
+import { openJournal, saveJournal } from "./journal-store.mjs?v=0.28.0";
 
 let journalDBReady = false,
   storageErrorShown = false;
 
 const $ = (s, root = document) => root.querySelector(s);
 
-import { referenceRequest, REFERENCE_ID } from "./reference-preset.mjs?v=0.27.0";
+import { referenceRequest, REFERENCE_ID } from "./reference-preset.mjs?v=0.28.0";
 
 let saved = {};
 try {
@@ -153,7 +153,7 @@ state.filters = { text: "", sector: "all", discount: false, type: "all" };
 state.sort = { key: "symbol", ascending: true };
 let data,
   worker,
-  compositionWorker,
+  compositionWorkers = [],
   compositionJob = 0,
   job = 0,
   toastTimer,
@@ -423,7 +423,7 @@ function runForecast() {
       state.research,
     );
     worker ||= new Worker(
-      new URL("./forecast-worker.mjs?v=0.27.0", import.meta.url),
+      new URL("./forecast-worker.mjs?v=0.28.0", import.meta.url),
       {
         type: "module",
       },
@@ -497,56 +497,79 @@ function runComposition(reference = false) {
       };
   state.compositionBusy = true;
   state.compositionError = null;
+  const finish = (proposal) => {
+    if (id !== compositionJob) return;
+    state.compositionBusy = false;
+    if (proposalSignature() !== signature) {
+      render();
+      toast(
+        "La entrada cambió durante el cálculo. Vuelve a proponer con los valores actuales.",
+      );
+      return;
+    }
+    state.proposal = proposal;
+    if (reference) state.proposal.reference_id = REFERENCE_ID;
+    state.proposal.signature = proposalSignature();
+    state.proposal.modified = false;
+    // A recommendation never mutates actual or working positions.
+    // It must be deliberately applied by the user.
+    persist();
+    render();
+    toast(reference
+      ? "Referencia base calculada con entradas independientes de tu sesión."
+      : "Propuesta calculada. Tus posiciones no se han modificado.");
+  };
+  const fail = (error) => {
+    if (id !== compositionJob) return;
+    state.compositionBusy = false;
+    state.compositionError = error.message;
+    render();
+  };
+  // Independent searches run in parallel workers; their winners are then
+  // reconciled on common paths by one of them.
+  const base = { id, snapshot: data, overrides: request.overrides, rules: request.rules };
+  const seeds = startSeeds((request.settings.seed ?? 20261024) >>> 0);
+  const proposals = new Array(seeds.length);
+  let next = 0;
   try {
-    compositionWorker ||= new Worker(
-      new URL("./composer-worker.mjs?v=0.27.0", import.meta.url),
-      { type: "module" },
-    );
-    compositionWorker.onmessage = (event) => {
-      if (event.data.id !== compositionJob) return;
-      state.compositionBusy = false;
-      if (proposalSignature() !== signature) {
-        render();
-        toast(
-          "La entrada cambió durante el cálculo. Vuelve a proponer con los valores actuales.",
-        );
-        return;
+    const pool = compositionPool();
+    Promise.all(pool.map(async (instance) => {
+      while (next < seeds.length) {
+        const k = next++;
+        proposals[k] = await workerCall(instance,
+          { ...base, settings: { ...request.settings, seed: seeds[k] } });
+        if (id !== compositionJob) return;
       }
-      if (event.data.error) {
-        state.compositionError = event.data.error;
-        render();
-        return;
-      }
-      state.proposal = event.data.proposal;
-      if (reference) state.proposal.reference_id = REFERENCE_ID;
-      state.proposal.signature = proposalSignature();
-      state.proposal.modified = false;
-      // A recommendation never mutates actual or working positions.
-      // It must be deliberately applied by the user.
-      persist();
-      render();
-      toast(reference
-        ? "Referencia base calculada con entradas independientes de tu sesión."
-        : "Propuesta calculada. Tus posiciones no se han modificado.");
-    };
-    compositionWorker.onerror = () => {
-      state.compositionBusy = false;
-      state.compositionError =
-        "No se pudo ejecutar la composición. Recarga la página para reintentar.";
-      render();
-    };
-    compositionWorker.postMessage({
-      id,
-      snapshot: data,
-      settings: request.settings,
-      overrides: request.overrides,
-      rules: request.rules,
-    });
+    }))
+      .then(() => id === compositionJob
+        ? workerCall(pool[0], { ...base, kind: "reconcile", settings: request.settings, proposals })
+        : null)
+      .then((proposal) => proposal && finish(proposal), fail);
   } catch (error) {
     state.compositionBusy = false;
     state.compositionError = error.message;
   }
   render();
+}
+
+function compositionPool() {
+  const size = Math.max(1, Math.min(MULTI_START_COUNT,
+    (navigator.hardwareConcurrency || 2) - 1));
+  while (compositionWorkers.length < size)
+    compositionWorkers.push(new Worker(
+      new URL("./composer-worker.mjs?v=0.28.0", import.meta.url),
+      { type: "module" },
+    ));
+  return compositionWorkers;
+}
+function workerCall(instance, message) {
+  return new Promise((resolve, reject) => {
+    instance.onmessage = (event) => event.data.error
+      ? reject(new Error(event.data.error)) : resolve(event.data.proposal);
+    instance.onerror = () => reject(new Error(
+      "No se pudo ejecutar la composición. Recarga la página para reintentar."));
+    instance.postMessage(message);
+  });
 }
 
 let robustWorker=null,robustJob=0;
@@ -572,7 +595,7 @@ function runRobustness(){
  }
  state.robustnessBusy=true;state.robustnessError=null;state.robustnessProgress='Preparando comparación';render();
  try{
-  robustWorker??=new Worker(new URL('./robust-worker.mjs?v=0.27.0',import.meta.url),{type:'module'});
+  robustWorker??=new Worker(new URL('./robust-worker.mjs?v=0.28.0',import.meta.url),{type:'module'});
   robustWorker.onmessage=({data:message})=>{
    if(message.id!==robustJob)return;
    if(proposalSignature()!==signature){

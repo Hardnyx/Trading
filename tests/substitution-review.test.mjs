@@ -1,11 +1,20 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {prepareComposition,reviewSubstitutions,validWeights,SUBSTITUTION_Z} from '../dist/assets/js/composer.mjs?v=0.27.0';
-import {generatePaths,evaluatePaths,BASE_REGIME} from '../dist/assets/js/path-model.mjs?v=0.27.0';
-import {tradePlan} from '../dist/assets/js/policy.mjs?v=0.27.0';
+import {prepareComposition,reviewSubstitutions,validWeights,SUBSTITUTION_Z,weightOverlap,reconcileStarts,startSeeds} from '../dist/assets/js/composer.mjs?v=0.28.0';
+import {generatePaths,evaluatePaths,BASE_REGIME} from '../dist/assets/js/path-model.mjs?v=0.28.0';
+import {tradePlan} from '../dist/assets/js/policy.mjs?v=0.28.0';
 
 // Two stocks, at most two positions (cash + one): improving needs a full
 // substitution, which reallocating cash alone cannot find.
+function universe() {
+ const asOf='2026-10-23';
+ const history=Array.from({length:260},(_,i)=>({date:new Date(Date.parse(asOf+'T12:00:00Z')-(259-i)*86400000).toISOString().slice(0,10),close:100,adj_close:100,volume:1e6}));
+ const stock=symbol=>({symbol,type:'stock',sector:'Industrial',price:100,price_date:asOf,history,dividend_per_share:0,
+  assumptions:{growth:.06,multiple:20,discount:.1,horizon:3},financials:{eps:{value:5,filed:'2026-08-01',period_end:'2026-06-30',method:'TTM'}}});
+ return {snapshot:{price_as_of:asOf,generated_at:asOf+'T23:00:00Z',assets:[stock('AAA'),stock('BBB')],macro:[]},
+  settings:{horizon:1,seed:1,model:'gbm',volatilityMode:'legacy',uncertainFundamentals:false,macroRegimes:[BASE_REGIME],mandate:{minimumCash:.8},execution:{spreadBps:0,slippageBps:0}},
+  rules:{maxPositions:2,maxCorrelation:1}};
+}
 function fixture(terminal) {
  const asOf='2026-10-23';
  const history=Array.from({length:260},(_,i)=>({date:new Date(Date.parse(asOf+'T12:00:00Z')-(259-i)*86400000).toISOString().slice(0,10),close:100,adj_close:100,volume:1e6}));
@@ -66,4 +75,35 @@ test('shortfall counts paths that trail the bill at the cut, or a better declare
  const none=evaluatePaths(initial.weights,{...sample,riskFreeRate:null},opts);
  assert.equal(none.shortfallProbability,null);
  assert.equal(index('CASH')>=0,true);
+});
+
+test('independent searches are reconciled on common paths: equivalent winners, least turnover, overlap',()=>{
+ const {snapshot,settings,rules}=universe();
+ const proposal=(positions,status='proposed')=>({status,positions,diagnostics:{},search:{}});
+ const aaa=proposal([{symbol:'CASH',weight:.8},{symbol:'AAA',weight:.2}]);
+ const bbb=proposal([{symbol:'CASH',weight:.8},{symbol:'BBB',weight:.2}]);
+ const cash=proposal([{symbol:'CASH',weight:1}]);
+ // AAA and BBB share fundamentals: equivalent within noise, same turnover,
+ // so the higher common utility wins. All-cash trades least but is
+ // significantly worse, so it cannot win the turnover tie-break.
+ const r=reconcileStarts(snapshot,settings,{},rules,[aaa,bbb,cash],400);
+ const st=r.diagnostics.stability;
+ const chosen=st.winners.find(w=>w.chosen);
+ assert.equal(chosen.z,0);
+ assert.equal(r.positions,chosen.positions);
+ assert.notEqual(r.positions,cash.positions);
+ assert.ok(st.winners.filter(w=>w!==chosen&&w.equivalent).every(w=>w.z<SUBSTITUTION_Z));
+ assert.equal(st.starts,3);
+ assert.equal(st.equivalent,1);
+ assert.equal(st.worse,1);
+ assert.ok(Math.abs(st.minimumOverlap-.8)<1e-12); // the all-cash winner (overlap 0.8 too) is excluded as worse
+ assert.equal(st.level,'high');
+ const byLast=st.winners.at(-1);
+ assert.equal(byLast.equivalent,false);
+ assert.ok(byLast.z>SUBSTITUTION_Z);
+ assert.deepEqual(st.winners.map(w=>w.seed),startSeeds(1,3));
+ assert.equal(r.search.starts,3);
+ // A single usable start passes through untouched.
+ assert.equal(reconcileStarts(snapshot,settings,{},rules,[aaa,{status:'infeasible'}],400),aaa);
+ assert.equal(startSeeds(20261024,3)[0],20261024);
 });

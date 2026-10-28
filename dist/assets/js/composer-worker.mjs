@@ -1,11 +1,15 @@
-import { composePortfolio } from "./composer.mjs?v=0.27.0";
+import { composePortfolio, reconcileStarts } from "./composer.mjs?v=0.28.0";
 
+// One independent search per message, or the reconciliation of their winners
+// on common paths (multi-start, see reconcileStarts).
 self.onmessage = (event) => {
-  const { id, snapshot, settings, overrides, rules } = event.data;
+  const { id, kind = "compose", snapshot, settings, overrides, rules, proposals } = event.data;
   try {
     self.postMessage({
       id,
-      proposal: composePortfolio(snapshot, settings, overrides, rules),
+      proposal: kind === "reconcile"
+        ? reconcileStarts(snapshot, settings, overrides, rules, proposals)
+        : composePortfolio(snapshot, settings, overrides, rules),
     });
   } catch (error) {
     self.postMessage({ id, error: error.message });

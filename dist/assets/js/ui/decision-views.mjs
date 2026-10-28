@@ -1,6 +1,6 @@
-import { template as t } from "./templates.mjs?v=0.27.0";
-import { pct, fmt, money, dateLabel, timestampLabel } from "./format.mjs?v=0.27.0";
-import { finite, sum, normalizeWeights } from "../analytics.mjs?v=0.27.0";
+import { template as t } from "./templates.mjs?v=0.28.0";
+import { pct, fmt, money, dateLabel, timestampLabel } from "./format.mjs?v=0.28.0";
+import { finite, sum, normalizeWeights } from "../analytics.mjs?v=0.28.0";
 import {
   DEFAULT_MANDATE,
   DEFAULT_EXECUTION,
@@ -8,18 +8,18 @@ import {
   DEFAULT_REGIMES,
   currentAccount,
   informationDate,
-} from "../policy.mjs?v=0.27.0";
+} from "../policy.mjs?v=0.28.0";
 import {
   fundamentalForecast,
   businessQuality,
   evaluateThesis,
   bondAssumptions,
-} from "../research-model.mjs?v=0.27.0";
-import { dilutedEarningsBridge } from '../earnings-normalization.mjs?v=0.27.0';
-import { growthEvidence } from '../growth-evidence.mjs?v=0.27.0';
-import { factorModel, factorAttribution } from "../factors.mjs?v=0.27.0";
-import { calibrationAudit } from "../calibration-audit.mjs?v=0.27.0";
-import { evaluateJournal } from "../journal.mjs?v=0.27.0";
+} from "../research-model.mjs?v=0.28.0";
+import { dilutedEarningsBridge } from '../earnings-normalization.mjs?v=0.28.0';
+import { growthEvidence } from '../growth-evidence.mjs?v=0.28.0';
+import { factorModel, factorAttribution } from "../factors.mjs?v=0.28.0";
+import { calibrationAudit } from "../calibration-audit.mjs?v=0.28.0";
+import { evaluateJournal } from "../journal.mjs?v=0.28.0";
 const objectives = {
   growth: "Crecimiento logarítmico",
   preservation: "Preservación · utilidad CRRA",
@@ -582,9 +582,9 @@ export function createDecisionViews({ state = {}, data, asset }) {
         "Modelo de valoración",
       ],
       [
-        "MODO AJUSTADO / AÑO",
+        "CONTRAÍDO AL PRIOR / AÑO",
         pct(f.central),
-        `Peso efectivo de la previsión: ${pct(f.confidence)}`,
+        `Peso efectivo de la previsión: ${pct(f.confidence)}; antes del ajuste transversal de la composición`,
       ],
     ]);
     const quality = table(

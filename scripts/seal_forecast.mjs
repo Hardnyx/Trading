@@ -5,10 +5,10 @@
 import { readFileSync, existsSync, mkdirSync, writeFileSync, readdirSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { resolve, join, dirname } from "node:path";
-import { composePortfolio } from "../dist/assets/js/composer.mjs?v=0.27.0";
-import { referenceRequest } from "../dist/assets/js/reference-preset.mjs?v=0.27.0";
-import { adjustedReturn } from "../dist/assets/js/factors.mjs?v=0.27.0";
-import { reconcilePortfolioDistributions } from "../dist/assets/js/distribution-ledger.mjs?v=0.27.0";
+import { composeMultiStart } from "../dist/assets/js/composer.mjs?v=0.28.0";
+import { referenceRequest } from "../dist/assets/js/reference-preset.mjs?v=0.28.0";
+import { adjustedReturn } from "../dist/assets/js/factors.mjs?v=0.28.0";
+import { reconcilePortfolioDistributions } from "../dist/assets/js/distribution-ledger.mjs?v=0.28.0";
 
 export function nextSessionStart(cutDate){
   if(!/^\d{4}-\d{2}-\d{2}$/.test(cutDate))throw Error("Invalid market cut");
@@ -51,7 +51,7 @@ export function buildSealedOrigin(snapshot, volatility, marketBytes, volatilityB
      volatility.source_market_generated_at!==snapshot.generated_at)
     throw Error("Market snapshot and GJR calibration are not same original cut");
   const preset=referenceRequest({...snapshot,volatility});
-  const model=composePortfolio(snapshot,preset.settings,preset.overrides,
+  const model=composeMultiStart(snapshot,preset.settings,preset.overrides,
                                preset.rules,search);
   const issueDate=newYorkParts(now).date;
   const maturity=new Date(snapshot.price_as_of+"T12:00:00Z");

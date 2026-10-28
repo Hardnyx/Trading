@@ -758,3 +758,46 @@ cambia. Con 6 posiciones y correlación 0,85: se acepta SHV → IEI 10% (USD
 +52, z 5,3) y se descarta TGT → NFLX 5% (z 1,4). El coste es de 1 a 3
 segundos por propuesta. Es una revisión local con el mismo modelo y datos:
 mide error de Monte Carlo, no error de parámetros ni optimalidad global.
+
+### 0.28.0 — Arranque múltiple y estabilidad visible
+
+**Diagnóstico.** Con la configuración por defecto al corte del 27-oct,
+cuatro semillas dieron ganadoras que comparten solo 45–65% de los pesos. La
+estructura es común (~50% acciones con NVDA y NFLX, ~45% renta fija), pero
+cambian los nombres. Reevaluadas en 6.000 trayectorias comunes, quedan a
+menos de USD 184 entre sí. Dos no son significativamente peores que la
+mejor; una sí (z 2,2). El objetivo es plano cerca del óptimo: la elección
+entre esas carteras depende del azar de la búsqueda, no del modelo. Una
+medida tomada dentro de una sola búsqueda no lo capta. Sus finalistas son
+variaciones locales: comparten 75–80% de los pesos e indicaban estabilidad
+alta, así que se descartó.
+
+**Cambio.** Cada propuesta corre tres búsquedas independientes con
+semillas derivadas; la primera conserva la semilla del usuario. En el
+navegador van en workers paralelos, hasta tres según los núcleos. Sus
+ganadoras se reevalúan en 3.000 trayectorias comunes nuevas, con la misma
+prueba pareada de 0.27.0. Entre las que no son significativamente peores
+que la mejor se elige la de menor rotación, y con rotación igual la de
+mayor utilidad. La propuesta muestra la estabilidad: cuánto peso comparte
+con la ganadora equivalente más distinta (alta ≥ 80%, media ≥ 60%, baja
+por debajo) y cuántas se descartan por ser peores. Las cifras de la
+propuesta siguen siendo las de su propia verificación. El sello diario y
+la prueba de paridad usan el mismo procedimiento. El tiempo en el navegador
+apenas cambia con tres núcleos libres; en Node, secuencial, se triplica
+(~2,5 min).
+
+**Resultado al corte del 27-oct.** Por defecto se mantiene la cartera de
+la semilla original (TLT 20, SHY 10, IGSB 15, efectivo 5, NVDA 20, NFLX
+15, HPQ 10, GOOGL 5). Estabilidad baja: la otra ganadora equivalente (AGG,
+LQD, IGSB, NVDA, AMZN, NFLX) comparte 55% de los pesos. La tercera es USD
+718 peor (z 3,7) y queda descartada: con una sola búsqueda habría podido
+ser la propuesta. Con 6 posiciones y correlación 0,85, estabilidad media:
+las tres son equivalentes, comparten al menos 70% y difieren en USD 56.
+La renta variable concentrada en NVDA y NFLX es robusta entre búsquedas;
+el resto de nombres no.
+
+**Rótulos.** La columna «ancla modo» pasa a «ancla media», porque desde
+0.23.0 el ancla es la media de la distribución. LQD, IGSB y AGG se
+describen como crédito con TIR neta de pérdida esperada, en lugar de
+«supuesto de retorno explícito». En la valoración, «modo ajustado» pasa a
+«contraído al prior», previo al ajuste transversal.

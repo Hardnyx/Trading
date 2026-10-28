@@ -1,8 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {financialFreshness} from '../dist/assets/js/financial-freshness.mjs?v=0.27.0';
-import {fundamentalForecast} from '../dist/assets/js/research-model.mjs?v=0.27.0';
-import {metrics,valuation} from '../dist/assets/js/analytics.mjs?v=0.27.0';
+import {financialFreshness} from '../dist/assets/js/financial-freshness.mjs?v=0.28.0';
+import {fundamentalForecast} from '../dist/assets/js/research-model.mjs?v=0.28.0';
+import {metrics,valuation} from '../dist/assets/js/analytics.mjs?v=0.28.0';
 const stock=()=>({symbol:'AAA',type:'stock',price:100,price_date:'2026-10-26',history:[],
  assumptions:{growth:.04,multiple:15,horizon:3},
  financials:{eps:{value:5,filed:'2026-07-30',period_end:'2026-06-30',method:'TTM'}},

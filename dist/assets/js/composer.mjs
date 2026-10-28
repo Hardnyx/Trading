@@ -4,16 +4,16 @@ import {
   mean,
   quantile,
   normalizeWeights,
-} from "./analytics.mjs?v=0.27.0";
-import { seededRandom } from "./random.mjs?v=0.27.0";
-import { portfolioAttribution } from "./attribution.mjs?v=0.27.0";
+} from "./analytics.mjs?v=0.28.0";
+import { seededRandom } from "./random.mjs?v=0.28.0";
+import { portfolioAttribution } from "./attribution.mjs?v=0.28.0";
 import {
   preparePaths,
   generatePaths,
   evaluatePaths,
   marginalRisk,
   centeredRegimeConditions,
-} from "./path-model.mjs?v=0.27.0";
+} from "./path-model.mjs?v=0.28.0";
 import {
   withCashAsset,
   mandate,
@@ -22,12 +22,12 @@ import {
   tradePlan,
   withdrawalSchedule,
   MODEL_VERSION,
-} from "./policy.mjs?v=0.27.0";
-import { buildReturnAnchors, constituentForecasts, holdingsAnchor } from "./return-model.mjs?v=0.27.0";
-import { assetAt, fundamentalForecast, bondAssumptions } from "./research-model.mjs?v=0.27.0";
-import { selectCompositionUniverse } from "./universe.mjs?v=0.27.0";
-import { factorizeStressedCovariance } from "./factor-covariance.mjs?v=0.27.0";
-import { economicClass, exposureReport, rawCorrelation, qualifiedOpportunity, holdingsOverlap, knownFundOverlap } from "./economic-exposure.mjs?v=0.27.0";
+} from "./policy.mjs?v=0.28.0";
+import { buildReturnAnchors, constituentForecasts, holdingsAnchor } from "./return-model.mjs?v=0.28.0";
+import { assetAt, fundamentalForecast, bondAssumptions } from "./research-model.mjs?v=0.28.0";
+import { selectCompositionUniverse } from "./universe.mjs?v=0.28.0";
+import { factorizeStressedCovariance } from "./factor-covariance.mjs?v=0.28.0";
+import { economicClass, exposureReport, rawCorrelation, qualifiedOpportunity, holdingsOverlap, knownFundOverlap } from "./economic-exposure.mjs?v=0.28.0";
 
 export const DEFAULT_COMPOSITION_RULES = {
   maxPosition: 0.2,
@@ -567,21 +567,30 @@ export const SUBSTITUTION_Z = 1.645;
  * candidates never add trades. Same model and data: this measures Monte Carlo
  * error, not parameter error.
  */
+function pathUtilities(row, x, verification) {
+  return evaluatePaths(row.weights, verification, {
+    capital: x.current.capital, cost: row.plan.total, pathUtilities: true }).pathUtilities;
+}
+/** Paired mean and z statistic of candidate minus incumbent per-path utility. */
+export function pairedUtilityTest(candidate, incumbent) {
+  const n = candidate.length;
+  let total = 0, squares = 0;
+  for (let p = 0; p < n; p++) {
+    const d = candidate[p] - incumbent[p];
+    total += d; squares += d * d;
+  }
+  const mean = total / n, sd = Math.sqrt(Math.max(0, squares / n - mean * mean) * n / (n - 1));
+  return { mean, z: sd > 0 ? mean / (sd / Math.sqrt(n)) : mean > 0 ? Infinity : mean < 0 ? -Infinity : 0 };
+}
+/** Weight two portfolios hold in common: sum of the smaller weights. */
+export function weightOverlap(a, b) {
+  return a.reduce((total, w, i) => total + Math.min(w, b[i]), 0);
+}
 export function reviewSubstitutions(initial, x, sample, verification, maxRounds = 3, verifyTop = 5) {
   if (!initial) return { best: initial, finalists: [], audit: null };
   const cash = x.assets.findIndex(a => a.symbol === "CASH");
-  const utilities = (row) => evaluatePaths(row.weights, verification, {
-    capital: x.current.capital, cost: row.plan.total, pathUtilities: true }).pathUtilities;
-  const paired = (candidate, incumbent) => {
-    const n = candidate.length;
-    let total = 0, squares = 0;
-    for (let p = 0; p < n; p++) {
-      const d = candidate[p] - incumbent[p];
-      total += d; squares += d * d;
-    }
-    const mean = total / n, sd = Math.sqrt(Math.max(0, squares / n - mean * mean) * n / (n - 1));
-    return { mean, z: sd > 0 ? mean / (sd / Math.sqrt(n)) : mean > 0 ? Infinity : 0 };
-  };
+  const utilities = (row) => pathUtilities(row, x, verification);
+  const paired = pairedUtilityTest;
   const describe = (move, result, test) => ({
     from: x.assets[move.i].symbol, to: x.assets[move.j].symbol, transfer: move.amount,
     full: move.full, certaintyEquivalentGain:
@@ -657,6 +666,73 @@ function passiveCandidates(x) {
       if (validWeights(w, x)) result.push(w);
     }
   return result;
+}
+// Independent searches per proposal. The objective is flat near its optimum:
+// on the 27-Oct cut, four seeds gave winners sharing 45-65% of their weights
+// yet within USD 184 of each other on common paths.
+export const MULTI_START_COUNT = 3;
+export function startSeeds(seed, count = MULTI_START_COUNT) {
+  return Array.from({ length: count }, (_, k) => (seed + k * 0x9e3779b9) >>> 0);
+}
+/**
+ * Re-run the winners of independent searches on fresh common paths. Among
+ * those not significantly worse than the best (paired one-sided 95%), the
+ * one with the least turnover is kept, then the higher utility. Its weight
+ * overlap with the other winners measures how much the proposal depends on
+ * the search's random draws.
+ */
+export function reconcileStarts(snapshot, settings = {}, overrides = {}, rules = {}, proposals = [], finalPaths = 3000) {
+  const usable = proposals.map((proposal, k) => ({ proposal, k }))
+    .filter(({ proposal }) => proposal?.positions?.length);
+  if (usable.length < 2) return proposals.find(p => p?.positions?.length) || proposals[0];
+  const x = prepareComposition(snapshot, settings, overrides, rules);
+  const common = generatePaths(x, finalPaths, ((x.options.seed >>> 0) ^ 0x2545f491) >>> 0, 52);
+  const rows = usable.map(({ proposal, k }) => {
+    const bySymbol = new Map(proposal.positions.map(p => [p.symbol, p.weight]));
+    const weights = x.assets.map(a => bySymbol.get(a.symbol) || 0);
+    const covered = proposal.positions.every(p => x.assets.some(a => a.symbol === p.symbol));
+    const result = assess(weights, x, common, proposal.status === "hold");
+    return { proposal, k, weights, covered, result, utilities: pathUtilities(result, x, common) };
+  }).filter(row => row.covered);
+  if (rows.length < 2) return usable[0].proposal;
+  const top = rows.reduce((a, b) => b.result.metrics.score > a.result.metrics.score ? b : a);
+  for (const row of rows)
+    row.z = row === top ? 0 : pairedUtilityTest(top.utilities, row.utilities).z;
+  const equivalent = rows.filter(row => row.z < SUBSTITUTION_Z);
+  const chosen = equivalent.reduce((a, b) => {
+    const d = b.result.plan.turnover - a.result.plan.turnover;
+    return d < -1e-9 || (Math.abs(d) <= 1e-9 && b.result.metrics.score > a.result.metrics.score) ? b : a;
+  });
+  const winners = rows.map(row => ({
+    seed: startSeeds(x.options.seed >>> 0, proposals.length)[row.k],
+    positions: row.proposal.positions, status: row.proposal.status,
+    certaintyEquivalent: row.result.metrics.certaintyEquivalent,
+    turnover: row.result.plan.turnover, z: row.z, equivalent: row.z < SUBSTITUTION_Z,
+    overlap: weightOverlap(chosen.weights, row.weights), chosen: row === chosen,
+  }));
+  // Fragility is measured against equivalent winners only: a significantly
+  // worse winner is a failed search that the reconciliation already discards.
+  const others = winners.filter(w => !w.chosen), peers = others.filter(w => w.equivalent);
+  const minimumOverlap = peers.length ? Math.min(...peers.map(w => w.overlap)) : 1;
+  const stability = {
+    method: "multi-start", starts: proposals.length, compared: rows.length, commonPaths: finalPaths,
+    equivalent: peers.length, worse: others.length - peers.length, minimumOverlap,
+    level: minimumOverlap >= .8 ? "high" : minimumOverlap >= .6 ? "medium" : "low",
+    certaintyEquivalentRange: Math.max(...winners.map(w => w.certaintyEquivalent)) -
+      Math.min(...winners.map(w => w.certaintyEquivalent)),
+    threshold: SUBSTITUTION_Z, winners,
+    scope: "Winners of independent searches on fresh common paths; Monte Carlo error of the same model and data, not parameter error",
+  };
+  const proposal = chosen.proposal;
+  return { ...proposal, diagnostics: { ...proposal.diagnostics, stability },
+    search: { ...proposal.search, starts: proposals.length } };
+}
+/** Sequential multi-start (Node, tests); the browser runs the starts in parallel workers. */
+export function composeMultiStart(snapshot, settings = {}, overrides = {}, rules = {}, search = {}, count = MULTI_START_COUNT) {
+  const seed = (settings.seed ?? 20261024) >>> 0;
+  const proposals = startSeeds(seed, count).map(start =>
+    composePortfolio(snapshot, { ...settings, seed: start }, overrides, rules, search));
+  return reconcileStarts(snapshot, { ...settings, seed }, overrides, rules, proposals, search.finalPaths ?? 3000);
 }
 export function composePortfolio(
   snapshot,

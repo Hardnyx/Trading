@@ -1,6 +1,6 @@
 # Trading · lo que falta
 
-Backlog actualizado el 27 de octubre de 2026 para el motor 0.27.0, corte de
+Backlog actualizado el 28 de octubre de 2026 para el motor 0.28.0, corte de
 precios examinado del 27-oct, 260 instrumentos (160 acciones, 100 ETF).
 Consultar las pruebas y los cierres en `docs/estado-validacion.md`. Cero
 incidencias publicadas o pruebas de software aprobadas no acreditan datos
@@ -154,18 +154,15 @@ Este archivo lista **solo lo que falta**. Para el funcionamiento, consultar
 
 ## P2 · Optimización y operativa
 
-20. **Estabilidad de la propuesta.** Se simulan 20–80 activos de 260, con 40
-    como valor inicial, y la convergencia no está verificada. Desde 0.27.0,
-    tras revisar el efectivo, se prueban intercambios de 5 puntos entre
-    posiciones y sustituciones completas por cualquier instrumento simulado.
-    Solo se acepta una mejora pareada significativa (z ≥ 1,645) en los
-    escenarios de verificación: entre candidatas equivalentes se conserva la
-    cartera con menos operaciones. Esto cubre el contraejemplo CI → NFLX de la
-    revisión de 0.24.0, pero sigue siendo local y mide solo error de Monte
-    Carlo. La propuesta aún cambia con la semilla, el corte y la muestra de
-    40 (dos cortes seguidos dieron carteras distintas). Falta una métrica de
-    estabilidad visible: proponer con varias semillas y muestras y mostrar
-    cuánto coinciden los pesos.
+20. **Estabilidad de la propuesta.** Desde 0.28.0, cada propuesta corre tres
+    búsquedas independientes y concilia sus ganadoras en escenarios comunes,
+    con la estabilidad visible en la propuesta. Al corte del 27-oct, el
+    objetivo es plano: carteras que comparten 40–75% de los pesos quedan a
+    USD 50–700 entre sí sobre USD 100.000. Falta: (a) variar también la
+    muestra de 40 activos, que hoy es la misma en las tres búsquedas; (b)
+    decidir si conviene proponer una mezcla de las ganadoras equivalentes
+    (cartera remuestreada), lo que choca con el máximo de posiciones; (c)
+    contrastar la estabilidad entre cortes consecutivos.
 21. **Comparación robusta** limitada a crecimiento en USD sin retiros, suelo
     ni meta. Falta extenderla a los demás mandatos.
 22. **Topes prudenciales sin validar** (Treasury 60 %, renta variable 50 %,

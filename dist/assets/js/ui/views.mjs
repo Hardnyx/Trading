@@ -7,7 +7,7 @@ import {
   resolveAssumptions,
   returnDecomposition,
   valuation,
-} from "../analytics.mjs?v=0.27.0";
+} from "../analytics.mjs?v=0.28.0";
 import {
   sparkline,
   portfolioChart,
@@ -16,7 +16,7 @@ import {
   scatter,
   forecastCone,
   histogram,
-} from "../charts.mjs?v=0.27.0";
+} from "../charts.mjs?v=0.28.0";
 import {
   esc,
   url,
@@ -27,16 +27,16 @@ import {
   color,
   dateLabel,
   timestampLabel,
-} from "./format.mjs?v=0.27.0";
-import { template } from "./templates.mjs?v=0.27.0";
-import { DEFAULT_COMPOSITION_RULES } from "../composer.mjs?v=0.27.0";
-import { factorModel } from "../factors.mjs?v=0.27.0";
-import { MODEL_VERSION, informationDate } from "../policy.mjs?v=0.27.0";
-import { fundamentalForecast } from "../research-model.mjs?v=0.27.0";
-import { financialFreshness } from '../financial-freshness.mjs?v=0.27.0';
-import { priceMonitor } from '../price-monitor.mjs?v=0.27.0';
+} from "./format.mjs?v=0.28.0";
+import { template } from "./templates.mjs?v=0.28.0";
+import { DEFAULT_COMPOSITION_RULES } from "../composer.mjs?v=0.28.0";
+import { factorModel } from "../factors.mjs?v=0.28.0";
+import { MODEL_VERSION, informationDate } from "../policy.mjs?v=0.28.0";
+import { fundamentalForecast } from "../research-model.mjs?v=0.28.0";
+import { financialFreshness } from '../financial-freshness.mjs?v=0.28.0';
+import { priceMonitor } from '../price-monitor.mjs?v=0.28.0';
 
-import { createDecisionViews } from "./decision-views.mjs?v=0.27.0";
+import { createDecisionViews } from "./decision-views.mjs?v=0.28.0";
 
 /**
  * Describes the process the Monte Carlo actually runs. Jumps and the GBM /
@@ -121,6 +121,24 @@ export function compositionAnchorRefinement(signal){
   if(!r)return "";
   return `Ancla ${pct(r.anchor,1)} = equilibrio ${pct(r.equilibrium,1)} (β ${fmt(r.beta,2)} frente a ${r.benchmark}) + alfa ${pct(r.alpha,1,true)} · IC ${fmt(r.ic,3)} × volatilidad residual ${pct(r.omega,0)} × puntuación ${fmt(r.score,2)}. Bloques sin ajustar ${pct(r.buildingBlock,1)}.`;
 }
+/** Stability across independent searches, reconciled on common paths. */
+export function compositionStabilityNote(st){
+  const tail='Selección experimental; depende de los supuestos y de una búsqueda limitada.';
+  if(!st)return tail;
+  const level={high:'alta',medium:'media',low:'baja'}[st.level];
+  const chosen=st.winners.find(w=>w.chosen);
+  const peers=st.winners.filter(w=>!w.chosen&&w.equivalent);
+  const worse=st.winners.filter(w=>!w.chosen&&!w.equivalent);
+  const names=w=>w.positions.filter(r=>r.symbol!=='CASH').sort((a,b)=>b.weight-a.weight)
+    .slice(0,4).map(r=>`${r.symbol} ${pct(r.weight,0)}`).join(', ');
+  const far=peers.reduce((a,b)=>!a||b.overlap<a.overlap?b:a,null);
+  const parts=[`Estabilidad ${level} entre ${st.starts} búsquedas independientes, comparadas en escenarios comunes.`];
+  parts.push(far
+    ?`${peers.length} ganadora${peers.length>1?'s':''} alternativa${peers.length>1?'s':''} no ${peers.length>1?'son':'es'} significativamente peor${peers.length>1?'es':''}; la más distinta comparte ${pct(st.minimumOverlap,0)} de los pesos (${names(far)}). Entre equivalentes se elige la de menor rotación.`
+    :'Ninguna otra ganadora iguala a esta mezcla.');
+  if(worse.length)parts.push(`${worse.length} ${worse.length>1?'quedan':'queda'} descartada${worse.length>1?'s':''} por ser significativamente peor${worse.length>1?'es':''} (hasta USD ${fmt(Math.max(...worse.map(w=>chosen.certaintyEquivalent-w.certaintyEquivalent)),0)} menos).`);
+  return parts.join(' ')+' '+tail;
+}
 /** One paragraph on the exchange and substitution review of the proposal. */
 export function compositionSubstitutionSummary(a){
   if(!a)return 'Sin revisión de intercambios entre posiciones en esta propuesta.';
@@ -153,6 +171,9 @@ export function compositionRole(signal, proposal={}) {
   const bonds={TLT:'Treasuries largos',IEF:'Treasuries intermedios',IEI:'Treasuries intermedios',
     SHY:'Treasuries cortos',SHV:'Treasuries de vencimiento corto',SGOV:'Letras del Tesoro'};
   if (bonds[signal.symbol]) return bonds[signal.symbol]+(signal.symbol==='TLT'?' · sensibilidad a tasas':'');
+  const credit={LQD:'Crédito corporativo IG',IGSB:'Crédito corporativo IG corto',AGG:'Bonos agregados EE. UU.'};
+  if (credit[signal.symbol]) return credit[signal.symbol]+' · TIR neta de pérdida esperada';
+  if (signal.bondDate) return 'Renta fija · perfil fechado del emisor';
   if (finite(signal.holdingsCoverage))
     return `Fondo de acciones · ${pct(signal.holdingsCoverage,0)} del peso con ancla de sus constituyentes`;
   const growth=signal.valuationEvidence?.assumptions?.growth;
@@ -1129,6 +1150,7 @@ export function createViews(context) {
           : `Comparación local entre ${p.selection?.simulated??'—'} activos simulados.`)+
         ` · máximo ${p.rules.maxPositions} posiciones · correlación ${fmt(p.rules.maxCorrelation,2)}`,
       cashExplanation:compositionCashExplanation(p),
+      stabilityNote:compositionStabilityNote(p.diagnostics?.stability),
       cashAuditSummary:(()=>{
         const a=p.diagnostics?.cashAllocation;
         return a?`${a.evaluated} reasignaciones evaluadas; ${a.structurallyBlocked} bloqueadas por los topes. `+
