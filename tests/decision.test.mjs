@@ -7,14 +7,14 @@ import {
   withCashAsset,
   regimes,
   DEFAULT_REGIMES,
-} from "../dist/assets/js/policy.mjs?v=0.30.0";
+} from "../dist/assets/js/policy.mjs?v=0.31.0";
 import {
   fundamentalForecast,
   consensusAt,
   evaluateThesis,
   bondAssumptions,
   CREDIT_CONVENTIONS,
-} from "../dist/assets/js/research-model.mjs?v=0.30.0";
+} from "../dist/assets/js/research-model.mjs?v=0.31.0";
 import {
   valuation,
   correlation,
@@ -22,12 +22,12 @@ import {
   resolveAssumptions,
   returnDecomposition,
   RERATING_HALF_LIFE_YEARS,
-} from "../dist/assets/js/analytics.mjs?v=0.30.0";
-import { sampleDrifts, bondScenarioAnnualReturn, buildReturnAnchors, holdingsAnchor, constituentForecasts, HOLDINGS_ANCHOR_MIN_COVERAGE, centeredTriangularQuantile, bondRegimeShift } from "../dist/assets/js/return-model.mjs?v=0.30.0";
+} from "../dist/assets/js/analytics.mjs?v=0.31.0";
+import { sampleDrifts, bondScenarioAnnualReturn, buildReturnAnchors, holdingsAnchor, constituentForecasts, HOLDINGS_ANCHOR_MIN_COVERAGE, centeredTriangularQuantile, bondRegimeShift } from "../dist/assets/js/return-model.mjs?v=0.31.0";
 import {
   seededRandom,
   normalGenerator,
-} from "../dist/assets/js/random.mjs?v=0.30.0";
+} from "../dist/assets/js/random.mjs?v=0.31.0";
 import {
   generatePaths,
   evaluatePaths,
@@ -35,17 +35,17 @@ import {
   jumpParameters,
   regimeCondition,
   centeredRegimeConditions,
-} from "../dist/assets/js/path-model.mjs?v=0.30.0";
+} from "../dist/assets/js/path-model.mjs?v=0.31.0";
 import {
   journalOrigin,
   appendForecast,
   evaluateJournal,
   freezeMaturedOutcomes,
-} from "../dist/assets/js/journal.mjs?v=0.30.0";
+} from "../dist/assets/js/journal.mjs?v=0.31.0";
 import {
   reviewPortfolio,
   registerPortfolio,
-} from "../dist/assets/js/monitor.mjs?v=0.30.0";
+} from "../dist/assets/js/monitor.mjs?v=0.31.0";
 
 const near = (a, b, tol = 1e-8) =>
   assert.ok(Math.abs(a - b) < tol, `${a} != ${b}`);

@@ -1,6 +1,6 @@
 # Trading · lo que falta
 
-Backlog actualizado el 28 de octubre de 2026 para el motor 0.30.0, corte de
+Backlog actualizado el 28 de octubre de 2026 para el motor 0.31.0, corte de
 precios examinado del 27-oct, 260 instrumentos (160 acciones, 100 ETF).
 Consultar las pruebas y los cierres en `docs/estado-validacion.md`. Cero
 incidencias publicadas o pruebas de software aprobadas no acreditan datos
@@ -59,8 +59,13 @@ Este archivo lista **solo lo que falta**. Para el funcionamiento, consultar
   observación. EFA y EEM obtienen un ancla por rendimiento de beneficios
   (P/E fechado del emisor + inflación implícita, contraído al prior, neto
   de gastos).
-- **Falta:** VEA, VWO, VXUS y los fondos país no tienen URL de emisor
-  verificada para su P/E y siguen en observación. IWM, XLRE, XBI, KRE, IBB,
+- **Avance en 0.31.0:** ACWX, IJH e IJR toman el mismo ancla, con URLs del
+  catálogo oficial de iShares.
+- **Falta:** los fondos país (EWJ, EWZ, INDA, MCHI…) siguen en observación
+  hasta tener un límite por riesgo país: el bloque de beneficios daría
+  anclas altas a mercados baratos por riesgo político, de gobierno o de
+  divisa. IWM queda fuera porque el P/E del emisor excluye a las empresas con
+  pérdidas, cerca del 40% del Russell 2000. VEA, VWO y VXUS no son iShares. IWM, XLRE, XBI, KRE, IBB,
   XLB, RSP y SPLV quedan bajo el 70%. Los gastos provienen de un
   agregador, no del folleto. El bloque de beneficios no distingue
   crecimiento ni ciclo de márgenes por región. La banda supone errores
@@ -174,7 +179,10 @@ Este archivo lista **solo lo que falta**. Para el funcionamiento, consultar
     muestra de 40 activos, que hoy es la misma en las tres búsquedas; (b)
     decidir si conviene proponer una mezcla de las ganadoras equivalentes
     (cartera remuestreada), lo que choca con el máximo de posiciones; (c)
-    contrastar la estabilidad entre cortes consecutivos.
+    contrastar la estabilidad entre cortes consecutivos; (d) escalar el
+    presupuesto de búsqueda con el universo elegible. En 0.31.0, añadir tres
+    índices a la muestra hizo que las búsquedas no reencontraran una cartera
+    USD 161 mejor (z 1,88), sin que ninguno de los índices fuera elegido.
 21. **Comparación robusta** limitada a crecimiento en USD sin retiros, suelo
     ni meta. Falta extenderla a los demás mandatos.
 22. **Topes prudenciales sin validar** (Treasury 60 %, renta variable 50 %,

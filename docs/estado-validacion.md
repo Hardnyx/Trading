@@ -883,3 +883,23 @@ defecto pasa a LQD 25, EMB 20, efectivo 5, NVDA 20, AMZN 15, GOOGL 5 y TGT
 10. El equivalente cierto queda en USD 106.125: la concentración en EMB no
 aportaba utilidad medible dentro del error de Monte Carlo. CVaR 18,3%,
 estabilidad baja (la otra ganadora equivalente comparte 55%).
+
+### 0.31.0 — Más índices con ancla por rendimiento de beneficios
+
+Las URLs salen del catálogo oficial de productos de iShares, y cada página
+se verifica por ticker, divisa e identificador. ACWX (todo el mundo excepto
+EE. UU., P/E 18,8), IJH (S&P 400, 21,7) e IJR (S&P 600, 18,9) toman el
+ancla de 0.29.0. La URL de ACWX supuesta antes correspondía a ACWI; ahora es
+la del catálogo. Quedan fuera los fondos país, hasta que exista un límite
+por riesgo país, e IWM, cuyo P/E publicado excluye a las empresas con
+pérdidas. Los datos llegan con la próxima actualización.
+
+Efecto medido con esos datos inyectados en el corte del 27-oct: ninguno de
+los tres índices entra en la propuesta, pero sí en la muestra de 40, y con
+el mismo presupuesto las tres búsquedas no reencuentran la ganadora
+anterior (LQD 25, EMB 20, NVDA 20, AMZN 15, TGT 10, GOOGL 5, efectivo 5).
+Sobre 6.000 trayectorias comunes, esa cartera es USD 161 mejor que la
+nueva propuesta (LQD 20, IGSB 25, NVDA 10, AMZN 20, NKE 10, HON 10,
+efectivo 5), z 1,88. Es evidencia del pendiente 20: la búsqueda es local
+sobre un objetivo plano, y ampliar el universo con el mismo presupuesto
+puede empeorar la cartera hallada aunque no cambie el óptimo.

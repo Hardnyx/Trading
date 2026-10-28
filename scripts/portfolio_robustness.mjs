@@ -1,8 +1,8 @@
 /** Fixed-universe, paired-model, finite-pool minimax-regret research. Not a live trading signal. */
 import {readFileSync,writeFileSync,mkdirSync} from 'node:fs';
 import {createHash} from 'node:crypto';
-import {referenceRequest} from '../dist/assets/js/reference-preset.mjs?v=0.30.0';
-import {compareRobustPortfolio} from '../dist/assets/js/robust-composer.mjs?v=0.30.0';
+import {referenceRequest} from '../dist/assets/js/reference-preset.mjs?v=0.31.0';
+import {compareRobustPortfolio} from '../dist/assets/js/robust-composer.mjs?v=0.31.0';
 
 const market=JSON.parse(readFileSync('dist/data/market.json'));
 const volatility=JSON.parse(readFileSync('dist/data/volatility.json'));

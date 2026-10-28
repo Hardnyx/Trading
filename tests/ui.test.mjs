@@ -1,26 +1,26 @@
-import {timestampLabel} from '../dist/assets/js/ui/format.mjs?v=0.30.0';
+import {timestampLabel} from '../dist/assets/js/ui/format.mjs?v=0.31.0';
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import {
   createTemplateRenderer,
   loadTemplates,
-} from "../dist/assets/js/ui/templates.mjs?v=0.30.0";
-import { createViews, NAV } from "../dist/assets/js/ui/views.mjs?v=0.30.0";
+} from "../dist/assets/js/ui/templates.mjs?v=0.31.0";
+import { createViews, NAV } from "../dist/assets/js/ui/views.mjs?v=0.31.0";
 import {
   valuation,
   portfolioAnalysis,
   metrics,
-} from "../dist/assets/js/analytics.mjs?v=0.30.0";
+} from "../dist/assets/js/analytics.mjs?v=0.31.0";
 import {
   simulateForecast,
   validateRiskBands,
-} from "../dist/assets/js/forecast.mjs?v=0.30.0";
+} from "../dist/assets/js/forecast.mjs?v=0.31.0";
 import {
   registerPortfolio,
   reviewPortfolio,
   DEFAULT_RULES,
-} from "../dist/assets/js/monitor.mjs?v=0.30.0";
+} from "../dist/assets/js/monitor.mjs?v=0.31.0";
 
 test("external templates escape untrusted text and attributes without interpreting inserted placeholders", () => {
   const render = createTemplateRenderer([
@@ -44,7 +44,7 @@ test("template configuration rejects missing bindings and duplicate template nam
   assert.throws(() => render("missing"), /no disponible/);
 });
 
-import { MODEL_VERSION } from "../dist/assets/js/policy.mjs?v=0.30.0";
+import { MODEL_VERSION } from "../dist/assets/js/policy.mjs?v=0.31.0";
 
 await loadTemplates(async (url) => ({
   ok: true,
@@ -256,7 +256,7 @@ for (const populated of [false, true])
   });
 
 test("composition distinguishes published EPS from the effective valuation assumptions", async () => {
-  const { compositionValuationEvidence } = await import("../dist/assets/js/ui/views.mjs?v=0.30.0");
+  const { compositionValuationEvidence } = await import("../dist/assets/js/ui/views.mjs?v=0.31.0");
   const text = compositionValuationEvidence({filed:"2026-10-22",valuationEvidence:{
     source:"BPA y múltiplo propios",assumptions:{growth:.04,multiple:16,horizon:3},
     confidence:.514285714,prior:.06,
@@ -271,7 +271,7 @@ test("composition distinguishes published EPS from the effective valuation assum
 });
 
 test('the compact allocation keeps financial evidence in details and explains actual cash constraints',async()=>{
- const {compositionCashExplanation,compositionRole}=await import('../dist/assets/js/ui/views.mjs?v=0.30.0');
+ const {compositionCashExplanation,compositionRole}=await import('../dist/assets/js/ui/views.mjs?v=0.31.0');
  const p={positions:[{symbol:'CASH',weight:.15}],mandate:{cashYield:0},diagnostics:{cashAllocation:{
   cashWeight:.15,requiredCash:.05,status:'no_local_improvement'}}};
  assert.match(compositionCashExplanation(p),/15[,.]0%/);
@@ -295,7 +295,7 @@ test('the compact allocation keeps financial evidence in details and explains ac
 });
 
 test('robustness panel exposes conditional results, current comparison and stale-input protection', async()=>{
- const {robustnessView}=await import('../dist/assets/js/ui/views.mjs?v=0.30.0');
+ const {robustnessView}=await import('../dist/assets/js/ui/views.mjs?v=0.31.0');
  const metric={medianReturn:.03,cvar95:.1,lossProbability:.3};
  const report={as_of:'2026-10-23',horizon:1,account_source:'Cuenta <propia>',candidate_count:500,
   verified_candidates:12,decision:'no_robust_rebalance_evidence',current:{structuralFeasible:false,verification:{original:metric}},
@@ -314,8 +314,8 @@ test('robustness panel exposes conditional results, current comparison and stale
 });
 
 test('robust transition explains hypothetical trades, reconciles cash and blocks incomplete tax evidence',async()=>{
- const {robustTransitionView}=await import('../dist/assets/js/ui/views.mjs?v=0.30.0');
- const {robustTransition}=await import('../dist/assets/js/robust-transition.mjs?v=0.30.0');
+ const {robustTransitionView}=await import('../dist/assets/js/ui/views.mjs?v=0.31.0');
+ const {robustTransition}=await import('../dist/assets/js/robust-transition.mjs?v=0.31.0');
  const plan=robustTransition([{symbol:'A<',price:100},{symbol:'CASH',price:1}],
   [{symbol:'CASH',weight:1}],[{symbol:'A<',weight:.5},{symbol:'CASH',weight:.5}],10000,{commissionFixed:5});
  const html=robustTransitionView(plan,false);
@@ -330,7 +330,7 @@ test('robust transition explains hypothetical trades, reconciles cash and blocks
 });
 
 test('financial coverage distinguishes report, accounting period and source capture',async()=>{
- const {financialCoverageView}=await import('../dist/assets/js/ui/views.mjs?v=0.30.0');
+ const {financialCoverageView}=await import('../dist/assets/js/ui/views.mjs?v=0.31.0');
  const html=financialCoverageView({price_as_of:'2026-10-26',assets:[{symbol:'A<',type:'stock',
   financials:{eps:{value:5,period_end:'2026-06-30',filed:'2026-07-30',method:'TTM'},
    observed_at:'2026-10-26T21:00:00Z',refresh_status:'retained_after_failure'},
@@ -341,7 +341,7 @@ test('financial coverage distinguishes report, accounting period and source capt
 });
 
 test('price monitor renders empty filters and keeps descriptive price data separate from anchors',async()=>{
- const {priceMonitorView}=await import('../dist/assets/js/ui/views.mjs?v=0.30.0');
+ const {priceMonitorView}=await import('../dist/assets/js/ui/views.mjs?v=0.31.0');
  const snapshot={price_as_of:'2026-10-26',assets:[{symbol:'A<',type:'stock',price:10,price_date:'2026-10-26',history:[]}]};
  const html=priceMonitorView(snapshot,[],'all');
  assert.match(html,/A&lt;/);assert.match(html,/252 cierres/);
@@ -372,7 +372,7 @@ test('the primary valuation and scenarios follow the reconciled continuing EPS s
 });
 
 test("F3 names the process that is actually simulated", async () => {
-  const { simulatedProcess } = await import("../dist/assets/js/ui/views.mjs?v=0.30.0");
+  const { simulatedProcess } = await import("../dist/assets/js/ui/views.mjs?v=0.31.0");
   const hybrid = simulatedProcess({ volatilityMode: "hybrid", model: "merton" }, { accepted: 2 });
   assert.equal(hybrid.jumps, false);
   assert.equal(hybrid.legacy, false);
@@ -388,7 +388,7 @@ test("F3 names the process that is actually simulated", async () => {
 });
 
 test("F6 summarizes the sealed one-session risk ledger without overstating it", async () => {
-  const { riskCalibrationNote } = await import("../dist/assets/js/ui/views.mjs?v=0.30.0");
+  const { riskCalibrationNote } = await import("../dist/assets/js/ui/views.mjs?v=0.31.0");
   assert.match(riskCalibrationNote(null), /todavía sin sesiones/);
   const summary = {
     current_risk_model_version: "1.0.0", minimum_sessions: 20, minimum_observations: 500,
@@ -409,7 +409,7 @@ test("F6 summarizes the sealed one-session risk ledger without overstating it", 
 });
 
 test("composition explains the exit multiple and splits the model return", async () => {
-  const { compositionValuationEvidence } = await import("../dist/assets/js/ui/views.mjs?v=0.30.0");
+  const { compositionValuationEvidence } = await import("../dist/assets/js/ui/views.mjs?v=0.31.0");
   const text = compositionValuationEvidence({filed:"2026-10-22",valuationEvidence:{
     source:"BPA y múltiplo propios",assumptions:{growth:.04,multiple:8.2,horizon:3},
     confidence:.5,prior:.06,
@@ -419,12 +419,12 @@ test("composition explains the exit multiple and splits the model return", async
   assert.match(text,/P\/E actual 7[,.]0 → salida 8[,.]2/);
   assert.match(text,/sectorial 16[,.]0; vida media 10 años/);
   assert.doesNotMatch(text,/dividendos/);
-  const { compositionReturnSplit, compositionAnchorRefinement, rulerMarkers } = await import("../dist/assets/js/ui/views.mjs?v=0.30.0");
+  const { compositionReturnSplit, compositionAnchorRefinement, rulerMarkers } = await import("../dist/assets/js/ui/views.mjs?v=0.31.0");
   assert.match(compositionAnchorRefinement({valuationEvidence:{refinement:{anchor:.086,equilibrium:.067,beta:1.18,
     benchmark:"SPY",alpha:.019,ic:.0467,omega:.255,score:2.2,buildingBlock:.109}}}),
     /Ancla 8[,.]6% = equilibrio 6[,.]7% \(β 1[,.]18 frente a SPY\) \+ alfa \+1[,.]9%.*Bloques sin ajustar 10[,.]9%/);
   assert.equal(compositionAnchorRefinement({}),"");
-  const { shortfallDetail, compositionSubstitutionSummary } = await import("../dist/assets/js/ui/views.mjs?v=0.30.0");
+  const { shortfallDetail, compositionSubstitutionSummary } = await import("../dist/assets/js/ui/views.mjs?v=0.31.0");
   assert.match(shortfallDetail({lossProbabilitySE:.008,shortfallProbabilitySE:.009,shortfallProbability:.451,shortfallRate:.0422,shortfallBasis:"bill"}),
     /^45[,.]1% bajo letra 3M \(4[,.]2% anual\) · error MC ±1[,.]8%$/);
   assert.match(shortfallDetail({lossProbabilitySE:.008,shortfallProbability:null}),/^Error Monte Carlo ±1[,.]6%$/);
@@ -433,7 +433,7 @@ test("composition explains the exit multiple and splits the model return", async
     closestRejected:{from:"TGT",to:"NFLX",transfer:.05,full:false,certaintyEquivalentGain:49.6,z:1.38}}),
     /200 probados.*8 verificados.*SHV → IEI \(10% completo\).*z 5[,.]3.*TGT → NFLX 5%.*z 1[,.]4/);
   assert.match(compositionSubstitutionSummary(null),/Sin revisión/);
-  const { compositionStabilityNote } = await import("../dist/assets/js/ui/views.mjs?v=0.30.0");
+  const { compositionStabilityNote } = await import("../dist/assets/js/ui/views.mjs?v=0.31.0");
   assert.match(compositionStabilityNote({starts:3,equivalent:1,worse:1,minimumOverlap:.55,level:"low",
     winners:[{chosen:true,equivalent:true,overlap:1,certaintyEquivalent:106084,positions:[]},
       {chosen:false,equivalent:true,overlap:.55,certaintyEquivalent:105915,positions:[{symbol:"CASH",weight:.05},{symbol:"LQD",weight:.2},{symbol:"NVDA",weight:.2},{symbol:"AGG",weight:.1}]},
@@ -443,7 +443,7 @@ test("composition explains the exit multiple and splits the model return", async
     winners:[{chosen:true,equivalent:true,overlap:1,certaintyEquivalent:1,positions:[]},{chosen:false,equivalent:false,overlap:.3,certaintyEquivalent:0,positions:[]},{chosen:false,equivalent:false,overlap:.3,certaintyEquivalent:0,positions:[]}]}),
     /Ninguna otra ganadora iguala a esta mezcla\. 2 quedan descartadas/);
   assert.match(compositionStabilityNote(null),/^Selección experimental/);
-  const { regimeProbabilityNote } = await import("../dist/assets/js/ui/decision-views.mjs?v=0.30.0");
+  const { regimeProbabilityNote } = await import("../dist/assets/js/ui/decision-views.mjs?v=0.31.0");
   assert.match(regimeProbabilityNote({source:"curve",curve:{probability:.1304,spread:.9338,observations:21,to:"2026-10-27"}},1),
     /^Recesión 13% según la curva al corte: modelo probit de la Fed de Nueva York con el diferencial 10A − 3M medio de 0[.,]93 pp \(21 sesiones/);
   assert.match(regimeProbabilityNote({source:"manual",curve:null},.95),/^Probabilidades fijadas a mano: suma 95%/);
@@ -465,7 +465,7 @@ test("composition explains the exit multiple and splits the model return", async
 });
 
 test("a holdings-anchored ETF is described as a diversified fund, not an explicit assumption", async () => {
-  const { compositionRole } = await import("../dist/assets/js/ui/views.mjs?v=0.30.0");
+  const { compositionRole } = await import("../dist/assets/js/ui/views.mjs?v=0.31.0");
   assert.match(compositionRole({symbol:"SPY",holdingsCoverage:.72}), /Fondo de acciones · 72% del peso con ancla de sus constituyentes/);
   assert.equal(compositionRole({symbol:"GLD"}), "Supuesto de retorno explícito");
 });

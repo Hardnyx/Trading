@@ -1,7 +1,7 @@
-import { finite, mean, normalizeWeights, sum } from "./analytics.mjs?v=0.30.0";
-import { adjustedReturn } from "./factors.mjs?v=0.30.0";
-import { MODEL_VERSION } from "./policy.mjs?v=0.30.0";
-import { reconcilePortfolioDistributions } from "./distribution-ledger.mjs?v=0.30.0";
+import { finite, mean, normalizeWeights, sum } from "./analytics.mjs?v=0.31.0";
+import { adjustedReturn } from "./factors.mjs?v=0.31.0";
+import { MODEL_VERSION } from "./policy.mjs?v=0.31.0";
+import { reconcilePortfolioDistributions } from "./distribution-ledger.mjs?v=0.31.0";
 const clone = (value) => JSON.parse(JSON.stringify(value));
 function hash(value) {
   let h = 2166136261;

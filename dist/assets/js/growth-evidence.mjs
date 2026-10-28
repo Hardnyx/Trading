@@ -1,5 +1,5 @@
-import { observedBy } from "./observation.mjs?v=0.30.0";
-import { finite } from './analytics.mjs?v=0.30.0';
+import { observedBy } from "./observation.mjs?v=0.31.0";
+import { finite } from './analytics.mjs?v=0.31.0';
 
 // Observing filing dates today does not establish original historical vintages.
 export function growthEvidence(asset, assumptions={}, research={}, context={}) {

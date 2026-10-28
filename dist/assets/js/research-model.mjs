@@ -1,9 +1,9 @@
-import { observedBy } from "./observation.mjs?v=0.30.0";
-import { finite, metrics, valuation, scenarios, resolveAssumptions, returnDecomposition } from "./analytics.mjs?v=0.30.0";
-import { DEFAULT_RESEARCH } from "./policy.mjs?v=0.30.0";
-import { dilutedEarningsBridge } from './earnings-normalization.mjs?v=0.30.0';
-import { financialFreshness } from './financial-freshness.mjs?v=0.30.0';
-import { growthEvidence } from './growth-evidence.mjs?v=0.30.0';
+import { observedBy } from "./observation.mjs?v=0.31.0";
+import { finite, metrics, valuation, scenarios, resolveAssumptions, returnDecomposition } from "./analytics.mjs?v=0.31.0";
+import { DEFAULT_RESEARCH } from "./policy.mjs?v=0.31.0";
+import { dilutedEarningsBridge } from './earnings-normalization.mjs?v=0.31.0';
+import { financialFreshness } from './financial-freshness.mjs?v=0.31.0';
+import { growthEvidence } from './growth-evidence.mjs?v=0.31.0';
 
 const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
 const years = (a, b) =>

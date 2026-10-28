@@ -1,7 +1,7 @@
-import { finite, normalizeWeights, sum } from "./analytics.mjs?v=0.30.0";
-import { normalCDF } from "./random.mjs?v=0.30.0";
+import { finite, normalizeWeights, sum } from "./analytics.mjs?v=0.31.0";
+import { normalCDF } from "./random.mjs?v=0.31.0";
 
-export const MODEL_VERSION = "0.30.0";
+export const MODEL_VERSION = "0.31.0";
 export function informationDate(snapshot) {
   const parts = Object.fromEntries(
     new Intl.DateTimeFormat("en-US", {

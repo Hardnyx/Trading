@@ -13,9 +13,18 @@ try:
 except ImportError:
     from bond_profiles import _Components
 
+# URLs from the issuer's product catalog; each page is checked for ticker,
+# currency and product id. Broad funds only: single-country funds would take
+# high anchors from cheap markets whose discount reflects political,
+# governance or currency risk, and there is no country cap yet. IWM is left
+# out because the issuer's P/E excludes loss-making companies, about 40% of
+# the Russell 2000; S&P 400 and 600 require profitability for inclusion.
 VALUATION_URLS = {
     "EFA": "https://www.ishares.com/us/products/239623/ishares-msci-eafe-etf",
     "EEM": "https://www.ishares.com/us/products/239637/ishares-msci-emerging-markets-etf",
+    "ACWX": "https://www.ishares.com/us/products/239594/ishares-msci-acwi-ex-u-s-etf",
+    "IJH": "https://www.ishares.com/us/products/239763/ishares-core-s-p-mid-cap-etf",
+    "IJR": "https://www.ishares.com/us/products/239774/ishares-core-s-p-small-cap-etf",
 }
 
 
