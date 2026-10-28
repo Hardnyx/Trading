@@ -1,0 +1,78 @@
+{
+  "schema_version": 2,
+  "origin_type": "first-capture-forward-shadow-no-trading",
+  "research_only": true,
+  "issued_at": "2026-10-28T22:18:50.552Z",
+  "issue_ny_date": "2026-10-28",
+  "original_price_as_of": "2026-10-28",
+  "market_collected_at": "2026-10-28T22:15:31.474601+00:00",
+  "maturity_date": "2027-10-28",
+  "eligibility": {
+    "eligible": true,
+    "reason": "Original-close-to-next-session-window",
+    "next_session_start_estimate": "2026-10-29T09:30 America/New_York",
+    "warning": "Weekday calendar is conservative and does not certify exchange holidays."
+  },
+  "market_sha256": "46c9e4d47b119a78569aaf30f93ac2c43a11947c3b08ddcb3deddf5c84bc719e",
+  "volatility_sha256": "c73d17d76fddc2e51b707856642c9d1912520a7cfa7fec40fa9674ba118e89b8",
+  "engine_version": "0.35.0",
+  "model_settings": {
+    "horizon": 1,
+    "seed": 20261024,
+    "volatility_mode": "hybrid",
+    "mandate": {
+      "objective": "growth",
+      "referenceCurrency": "USD",
+      "horizon": 1,
+      "maxDrawdown": 0.25,
+      "maxDrawdownProbability": 0.25,
+      "minimumCash": 0.05,
+      "monthlyWithdrawal": 0,
+      "withdrawals": [],
+      "terminalTarget": 0,
+      "capitalFloor": 0,
+      "maxLiquidityFailure": 0.02,
+      "fxSpot": 1,
+      "fxAnnualChange": 0,
+      "fxVolatility": 0,
+      "fxMarketCorrelation": 0,
+      "fxConfirmed": false,
+      "benchmark": "SPY",
+      "riskAversion": 5,
+      "dividendPolicy": "cash",
+      "dividendWithholding": 0,
+      "cashYield": 0,
+      "region": "us"
+    },
+    "capital": 100000,
+    "initial_cost": 42.7317321844897
+  },
+  "model_status": "proposed",
+  "positions": [
+    {
+      "symbol": "SPY",
+      "weight": 0.35
+    },
+    {
+      "symbol": "LQD",
+      "weight": 0.35
+    },
+    {
+      "symbol": "CASH",
+      "weight": 0.05
+    },
+    {
+      "symbol": "TIP",
+      "weight": 0.25
+    }
+  ],
+  "forecast": {
+    "expected_return": 0.055896975294939776,
+    "median_return": 0.05432585784552091,
+    "p05": -0.07065383731871797,
+    "p95": 0.1878293021627953,
+    "probability_loss": 0.255,
+    "simulated_cvar95": 0.09770477537839752
+  },
+  "note": "This is a sealed prior forecast, not proven predictive skill. It may never be silently altered by newer API data."
+}

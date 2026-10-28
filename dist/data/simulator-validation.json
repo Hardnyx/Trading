@@ -1,13 +1,13 @@
 {
  "schema_version": 1,
  "price_kernel_version": "1.0.0",
- "updated_at": "2026-10-28T19:09:07.238Z",
- "sealed": 1,
- "historical_sealed": 1,
+ "updated_at": "2026-10-28T22:18:53.022Z",
+ "sealed": 2,
+ "historical_sealed": 2,
  "excluded_nonprospective": 0,
  "horizons": {
   "1": {
-   "sealed": 1,
+   "sealed": 2,
    "scored_origins": 0,
    "nonoverlapping_origins": 0,
    "asset_observations": 0,
@@ -33,7 +33,7 @@
    "status": "accumulating"
   },
   "5": {
-   "sealed": 1,
+   "sealed": 2,
    "scored_origins": 0,
    "nonoverlapping_origins": 0,
    "asset_observations": 0,
@@ -59,7 +59,7 @@
    "status": "accumulating"
   },
   "21": {
-   "sealed": 1,
+   "sealed": 2,
    "scored_origins": 0,
    "nonoverlapping_origins": 0,
    "asset_observations": 0,
