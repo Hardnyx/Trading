@@ -4,16 +4,16 @@ import {
   mean,
   quantile,
   normalizeWeights,
-} from "./analytics.mjs?v=0.31.0";
-import { seededRandom } from "./random.mjs?v=0.31.0";
-import { portfolioAttribution } from "./attribution.mjs?v=0.31.0";
+} from "./analytics.mjs?v=0.32.0";
+import { seededRandom } from "./random.mjs?v=0.32.0";
+import { portfolioAttribution } from "./attribution.mjs?v=0.32.0";
 import {
   preparePaths,
   generatePaths,
   evaluatePaths,
   marginalRisk,
   centeredRegimeConditions,
-} from "./path-model.mjs?v=0.31.0";
+} from "./path-model.mjs?v=0.32.0";
 import {
   withCashAsset,
   mandate,
@@ -24,12 +24,12 @@ import {
   effectiveRegimes,
   DEFAULT_REGIMES,
   MODEL_VERSION,
-} from "./policy.mjs?v=0.31.0";
-import { buildReturnAnchors, constituentForecasts, holdingsAnchor, valuationAnchor } from "./return-model.mjs?v=0.31.0";
-import { assetAt, fundamentalForecast, bondAssumptions } from "./research-model.mjs?v=0.31.0";
-import { selectCompositionUniverse } from "./universe.mjs?v=0.31.0";
-import { factorizeStressedCovariance } from "./factor-covariance.mjs?v=0.31.0";
-import { economicClass, exposureReport, rawCorrelation, qualifiedOpportunity, holdingsOverlap, knownFundOverlap } from "./economic-exposure.mjs?v=0.31.0";
+} from "./policy.mjs?v=0.32.0";
+import { buildReturnAnchors, constituentForecasts, holdingsAnchor, valuationAnchor } from "./return-model.mjs?v=0.32.0";
+import { assetAt, fundamentalForecast, bondAssumptions } from "./research-model.mjs?v=0.32.0";
+import { selectCompositionUniverse } from "./universe.mjs?v=0.32.0";
+import { factorizeStressedCovariance } from "./factor-covariance.mjs?v=0.32.0";
+import { economicClass, outsideUS, exposureReport, rawCorrelation, qualifiedOpportunity, holdingsOverlap, knownFundOverlap } from "./economic-exposure.mjs?v=0.32.0";
 
 export const DEFAULT_COMPOSITION_RULES = {
   maxPosition: 0.2,
@@ -141,6 +141,8 @@ export function prepareComposition(
       original.price_date !== asOf
     )
       reason = "Precio o historia común insuficiente al corte";
+    if (!reason && policy.region === "us" && outsideUS(asset))
+      reason = "Fuera del mandato: inversión limitada a EE. UU.";
     if (!reason && asset.type === "stock") {
       const forecast = fundamentalForecast(
         asset,

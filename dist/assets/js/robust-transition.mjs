@@ -1,4 +1,4 @@
-import {tradePlan} from './policy.mjs?v=0.31.0';
+import {tradePlan} from './policy.mjs?v=0.32.0';
 
 // One cost calculation supplies both the simulation and its visible transition.
 export function robustTransition(assets,current,target,capital,assumptions={}){

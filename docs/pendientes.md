@@ -1,6 +1,6 @@
 # Trading · lo que falta
 
-Backlog actualizado el 28 de octubre de 2026 para el motor 0.31.0, corte de
+Backlog actualizado el 28 de octubre de 2026 para el motor 0.32.0, corte de
 precios examinado del 27-oct, 260 instrumentos (160 acciones, 100 ETF).
 Consultar las pruebas y los cierres en `docs/estado-validacion.md`. Cero
 incidencias publicadas o pruebas de software aprobadas no acreditan datos
@@ -61,7 +61,9 @@ Este archivo lista **solo lo que falta**. Para el funcionamiento, consultar
   de gastos).
 - **Avance en 0.31.0:** ACWX, IJH e IJR toman el mismo ancla, con URLs del
   catálogo oficial de iShares.
-- **Falta:** los fondos país (EWJ, EWZ, INDA, MCHI…) siguen en observación
+- **Desde 0.32.0 el mandato por defecto es solo EE. UU.:** lo internacional
+  queda fuera de las compras salvo que el usuario elija «global».
+- **Falta (para un mandato global):** los fondos país (EWJ, EWZ, INDA, MCHI…) siguen en observación
   hasta tener un límite por riesgo país: el bloque de beneficios daría
   anclas altas a mercados baratos por riesgo político, de gobierno o de
   divisa. IWM queda fuera porque el P/E del emisor excluye a las empresas con

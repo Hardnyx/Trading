@@ -1,6 +1,6 @@
-import { template as t } from "./templates.mjs?v=0.31.0";
-import { pct, fmt, money, dateLabel, timestampLabel } from "./format.mjs?v=0.31.0";
-import { finite, sum, normalizeWeights } from "../analytics.mjs?v=0.31.0";
+import { template as t } from "./templates.mjs?v=0.32.0";
+import { pct, fmt, money, dateLabel, timestampLabel } from "./format.mjs?v=0.32.0";
+import { finite, sum, normalizeWeights } from "../analytics.mjs?v=0.32.0";
 import {
   DEFAULT_MANDATE,
   DEFAULT_EXECUTION,
@@ -10,18 +10,18 @@ import {
   informationDate,
   effectiveRegimes,
   curveRecessionProbability,
-} from "../policy.mjs?v=0.31.0";
+} from "../policy.mjs?v=0.32.0";
 import {
   fundamentalForecast,
   businessQuality,
   evaluateThesis,
   bondAssumptions,
-} from "../research-model.mjs?v=0.31.0";
-import { dilutedEarningsBridge } from '../earnings-normalization.mjs?v=0.31.0';
-import { growthEvidence } from '../growth-evidence.mjs?v=0.31.0';
-import { factorModel, factorAttribution } from "../factors.mjs?v=0.31.0";
-import { calibrationAudit } from "../calibration-audit.mjs?v=0.31.0";
-import { evaluateJournal } from "../journal.mjs?v=0.31.0";
+} from "../research-model.mjs?v=0.32.0";
+import { dilutedEarningsBridge } from '../earnings-normalization.mjs?v=0.32.0';
+import { growthEvidence } from '../growth-evidence.mjs?v=0.32.0';
+import { factorModel, factorAttribution } from "../factors.mjs?v=0.32.0";
+import { calibrationAudit } from "../calibration-audit.mjs?v=0.32.0";
+import { evaluateJournal } from "../journal.mjs?v=0.32.0";
 const objectives = {
   growth: "Crecimiento logarítmico",
   preservation: "Preservación · utilidad CRRA",
@@ -147,6 +147,16 @@ export function createDecisionViews({ state = {}, data, asset }) {
         "OBJETIVO",
         policy.objective,
         Object.entries(objectives),
+      ),
+      select(
+        "mandate",
+        "region",
+        "REGIÓN INVERTIBLE",
+        policy.region,
+        [
+          ["us", "Solo EE. UU."],
+          ["global", "Global (incluye internacional y deuda extranjera)"],
+        ],
       ),
       select(
         "mandate",

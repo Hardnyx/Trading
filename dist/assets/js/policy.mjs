@@ -1,7 +1,7 @@
-import { finite, normalizeWeights, sum } from "./analytics.mjs?v=0.31.0";
-import { normalCDF } from "./random.mjs?v=0.31.0";
+import { finite, normalizeWeights, sum } from "./analytics.mjs?v=0.32.0";
+import { normalCDF } from "./random.mjs?v=0.32.0";
 
-export const MODEL_VERSION = "0.31.0";
+export const MODEL_VERSION = "0.32.0";
 export function informationDate(snapshot) {
   const parts = Object.fromEntries(
     new Intl.DateTimeFormat("en-US", {
@@ -42,6 +42,9 @@ export const DEFAULT_MANDATE = {
   // Net annual yield the account pays on uninvested USD cash. Zero means the
   // cash is explicitly assumed unremunerated, not that it earns nothing.
   cashYield: 0,
+  // Investable region: "us" keeps purchases to US equities and US bond
+  // markets; "global" also admits international equity and foreign debt.
+  region: "us",
 };
 export const DEFAULT_EXECUTION = {
   commissionFixed: 0,
@@ -166,6 +169,7 @@ export function mandate(input = {}) {
     range(value[key], 0, 1e12, key);
   range(value.riskAversion, 1, 20, "la aversión al riesgo");
   if (!["cash","reinvest"].includes(value.dividendPolicy))throw new Error("Política de dividendos no válida");
+  if (!["us","global"].includes(value.region))throw new Error("Región de inversión no válida");
   range(value.dividendWithholding,0,1,"retención sobre dividendos");
   range(value.cashYield,0,0.2,"el rendimiento neto del efectivo");
   if (value.objective === "target" && !(value.terminalTarget > 0))

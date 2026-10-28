@@ -903,3 +903,21 @@ nueva propuesta (LQD 20, IGSB 25, NVDA 10, AMZN 20, NKE 10, HON 10,
 efectivo 5), z 1,88. Es evidencia del pendiente 20: la búsqueda es local
 sobre un objetivo plano, y ampliar el universo con el mismo presupuesto
 puede empeorar la cartera hallada aunque no cambie el óptimo.
+
+### 0.32.0 — Mandato limitado a EE. UU.
+
+Por decisión del usuario, la región invertible por defecto es EE. UU.
+(`region: "us"` en el mandato, editable a «global» en F8). Quedan fuera de
+las compras la renta variable internacional y global (EFA, EEM, ACWX,
+VEA, VWO, VXUS, fondos país, y también VT, ACWI y URTH, con ~40% fuera de
+EE. UU.) y la deuda extranjera o emergente (EMB, BNDX). Las 160 acciones
+del universo son del S&P 500, aunque algunas tengan domicilio legal fuera
+(LIN, ACN, MDT, CB, AON). Una posición ya mantenida fuera del mandato se
+puede conservar o vender, pero no ampliar. Los datos internacionales se
+siguen recolectando para una eventual apertura.
+
+Propuesta por defecto al corte del 27-oct: LQD 25, HYG 20 (en el tope de
+alto rendimiento), efectivo 5, NVDA 20, HPQ 15, NFLX 10, AMZN 5. Mediana
+6,0%, probabilidad de pérdida 31,4%, 43,9% bajo la letra, CVaR 16,3%.
+Estabilidad baja: la otra ganadora equivalente (AGG, IGSB, HYG, NVDA,
+NFLX, HPQ, NKE) comparte 50%.

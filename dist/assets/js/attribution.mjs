@@ -3,7 +3,7 @@
  * cases without cashflows. Not a causal factor attribution, portfolio CVaR
  * gradient, or an out-of-sample proof. Same held-out verification scenarios.
  */
-import { distributionAccounting,distributionTerminalValue } from "./distribution-ledger.mjs?v=0.31.0";
+import { distributionAccounting,distributionTerminalValue } from "./distribution-ledger.mjs?v=0.32.0";
 export function portfolioAttribution(assets, weights, sample, cost=0, capital=100000) {
   if (!Array.isArray(assets) || weights.length !== assets.length ||
       sample.assets.length !== assets.length || !(capital > cost) || cost < 0)

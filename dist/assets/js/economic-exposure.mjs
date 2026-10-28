@@ -1,10 +1,17 @@
-import { observedBy } from "./observation.mjs?v=0.31.0";
+import { observedBy } from "./observation.mjs?v=0.32.0";
 /* Economic ETF exposure. Never invent missing issuer holdings. */
 export const TREASURY=new Set(["SHY","SGOV","BIL","IEI","IEF","TLT","TIP","VGSH","VGIT","VGLT","SHV"]);
 const CREDIT=new Set(["LQD","HYG","EMB","IGSB","VCIT","VCSH","JNK","BKLN"]);
 // Credit below investment grade or emerging-market sovereign: a sub-sleeve
 // of credit with its own prudential cap.
 export const RISKY_CREDIT=new Set(["HYG","JNK","BKLN","EMB"]);
+// Outside a US-only mandate: international and global equity (global funds
+// hold about 40% outside the US) and foreign or emerging-market debt.
+const FOREIGN_DEBT=new Set(["EMB","BNDX"]);
+export function outsideUS(a){
+ const k=economicClass(a);
+ return k==="international-equity"||k==="global-equity"||FOREIGN_DEBT.has(a.symbol);
+}
 const MIXED=new Set(["AGG","BND","BNDX"]);
 const GOLD=new Set(["GLD","IAU"]);
 const INTL=new Set(["VXUS","VEA","VWO","EFA","EEM","EWJ","EWZ","EWW","ECH","EPU","INDA","MCHI","FXI","EWG","EWU","EWC","EWA","EWT","KWEB"]);
