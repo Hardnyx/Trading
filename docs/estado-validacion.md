@@ -1,6 +1,6 @@
 # Estado de validación de Trading
 
-**Actualizado:** 28 de octubre de 2026 · motor 0.34.1 · precios al 27-oct.
+**Actualizado:** 28 de octubre de 2026 · motor 0.35.0 · precios al 27-oct.
 **Estado:** escenarios condicionales de investigación; capacidad predictiva y
 ventaja económica sin acreditar. El [historial hasta 0.32.0](historial-validacion-hasta-0.32.md)
 conserva los cambios y cifras anteriores.
@@ -41,8 +41,9 @@ modelos y añade combinaciones sencillas de fondos elegibles. Se separan
 cribado, selección y una única confirmación. Los riesgos incluyen cotas de
 muestreo: KL para probabilidades y aproximación de influencia para CVaR.
 Se informa el conjunto cuyos rankings no se resuelven, sin llamarlo
-estadísticamente equivalente. El desempate favorece menor rotación y luego
-riesgo; no bloquea una mejora respaldada ni garantiza óptimo global.
+estadísticamente equivalente. Desde 0.35.0, el desempate por rotación exige una cota de pérdida económica
+dentro del umbral del mandato; la incertidumbre sola no lo habilita. Se
+conserva el objetivo del peor modelo, sin garantizar un óptimo global.
 
 El [protocolo de confianza](criterios-confianza.md) distingue corrección del
 software, admisibilidad condicional de una decisión y evidencia predictiva.
@@ -57,6 +58,39 @@ separado fuerza ahora su proceso diario con Student también en ese caso;
 una prueba verifica la ley ejecutada y que no pueda usarse como retorno
 económico. La cartera canónica y los registros del núcleo 1.0.0 usan el modo
 diario, por lo que la corrección no cambia sus cifras auditadas en 0.34.0.
+
+## Alineación del objetivo y evidencia reconstruida (0.35.0)
+
+La elección de SGOV 35%, IGSB 35%, SHV 25%, CASH 5% de 0.34.1 no era una
+conclusión de que esas posiciones fueran óptimas. El desempate conservador
+podía escoger menor riesgo dentro de rankings inciertos y omitir una mejor
+utilidad del mandato. Con la misma lista de candidatas y 3.000 escenarios
+nuevos, sustituir SGOV por SHY mejora el peor equivalente en USD 205,90;
+las cotas pareadas por modelo rondan USD 146, por encima del umbral de
+USD 100. Se corrige el criterio de selección, sin alterar anclas ni semillas
+para obtener una composición deseada.
+
+Una sensibilidad del mismo conjunto elige 35% de acciones en el modelo base,
+45% al contrastar cuatro modelos y 0% al incorporar baja convicción. Ese
+modelo declara prima accionaria e IC cero. La interfaz lo hace explícito;
+el resultado defensivo depende de esa convención, no de evidencia de que
+las acciones vayan a perder. No se elimina un modelo para forzar compras.
+
+El contraste cronológico de precios abarca orígenes desde abril de 2022
+hasta septiembre de 2026, a 1/5/21 sesiones, con tres variantes de varianza,
+12 instrumentos y cuatro cestas fijas. Para la cesta de la captura, a 21
+sesiones quedan 38 orígenes no superpuestos y dos excepciones VaR95: 5,26%,
+intervalo binomial bajo independencia [0,64%; 17,75%]. Las mejoras de CRPS
+frente a EWMA plano y dinámico no se distinguen de cero con los intervalos
+por bloques registrados. Solo hay dos observaciones de cola: no valida ES.
+
+Es una prueba reconstruida del **fallback de varianza**. Desactiva GJR,
+macro y anclas económicas históricas; comparte un centrado de precios
+anterior a cada corte. Usa precios ajustados actuales y una cesta elegida
+ex post, sin acreditar vintages, estrategia histórica, dividendos en efectivo,
+costes ejecutados o CVaR a doce meses. Los resultados no promueven cambios
+a la ley de precios ni acreditan la ventaja de las decisiones. Véase la
+[auditoría completa](auditoria-decision-riesgo-0.35.md).
 
 ## Decisión de operar
 
@@ -202,7 +236,7 @@ python scripts/build_volatility.py
 node scripts/reliability_audit.mjs --full
 ```
 
-**Verificación local:** 236 pruebas JavaScript, 137 Python y `npm run check` aprobados.
+**Verificación local:** 242 pruebas JavaScript, 141 Python y `npm run check` aprobados.
 
 Las pruebas cubren rechazo de mejoras aparentes bajo otro modelo, costes
 cero al mantener, mandato completo, anclas ausentes, constituyentes fuera de

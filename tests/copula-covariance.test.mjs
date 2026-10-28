@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {copulaInnovationCovariance} from '../dist/assets/js/copula-covariance.mjs?v=0.34.1';
-import {cholesky} from '../dist/assets/js/risk-math.mjs?v=0.34.1';
+import {copulaInnovationCovariance} from '../dist/assets/js/copula-covariance.mjs?v=0.35.0';
+import {cholesky} from '../dist/assets/js/risk-math.mjs?v=0.35.0';
 
 test('Gaussian marginals preserve the input; t marginals report their induced linear covariance',()=>{
  const latent=[[.04,.054],[.054,.09]];

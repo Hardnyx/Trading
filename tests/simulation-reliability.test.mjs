@@ -1,9 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {generatePaths,evaluatePaths} from '../dist/assets/js/path-model.mjs?v=0.34.1';
-import {factorizeStressedCovariance} from '../dist/assets/js/factor-covariance.mjs?v=0.34.1';
-import {studentMarginal,normalUpperTail} from '../dist/assets/js/conditional-risk.mjs?v=0.34.1';
-import {cvarStandardError,probabilityUpperBound,riskSamplingEvidence} from '../dist/assets/js/simulation-evidence.mjs?v=0.34.1';
+import {generatePaths,evaluatePaths} from '../dist/assets/js/path-model.mjs?v=0.35.0';
+import {factorizeStressedCovariance} from '../dist/assets/js/factor-covariance.mjs?v=0.35.0';
+import {studentMarginal,normalUpperTail} from '../dist/assets/js/conditional-risk.mjs?v=0.35.0';
+import {cvarStandardError,probabilityUpperBound,riskSamplingEvidence} from '../dist/assets/js/simulation-evidence.mjs?v=0.35.0';
 
 function fixture(stress=false){
   const assets=['BBB','SPY','AAA','CASH'].map(symbol=>({symbol,type:symbol==='CASH'?'cash':'stock',sector:symbol==='BBB'?'B':'A'})),

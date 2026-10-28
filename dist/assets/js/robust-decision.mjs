@@ -1,7 +1,7 @@
-import { generatePaths, evaluatePaths, utilityCertaintyEquivalent } from './path-model.mjs?v=0.34.1';
-import { MODEL_VARIANTS, variantInputs } from './robust-core.mjs?v=0.34.1';
-import { tradePlan } from './policy.mjs?v=0.34.1';
-import { riskSamplingEvidence } from './simulation-evidence.mjs?v=0.34.1';
+import { generatePaths, evaluatePaths, utilityCertaintyEquivalent } from './path-model.mjs?v=0.35.0';
+import { MODEL_VARIANTS, variantInputs } from './robust-core.mjs?v=0.35.0';
+import { tradePlan } from './policy.mjs?v=0.35.0';
+import { riskSamplingEvidence } from './simulation-evidence.mjs?v=0.35.0';
 
 // Discovery seeds never reroll the evidence for a fixed transition. These
 // experiments are independent inside a run, not unseen future market data.

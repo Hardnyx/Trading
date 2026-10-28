@@ -1,8 +1,34 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {prepareComposition,validWeights} from '../dist/assets/js/composer.mjs?v=0.34.1';
-import {selectReliableCandidate} from '../dist/assets/js/reliable-selection.mjs?v=0.34.1';
-import {reviewRobustDecision,DECISION_EXPERIMENT_SEEDS} from '../dist/assets/js/robust-decision.mjs?v=0.34.1';
+import {prepareComposition,validWeights} from '../dist/assets/js/composer.mjs?v=0.35.0';
+import {selectReliableCandidate,robustRegretEvidence,rankRobustCandidates} from '../dist/assets/js/reliable-selection.mjs?v=0.35.0';
+import {reviewRobustDecision,DECISION_EXPERIMENT_SEEDS} from '../dist/assets/js/robust-decision.mjs?v=0.35.0';
+import {DEFAULT_MANDATE} from '../dist/assets/js/policy.mjs?v=0.35.0';
+
+const constantModels=returns=>returns.map(r=>({utilities:Array(100).fill(Math.log1p(r))}));
+test('worst-objective regret is identified even when the models disagree about the best base return',()=>{
+  const leader=constantModels([.05,.04]),other=constantModels([.08,.02]),
+    r=robustRegretEvidence(leader,other,DEFAULT_MANDATE,100000);
+  assert.ok(Math.abs(r.gain-2000)<1e-7);assert.ok(Math.abs(r.lowerGain-2000)<1e-7);
+  assert.ok(Math.abs(r.upperGain-2000)<1e-7);
+  assert.equal(robustRegretEvidence(leader,leader,DEFAULT_MANDATE,100000).upperGain,0);
+});
+test('an unresolved ranking cannot invoke lower turnover or risk when opportunity loss is unbounded',()=>{
+  const leaderModels=constantModels([.04,.04]),noisy=[{utilities:Array.from({length:100},(_,k)=>Math.log1p(.039)+(k%2?.08:-.08))}],
+    rows=[{key:'growth',models:leaderModels,worstScore:Math.log1p(.04),plan:{turnover:.8},maximumRisk:.1},
+      {key:'conservative',models:noisy,worstScore:Math.log1p(.039),plan:{turnover:.1},maximumRisk:.01}],
+    r=rankRobustCandidates(rows,DEFAULT_MANDATE,100000,100);
+  assert.ok(rows[1].regret.lowerGain<0);assert.ok(rows[1].regret.upperGain>100);
+  assert.equal(r.unresolved.length,2);assert.equal(r.indifferent.length,1);
+  assert.equal(r.chosen.key,'growth');
+});
+test('a demonstrated small opportunity loss permits the mandate turnover tie-break',()=>{
+  const row=(key,r,turnover)=>({key,models:constantModels([r,r]),worstScore:Math.log1p(r),plan:{turnover},maximumRisk:.02}),
+    rows=[row('leader',.04,.8),row('nearby',.0395,.2),row('inferior',.02,.1)],
+    r=rankRobustCandidates(rows,DEFAULT_MANDATE,100000,100);
+  assert.equal(r.chosen.key,'nearby');assert.ok(r.chosen.regret.upperGain<100);
+  assert.ok(rows[2].regret.lowerGain>100);
+});
 
 function fixture(){
   const cut='2026-10-23',history=Array.from({length:300},(_,k)=>({

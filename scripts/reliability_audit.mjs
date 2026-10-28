@@ -1,11 +1,11 @@
 /** Frozen-input diagnosis. Numerical stability is not predictive validation. */
 import {readFileSync,writeFileSync,mkdirSync} from 'node:fs';
 import {createHash} from 'node:crypto';
-import {prepareComposition,composePortfolio,weightOverlap} from '../dist/assets/js/composer.mjs?v=0.34.0';
-import {generatePaths,evaluatePaths} from '../dist/assets/js/path-model.mjs?v=0.34.0';
-import {referenceRequest} from '../dist/assets/js/reference-preset.mjs?v=0.34.0';
-import {reviewRobustDecision} from '../dist/assets/js/robust-decision.mjs?v=0.34.0';
-import {MODEL_VERSION} from '../dist/assets/js/policy.mjs?v=0.34.0';
+import {prepareComposition,composePortfolio,weightOverlap} from '../dist/assets/js/composer.mjs?v=0.35.0';
+import {generatePaths,evaluatePaths} from '../dist/assets/js/path-model.mjs?v=0.35.0';
+import {referenceRequest} from '../dist/assets/js/reference-preset.mjs?v=0.35.0';
+import {reviewRobustDecision} from '../dist/assets/js/robust-decision.mjs?v=0.35.0';
+import {MODEL_VERSION} from '../dist/assets/js/policy.mjs?v=0.35.0';
 
 const market=JSON.parse(readFileSync('dist/data/market.json')),volatility=JSON.parse(readFileSync('dist/data/volatility.json')),
   snapshot={...market,volatility},request=referenceRequest(snapshot),x=prepareComposition(snapshot,request.settings,{},request.rules),

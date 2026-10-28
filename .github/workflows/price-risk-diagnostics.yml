@@ -1,0 +1,48 @@
+name: Price-only risk diagnostics (shadow)
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/price_risk_replay.mjs'
+      - 'scripts/summarize_price_risk.py'
+      - 'scripts/simulator_validation.mjs'
+      - 'dist/assets/js/path-model.mjs'
+      - 'dist/assets/js/conditional-risk.mjs'
+      - 'dist/assets/js/factor-covariance.mjs'
+      - 'dist/assets/js/risk-math.mjs'
+      - 'dist/data/market.json'
+      - 'tests/price-risk-replay.test.mjs'
+      - 'tests/test_price_risk_summary.py'
+      - '.github/workflows/price-risk-diagnostics.yml'
+permissions:
+  contents: read
+concurrency:
+  group: price-risk-diagnostics
+  cancel-in-progress: true
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-research.txt
+      - name: Replay a bounded chronological price-only diagnostic
+        run: node scripts/price_risk_replay.mjs --quick
+      - name: Contrast original paired outcomes without promoting any model
+        run: python scripts/summarize_price_risk.py
+      - name: Preserve reconstructed evidence and its explicit limitations
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: price-only-risk-evidence
+          path: |
+            out/price-risk-replay.json
+            out/price-risk-summary.json
+          retention-days: 30

@@ -1,12 +1,12 @@
-import {prepareComposition,validWeights} from "./composer.mjs?v=0.34.1";
-import {generatePaths,evaluatePaths} from "./path-model.mjs?v=0.34.1";
-import {distributionAccounting,distributionTerminalValue} from "./distribution-ledger.mjs?v=0.34.1";
-import {tradePlan,MODEL_VERSION} from "./policy.mjs?v=0.34.1";
-import {bondAssumptions} from "./research-model.mjs?v=0.34.1";
-import {seededRandom} from "./random.mjs?v=0.34.1";
-import {MODEL_VARIANTS,variantInputs,minimaxRegret,pairedUtilityEvidence} from "./robust-core.mjs?v=0.34.1";
-import {robustTransition} from './robust-transition.mjs?v=0.34.1';
-import {reviewRobustDecision} from './robust-decision.mjs?v=0.34.1';
+import {prepareComposition,validWeights} from "./composer.mjs?v=0.35.0";
+import {generatePaths,evaluatePaths} from "./path-model.mjs?v=0.35.0";
+import {distributionAccounting,distributionTerminalValue} from "./distribution-ledger.mjs?v=0.35.0";
+import {tradePlan,MODEL_VERSION} from "./policy.mjs?v=0.35.0";
+import {bondAssumptions} from "./research-model.mjs?v=0.35.0";
+import {seededRandom} from "./random.mjs?v=0.35.0";
+import {MODEL_VARIANTS,variantInputs,minimaxRegret,pairedUtilityEvidence} from "./robust-core.mjs?v=0.35.0";
+import {robustTransition} from './robust-transition.mjs?v=0.35.0';
+import {reviewRobustDecision} from './robust-decision.mjs?v=0.35.0';
 
 export function compareRobustPortfolio(snapshot,settings={},overrides={},rules={},options={}){
  const config={candidateCount:300,searchPaths:200,verificationPaths:1000,finalists:6,

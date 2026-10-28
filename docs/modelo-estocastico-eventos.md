@@ -10,7 +10,7 @@ Se propone un sistema predictivo para carteras multiactivo que distingue entre (
 
 **Palabras clave:** cálculo estocástico, GJR-GARCH, efectos asimétricos, regímenes, datos *point-in-time*, eventos, riesgo de cartera, CVaR.
 
-### Estado de implementación (28 de octubre de 2026 · motor 0.34.0)
+### Estado de implementación (28 de octubre de 2026 · motor 0.35.0)
 
 El núcleo de precios 1.0.0 conserva la matriz EWMA factorial conjunta con
 SPY, GJR para los 20 ajustes aceptados y varianza con reversión para los
@@ -27,8 +27,9 @@ declaradas. No están predictivamente validadas. Las candidatas de las tres
 búsquedas y referencias sencillas se contrastan en cinco modelos; una sola
 transición llega a confirmación independiente, con márgenes de simulación
 tanto para mejora como para riesgo y un estrés Student adicional. Se hacen
-visibles las composiciones cuyo ranking no se resuelve; su desempate por
-rotación y riesgo es una política, no evidencia de equivalencia u óptimo.
+visibles las composiciones cuyo ranking no se resuelve; desde 0.35.0, el desempate por rotación exige una cota de pérdida económica
+frente al líder dentro del umbral del mandato. Un ranking incierto no
+autoriza sustituir la utilidad por mínimo riesgo. No acredita un óptimo.
 
 Se añaden sellos del núcleo exacto a 1/5/21 sesiones, con origen futuro,
 puntuaciones frente a EWMA y cestas conjuntas de referencia. Las cohortes

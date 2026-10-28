@@ -1,6 +1,6 @@
 # Convenciones declaradas y reglas de revisión
 
-Actualizado para el motor 0.34.0. Una convención permite calcular escenarios
+Actualizado para el motor 0.35.0. Una convención permite calcular escenarios
 condicionales; **no acredita capacidad predictiva** ni se convierte en un
 estimador por aparecer en este registro. No se cambian reglas después de
 examinar un resultado para presentarlo como validación prospectiva.
@@ -32,7 +32,7 @@ Se distinguen cuatro categorías:
 | Ley de precios | Gaussiana condicional; GJR estimado con verosimilitud t | Cobertura, ES o puntuaciones peores que EWMA; error matemático en el centrado | Registro inmutable del núcleo exacto; una futura ley de precios debe tener momento exponencial finito y compensador correcto |
 | Estrés de colas | Student solo para riesgo: ν ajustado o ν=4 declarado en fallback | Dependencia conjunta o riesgo observado incompatibles; no es una ley de precio medio | VaR/ES y coexcedencias fuera de muestra, sin usar su media para elegir una cartera |
 | Márgenes de simulación | Presupuesto nominal 0,025 para mejoras y 0,025 para riesgo; correcciones por modelos y restricciones | Fallo de cobertura en replicaciones independientes o muestras de cola insuficientes | Contrastes pareados; probabilidades con cota KL y CVaR con aproximación de influencia. No son una garantía de confianza predictiva del 95% |
-| Rankings no resueltos | Menor rotación, luego menor cota de riesgo; conjunto finito | Mejoras robustas, más evidencia o insuficiente cobertura de candidatas | Mostrar rangos de peso, perturbaciones de datos/mandato y búsquedas nuevas; no congelar posiciones ni afirmar equivalencia estadística |
+| Desempate del objetivo robusto | Mayor utilidad en el peor modelo; menor rotación solo con pérdida de oportunidad acotada dentro de `minBenefit` (USD 100 por defecto) | Cotas o estabilidad incompatibles con el umbral económico; cambio del mandato | Comparaciones pareadas entre todas las parejas de modelos, con multiplicidad de candidatas; rangos no resueltos separados de empates económicos. No es validación predictiva |
 | Validación causal del núcleo | Origen dos sesiones observadas después del corte; 1/5/21 sesiones de retorno total | Publicación tardía, cambio material del núcleo o problemas de datos | Excluir el origen no prospectivo; separar cohortes. 20 orígenes no superpuestos y 500 observaciones solo habilitan revisión, sin promoción automática |
 
 El límite combinado de 20% para alto rendimiento/emergentes permanece.

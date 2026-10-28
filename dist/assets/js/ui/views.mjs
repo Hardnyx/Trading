@@ -7,7 +7,7 @@ import {
   resolveAssumptions,
   returnDecomposition,
   valuation,
-} from "../analytics.mjs?v=0.34.1";
+} from "../analytics.mjs?v=0.35.0";
 import {
   sparkline,
   portfolioChart,
@@ -16,7 +16,7 @@ import {
   scatter,
   forecastCone,
   histogram,
-} from "../charts.mjs?v=0.34.1";
+} from "../charts.mjs?v=0.35.0";
 import {
   esc,
   url,
@@ -27,16 +27,16 @@ import {
   color,
   dateLabel,
   timestampLabel,
-} from "./format.mjs?v=0.34.1";
-import { template } from "./templates.mjs?v=0.34.1";
-import { DEFAULT_COMPOSITION_RULES } from "../composer.mjs?v=0.34.1";
-import { factorModel } from "../factors.mjs?v=0.34.1";
-import { MODEL_VERSION, informationDate } from "../policy.mjs?v=0.34.1";
-import { fundamentalForecast } from "../research-model.mjs?v=0.34.1";
-import { financialFreshness } from '../financial-freshness.mjs?v=0.34.1';
-import { priceMonitor } from '../price-monitor.mjs?v=0.34.1';
+} from "./format.mjs?v=0.35.0";
+import { template } from "./templates.mjs?v=0.35.0";
+import { DEFAULT_COMPOSITION_RULES } from "../composer.mjs?v=0.35.0";
+import { factorModel } from "../factors.mjs?v=0.35.0";
+import { MODEL_VERSION, informationDate } from "../policy.mjs?v=0.35.0";
+import { fundamentalForecast } from "../research-model.mjs?v=0.35.0";
+import { financialFreshness } from '../financial-freshness.mjs?v=0.35.0';
+import { priceMonitor } from '../price-monitor.mjs?v=0.35.0';
 
-import { createDecisionViews } from "./decision-views.mjs?v=0.34.1";
+import { createDecisionViews } from "./decision-views.mjs?v=0.35.0";
 
 /**
  * Describes the process the Monte Carlo actually runs. Jumps and the GBM /
@@ -132,6 +132,7 @@ export function compositionStabilityNote(st){
   const tail='Selección experimental; depende de los supuestos y de una búsqueda limitada.';
   if(!st)return tail;
   const level={high:'alta',medium:'media',low:'baja'}[st.level];
+  if(st.method==='robust-finite-pool'&&st.selectionRule==='bounded-regret')return `Identificación de pesos ${level}: ${st.unresolved} alternativa${st.unresolved===1?'':'s'} sin superioridad resuelta en el peor caso del objetivo. Menor rotación solo con pérdida de oportunidad acotada a USD ${fmt(st.indifferenceDollars,0)}. No acredita un óptimo único ni capacidad predictiva.`;
   if(st.method==='robust-finite-pool')return `Identificación de pesos ${level}: ${st.unresolved} alternativa${st.unresolved===1?'':'s'} sin una superioridad resuelta en todos los modelos; solapamiento mínimo ${pct(st.minimumOverlap,0)}. Se favorecen menor rotación y riesgo. No acredita un óptimo único ni capacidad predictiva.`;
   const chosen=st.winners.find(w=>w.chosen);
   const peers=st.winners.filter(w=>!w.chosen&&w.equivalent);
@@ -1167,7 +1168,7 @@ export function createViews(context) {
         rows.push(['Efectivo',p.positions.find(r=>r.symbol==='CASH')?.weight||0]);
         return rows.filter(([,w])=>w>1e-8).map(([label,w])=>`${label} ${pct(w,1)}`).join(' · ');
       })(),
-      selectionSummary:`Objetivo: ${{growth:'crecimiento logarítmico',preservation:'preservación',target:'capital objetivo'}[p.mandate?.objective]||'según mandato'}. `+
+      selectionSummary:`Objetivo: ${{growth:'crecimiento logarítmico',preservation:'preservación',target:'capital objetivo'}[p.mandate?.objective]||'según mandato'} en el peor modelo declarado (incluye prima accionaria e IC cero). `+
         (p.diagnostics?.selected?.nearLimits?.length
           ? 'Topes próximos: '+p.diagnostics.selected.nearLimits.slice(0,3)
               .map(r=>`${r.name} ${pct(r.observed,0)} / ${pct(r.limit,0)}`).join(' · ')
@@ -1181,7 +1182,9 @@ export function createViews(context) {
         :'',
       cashAuditSummary:(()=>{
         const selection=p.diagnostics?.reliableSelection;
-        if(selection)return `${selection.discovered} candidatas descubiertas, ${selection.finalists} finalistas contrastadas en cinco modelos y estrés de colas. Una transición llega a confirmación independiente. El efectivo procede de esa selección, con reserva mínima ${pct(p.diagnostics.cashAllocation?.requiredCash,1)}; no es un óptimo global.`;
+        if(selection)return `${selection.discovered} candidatas descubiertas, ${selection.finalists} finalistas contrastadas en cinco modelos y estrés de colas. Una transición llega a confirmación independiente. `+
+          (selection.selectedRegret?`Cota MC de pérdida de oportunidad por el desempate USD ${fmt(selection.selectedRegret.upperGain,0)}, frente al umbral USD ${fmt(selection.indifferenceDollars,0)}. `:'')+
+          `Reserva mínima ${pct(p.diagnostics.cashAllocation?.requiredCash,1)}; no es un óptimo global.`;
         const a=p.diagnostics?.cashAllocation;
         return a?`${a.evaluated} reasignaciones evaluadas; ${a.structurallyBlocked} bloqueadas por los topes. `+
           `Efectivo antes de la revisión ${pct(a.initialCashWeight,1)}; después ${pct(a.cashWeight,1)}. `+

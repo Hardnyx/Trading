@@ -1,9 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { pairedDecisionEvidence, reviewRobustDecision, tailStressInputs } from '../dist/assets/js/robust-decision.mjs?v=0.34.1';
-import {generatePaths,evaluatePaths} from '../dist/assets/js/path-model.mjs?v=0.34.1';
-import { prepareComposition, finalizeCompositionDecision } from '../dist/assets/js/composer.mjs?v=0.34.1';
-import { DEFAULT_MANDATE } from '../dist/assets/js/policy.mjs?v=0.34.1';
+import { pairedDecisionEvidence, reviewRobustDecision, tailStressInputs } from '../dist/assets/js/robust-decision.mjs?v=0.35.0';
+import {generatePaths,evaluatePaths} from '../dist/assets/js/path-model.mjs?v=0.35.0';
+import { prepareComposition, finalizeCompositionDecision } from '../dist/assets/js/composer.mjs?v=0.35.0';
+import { DEFAULT_MANDATE } from '../dist/assets/js/policy.mjs?v=0.35.0';
 
 test('decision evidence uses the mandate utility rather than a log-return shortcut', () => {
   const growth = { ...DEFAULT_MANDATE };

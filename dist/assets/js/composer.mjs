@@ -4,19 +4,19 @@ import {
   mean,
   quantile,
   normalizeWeights,
-} from "./analytics.mjs?v=0.34.1";
-import { seededRandom } from "./random.mjs?v=0.34.1";
-import { portfolioAttribution } from "./attribution.mjs?v=0.34.1";
-import { selectReliableCandidate } from "./reliable-selection.mjs?v=0.34.1";
-import { riskSamplingEvidence } from "./simulation-evidence.mjs?v=0.34.1";
-import { reviewRobustDecision, DECISION_MODEL_LABELS, DECISION_EXPERIMENT_SEEDS } from "./robust-decision.mjs?v=0.34.1";
+} from "./analytics.mjs?v=0.35.0";
+import { seededRandom } from "./random.mjs?v=0.35.0";
+import { portfolioAttribution } from "./attribution.mjs?v=0.35.0";
+import { selectReliableCandidate } from "./reliable-selection.mjs?v=0.35.0";
+import { riskSamplingEvidence } from "./simulation-evidence.mjs?v=0.35.0";
+import { reviewRobustDecision, DECISION_MODEL_LABELS, DECISION_EXPERIMENT_SEEDS } from "./robust-decision.mjs?v=0.35.0";
 import {
   preparePaths,
   generatePaths,
   evaluatePaths,
   marginalRisk,
   centeredRegimeConditions,
-} from "./path-model.mjs?v=0.34.1";
+} from "./path-model.mjs?v=0.35.0";
 import {
   withCashAsset,
   mandate,
@@ -27,12 +27,12 @@ import {
   effectiveRegimes,
   DEFAULT_REGIMES,
   MODEL_VERSION,
-} from "./policy.mjs?v=0.34.1";
-import { buildReturnAnchors, constituentForecasts, holdingsAnchor, valuationAnchor } from "./return-model.mjs?v=0.34.1";
-import { assetAt, fundamentalForecast, bondAssumptions } from "./research-model.mjs?v=0.34.1";
-import { selectCompositionUniverse } from "./universe.mjs?v=0.34.1";
-import { factorizeStressedCovariance } from "./factor-covariance.mjs?v=0.34.1";
-import { economicClass, outsideUS, exposureReport, rawCorrelation, qualifiedOpportunity, holdingsOverlap, knownFundOverlap } from "./economic-exposure.mjs?v=0.34.1";
+} from "./policy.mjs?v=0.35.0";
+import { buildReturnAnchors, constituentForecasts, holdingsAnchor, valuationAnchor } from "./return-model.mjs?v=0.35.0";
+import { assetAt, fundamentalForecast, bondAssumptions } from "./research-model.mjs?v=0.35.0";
+import { selectCompositionUniverse } from "./universe.mjs?v=0.35.0";
+import { factorizeStressedCovariance } from "./factor-covariance.mjs?v=0.35.0";
+import { economicClass, outsideUS, exposureReport, rawCorrelation, qualifiedOpportunity, holdingsOverlap, knownFundOverlap } from "./economic-exposure.mjs?v=0.35.0";
 
 export const DEFAULT_COMPOSITION_RULES = {
   maxPosition: 0.2,

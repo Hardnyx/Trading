@@ -2,7 +2,7 @@
 
 Research, composición y seguimiento de una cartera personal de acciones y ETFs de Estados Unidos.
 
-**Motor 0.34.1.** Se corrigen artefactos de Monte Carlo y la correspondencia entre anclas y ley de precios. La selección compara un conjunto finito en cinco modelos económicos, confirma una única candidata en escenarios separados y añade margen por error de simulación y un estrés de colas. Se informa cuándo los pesos quedan sin identificar. Comienza la validación prospectiva del simulador exacto a 1/5/21 sesiones, con origen futuro y referencia EWMA. La capacidad predictiva y la ventaja económica siguen sin acreditar. Véanse [los criterios de confianza](docs/criterios-confianza.md), [el estado vigente](docs/estado-validacion.md) y [los pendientes](docs/pendientes.md).
+**Motor 0.35.0.** El objetivo del mandato se optimiza en el peor modelo declarado. El desempate por rotación exige acotar la pérdida económica frente a la mejor candidata; incertidumbre no significa equivalencia. Se conserva confirmación independiente y límites de riesgo. Un contraste histórico del fallback con precios anteriores a cada origen no demuestra superioridad frente a EWMA sencillo y no valida el CVaR anual. La predicción y la ventaja económica siguen sin acreditar. Véanse [la auditoría](docs/auditoria-decision-riesgo-0.35.md), [los criterios de confianza](docs/criterios-confianza.md) y [el estado vigente](docs/estado-validacion.md).
 
 [Abrir aplicación](https://hardnyx.github.io/Trading/)
 

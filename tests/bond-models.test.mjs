@@ -1,9 +1,9 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { bondAssumptions, CREDIT_CONVENTIONS } from "../dist/assets/js/research-model.mjs?v=0.34.1";
-import { bondRegimeShift, bondScenarioAnnualReturn } from "../dist/assets/js/return-model.mjs?v=0.34.1";
-import { regimeCondition, centeredRegimeConditions } from "../dist/assets/js/path-model.mjs?v=0.34.1";
-import { regimes, DEFAULT_REGIMES } from "../dist/assets/js/policy.mjs?v=0.34.1";
+import { bondAssumptions, CREDIT_CONVENTIONS } from "../dist/assets/js/research-model.mjs?v=0.35.0";
+import { bondRegimeShift, bondScenarioAnnualReturn } from "../dist/assets/js/return-model.mjs?v=0.35.0";
+import { regimeCondition, centeredRegimeConditions } from "../dist/assets/js/path-model.mjs?v=0.35.0";
+import { regimes, DEFAULT_REGIMES } from "../dist/assets/js/policy.mjs?v=0.35.0";
 
 const near = (a, b, tolerance = 1e-12) => assert.ok(Math.abs(a - b) <= tolerance, `${a} != ${b}`);
 const settings = { asOf: "2026-10-27", informationAsOf: "2026-10-27", yieldCurve: { DGS3MO: 4.22, T10YIE: 2.35 } };
@@ -47,7 +47,7 @@ test("TIP earns real yield plus breakeven; scenarios move the real yield and acc
 });
 
 test("international equity funds take an earnings-yield anchor from a dated issuer P/E", async () => {
-  const { valuationAnchor, buildReturnAnchors } = await import("../dist/assets/js/return-model.mjs?v=0.34.1");
+  const { valuationAnchor, buildReturnAnchors } = await import("../dist/assets/js/return-model.mjs?v=0.35.0");
   const efa = { symbol: "EFA", type: "etf", price_date: "2026-10-27", history: [],
     equity_valuation: { priceEarnings: 20, date: "2026-10-26", observed_at: "2026-10-27T00:10:00Z", expenseRatio: .0032 } };
   const a = valuationAnchor(efa, settings);
@@ -72,7 +72,7 @@ test("international equity funds take an earnings-yield anchor from a dated issu
 });
 
 test("observations are dated on the New York calendar of the information cut", async () => {
-  const { observationDate, observedBy } = await import("../dist/assets/js/observation.mjs?v=0.34.1");
+  const { observationDate, observedBy } = await import("../dist/assets/js/observation.mjs?v=0.35.0");
   assert.equal(observationDate("2026-10-28T00:12:18.56+00:00"), "2026-10-27");
   assert.equal(observationDate("2026-10-27T13:00:00Z"), "2026-10-27");
   assert.equal(observationDate("2026-01-15T04:59:00Z"), "2026-01-14"); // EST, UTC-5
@@ -83,7 +83,7 @@ test("observations are dated on the New York calendar of the information cut", a
 });
 
 test("in a market jump credit spreads widen with each fund's spread beta", async () => {
-  const { jumpParameters } = await import("../dist/assets/js/path-model.mjs?v=0.34.1");
+  const { jumpParameters } = await import("../dist/assets/js/path-model.mjs?v=0.35.0");
   const recession = regimes(DEFAULT_REGIMES).find((r) => r.id === "recession");
   const options = { jumpMean: -0.12, jumpVol: 0.08 };
   const jump = (bond) => jumpParameters({ symbol: "B", type: "etf" }, { bond }, options, recession).mean;

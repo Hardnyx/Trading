@@ -1,0 +1,1663 @@
+{
+ "engine": "0.34.1",
+ "method": "frozen-candidate-policy-attribution-v1",
+ "paths": 3000,
+ "seed": 682365817,
+ "source_market_sha256": "14d9208e903fb57f8485b64e671fa0db88ea590afdc45dcf1c6ba737f3260a61",
+ "source_pool_sha256": "e5baa4b940b9dfcb11a044277c0c8f43958b012477e36d423550304cde22466f",
+ "market_collected_at": "2026-10-28T12:27:53.076354+00:00",
+ "price_cut": "2026-10-27",
+ "selected": {
+  "positions": [
+   {
+    "symbol": "SGOV",
+    "weight": 0.35
+   },
+   {
+    "symbol": "CASH",
+    "weight": 0.05
+   },
+   {
+    "symbol": "IGSB",
+    "weight": 0.35
+   },
+   {
+    "symbol": "SHV",
+    "weight": 0.25
+   }
+  ],
+  "selected": true,
+  "worstCertaintyEquivalent": 103976.09556986933,
+  "maximumRiskInSelection": 0.003134547751433936,
+  "turnover": 0.9498077072051546,
+  "models": [
+   {
+    "id": "original",
+    "score": 0.0398007688088991,
+    "certaintyEquivalent": 104060.34328772496,
+    "cvar95": 0
+   },
+   {
+    "id": "no_rerating",
+    "score": 0.0398007688088991,
+    "certaintyEquivalent": 104060.34328772496,
+    "cvar95": 0
+   },
+   {
+    "id": "margin_stress",
+    "score": 0.03899083644393704,
+    "certaintyEquivalent": 103976.09556986933,
+    "cvar95": 0
+   },
+   {
+    "id": "combined",
+    "score": 0.03899083644393704,
+    "certaintyEquivalent": 103976.09556986933,
+    "cvar95": 0
+   },
+   {
+    "id": "low_conviction",
+    "score": 0.03899083644393704,
+    "certaintyEquivalent": 103976.09556986933,
+    "cvar95": 0
+   }
+  ]
+ },
+ "worstObjectiveLeader": {
+  "positions": [
+   {
+    "symbol": "SHY",
+    "weight": 0.35
+   },
+   {
+    "symbol": "CASH",
+    "weight": 0.05
+   },
+   {
+    "symbol": "IGSB",
+    "weight": 0.35
+   },
+   {
+    "symbol": "SHV",
+    "weight": 0.25
+   }
+  ],
+  "selected": false,
+  "worstCertaintyEquivalent": 104181.99812407333,
+  "maximumRiskInSelection": 0.004782527902583907,
+  "turnover": 0.9498077072051546,
+  "models": [
+   {
+    "id": "original",
+    "score": 0.04177054696701906,
+    "certaintyEquivalent": 104265.52109009515,
+    "cvar95": 0
+   },
+   {
+    "id": "no_rerating",
+    "score": 0.04177054696701906,
+    "certaintyEquivalent": 104265.52109009515,
+    "cvar95": 0
+   },
+   {
+    "id": "margin_stress",
+    "score": 0.040969165681152594,
+    "certaintyEquivalent": 104181.99812407333,
+    "cvar95": 0
+   },
+   {
+    "id": "combined",
+    "score": 0.040969165681152594,
+    "certaintyEquivalent": 104181.99812407333,
+    "cvar95": 0
+   },
+   {
+    "id": "low_conviction",
+    "score": 0.040969165681152594,
+    "certaintyEquivalent": 104181.99812407333,
+    "cvar95": 0
+   }
+  ]
+ },
+ "worstObjectiveCertaintyEquivalentGap": 205.90255420400354,
+ "worstObjectiveLowerUtilityGain": 0.001409928962724468,
+ "crossModelPairedComparisons": [
+  [
+   {
+    "leaderModel": "original",
+    "selectedModel": "original",
+    "lowerUtilityGain": 0.0014027380427194967,
+    "meanUtilityGain": 0.001969778158119995,
+    "standardError": 0.00012846881382100255,
+    "z": 4.4138347551847374,
+    "familySize": 425,
+    "alpha": 0.025,
+    "paths": 3000,
+    "gain": 205.17780237019178,
+    "lowerGain": 146.07182857180305
+   },
+   {
+    "leaderModel": "original",
+    "selectedModel": "no_rerating",
+    "lowerUtilityGain": 0.0014027380427194967,
+    "meanUtilityGain": 0.001969778158119995,
+    "standardError": 0.00012846881382100255,
+    "z": 4.4138347551847374,
+    "familySize": 425,
+    "alpha": 0.025,
+    "paths": 3000,
+    "gain": 205.17780237019178,
+    "lowerGain": 146.07182857180305
+   },
+   {
+    "leaderModel": "original",
+    "selectedModel": "margin_stress",
+    "lowerUtilityGain": 0.0021106441976909535,
+    "meanUtilityGain": 0.0027797105230819292,
+    "standardError": 0.00015158390889125447,
+    "z": 4.4138347551847374,
+    "familySize": 425,
+    "alpha": 0.025,
+    "paths": 3000,
+    "gain": 289.42552022582095,
+    "lowerGain": 219.68830317836546
+   },
+   {
+    "leaderModel": "original",
+    "selectedModel": "combined",
+    "lowerUtilityGain": 0.0021106441976909535,
+    "meanUtilityGain": 0.0027797105230819292,
+    "standardError": 0.00015158390889125447,
+    "z": 4.4138347551847374,
+    "familySize": 425,
+    "alpha": 0.025,
+    "paths": 3000,
+    "gain": 289.42552022582095,
+    "lowerGain": 219.68830317836546
+   },
+   {
+    "leaderModel": "original",
+    "selectedModel": "low_conviction",
+    "lowerUtilityGain": 0.0021106441976909535,
+    "meanUtilityGain": 0.0027797105230819292,
+    "standardError": 0.00015158390889125447,
+    "z": 4.4138347551847374,
+    "familySize": 425,
+    "alpha": 0.025,
+    "paths": 3000,
+    "gain": 289.42552022582095,
+    "lowerGain": 219.68830317836546
+   }
+  ],
+  [
+   {
+    "leaderModel": "no_rerating",
+    "selectedModel": "original",
+    "lowerUtilityGain": 0.0014027380427194967,
+    "meanUtilityGain": 0.001969778158119995,
+    "standardError": 0.00012846881382100255,
+    "z": 4.4138347551847374,
+    "familySize": 425,
+    "alpha": 0.025,
+    "paths": 3000,
+    "gain": 205.17780237019178,
+    "lowerGain": 146.07182857180305
+   },
+   {
+    "leaderModel": "no_rerating",
+    "selectedModel": "no_rerating",
+    "lowerUtilityGain": 0.0014027380427194967,
+    "meanUtilityGain": 0.001969778158119995,
+    "standardError": 0.00012846881382100255,
+    "z": 4.4138347551847374,
+    "familySize": 425,
+    "alpha": 0.025,
+    "paths": 3000,
+    "gain": 205.17780237019178,
+    "lowerGain": 146.07182857180305
+   },
+   {
+    "leaderModel": "no_rerating",
+    "selectedModel": "margin_stress",
+    "lowerUtilityGain": 0.0021106441976909535,
+    "meanUtilityGain": 0.0027797105230819292,
+    "standardError": 0.00015158390889125447,
+    "z": 4.4138347551847374,
+    "familySize": 425,
+    "alpha": 0.025,
+    "paths": 3000,
+    "gain": 289.42552022582095,
+    "lowerGain": 219.68830317836546
+   },
+   {
+    "leaderModel": "no_rerating",
+    "selectedModel": "combined",
+    "lowerUtilityGain": 0.0021106441976909535,
+    "meanUtilityGain": 0.0027797105230819292,
+    "standardError": 0.00015158390889125447,
+    "z": 4.4138347551847374,
+    "familySize": 425,
+    "alpha": 0.025,
+    "paths": 3000,
+    "gain": 289.42552022582095,
+    "lowerGain": 219.68830317836546
+   },
+   {
+    "leaderModel": "no_rerating",
+    "selectedModel": "low_conviction",
+    "lowerUtilityGain": 0.0021106441976909535,
+    "meanUtilityGain": 0.0027797105230819292,
+    "standardError": 0.00015158390889125447,
+    "z": 4.4138347551847374,
+    "familySize": 425,
+    "alpha": 0.025,
+    "paths": 3000,
+    "gain": 289.42552022582095,
+    "lowerGain": 219.68830317836546
+   }
+  ],
+  [
+   {
+    "leaderModel": "margin_stress",
+    "selectedModel": "original",
+    "lowerUtilityGain": 0.0006518946003080676,
+    "meanUtilityGain": 0.0011683968722534938,
+    "standardError": 0.00011701894171246754,
+    "z": 4.4138347551847374,
+    "familySize": 425,
+    "alpha": 0.025,
+    "paths": 3000,
+    "gain": 121.65483634837437,
+    "lowerGain": 67.85849178454373
+   },
+   {
+    "leaderModel": "margin_stress",
+    "selectedModel": "no_rerating",
+    "lowerUtilityGain": 0.0006518946003080676,
+    "meanUtilityGain": 0.0011683968722534938,
+    "standardError": 0.00011701894171246754,
+    "z": 4.4138347551847374,
+    "familySize": 425,
+    "alpha": 0.025,
+    "paths": 3000,
+    "gain": 121.65483634837437,
+    "lowerGain": 67.85849178454373
+   },
+   {
+    "leaderModel": "margin_stress",
+    "selectedModel": "margin_stress",
+    "lowerUtilityGain": 0.001409928962724468,
+    "meanUtilityGain": 0.0019783292372154257,
+    "standardError": 0.00012877697195693222,
+    "z": 4.4138347551847374,
+    "familySize": 425,
+    "alpha": 0.025,
+    "paths": 3000,
+    "gain": 205.90255420398898,
+    "lowerGain": 146.70230418629944
+   },
+   {
+    "leaderModel": "margin_stress",
+    "selectedModel": "combined",
+    "lowerUtilityGain": 0.001409928962724468,
+    "meanUtilityGain": 0.0019783292372154257,
+    "standardError": 0.00012877697195693222,
+    "z": 4.4138347551847374,
+    "familySize": 425,
+    "alpha": 0.025,
+    "paths": 3000,
+    "gain": 205.90255420398898,
+    "lowerGain": 146.70230418629944
+   },
+   {
+    "leaderModel": "margin_stress",
+    "selectedModel": "low_conviction",
+    "lowerUtilityGain": 0.001409928962724468,
+    "meanUtilityGain": 0.0019783292372154257,
+    "standardError": 0.00012877697195693222,
+    "z": 4.4138347551847374,
+    "familySize": 425,
+    "alpha": 0.025,
+    "paths": 3000,
+    "gain": 205.90255420398898,
+    "lowerGain": 146.70230418629944
+   }
+  ],
+  [
+   {
+    "leaderModel": "combined",
+    "selectedModel": "original",
+    "lowerUtilityGain": 0.0006518946003080676,
+    "meanUtilityGain": 0.0011683968722534938,
+    "standardError": 0.00011701894171246754,
+    "z": 4.4138347551847374,
+    "familySize": 425,
+    "alpha": 0.025,
+    "paths": 3000,
+    "gain": 121.65483634837437,
+    "lowerGain": 67.85849178454373
+   },
+   {
+    "leaderModel": "combined",
+    "selectedModel": "no_rerating",
+    "lowerUtilityGain": 0.0006518946003080676,
+    "meanUtilityGain": 0.0011683968722534938,
+    "standardError": 0.00011701894171246754,
+    "z": 4.4138347551847374,
+    "familySize": 425,
+    "alpha": 0.025,
+    "paths": 3000,
+    "gain": 121.65483634837437,
+    "lowerGain": 67.85849178454373
+   },
+   {
+    "leaderModel": "combined",
+    "selectedModel": "margin_stress",
+    "lowerUtilityGain": 0.001409928962724468,
+    "meanUtilityGain": 0.0019783292372154257,
+    "standardError": 0.00012877697195693222,
+    "z": 4.4138347551847374,
+    "familySize": 425,
+    "alpha": 0.025,
+    "paths": 3000,
+    "gain": 205.90255420398898,
+    "lowerGain": 146.70230418629944
+   },
+   {
+    "leaderModel": "combined",
+    "selectedModel": "combined",
+    "lowerUtilityGain": 0.001409928962724468,
+    "meanUtilityGain": 0.0019783292372154257,
+    "standardError": 0.00012877697195693222,
+    "z": 4.4138347551847374,
+    "familySize": 425,
+    "alpha": 0.025,
+    "paths": 3000,
+    "gain": 205.90255420398898,
+    "lowerGain": 146.70230418629944
+   },
+   {
+    "leaderModel": "combined",
+    "selectedModel": "low_conviction",
+    "lowerUtilityGain": 0.001409928962724468,
+    "meanUtilityGain": 0.0019783292372154257,
+    "standardError": 0.00012877697195693222,
+    "z": 4.4138347551847374,
+    "familySize": 425,
+    "alpha": 0.025,
+    "paths": 3000,
+    "gain": 205.90255420398898,
+    "lowerGain": 146.70230418629944
+   }
+  ],
+  [
+   {
+    "leaderModel": "low_conviction",
+    "selectedModel": "original",
+    "lowerUtilityGain": 0.0006518946003080676,
+    "meanUtilityGain": 0.0011683968722534938,
+    "standardError": 0.00011701894171246754,
+    "z": 4.4138347551847374,
+    "familySize": 425,
+    "alpha": 0.025,
+    "paths": 3000,
+    "gain": 121.65483634837437,
+    "lowerGain": 67.85849178454373
+   },
+   {
+    "leaderModel": "low_conviction",
+    "selectedModel": "no_rerating",
+    "lowerUtilityGain": 0.0006518946003080676,
+    "meanUtilityGain": 0.0011683968722534938,
+    "standardError": 0.00011701894171246754,
+    "z": 4.4138347551847374,
+    "familySize": 425,
+    "alpha": 0.025,
+    "paths": 3000,
+    "gain": 121.65483634837437,
+    "lowerGain": 67.85849178454373
+   },
+   {
+    "leaderModel": "low_conviction",
+    "selectedModel": "margin_stress",
+    "lowerUtilityGain": 0.001409928962724468,
+    "meanUtilityGain": 0.0019783292372154257,
+    "standardError": 0.00012877697195693222,
+    "z": 4.4138347551847374,
+    "familySize": 425,
+    "alpha": 0.025,
+    "paths": 3000,
+    "gain": 205.90255420398898,
+    "lowerGain": 146.70230418629944
+   },
+   {
+    "leaderModel": "low_conviction",
+    "selectedModel": "combined",
+    "lowerUtilityGain": 0.001409928962724468,
+    "meanUtilityGain": 0.0019783292372154257,
+    "standardError": 0.00012877697195693222,
+    "z": 4.4138347551847374,
+    "familySize": 425,
+    "alpha": 0.025,
+    "paths": 3000,
+    "gain": 205.90255420398898,
+    "lowerGain": 146.70230418629944
+   },
+   {
+    "leaderModel": "low_conviction",
+    "selectedModel": "low_conviction",
+    "lowerUtilityGain": 0.001409928962724468,
+    "meanUtilityGain": 0.0019783292372154257,
+    "standardError": 0.00012877697195693222,
+    "z": 4.4138347551847374,
+    "familySize": 425,
+    "alpha": 0.025,
+    "paths": 3000,
+    "gain": 205.90255420398898,
+    "lowerGain": 146.70230418629944
+   }
+  ]
+ ],
+ "candidates": [
+  {
+   "positions": [
+    {
+     "symbol": "VTI",
+     "weight": 0.1
+    },
+    {
+     "symbol": "AGG",
+     "weight": 0.1
+    },
+    {
+     "symbol": "SGOV",
+     "weight": 0.25
+    },
+    {
+     "symbol": "LQD",
+     "weight": 0.15
+    },
+    {
+     "symbol": "CASH",
+     "weight": 0.05
+    },
+    {
+     "symbol": "ORCL",
+     "weight": 0.05
+    },
+    {
+     "symbol": "META",
+     "weight": 0.15
+    },
+    {
+     "symbol": "MDT",
+     "weight": 0.15
+    }
+   ],
+   "selected": false,
+   "worstCertaintyEquivalent": 103511.97779215855,
+   "maximumRiskInSelection": 0.16464876235125875,
+   "turnover": 0.9498077072051547,
+   "models": [
+    {
+     "id": "original",
+     "score": 0.04608860808355449,
+     "certaintyEquivalent": 104716.71943244485,
+     "cvar95": 0.13921435696577356
+    },
+    {
+     "id": "no_rerating",
+     "score": 0.04546426063093509,
+     "certaintyEquivalent": 104651.36022097227,
+     "cvar95": 0.13956993257409656
+    },
+    {
+     "id": "margin_stress",
+     "score": 0.04519569237161454,
+     "certaintyEquivalent": 104623.25796117862,
+     "cvar95": 0.1418787272499083
+    },
+    {
+     "id": "combined",
+     "score": 0.041136953179575844,
+     "certaintyEquivalent": 104199.48002750073,
+     "cvar95": 0.1443420654155786
+    },
+    {
+     "id": "low_conviction",
+     "score": 0.034517147481895424,
+     "certaintyEquivalent": 103511.97779215855,
+     "cvar95": 0.14989721821625576
+    }
+   ]
+  },
+  {
+   "positions": [
+    {
+     "symbol": "SHY",
+     "weight": 0.2
+    },
+    {
+     "symbol": "LQD",
+     "weight": 0.2
+    },
+    {
+     "symbol": "CASH",
+     "weight": 0.05
+    },
+    {
+     "symbol": "TIP",
+     "weight": 0.1
+    },
+    {
+     "symbol": "ORCL",
+     "weight": 0.1
+    },
+    {
+     "symbol": "META",
+     "weight": 0.15
+    },
+    {
+     "symbol": "TGT",
+     "weight": 0.15
+    },
+    {
+     "symbol": "VIG",
+     "weight": 0.05
+    }
+   ],
+   "selected": false,
+   "worstCertaintyEquivalent": 103464.81028163366,
+   "maximumRiskInSelection": 0.1942216163667368,
+   "turnover": 0.9498077072051547,
+   "models": [
+    {
+     "id": "original",
+     "score": 0.04858583471442583,
+     "certaintyEquivalent": 104978.54759897769,
+     "cvar95": 0.16068312231052884
+    },
+    {
+     "id": "no_rerating",
+     "score": 0.046766427662317936,
+     "certaintyEquivalent": 104787.72253602846,
+     "cvar95": 0.16171437585075552
+    },
+    {
+     "id": "margin_stress",
+     "score": 0.047341108461207294,
+     "certaintyEquivalent": 104847.95933493732,
+     "cvar95": 0.16358473708394142
+    },
+    {
+     "id": "combined",
+     "score": 0.04026539789822012,
+     "certaintyEquivalent": 104108.70398428435,
+     "cvar95": 0.1678227953060537
+    },
+    {
+     "id": "low_conviction",
+     "score": 0.03406137162625143,
+     "certaintyEquivalent": 103464.81028163366,
+     "cvar95": 0.1730140114177681
+    }
+   ]
+  },
+  {
+   "positions": [
+    {
+     "symbol": "SHY",
+     "weight": 0.15
+    },
+    {
+     "symbol": "CASH",
+     "weight": 0.65
+    },
+    {
+     "symbol": "SHV",
+     "weight": 0.2
+    }
+   ],
+   "selected": false,
+   "worstCertaintyEquivalent": 101441.25310366158,
+   "maximumRiskInSelection": 0.0010096732072541745,
+   "turnover": 0.35002362127964853,
+   "models": [
+    {
+     "id": "original",
+     "score": 0.014309657775762881,
+     "certaintyEquivalent": 101441.25310366158,
+     "cvar95": 0
+    },
+    {
+     "id": "no_rerating",
+     "score": 0.014309657775762881,
+     "certaintyEquivalent": 101441.25310366158,
+     "cvar95": 0
+    },
+    {
+     "id": "margin_stress",
+     "score": 0.014309657775762881,
+     "certaintyEquivalent": 101441.25310366158,
+     "cvar95": 0
+    },
+    {
+     "id": "combined",
+     "score": 0.014309657775762881,
+     "certaintyEquivalent": 101441.25310366158,
+     "cvar95": 0
+    },
+    {
+     "id": "low_conviction",
+     "score": 0.014309657775762881,
+     "certaintyEquivalent": 101441.25310366158,
+     "cvar95": 0
+    }
+   ]
+  },
+  {
+   "positions": [
+    {
+     "symbol": "IEF",
+     "weight": 0.15
+    },
+    {
+     "symbol": "LQD",
+     "weight": 0.15
+    },
+    {
+     "symbol": "HYG",
+     "weight": 0.15
+    },
+    {
+     "symbol": "CASH",
+     "weight": 0.05
+    },
+    {
+     "symbol": "TIP",
+     "weight": 0.2
+    },
+    {
+     "symbol": "META",
+     "weight": 0.15
+    },
+    {
+     "symbol": "VUG",
+     "weight": 0.15
+    }
+   ],
+   "selected": false,
+   "worstCertaintyEquivalent": 103639.48461006385,
+   "maximumRiskInSelection": 0.14440099094034856,
+   "turnover": 0.9498077072051545,
+   "models": [
+    {
+     "id": "original",
+     "score": 0.047034311755732625,
+     "certaintyEquivalent": 104815.79726029915,
+     "cvar95": 0.11939008757294967
+    },
+    {
+     "id": "no_rerating",
+     "score": 0.0464599583148811,
+     "certaintyEquivalent": 104755.61323159355,
+     "cvar95": 0.11936093516601422
+    },
+    {
+     "id": "margin_stress",
+     "score": 0.04329252795486504,
+     "certaintyEquivalent": 104424.33205385972,
+     "cvar95": 0.1253330764260904
+    },
+    {
+     "id": "combined",
+     "score": 0.03943459429115234,
+     "certaintyEquivalent": 104022.24601725551,
+     "cvar95": 0.1271579372848939
+    },
+    {
+     "id": "low_conviction",
+     "score": 0.035748196807152924,
+     "certaintyEquivalent": 103639.48461006385,
+     "cvar95": 0.1299664086830235
+    }
+   ]
+  },
+  {
+   "positions": [
+    {
+     "symbol": "SPY",
+     "weight": 0.05
+    },
+    {
+     "symbol": "TLT",
+     "weight": 0.1
+    },
+    {
+     "symbol": "VTI",
+     "weight": 0.25
+    },
+    {
+     "symbol": "CASH",
+     "weight": 0.05
+    },
+    {
+     "symbol": "SHV",
+     "weight": 0.35
+    },
+    {
+     "symbol": "ORCL",
+     "weight": 0.05
+    },
+    {
+     "symbol": "META",
+     "weight": 0.1
+    },
+    {
+     "symbol": "MDT",
+     "weight": 0.05
+    }
+   ],
+   "selected": false,
+   "worstCertaintyEquivalent": 103385.4399522609,
+   "maximumRiskInSelection": 0.16561852041292274,
+   "turnover": 0.949807707205155,
+   "models": [
+    {
+     "id": "original",
+     "score": 0.04530325446415377,
+     "certaintyEquivalent": 104634.51206297972,
+     "cvar95": 0.1449999517130746
+    },
+    {
+     "id": "no_rerating",
+     "score": 0.04471122245545341,
+     "certaintyEquivalent": 104572.58341630307,
+     "cvar95": 0.1452283422460738
+    },
+    {
+     "id": "margin_stress",
+     "score": 0.04493040180397793,
+     "certaintyEquivalent": 104595.50607900514,
+     "cvar95": 0.1452509937135443
+    },
+    {
+     "id": "combined",
+     "score": 0.04156809918510532,
+     "certaintyEquivalent": 104244.41490314282,
+     "cvar95": 0.14713912164057077
+    },
+    {
+     "id": "low_conviction",
+     "score": 0.03329395333037481,
+     "certaintyEquivalent": 103385.4399522609,
+     "cvar95": 0.15339265249284226
+    }
+   ]
+  },
+  {
+   "positions": [
+    {
+     "symbol": "SPY",
+     "weight": 0.05
+    },
+    {
+     "symbol": "AGG",
+     "weight": 0.35
+    },
+    {
+     "symbol": "LQD",
+     "weight": 0.05
+    },
+    {
+     "symbol": "CASH",
+     "weight": 0.05
+    },
+    {
+     "symbol": "IGSB",
+     "weight": 0.05
+    },
+    {
+     "symbol": "ORCL",
+     "weight": 0.1
+    },
+    {
+     "symbol": "MSFT",
+     "weight": 0.1
+    },
+    {
+     "symbol": "XLE",
+     "weight": 0.25
+    }
+   ],
+   "selected": false,
+   "worstCertaintyEquivalent": 103812.04759042658,
+   "maximumRiskInSelection": 0.1668607617439263,
+   "turnover": 0.9498077072051548,
+   "models": [
+    {
+     "id": "original",
+     "score": 0.047775287349196324,
+     "certaintyEquivalent": 104893.4919892726,
+     "cvar95": 0.1427280616581566
+    },
+    {
+     "id": "no_rerating",
+     "score": 0.04684581640998965,
+     "certaintyEquivalent": 104796.04183231686,
+     "cvar95": 0.14310020119819666
+    },
+    {
+     "id": "margin_stress",
+     "score": 0.046611437885311864,
+     "certaintyEquivalent": 104771.48276881108,
+     "cvar95": 0.1446737061622379
+    },
+    {
+     "id": "combined",
+     "score": 0.0418459402513245,
+     "certaintyEquivalent": 104273.38230650769,
+     "cvar95": 0.14754495836161993
+    },
+    {
+     "id": "low_conviction",
+     "score": 0.03741184342699517,
+     "certaintyEquivalent": 103812.04759042658,
+     "cvar95": 0.15221744054244687
+    }
+   ]
+  },
+  {
+   "positions": [
+    {
+     "symbol": "AGG",
+     "weight": 0.35
+    },
+    {
+     "symbol": "LQD",
+     "weight": 0.05
+    },
+    {
+     "symbol": "CASH",
+     "weight": 0.05
+    },
+    {
+     "symbol": "IGSB",
+     "weight": 0.05
+    },
+    {
+     "symbol": "SHV",
+     "weight": 0.05
+    },
+    {
+     "symbol": "ORCL",
+     "weight": 0.1
+    },
+    {
+     "symbol": "MSFT",
+     "weight": 0.1
+    },
+    {
+     "symbol": "XLE",
+     "weight": 0.25
+    }
+   ],
+   "selected": false,
+   "worstCertaintyEquivalent": 103863.1715122604,
+   "maximumRiskInSelection": 0.15776801180928562,
+   "turnover": 0.9498077072051548,
+   "models": [
+    {
+     "id": "original",
+     "score": 0.047366793722034034,
+     "certaintyEquivalent": 104850.65241670609,
+     "cvar95": 0.134108182101156
+    },
+    {
+     "id": "no_rerating",
+     "score": 0.04652863438167277,
+     "certaintyEquivalent": 104762.80768212509,
+     "cvar95": 0.1344696453356424
+    },
+    {
+     "id": "margin_stress",
+     "score": 0.04632606170920323,
+     "certaintyEquivalent": 104741.5877495593,
+     "cvar95": 0.13592941575370068
+    },
+    {
+     "id": "combined",
+     "score": 0.042072980298360124,
+     "certaintyEquivalent": 104297.05922783408,
+     "cvar95": 0.13846420674010418
+    },
+    {
+     "id": "low_conviction",
+     "score": 0.037904188378765635,
+     "certaintyEquivalent": 103863.1715122604,
+     "cvar95": 0.14281206195574575
+    }
+   ]
+  },
+  {
+   "positions": [
+    {
+     "symbol": "AGG",
+     "weight": 0.35
+    },
+    {
+     "symbol": "SGOV",
+     "weight": 0.05
+    },
+    {
+     "symbol": "LQD",
+     "weight": 0.05
+    },
+    {
+     "symbol": "CASH",
+     "weight": 0.05
+    },
+    {
+     "symbol": "IGSB",
+     "weight": 0.05
+    },
+    {
+     "symbol": "ORCL",
+     "weight": 0.1
+    },
+    {
+     "symbol": "MSFT",
+     "weight": 0.1
+    },
+    {
+     "symbol": "XLE",
+     "weight": 0.25
+    }
+   ],
+   "selected": false,
+   "worstCertaintyEquivalent": 103859.81177044586,
+   "maximumRiskInSelection": 0.15784436814874875,
+   "turnover": 0.9498077072051548,
+   "models": [
+    {
+     "id": "original",
+     "score": 0.047334867672597494,
+     "certaintyEquivalent": 104847.3050030287,
+     "cvar95": 0.13408281865493912
+    },
+    {
+     "id": "no_rerating",
+     "score": 0.04649668067843482,
+     "certaintyEquivalent": 104759.46017594096,
+     "cvar95": 0.13444319544568734
+    },
+    {
+     "id": "margin_stress",
+     "score": 0.04629396679247311,
+     "certaintyEquivalent": 104738.22613096803,
+     "cvar95": 0.13590490150267792
+    },
+    {
+     "id": "combined",
+     "score": 0.042040753643600035,
+     "certaintyEquivalent": 104293.69813667251,
+     "cvar95": 0.1384393071427236
+    },
+    {
+     "id": "low_conviction",
+     "score": 0.037871840087192785,
+     "certaintyEquivalent": 103859.81177044586,
+     "cvar95": 0.1427823220284857
+    }
+   ]
+  },
+  {
+   "positions": [
+    {
+     "symbol": "SPY",
+     "weight": 0.05
+    },
+    {
+     "symbol": "AGG",
+     "weight": 0.35
+    },
+    {
+     "symbol": "SGOV",
+     "weight": 0.05
+    },
+    {
+     "symbol": "CASH",
+     "weight": 0.05
+    },
+    {
+     "symbol": "IGSB",
+     "weight": 0.05
+    },
+    {
+     "symbol": "ORCL",
+     "weight": 0.1
+    },
+    {
+     "symbol": "MSFT",
+     "weight": 0.1
+    },
+    {
+     "symbol": "XLE",
+     "weight": 0.25
+    }
+   ],
+   "selected": false,
+   "worstCertaintyEquivalent": 103756.45539265672,
+   "maximumRiskInSelection": 0.16381106175991067,
+   "turnover": 0.9498077072051548,
+   "models": [
+    {
+     "id": "original",
+     "score": 0.0471043467294621,
+     "certaintyEquivalent": 104823.13828896808,
+     "cvar95": 0.13970585019545445
+    },
+    {
+     "id": "no_rerating",
+     "score": 0.04617429854160295,
+     "certaintyEquivalent": 104725.69304056915,
+     "cvar95": 0.14008361931577032
+    },
+    {
+     "id": "margin_stress",
+     "score": 0.046081807374557145,
+     "certaintyEquivalent": 104716.00728693038,
+     "cvar95": 0.1412649048338085
+    },
+    {
+     "id": "combined",
+     "score": 0.04131343454271919,
+     "certaintyEquivalent": 104217.87091655166,
+     "cvar95": 0.1441128923852431
+    },
+    {
+     "id": "low_conviction",
+     "score": 0.036876191839204764,
+     "certaintyEquivalent": 103756.45539265672,
+     "cvar95": 0.14869145128555894
+    }
+   ]
+  },
+  {
+   "positions": [
+    {
+     "symbol": "AGG",
+     "weight": 0.35
+    },
+    {
+     "symbol": "SGOV",
+     "weight": 0.05
+    },
+    {
+     "symbol": "CASH",
+     "weight": 0.05
+    },
+    {
+     "symbol": "TIP",
+     "weight": 0.05
+    },
+    {
+     "symbol": "ORCL",
+     "weight": 0.1
+    },
+    {
+     "symbol": "MSFT",
+     "weight": 0.1
+    },
+    {
+     "symbol": "XLE",
+     "weight": 0.25
+    },
+    {
+     "symbol": "HON",
+     "weight": 0.05
+    }
+   ],
+   "selected": false,
+   "worstCertaintyEquivalent": 103790.74101211199,
+   "maximumRiskInSelection": 0.16003815168583374,
+   "turnover": 0.9498077072051548,
+   "models": [
+    {
+     "id": "original",
+     "score": 0.0474374751458685,
+     "certaintyEquivalent": 104858.06367202481,
+     "cvar95": 0.137103915782213
+    },
+    {
+     "id": "no_rerating",
+     "score": 0.04638326356297291,
+     "certaintyEquivalent": 104747.5793339086,
+     "cvar95": 0.13761719231833186
+    },
+    {
+     "id": "margin_stress",
+     "score": 0.04662491695844081,
+     "certaintyEquivalent": 104772.89500080691,
+     "cvar95": 0.13833614062370378
+    },
+    {
+     "id": "combined",
+     "score": 0.041854769344937634,
+     "certaintyEquivalent": 104274.30295002564,
+     "cvar95": 0.1412792405634175
+    },
+    {
+     "id": "low_conviction",
+     "score": 0.03720658049644571,
+     "certaintyEquivalent": 103790.74101211199,
+     "cvar95": 0.14626958074552346
+    }
+   ]
+  },
+  {
+   "positions": [
+    {
+     "symbol": "AGG",
+     "weight": 0.2
+    },
+    {
+     "symbol": "LQD",
+     "weight": 0.3
+    },
+    {
+     "symbol": "HYG",
+     "weight": 0.1
+    },
+    {
+     "symbol": "CASH",
+     "weight": 0.05
+    },
+    {
+     "symbol": "IJR",
+     "weight": 0.05
+    },
+    {
+     "symbol": "GOOGL",
+     "weight": 0.15
+    },
+    {
+     "symbol": "META",
+     "weight": 0.15
+    }
+   ],
+   "selected": false,
+   "worstCertaintyEquivalent": 103651.78152693408,
+   "maximumRiskInSelection": 0.18345973932516715,
+   "turnover": 0.9498077072051547,
+   "models": [
+    {
+     "id": "original",
+     "score": 0.049715297066901996,
+     "certaintyEquivalent": 105097.18390131505,
+     "cvar95": 0.15185845947913498
+    },
+    {
+     "id": "no_rerating",
+     "score": 0.04839558880605062,
+     "certaintyEquivalent": 104958.57775948016,
+     "cvar95": 0.15266746289770425
+    },
+    {
+     "id": "margin_stress",
+     "score": 0.046508321639981934,
+     "certaintyEquivalent": 104760.67968388664,
+     "cvar95": 0.15833844483347215
+    },
+    {
+     "id": "combined",
+     "score": 0.04206809813648821,
+     "certaintyEquivalent": 104296.55003395115,
+     "cvar95": 0.16101365688217803
+    },
+    {
+     "id": "low_conviction",
+     "score": 0.035866840656590675,
+     "certaintyEquivalent": 103651.78152693408,
+     "cvar95": 0.16567221948673344
+    }
+   ]
+  },
+  {
+   "positions": [
+    {
+     "symbol": "QQQ",
+     "weight": 0.15
+    },
+    {
+     "symbol": "SHY",
+     "weight": 0.05
+    },
+    {
+     "symbol": "AGG",
+     "weight": 0.2
+    },
+    {
+     "symbol": "IEF",
+     "weight": 0.15
+    },
+    {
+     "symbol": "CASH",
+     "weight": 0.05
+    },
+    {
+     "symbol": "IEI",
+     "weight": 0.25
+    },
+    {
+     "symbol": "META",
+     "weight": 0.15
+    }
+   ],
+   "selected": false,
+   "worstCertaintyEquivalent": 103852.59355044461,
+   "maximumRiskInSelection": 0.1437212340080886,
+   "turnover": 0.9498077072051546,
+   "models": [
+    {
+     "id": "original",
+     "score": 0.04545021368570543,
+     "certaintyEquivalent": 104649.89019937172,
+     "cvar95": 0.12112795210872823
+    },
+    {
+     "id": "no_rerating",
+     "score": 0.044755390514714964,
+     "certaintyEquivalent": 104577.20228636704,
+     "cvar95": 0.1210772918205875
+    },
+    {
+     "id": "margin_stress",
+     "score": 0.044482510480234945,
+     "certaintyEquivalent": 104548.66914904013,
+     "cvar95": 0.1220079738461156
+    },
+    {
+     "id": "combined",
+     "score": 0.040339373384298376,
+     "certaintyEquivalent": 104116.40576113442,
+     "cvar95": 0.12402736049855193
+    },
+    {
+     "id": "low_conviction",
+     "score": 0.0378023380274288,
+     "certaintyEquivalent": 103852.59355044461,
+     "cvar95": 0.12603726546198457
+    }
+   ]
+  },
+  {
+   "positions": [
+    {
+     "symbol": "SHY",
+     "weight": 0.35
+    },
+    {
+     "symbol": "CASH",
+     "weight": 0.05
+    },
+    {
+     "symbol": "IGSB",
+     "weight": 0.35
+    },
+    {
+     "symbol": "SHV",
+     "weight": 0.25
+    }
+   ],
+   "selected": false,
+   "worstCertaintyEquivalent": 104181.99812407333,
+   "maximumRiskInSelection": 0.004782527902583907,
+   "turnover": 0.9498077072051546,
+   "models": [
+    {
+     "id": "original",
+     "score": 0.04177054696701906,
+     "certaintyEquivalent": 104265.52109009515,
+     "cvar95": 0
+    },
+    {
+     "id": "no_rerating",
+     "score": 0.04177054696701906,
+     "certaintyEquivalent": 104265.52109009515,
+     "cvar95": 0
+    },
+    {
+     "id": "margin_stress",
+     "score": 0.040969165681152594,
+     "certaintyEquivalent": 104181.99812407333,
+     "cvar95": 0
+    },
+    {
+     "id": "combined",
+     "score": 0.040969165681152594,
+     "certaintyEquivalent": 104181.99812407333,
+     "cvar95": 0
+    },
+    {
+     "id": "low_conviction",
+     "score": 0.040969165681152594,
+     "certaintyEquivalent": 104181.99812407333,
+     "cvar95": 0
+    }
+   ]
+  },
+  {
+   "positions": [
+    {
+     "symbol": "SGOV",
+     "weight": 0.35
+    },
+    {
+     "symbol": "CASH",
+     "weight": 0.3
+    },
+    {
+     "symbol": "IGSB",
+     "weight": 0.35
+    }
+   ],
+   "selected": false,
+   "worstCertaintyEquivalent": 103005.40748092523,
+   "maximumRiskInSelection": 0.003096457216722336,
+   "turnover": 0.6999370198387489,
+   "models": [
+    {
+     "id": "original",
+     "score": 0.030429821652193528,
+     "certaintyEquivalent": 103089.7540823963,
+     "cvar95": 0
+    },
+    {
+     "id": "no_rerating",
+     "score": 0.030429821652193528,
+     "certaintyEquivalent": 103089.7540823963,
+     "cvar95": 0
+    },
+    {
+     "id": "margin_stress",
+     "score": 0.02961130067828556,
+     "certaintyEquivalent": 103005.40748092523,
+     "cvar95": 0
+    },
+    {
+     "id": "combined",
+     "score": 0.02961130067828556,
+     "certaintyEquivalent": 103005.40748092523,
+     "cvar95": 0
+    },
+    {
+     "id": "low_conviction",
+     "score": 0.02961130067828556,
+     "certaintyEquivalent": 103005.40748092523,
+     "cvar95": 0
+    }
+   ]
+  },
+  {
+   "positions": [
+    {
+     "symbol": "SGOV",
+     "weight": 0.35
+    },
+    {
+     "symbol": "CASH",
+     "weight": 0.05
+    },
+    {
+     "symbol": "IGSB",
+     "weight": 0.35
+    },
+    {
+     "symbol": "TIP",
+     "weight": 0.25
+    }
+   ],
+   "selected": false,
+   "worstCertaintyEquivalent": 104159.5620601204,
+   "maximumRiskInSelection": 0.015327173197027366,
+   "turnover": 0.9498077072051546,
+   "models": [
+    {
+     "id": "original",
+     "score": 0.04155828361450169,
+     "certaintyEquivalent": 104243.39168975003,
+     "cvar95": 0
+    },
+    {
+     "id": "no_rerating",
+     "score": 0.04155828361450169,
+     "certaintyEquivalent": 104243.39168975003,
+     "cvar95": 0
+    },
+    {
+     "id": "margin_stress",
+     "score": 0.04075378797139713,
+     "certaintyEquivalent": 104159.5620601204,
+     "cvar95": 0
+    },
+    {
+     "id": "combined",
+     "score": 0.04075378797139713,
+     "certaintyEquivalent": 104159.5620601204,
+     "cvar95": 0
+    },
+    {
+     "id": "low_conviction",
+     "score": 0.04075378797139713,
+     "certaintyEquivalent": 104159.5620601204,
+     "cvar95": 0
+    }
+   ]
+  },
+  {
+   "positions": [
+    {
+     "symbol": "SGOV",
+     "weight": 0.35
+    },
+    {
+     "symbol": "CASH",
+     "weight": 0.05
+    },
+    {
+     "symbol": "IGSB",
+     "weight": 0.35
+    },
+    {
+     "symbol": "SHV",
+     "weight": 0.25
+    }
+   ],
+   "selected": true,
+   "worstCertaintyEquivalent": 103976.09556986933,
+   "maximumRiskInSelection": 0.003134547751433936,
+   "turnover": 0.9498077072051546,
+   "models": [
+    {
+     "id": "original",
+     "score": 0.0398007688088991,
+     "certaintyEquivalent": 104060.34328772496,
+     "cvar95": 0
+    },
+    {
+     "id": "no_rerating",
+     "score": 0.0398007688088991,
+     "certaintyEquivalent": 104060.34328772496,
+     "cvar95": 0
+    },
+    {
+     "id": "margin_stress",
+     "score": 0.03899083644393704,
+     "certaintyEquivalent": 103976.09556986933,
+     "cvar95": 0
+    },
+    {
+     "id": "combined",
+     "score": 0.03899083644393704,
+     "certaintyEquivalent": 103976.09556986933,
+     "cvar95": 0
+    },
+    {
+     "id": "low_conviction",
+     "score": 0.03899083644393704,
+     "certaintyEquivalent": 103976.09556986933,
+     "cvar95": 0
+    }
+   ]
+  },
+  {
+   "positions": [
+    {
+     "symbol": "CASH",
+     "weight": 0.3
+    },
+    {
+     "symbol": "IGSB",
+     "weight": 0.35
+    },
+    {
+     "symbol": "SHV",
+     "weight": 0.35
+    }
+   ],
+   "selected": false,
+   "worstCertaintyEquivalent": 103028.76025877267,
+   "maximumRiskInSelection": 0.002995950115452765,
+   "turnover": 0.6999370198387489,
+   "models": [
+    {
+     "id": "original",
+     "score": 0.030655682762087612,
+     "certaintyEquivalent": 103113.04067834128,
+     "cvar95": 0
+    },
+    {
+     "id": "no_rerating",
+     "score": 0.030655682762087612,
+     "certaintyEquivalent": 103113.04067834128,
+     "cvar95": 0
+    },
+    {
+     "id": "margin_stress",
+     "score": 0.02983798907859923,
+     "certaintyEquivalent": 103028.76025877267,
+     "cvar95": 0
+    },
+    {
+     "id": "combined",
+     "score": 0.02983798907859923,
+     "certaintyEquivalent": 103028.76025877267,
+     "cvar95": 0
+    },
+    {
+     "id": "low_conviction",
+     "score": 0.02983798907859923,
+     "certaintyEquivalent": 103028.76025877267,
+     "cvar95": 0
+    }
+   ]
+  }
+ ],
+ "scope": "Independent Monte Carlo attribution of the frozen admissible candidate pool, not a rerun of discovery, global optimization, out-of-sample market validation or a new recommendation.",
+ "frozen_pool_engine": "0.34.0",
+ "source_commit": "d6e54473a52d24985ff274738d44826db4c78b7a",
+ "sensitivityLeaders": {
+  "base": {
+   "positions": [
+    {
+     "symbol": "AGG",
+     "weight": 0.2
+    },
+    {
+     "symbol": "LQD",
+     "weight": 0.3
+    },
+    {
+     "symbol": "HYG",
+     "weight": 0.1
+    },
+    {
+     "symbol": "CASH",
+     "weight": 0.05
+    },
+    {
+     "symbol": "IJR",
+     "weight": 0.05
+    },
+    {
+     "symbol": "GOOGL",
+     "weight": 0.15
+    },
+    {
+     "symbol": "META",
+     "weight": 0.15
+    }
+   ],
+   "worstCertaintyEquivalent": 105097.18390131505
+  },
+  "withoutLowConviction": {
+   "positions": [
+    {
+     "symbol": "AGG",
+     "weight": 0.35
+    },
+    {
+     "symbol": "LQD",
+     "weight": 0.05
+    },
+    {
+     "symbol": "CASH",
+     "weight": 0.05
+    },
+    {
+     "symbol": "IGSB",
+     "weight": 0.05
+    },
+    {
+     "symbol": "SHV",
+     "weight": 0.05
+    },
+    {
+     "symbol": "ORCL",
+     "weight": 0.1
+    },
+    {
+     "symbol": "MSFT",
+     "weight": 0.1
+    },
+    {
+     "symbol": "XLE",
+     "weight": 0.25
+    }
+   ],
+   "worstCertaintyEquivalent": 104297.05922783408
+  },
+  "allFive": {
+   "positions": [
+    {
+     "symbol": "SHY",
+     "weight": 0.35
+    },
+    {
+     "symbol": "CASH",
+     "weight": 0.05
+    },
+    {
+     "symbol": "IGSB",
+     "weight": 0.35
+    },
+    {
+     "symbol": "SHV",
+     "weight": 0.25
+    }
+   ],
+   "worstCertaintyEquivalent": 104181.99812407333
+  }
+ }
+}

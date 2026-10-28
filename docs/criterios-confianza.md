@@ -33,11 +33,21 @@ cota binomial para probabilidades y una aproximación para CVaR. El estrés
 Student controla riesgo sin interpretar su precio medio como rentabilidad.
 Estas cotas no contienen toda la incertidumbre de parámetros o del mercado.
 
-Si la comparación no resuelve qué pesos son mejores, se informa el conjunto
-de candidatas y los rangos de peso. Entre rankings no resueltos se favorecen
-menor rotación y menor riesgo. Es una política conservadora declarada, no una
-prueba de equivalencia estadística ni de óptimo único. No se fija la cartera
-anterior y una mejora respaldada puede justificar un cambio importante.
+Se maximiza la utilidad del mandato en el peor modelo declarado. La
+incertidumbre del ranking no permite cambiar ese objetivo por mínimo riesgo.
+Desde 0.35.0, favorecer menor rotación exige que la **cota superior** de la
+pérdida de oportunidad frente a la mejor candidata quede dentro del umbral
+económico del mandato (USD 100 en la configuración base). Si dos alternativas
+tienen la misma rotación, se conserva la mayor utilidad en el peor modelo.
+
+Se contrastan todas las parejas de modelos porque `min(a) − min(b)` no es
+la mejora en cada modelo por separado. Las cotas pareadas de Monte Carlo
+incluyen la multiplicidad de candidatas y modelos y convierten utilidad a
+un equivalente monetario aproximado. No representan incertidumbre total de
+parámetros ni confianza predictiva. Se siguen mostrando alternativas cuyo
+ranking no queda resuelto, aunque no sean empates económicos demostrados.
+No se fija la cartera anterior y una mejora respaldada puede justificar
+un cambio importante.
 
 ## 3. Evidencia predictiva
 

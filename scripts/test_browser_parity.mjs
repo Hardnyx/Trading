@@ -1,10 +1,10 @@
 import { chromium } from "playwright";
 import { spawn } from "node:child_process";
 import { readFileSync, mkdirSync } from "node:fs";
-import { composeMultiStart } from "../dist/assets/js/composer.mjs?v=0.34.1";
-import { referenceRequest } from "../dist/assets/js/reference-preset.mjs?v=0.34.1";
-import { exposureReport } from "../dist/assets/js/economic-exposure.mjs?v=0.34.1";
-import { MODEL_VERSION } from "../dist/assets/js/policy.mjs?v=0.34.1";
+import { composeMultiStart } from "../dist/assets/js/composer.mjs?v=0.35.0";
+import { referenceRequest } from "../dist/assets/js/reference-preset.mjs?v=0.35.0";
+import { exposureReport } from "../dist/assets/js/economic-exposure.mjs?v=0.35.0";
+import { MODEL_VERSION } from "../dist/assets/js/policy.mjs?v=0.35.0";
 
 const market=JSON.parse(readFileSync("dist/data/market.json","utf8"));
 const volatility=JSON.parse(readFileSync("dist/data/volatility.json","utf8"));

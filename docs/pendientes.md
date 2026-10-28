@@ -1,6 +1,6 @@
 # Trading · lo que falta
 
-Backlog actualizado el 28 de octubre de 2026 para el motor 0.34.1, corte de
+Backlog actualizado el 28 de octubre de 2026 para el motor 0.35.0, corte de
 precios examinado del 27-oct, 260 instrumentos (160 acciones, 100 ETF).
 Consultar las pruebas y los cierres en `docs/estado-validacion.md`. Cero
 incidencias publicadas o pruebas de software aprobadas no acreditan datos
@@ -116,6 +116,10 @@ Este archivo lista **solo lo que falta**. Para el funcionamiento, consultar
   con origen futuro, cestas conjuntas y puntuación CRPS/QLIKE/cobertura/ES
   frente a EWMA. No se reutilizan cohortes anteriores como evidencia de la
   nueva ley de precios. No hay observaciones maduras del núcleo nuevo.
+- **Contraste 0.35.0:** reconstrucción cronológica del fallback frente a
+  EWMA plano y dinámico. La cesta actual tiene 38 intervalos mensuales no
+  superpuestos y dos excepciones; no hay superioridad resuelta en CRPS ni
+  suficiente cola para validar ES. No acredita anclas, vintages o CVaR anual.
 - **Falta:** acumular resultados, intervalos de cobertura/ES y decisiones
   mensuales predeterminadas; contrastar por subperiodo y con referencias.
   Faltan gráficos acumulados, alertas Kupiec/Christoffersen y una regla
@@ -199,7 +203,9 @@ Este archivo lista **solo lo que falta**. Para el funcionamiento, consultar
     semillas. En 0.34.0 se corrigen aleatoriedad acoplada, centrado t de
     precios y selección base seguida de veto de una sola candidata. Se
     publica el conjunto de rankings no resueltos y su rango de pesos;
-    menor rotación y luego riesgo desempatan sin congelar la cartera.
+    En 0.35.0, la rotación solo desempata si la cota de pérdida económica
+    frente al líder queda dentro del umbral del mandato. No se sustituye
+    crecimiento por mínimo riesgo cuando el ranking es incierto.
     **Falta:** contrastar universos, cortes nuevos, supuestos y cobertura de
     la búsqueda finita, y atribuir cada cambio importante a datos, corrección
     o evidencia. La coincidencia de semillas con la política nueva no prueba

@@ -1,4 +1,4 @@
-import { observedBy } from "./observation.mjs?v=0.34.1";
+import { observedBy } from "./observation.mjs?v=0.35.0";
 /* Economic ETF exposure. Never invent missing issuer holdings. */
 export const TREASURY=new Set(["SHY","SGOV","BIL","IEI","IEF","TLT","TIP","VGSH","VGIT","VGLT","SHV"]);
 const CREDIT=new Set(["LQD","HYG","EMB","IGSB","VCIT","VCSH","JNK","BKLN"]);

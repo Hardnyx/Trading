@@ -1,0 +1,798 @@
+{
+ "model_version": "0.34.0",
+ "snapshot_generated_at": "2026-10-28T12:27:53.076354+00:00",
+ "source_commit": "06fece6494ade19bd6c541abf45150968eed4516",
+ "diagnostics": {
+  "reliableSelection": {
+   "candidates": [
+    {
+     "positions": [
+      {
+       "symbol": "CASH",
+       "weight": 1
+      }
+     ],
+     "feasible": true,
+     "minimumLowerGain": 0,
+     "maximumRisk": 0,
+     "turnover": 0,
+     "selected": false
+    },
+    {
+     "positions": [
+      {
+       "symbol": "AGG",
+       "weight": 0.1
+      },
+      {
+       "symbol": "LQD",
+       "weight": 0.15
+      },
+      {
+       "symbol": "CASH",
+       "weight": 0.05
+      },
+      {
+       "symbol": "TIP",
+       "weight": 0.2
+      },
+      {
+       "symbol": "ORCL",
+       "weight": 0.15
+      },
+      {
+       "symbol": "META",
+       "weight": 0.15
+      },
+      {
+       "symbol": "TGT",
+       "weight": 0.15
+      },
+      {
+       "symbol": "VUG",
+       "weight": 0.05
+      }
+     ],
+     "feasible": false,
+     "minimumLowerGain": 2331.1487881944195,
+     "maximumRisk": 0.22224618825781156,
+     "turnover": 0.9498077072051546,
+     "selected": false
+    },
+    {
+     "positions": [
+      {
+       "symbol": "SPY",
+       "weight": 0.15
+      },
+      {
+       "symbol": "TLT",
+       "weight": 0.25
+      },
+      {
+       "symbol": "AGG",
+       "weight": 0.2
+      },
+      {
+       "symbol": "CASH",
+       "weight": 0.05
+      },
+      {
+       "symbol": "ORCL",
+       "weight": 0.1
+      },
+      {
+       "symbol": "GOOGL",
+       "weight": 0.05
+      },
+      {
+       "symbol": "VUG",
+       "weight": 0.1
+      },
+      {
+       "symbol": "MDT",
+       "weight": 0.1
+      }
+     ],
+     "feasible": false,
+     "minimumLowerGain": 2361.7581798067113,
+     "maximumRisk": 0.22471542446297144,
+     "turnover": 0.9498077072051548,
+     "selected": false
+    },
+    {
+     "positions": [
+      {
+       "symbol": "VTI",
+       "weight": 0.1
+      },
+      {
+       "symbol": "AGG",
+       "weight": 0.1
+      },
+      {
+       "symbol": "SGOV",
+       "weight": 0.25
+      },
+      {
+       "symbol": "LQD",
+       "weight": 0.15
+      },
+      {
+       "symbol": "CASH",
+       "weight": 0.05
+      },
+      {
+       "symbol": "ORCL",
+       "weight": 0.05
+      },
+      {
+       "symbol": "META",
+       "weight": 0.15
+      },
+      {
+       "symbol": "MDT",
+       "weight": 0.15
+      }
+     ],
+     "feasible": true,
+     "minimumLowerGain": 2615.315432736388,
+     "maximumRisk": 0.16464876235125875,
+     "turnover": 0.9498077072051547,
+     "selected": false
+    },
+    {
+     "positions": [
+      {
+       "symbol": "SHY",
+       "weight": 0.2
+      },
+      {
+       "symbol": "LQD",
+       "weight": 0.2
+      },
+      {
+       "symbol": "CASH",
+       "weight": 0.05
+      },
+      {
+       "symbol": "TIP",
+       "weight": 0.1
+      },
+      {
+       "symbol": "ORCL",
+       "weight": 0.1
+      },
+      {
+       "symbol": "META",
+       "weight": 0.15
+      },
+      {
+       "symbol": "TGT",
+       "weight": 0.15
+      },
+      {
+       "symbol": "VIG",
+       "weight": 0.05
+      }
+     ],
+     "feasible": true,
+     "minimumLowerGain": 2654.756713228722,
+     "maximumRisk": 0.1942216163667368,
+     "turnover": 0.9498077072051547,
+     "selected": false
+    },
+    {
+     "positions": [
+      {
+       "symbol": "SHY",
+       "weight": 0.15
+      },
+      {
+       "symbol": "CASH",
+       "weight": 0.65
+      },
+      {
+       "symbol": "SHV",
+       "weight": 0.2
+      }
+     ],
+     "feasible": true,
+     "minimumLowerGain": 1374.3558864032238,
+     "maximumRisk": 0.0010096732072541745,
+     "turnover": 0.35002362127964853,
+     "selected": false
+    },
+    {
+     "positions": [
+      {
+       "symbol": "IEF",
+       "weight": 0.15
+      },
+      {
+       "symbol": "LQD",
+       "weight": 0.15
+      },
+      {
+       "symbol": "HYG",
+       "weight": 0.15
+      },
+      {
+       "symbol": "CASH",
+       "weight": 0.05
+      },
+      {
+       "symbol": "TIP",
+       "weight": 0.2
+      },
+      {
+       "symbol": "META",
+       "weight": 0.15
+      },
+      {
+       "symbol": "VUG",
+       "weight": 0.15
+      }
+     ],
+     "feasible": true,
+     "minimumLowerGain": 2945.949564430397,
+     "maximumRisk": 0.14440099094034856,
+     "turnover": 0.9498077072051545,
+     "selected": false
+    },
+    {
+     "positions": [
+      {
+       "symbol": "SPY",
+       "weight": 0.05
+      },
+      {
+       "symbol": "TLT",
+       "weight": 0.1
+      },
+      {
+       "symbol": "VTI",
+       "weight": 0.25
+      },
+      {
+       "symbol": "CASH",
+       "weight": 0.05
+      },
+      {
+       "symbol": "SHV",
+       "weight": 0.35
+      },
+      {
+       "symbol": "ORCL",
+       "weight": 0.05
+      },
+      {
+       "symbol": "META",
+       "weight": 0.1
+      },
+      {
+       "symbol": "MDT",
+       "weight": 0.05
+      }
+     ],
+     "feasible": true,
+     "minimumLowerGain": 2583.128022611607,
+     "maximumRisk": 0.16561852041292274,
+     "turnover": 0.949807707205155,
+     "selected": false
+    },
+    {
+     "positions": [
+      {
+       "symbol": "SPY",
+       "weight": 0.05
+      },
+      {
+       "symbol": "AGG",
+       "weight": 0.35
+      },
+      {
+       "symbol": "LQD",
+       "weight": 0.05
+      },
+      {
+       "symbol": "CASH",
+       "weight": 0.05
+      },
+      {
+       "symbol": "IGSB",
+       "weight": 0.05
+      },
+      {
+       "symbol": "ORCL",
+       "weight": 0.1
+      },
+      {
+       "symbol": "MSFT",
+       "weight": 0.1
+      },
+      {
+       "symbol": "XLE",
+       "weight": 0.25
+      }
+     ],
+     "feasible": true,
+     "minimumLowerGain": 2745.162834838906,
+     "maximumRisk": 0.1668607617439263,
+     "turnover": 0.9498077072051548,
+     "selected": false
+    },
+    {
+     "positions": [
+      {
+       "symbol": "AGG",
+       "weight": 0.35
+      },
+      {
+       "symbol": "LQD",
+       "weight": 0.05
+      },
+      {
+       "symbol": "CASH",
+       "weight": 0.05
+      },
+      {
+       "symbol": "IGSB",
+       "weight": 0.05
+      },
+      {
+       "symbol": "SHV",
+       "weight": 0.05
+      },
+      {
+       "symbol": "ORCL",
+       "weight": 0.1
+      },
+      {
+       "symbol": "MSFT",
+       "weight": 0.1
+      },
+      {
+       "symbol": "XLE",
+       "weight": 0.25
+      }
+     ],
+     "feasible": true,
+     "minimumLowerGain": 2799.7949937835947,
+     "maximumRisk": 0.15776801180928562,
+     "turnover": 0.9498077072051548,
+     "selected": false
+    },
+    {
+     "positions": [
+      {
+       "symbol": "AGG",
+       "weight": 0.35
+      },
+      {
+       "symbol": "SGOV",
+       "weight": 0.05
+      },
+      {
+       "symbol": "LQD",
+       "weight": 0.05
+      },
+      {
+       "symbol": "CASH",
+       "weight": 0.05
+      },
+      {
+       "symbol": "IGSB",
+       "weight": 0.05
+      },
+      {
+       "symbol": "ORCL",
+       "weight": 0.1
+      },
+      {
+       "symbol": "MSFT",
+       "weight": 0.1
+      },
+      {
+       "symbol": "XLE",
+       "weight": 0.25
+      }
+     ],
+     "feasible": true,
+     "minimumLowerGain": 2797.2254107303597,
+     "maximumRisk": 0.15784436814874875,
+     "turnover": 0.9498077072051548,
+     "selected": false
+    },
+    {
+     "positions": [
+      {
+       "symbol": "SPY",
+       "weight": 0.05
+      },
+      {
+       "symbol": "AGG",
+       "weight": 0.35
+      },
+      {
+       "symbol": "SGOV",
+       "weight": 0.05
+      },
+      {
+       "symbol": "CASH",
+       "weight": 0.05
+      },
+      {
+       "symbol": "IGSB",
+       "weight": 0.05
+      },
+      {
+       "symbol": "ORCL",
+       "weight": 0.1
+      },
+      {
+       "symbol": "MSFT",
+       "weight": 0.1
+      },
+      {
+       "symbol": "XLE",
+       "weight": 0.25
+      }
+     ],
+     "feasible": true,
+     "minimumLowerGain": 2724.6059876280633,
+     "maximumRisk": 0.16381106175991067,
+     "turnover": 0.9498077072051548,
+     "selected": false
+    },
+    {
+     "positions": [
+      {
+       "symbol": "AGG",
+       "weight": 0.35
+      },
+      {
+       "symbol": "HYG",
+       "weight": 0.05
+      },
+      {
+       "symbol": "CASH",
+       "weight": 0.05
+      },
+      {
+       "symbol": "IEI",
+       "weight": 0.05
+      },
+      {
+       "symbol": "ORCL",
+       "weight": 0.15
+      },
+      {
+       "symbol": "MSFT",
+       "weight": 0.1
+      },
+      {
+       "symbol": "XLE",
+       "weight": 0.25
+      }
+     ],
+     "feasible": false,
+     "minimumLowerGain": 2378.0079632562847,
+     "maximumRisk": 0.18578846731577606,
+     "turnover": 0.9498077072051547,
+     "selected": false
+    },
+    {
+     "positions": [
+      {
+       "symbol": "AGG",
+       "weight": 0.35
+      },
+      {
+       "symbol": "SGOV",
+       "weight": 0.05
+      },
+      {
+       "symbol": "CASH",
+       "weight": 0.05
+      },
+      {
+       "symbol": "TIP",
+       "weight": 0.05
+      },
+      {
+       "symbol": "ORCL",
+       "weight": 0.1
+      },
+      {
+       "symbol": "MSFT",
+       "weight": 0.1
+      },
+      {
+       "symbol": "XLE",
+       "weight": 0.25
+      },
+      {
+       "symbol": "HON",
+       "weight": 0.05
+      }
+     ],
+     "feasible": true,
+     "minimumLowerGain": 2745.4857602600823,
+     "maximumRisk": 0.16003815168583374,
+     "turnover": 0.9498077072051548,
+     "selected": false
+    },
+    {
+     "positions": [
+      {
+       "symbol": "AGG",
+       "weight": 0.35
+      },
+      {
+       "symbol": "SGOV",
+       "weight": 0.05
+      },
+      {
+       "symbol": "CASH",
+       "weight": 0.05
+      },
+      {
+       "symbol": "IEI",
+       "weight": 0.05
+      },
+      {
+       "symbol": "ORCL",
+       "weight": 0.15
+      },
+      {
+       "symbol": "MSFT",
+       "weight": 0.1
+      },
+      {
+       "symbol": "XLE",
+       "weight": 0.25
+      }
+     ],
+     "feasible": false,
+     "minimumLowerGain": 2426.427650929443,
+     "maximumRisk": 0.18290888045027134,
+     "turnover": 0.9498077072051547,
+     "selected": false
+    },
+    {
+     "positions": [
+      {
+       "symbol": "AGG",
+       "weight": 0.2
+      },
+      {
+       "symbol": "LQD",
+       "weight": 0.3
+      },
+      {
+       "symbol": "HYG",
+       "weight": 0.1
+      },
+      {
+       "symbol": "CASH",
+       "weight": 0.05
+      },
+      {
+       "symbol": "IJR",
+       "weight": 0.05
+      },
+      {
+       "symbol": "GOOGL",
+       "weight": 0.15
+      },
+      {
+       "symbol": "META",
+       "weight": 0.15
+      }
+     ],
+     "feasible": true,
+     "minimumLowerGain": 2614.891978754531,
+     "maximumRisk": 0.18345973932516715,
+     "turnover": 0.9498077072051547,
+     "selected": false
+    },
+    {
+     "positions": [
+      {
+       "symbol": "LQD",
+       "weight": 0.35
+      },
+      {
+       "symbol": "CASH",
+       "weight": 0.05
+      },
+      {
+       "symbol": "SHV",
+       "weight": 0.1
+      },
+      {
+       "symbol": "NKE",
+       "weight": 0.1
+      },
+      {
+       "symbol": "MSFT",
+       "weight": 0.15
+      },
+      {
+       "symbol": "META",
+       "weight": 0.1
+      },
+      {
+       "symbol": "QUAL",
+       "weight": 0.1
+      },
+      {
+       "symbol": "DGRO",
+       "weight": 0.05
+      }
+     ],
+     "feasible": false,
+     "minimumLowerGain": 2253.5450243614614,
+     "maximumRisk": 0.20159680964311458,
+     "turnover": 0.9498077072051548,
+     "selected": false
+    },
+    {
+     "positions": [
+      {
+       "symbol": "QQQ",
+       "weight": 0.15
+      },
+      {
+       "symbol": "SHY",
+       "weight": 0.05
+      },
+      {
+       "symbol": "AGG",
+       "weight": 0.2
+      },
+      {
+       "symbol": "IEF",
+       "weight": 0.15
+      },
+      {
+       "symbol": "CASH",
+       "weight": 0.05
+      },
+      {
+       "symbol": "IEI",
+       "weight": 0.25
+      },
+      {
+       "symbol": "META",
+       "weight": 0.15
+      }
+     ],
+     "feasible": true,
+     "minimumLowerGain": 2973.6252107845066,
+     "maximumRisk": 0.1437212340080886,
+     "turnover": 0.9498077072051546,
+     "selected": false
+    },
+    {
+     "positions": [
+      {
+       "symbol": "SHY",
+       "weight": 0.35
+      },
+      {
+       "symbol": "CASH",
+       "weight": 0.05
+      },
+      {
+       "symbol": "IGSB",
+       "weight": 0.35
+      },
+      {
+       "symbol": "SHV",
+       "weight": 0.25
+      }
+     ],
+     "feasible": true,
+     "minimumLowerGain": 3912.427731169664,
+     "maximumRisk": 0.004782527902583907,
+     "turnover": 0.9498077072051546,
+     "selected": false
+    },
+    {
+     "positions": [
+      {
+       "symbol": "SGOV",
+       "weight": 0.35
+      },
+      {
+       "symbol": "CASH",
+       "weight": 0.3
+      },
+      {
+       "symbol": "IGSB",
+       "weight": 0.35
+      }
+     ],
+     "feasible": true,
+     "minimumLowerGain": 2861.184444583123,
+     "maximumRisk": 0.003096457216722336,
+     "turnover": 0.6999370198387489,
+     "selected": false
+    },
+    {
+     "positions": [
+      {
+       "symbol": "SGOV",
+       "weight": 0.35
+      },
+      {
+       "symbol": "CASH",
+       "weight": 0.05
+      },
+      {
+       "symbol": "IGSB",
+       "weight": 0.35
+      },
+      {
+       "symbol": "TIP",
+       "weight": 0.25
+      }
+     ],
+     "feasible": true,
+     "minimumLowerGain": 3910.9832054347207,
+     "maximumRisk": 0.015327173197027366,
+     "turnover": 0.9498077072051546,
+     "selected": false
+    },
+    {
+     "positions": [
+      {
+       "symbol": "SGOV",
+       "weight": 0.35
+      },
+      {
+       "symbol": "CASH",
+       "weight": 0.05
+      },
+      {
+       "symbol": "IGSB",
+       "weight": 0.35
+      },
+      {
+       "symbol": "SHV",
+       "weight": 0.25
+      }
+     ],
+     "feasible": true,
+     "minimumLowerGain": 3821.9898725987878,
+     "maximumRisk": 0.003134547751433936,
+     "turnover": 0.9498077072051546,
+     "selected": true
+    },
+    {
+     "positions": [
+      {
+       "symbol": "CASH",
+       "weight": 0.3
+      },
+      {
+       "symbol": "IGSB",
+       "weight": 0.35
+      },
+      {
+       "symbol": "SHV",
+       "weight": 0.35
+      }
+     ],
+     "feasible": true,
+     "minimumLowerGain": 2875.8650613996288,
+     "maximumRisk": 0.002995950115452765,
+     "turnover": 0.6999370198387489,
+     "selected": false
+    }
+   ]
+  }
+ }
+}
