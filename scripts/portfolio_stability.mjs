@@ -5,8 +5,8 @@
  */
 import { readFileSync, mkdirSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
-import { composePortfolio } from "../dist/assets/js/composer.mjs?v=0.33.1";
-import { referenceRequest } from "../dist/assets/js/reference-preset.mjs?v=0.33.1";
+import { composeBasePortfolio as composePortfolio } from "../dist/assets/js/composer.mjs?v=0.34.0";
+import { referenceRequest } from "../dist/assets/js/reference-preset.mjs?v=0.34.0";
 
 const market=JSON.parse(readFileSync("dist/data/market.json","utf8"));
 const volatility=JSON.parse(readFileSync("dist/data/volatility.json","utf8"));
@@ -64,7 +64,8 @@ const comparisons=results.slice(1).map(r=>{
   };
 });
 const result={
-  method:"universe-seed-budget-stability-shadow-v1",
+  method:"base-discovery-universe-seed-budget-shadow-v2",
+  decision_scope:"Raw base-model discovery only, before robust selection and confirmation. A held final decision must not conceal unstable discovery.",
   snapshot_cut:market.price_as_of,
   source_market_generated_at:market.generated_at,
   no_promotion:true,

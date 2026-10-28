@@ -1,0 +1,92 @@
+{
+ "schema_version": 1,
+ "price_kernel_version": "1.0.0",
+ "updated_at": "2026-10-28T18:39:46.328Z",
+ "sealed": 0,
+ "historical_sealed": 0,
+ "excluded_nonprospective": 0,
+ "horizons": {
+  "1": {
+   "sealed": 0,
+   "scored_origins": 0,
+   "nonoverlapping_origins": 0,
+   "asset_observations": 0,
+   "nonoverlapping_asset_observations": 0,
+   "missing_outcomes": 0,
+   "kernel": {
+    "crps": null,
+    "var95_exception": null,
+    "es_residual": null,
+    "mean_error": null,
+    "qlike": null
+   },
+   "ewma_zero_mean": {
+    "crps": null,
+    "var95_exception": null,
+    "es_residual": null,
+    "mean_error": null,
+    "qlike": null
+   },
+   "portfolios": {},
+   "origin_paired_crps_gain": null,
+   "origin_block95_crps_gain": null,
+   "status": "accumulating"
+  },
+  "5": {
+   "sealed": 0,
+   "scored_origins": 0,
+   "nonoverlapping_origins": 0,
+   "asset_observations": 0,
+   "nonoverlapping_asset_observations": 0,
+   "missing_outcomes": 0,
+   "kernel": {
+    "crps": null,
+    "var95_exception": null,
+    "es_residual": null,
+    "mean_error": null,
+    "qlike": null
+   },
+   "ewma_zero_mean": {
+    "crps": null,
+    "var95_exception": null,
+    "es_residual": null,
+    "mean_error": null,
+    "qlike": null
+   },
+   "portfolios": {},
+   "origin_paired_crps_gain": null,
+   "origin_block95_crps_gain": null,
+   "status": "accumulating"
+  },
+  "21": {
+   "sealed": 0,
+   "scored_origins": 0,
+   "nonoverlapping_origins": 0,
+   "asset_observations": 0,
+   "nonoverlapping_asset_observations": 0,
+   "missing_outcomes": 0,
+   "kernel": {
+    "crps": null,
+    "var95_exception": null,
+    "es_residual": null,
+    "mean_error": null,
+    "qlike": null
+   },
+   "ewma_zero_mean": {
+    "crps": null,
+    "var95_exception": null,
+    "es_residual": null,
+    "mean_error": null,
+    "qlike": null
+   },
+   "portfolios": {},
+   "origin_paired_crps_gain": null,
+   "origin_block95_crps_gain": null,
+   "status": "accumulating"
+  }
+ },
+ "predictive_validation": "not-established",
+ "automatic_promotion": false,
+ "criteria": "20 nonoverlapping origins and 500 asset observations only enable diagnostic review; they do not certify predictive skill or economic advantage.",
+ "limitations": "Quantile-grid CRPS and origin-block intervals are approximate. Confidence blocks use five nonoverlapping origins, not independent asset rows. Larger-horizon overlapping origins are descriptive only. Current-source adjusted outcomes do not certify historical price vintages."
+}

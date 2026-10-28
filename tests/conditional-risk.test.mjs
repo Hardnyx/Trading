@@ -1,8 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { conditionalRisk, studentScale, updateGjrVariance, studentMarginal, studentUpperTail, normalUpperTail, updateTargetedVariance, updateEwmaVariance } from "../dist/assets/js/conditional-risk.mjs";
-import { preparePaths, generatePaths } from "../dist/assets/js/path-model.mjs?v=0.33.1";
-import { seededRandom, normalGenerator } from "../dist/assets/js/random.mjs?v=0.33.1";
+import { preparePaths, generatePaths } from "../dist/assets/js/path-model.mjs?v=0.34.0";
+import { seededRandom, normalGenerator } from "../dist/assets/js/random.mjs?v=0.34.0";
 
 const DATE="2026-10-23";
 function accepted(symbol,variance=1.8) {
@@ -151,16 +151,16 @@ test("Student-t marginal map matches reference quantiles and keeps unit variance
   assert.throws(()=>studentMarginal(2),/Student-t/);
 });
 
-test("accepted GJR instruments get fat-tailed daily innovations; fallback stays Gaussian",()=>{
+test("research-only Student price stress has fat tails and is never the economic default",()=>{
   const assets=[etf("AAA"),etf("BBB",2)];
   const fat={...accepted("AAA"),nu:4.5,alpha:0,gamma:0,beta:0,omega:1.8};
   const vol=sampleSource({AAA:fat,BBB:{...accepted("BBB"),status:"research_only"}});
   const inputs=preparePaths(assets,{
     asOf:DATE,informationAsOf:DATE,volatilityMode:"hybrid",volatilityData:vol,
-    horizon:1,seed:20261025,
+    horizon:1,seed:20261025,innovationLaw:"student-t-research",researchShadowMode:true,
   },{},assets);
   assert.equal(inputs.conditional.active,1);
-  assert.equal(inputs.conditional.innovationLaw,"student-t-marginals-gaussian-copula");
+  assert.equal(inputs.conditional.innovationLaw,"student-t-marginals-gaussian-copula-research");
   const sample=generatePaths(inputs,400,91,252);
   const kurtosis=(i)=>{
     const r=[];

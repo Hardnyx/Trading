@@ -18,6 +18,7 @@ on:
       - 'scripts/universe.py'
       - 'scripts/volatility_research.py'
       - 'scripts/build_volatility.py'
+      - 'scripts/simulator_validation.mjs'
       - 'scripts/risk_ledger.py'
       - 'requirements-research.txt'
   workflow_dispatch:
@@ -89,6 +90,8 @@ jobs:
         run: node scripts/seal_forecast.mjs --skip-ineligible
       - name: Score previously sealed forecasts only after maturity
         run: node scripts/seal_forecast.mjs --score
+      - name: Seal and score the actual simulator at future 1, 5 and 21 session horizons
+        run: node scripts/simulator_validation.mjs --skip-ineligible
       - name: Commit the updated snapshot
         id: snapshot
         run: |
@@ -96,6 +99,8 @@ jobs:
           if [ -d data/volatility-parameters ]; then git add data/volatility-parameters; fi
           git add data/forecasts data/holdings || true
           git add dist/data/risk-calibration.json
+          git add dist/data/simulator-validation.json
+          if [ -d data/simulator-validation ]; then git add data/simulator-validation; fi
           if [ -d data/risk-forecasts ]; then git add data/risk-forecasts; fi
           if [ -d data/distributions ]; then git add data/distributions; fi
           if [ "$REPOSITORY_PRIVATE" = 'true' ] && [ -d data/research ]; then

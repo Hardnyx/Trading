@@ -1,0 +1,558 @@
+{
+  "engine": "0.33.1",
+  "source_commit": "f1486deafd9c0412b5678be474e4f5b5677d7649",
+  "market_sha256": "14d9208e903fb57f8485b64e671fa0db88ea590afdc45dcf1c6ba737f3260a61",
+  "volatility_sha256": "c365b765a1139d29447739d86a6f94e693bcb9f7fcc6091357df984ea1218980",
+  "snapshot": "data/snapshots/2026-10/2026-10-28T122753076354Z.json",
+  "search": {
+    "candidates": 120,
+    "paths": 250,
+    "finalPaths": 650,
+    "deferRobustDecision": true
+  },
+  "raw_search_outcomes": [
+    {
+      "id": "seed_a",
+      "seed": 20261024,
+      "positions": [
+        {
+          "symbol": "TLT",
+          "weight": 0.3
+        },
+        {
+          "symbol": "CASH",
+          "weight": 0.04999999999999999
+        },
+        {
+          "symbol": "IGSB",
+          "weight": 0.2
+        },
+        {
+          "symbol": "NVDA",
+          "weight": 0.10000000000000002
+        },
+        {
+          "symbol": "AMZN",
+          "weight": 0.10000000000000002
+        },
+        {
+          "symbol": "NKE",
+          "weight": 0.15000000000000002
+        },
+        {
+          "symbol": "XLE",
+          "weight": 0.10000000000000002
+        }
+      ],
+      "simulated": [
+        "SPY",
+        "QQQ",
+        "TLT",
+        "SHY",
+        "VTI",
+        "AGG",
+        "IEF",
+        "SGOV",
+        "LQD",
+        "HYG",
+        "CASH",
+        "IGSB",
+        "TIP",
+        "IEI",
+        "SHV",
+        "NVDA",
+        "IJR",
+        "ORCL",
+        "IJH",
+        "AMZN",
+        "NKE",
+        "UPS",
+        "GOOGL",
+        "MSFT",
+        "META",
+        "TGT",
+        "QUAL",
+        "PGR",
+        "DIA",
+        "VUG",
+        "VIG",
+        "MDT",
+        "NEM",
+        "AEP",
+        "XLE",
+        "HON",
+        "PEP",
+        "TFC",
+        "DGRO",
+        "LLY"
+      ],
+      "raw_independent_CE": 105455.83143586057
+    },
+    {
+      "id": "seed_b",
+      "seed": 20261025,
+      "positions": [
+        {
+          "symbol": "LQD",
+          "weight": 0.10000000000000002
+        },
+        {
+          "symbol": "CASH",
+          "weight": 0.04999999999999999
+        },
+        {
+          "symbol": "IGSB",
+          "weight": 0.25
+        },
+        {
+          "symbol": "TIP",
+          "weight": 0.1
+        },
+        {
+          "symbol": "NVDA",
+          "weight": 0.2
+        },
+        {
+          "symbol": "AMZN",
+          "weight": 0.15000000000000002
+        },
+        {
+          "symbol": "PGR",
+          "weight": 0.15000000000000002
+        }
+      ],
+      "simulated": [
+        "SPY",
+        "QQQ",
+        "TLT",
+        "SHY",
+        "VTI",
+        "AGG",
+        "IEF",
+        "SGOV",
+        "LQD",
+        "HYG",
+        "CASH",
+        "IGSB",
+        "TIP",
+        "IEI",
+        "SHV",
+        "NVDA",
+        "IJR",
+        "ORCL",
+        "IJH",
+        "AMZN",
+        "NKE",
+        "UPS",
+        "GOOGL",
+        "MSFT",
+        "META",
+        "TGT",
+        "QUAL",
+        "PGR",
+        "DIA",
+        "VUG",
+        "VIG",
+        "MDT",
+        "NEM",
+        "AEP",
+        "XLE",
+        "HON",
+        "PEP",
+        "TFC",
+        "DGRO",
+        "LLY"
+      ],
+      "raw_independent_CE": 104827.14803481981
+    },
+    {
+      "id": "seed_c",
+      "seed": 20261026,
+      "positions": [
+        {
+          "symbol": "AGG",
+          "weight": 0.3
+        },
+        {
+          "symbol": "LQD",
+          "weight": 0.1
+        },
+        {
+          "symbol": "HYG",
+          "weight": 0.15
+        },
+        {
+          "symbol": "CASH",
+          "weight": 0.04999999999999999
+        },
+        {
+          "symbol": "NVDA",
+          "weight": 0.10000000000000002
+        },
+        {
+          "symbol": "AMZN",
+          "weight": 0.15000000000000002
+        },
+        {
+          "symbol": "UPS",
+          "weight": 0.15000000000000002
+        }
+      ],
+      "simulated": [
+        "SPY",
+        "QQQ",
+        "TLT",
+        "SHY",
+        "VTI",
+        "AGG",
+        "IEF",
+        "SGOV",
+        "LQD",
+        "HYG",
+        "CASH",
+        "IGSB",
+        "TIP",
+        "IEI",
+        "SHV",
+        "NVDA",
+        "IJR",
+        "ORCL",
+        "IJH",
+        "AMZN",
+        "NKE",
+        "UPS",
+        "GOOGL",
+        "MSFT",
+        "META",
+        "TGT",
+        "QUAL",
+        "PGR",
+        "DIA",
+        "VUG",
+        "VIG",
+        "MDT",
+        "NEM",
+        "AEP",
+        "XLE",
+        "HON",
+        "PEP",
+        "TFC",
+        "DGRO",
+        "LLY"
+      ],
+      "raw_independent_CE": 105373.58759655667
+    },
+    {
+      "id": "without_vti",
+      "seed": 20261024,
+      "positions": [
+        {
+          "symbol": "AGG",
+          "weight": 0.1
+        },
+        {
+          "symbol": "IEF",
+          "weight": 0.3
+        },
+        {
+          "symbol": "LQD",
+          "weight": 0.15
+        },
+        {
+          "symbol": "CASH",
+          "weight": 0.04999999999999999
+        },
+        {
+          "symbol": "NVDA",
+          "weight": 0.10000000000000002
+        },
+        {
+          "symbol": "UPS",
+          "weight": 0.2
+        },
+        {
+          "symbol": "MSFT",
+          "weight": 0.10000000000000002
+        }
+      ],
+      "simulated": [
+        "SPY",
+        "QQQ",
+        "TLT",
+        "SHY",
+        "AGG",
+        "IEF",
+        "SGOV",
+        "LQD",
+        "HYG",
+        "CASH",
+        "IGSB",
+        "TIP",
+        "IEI",
+        "SHV",
+        "NVDA",
+        "IJR",
+        "ORCL",
+        "IJH",
+        "AMZN",
+        "NKE",
+        "UPS",
+        "GOOGL",
+        "MSFT",
+        "META",
+        "TGT",
+        "QUAL",
+        "PGR",
+        "DIA",
+        "VUG",
+        "VIG",
+        "MDT",
+        "NEM",
+        "AEP",
+        "XLE",
+        "HON",
+        "PEP",
+        "TFC",
+        "DGRO",
+        "LLY",
+        "NUE"
+      ],
+      "raw_independent_CE": 105196.76443055627
+    }
+  ],
+  "overlaps": [
+    {
+      "a": "seed_a",
+      "b": "seed_b",
+      "weight_overlap": 0.45000000000000007
+    },
+    {
+      "a": "seed_a",
+      "b": "seed_c",
+      "weight_overlap": 0.25
+    },
+    {
+      "a": "seed_b",
+      "b": "seed_c",
+      "weight_overlap": 0.4
+    }
+  ],
+  "null_asset_experiment": {
+    "portfolio": {
+      "SPY": 0.35,
+      "SHY": 0.35,
+      "IEF": 0.25,
+      "CASH": 0.05
+    },
+    "paths": 1000,
+    "seed": 20261024,
+    "median_before": 0.049538050208959294,
+    "median_after": 0.04308540414794926,
+    "cvar_before": 0.09113228521319967,
+    "cvar_after": 0.09721140799837524,
+    "scenario_counts_before": {
+      "base": 599,
+      "recession": 138,
+      "inflation": 157,
+      "expansion": 106
+    },
+    "scenario_counts_after": {
+      "base": 606,
+      "recession": 132,
+      "inflation": 158,
+      "expansion": 104
+    },
+    "changed_path_coordinates": 2028000
+  },
+  "invalid_mean_counterexamples": [
+    {
+      "symbol": "REGN",
+      "nu": 4.086967405531595,
+      "sigma": 0.02149642551778628,
+      "z": 8,
+      "t": 5029.35457244333,
+      "probability": 6.12616480557648e-16,
+      "logLowerBound": 73.08412234369548,
+      "grossMeanLowerBound": 5.49580163073626e+31
+    },
+    {
+      "symbol": "PSX",
+      "nu": 4.33390157046164,
+      "sigma": 0.02795044344686113,
+      "z": 8,
+      "t": 3321.978924942153,
+      "probability": 6.12616480557648e-16,
+      "logLowerBound": 57.82160088240034,
+      "grossMeanLowerBound": 1.2930109359292506e+25
+    },
+    {
+      "symbol": "NUE",
+      "nu": 4.444848267471872,
+      "sigma": 0.025433051554565732,
+      "z": 8,
+      "t": 2799.5042196677146,
+      "probability": 6.12616480557648e-16,
+      "logLowerBound": 36.17081914876222,
+      "grossMeanLowerBound": 5114311334365162
+    }
+  ],
+  "scope": "Frozen-input engineering audit. Independent raw CE samples are NOT paired comparisons or evidence of investment performance. Student moment bounds refer to the intended Gaussian-latent t-quantile map, not observed returns.",
+  "paired_base_model_reassessment": {
+    "engine": "0.33.1",
+    "paths": 3000,
+    "seed": 1922935571,
+    "scope": "Paired diagnostic within the old conditional model, not predictive evidence or validation of its Student price mean",
+    "outcomes": [
+      {
+        "id": "seed_a",
+        "positions": [
+          {
+            "symbol": "TLT",
+            "weight": 0.3
+          },
+          {
+            "symbol": "CASH",
+            "weight": 0.04999999999999999
+          },
+          {
+            "symbol": "IGSB",
+            "weight": 0.2
+          },
+          {
+            "symbol": "NVDA",
+            "weight": 0.10000000000000002
+          },
+          {
+            "symbol": "AMZN",
+            "weight": 0.10000000000000002
+          },
+          {
+            "symbol": "NKE",
+            "weight": 0.15000000000000002
+          },
+          {
+            "symbol": "XLE",
+            "weight": 0.10000000000000002
+          }
+        ],
+        "certaintyEquivalent": 105545.25449439758,
+        "cvar": 0.15083594739793357
+      },
+      {
+        "id": "seed_b",
+        "positions": [
+          {
+            "symbol": "LQD",
+            "weight": 0.10000000000000002
+          },
+          {
+            "symbol": "CASH",
+            "weight": 0.04999999999999999
+          },
+          {
+            "symbol": "IGSB",
+            "weight": 0.25
+          },
+          {
+            "symbol": "TIP",
+            "weight": 0.1
+          },
+          {
+            "symbol": "NVDA",
+            "weight": 0.2
+          },
+          {
+            "symbol": "AMZN",
+            "weight": 0.15000000000000002
+          },
+          {
+            "symbol": "PGR",
+            "weight": 0.15000000000000002
+          }
+        ],
+        "certaintyEquivalent": 105792.25817719326,
+        "cvar": 0.15348514195520632
+      },
+      {
+        "id": "seed_c",
+        "positions": [
+          {
+            "symbol": "AGG",
+            "weight": 0.3
+          },
+          {
+            "symbol": "LQD",
+            "weight": 0.1
+          },
+          {
+            "symbol": "HYG",
+            "weight": 0.15
+          },
+          {
+            "symbol": "CASH",
+            "weight": 0.04999999999999999
+          },
+          {
+            "symbol": "NVDA",
+            "weight": 0.10000000000000002
+          },
+          {
+            "symbol": "AMZN",
+            "weight": 0.15000000000000002
+          },
+          {
+            "symbol": "UPS",
+            "weight": 0.15000000000000002
+          }
+        ],
+        "certaintyEquivalent": 105537.51915890157,
+        "cvar": 0.13846211292132793
+      }
+    ],
+    "comparisons": [
+      {
+        "a": "seed_a",
+        "b": "seed_b",
+        "capital_reallocated": 0.5499999999999999,
+        "evidence": {
+          "meanUtilityGain": -0.0023375291224268274,
+          "standardError": 0.0016702271248974297,
+          "z": 2.8615885665909766,
+          "familySize": 3,
+          "paths": 3000,
+          "gain": -247.0036827956792,
+          "lowerGain": -750.2539258556353
+        }
+      },
+      {
+        "a": "seed_a",
+        "b": "seed_c",
+        "capital_reallocated": 0.75,
+        "evidence": {
+          "meanUtilityGain": 7.329196376943987e-05,
+          "standardError": 0.001543183340894471,
+          "z": 2.8615885665909766,
+          "familySize": 3,
+          "paths": 3000,
+          "gain": 7.735335496021435,
+          "lowerGain": -457.32025551231345
+        }
+      },
+      {
+        "a": "seed_b",
+        "b": "seed_c",
+        "capital_reallocated": 0.6,
+        "evidence": {
+          "meanUtilityGain": 0.0024108210861962737,
+          "standardError": 0.0013831683778416366,
+          "z": 2.8615885665909766,
+          "familySize": 3,
+          "paths": 3000,
+          "gain": 254.73901829168608,
+          "lowerGain": -163.16537116112886
+        }
+      }
+    ]
+  },
+  "student_moment_scope": "Counterexample for the published quantile table under its intended continuous Gaussian latent law, not an expected price forecast or an exact moment over the finite pseudorandom seed space."
+}

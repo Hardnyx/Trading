@@ -74,8 +74,10 @@ export function conditionalRisk(assets, baseCov, options = {}) {
     multipliers: ratio,
     studentNu: null,
     fittedStudentNu: fits.filter(Boolean).map(f=>f.nu),
-    innovationLaw: "student-t-marginals-gaussian-copula",
-    reason: "GJR-t estimado en retornos totales, simulado con su marginal Student-t estandarizada; EWMA diario e innovaciones gaussianas para los demás. Dependencia por cópula gaussiana: sin dependencia de cola adicional hasta validar coexcedencias.",
+    innovationLaw: options.innovationLaw === 'student-t-research'
+      ? 'student-t-marginals-gaussian-copula-research' : 'conditional-gaussian',
+    estimationLaw: 'student-t',
+    reason: "GJR estimado con verosimilitud t sobre retornos totales; innovaciones gaussianas en precios para preservar la media condicional. Student-t en precios queda como estrés de colas, sin interpretación de media económica. EWMA diario para los demás.",
     evaluatedAsOf: asOf,
   };
 }

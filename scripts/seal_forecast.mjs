@@ -5,10 +5,10 @@
 import { readFileSync, existsSync, mkdirSync, writeFileSync, readdirSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { resolve, join, dirname } from "node:path";
-import { composeMultiStart } from "../dist/assets/js/composer.mjs?v=0.33.1";
-import { referenceRequest } from "../dist/assets/js/reference-preset.mjs?v=0.33.1";
-import { adjustedReturn } from "../dist/assets/js/factors.mjs?v=0.33.1";
-import { reconcilePortfolioDistributions } from "../dist/assets/js/distribution-ledger.mjs?v=0.33.1";
+import { composeMultiStart } from "../dist/assets/js/composer.mjs?v=0.34.0";
+import { referenceRequest } from "../dist/assets/js/reference-preset.mjs?v=0.34.0";
+import { adjustedReturn } from "../dist/assets/js/factors.mjs?v=0.34.0";
+import { reconcilePortfolioDistributions } from "../dist/assets/js/distribution-ledger.mjs?v=0.34.0";
 
 export function nextSessionStart(cutDate){
   if(!/^\d{4}-\d{2}-\d{2}$/.test(cutDate))throw Error("Invalid market cut");
@@ -192,6 +192,14 @@ function main(){
     return;
   }
   const origin=buildSealedOrigin(market,volatility,marketFile,volatilityFile,now);
+  const completedAt=new Date().toISOString(), completedGate=prospectiveEligibility(market,completedAt);
+  if(!completedGate.eligible){
+    if(args.has('--skip-ineligible')){console.log('No prospective seal after computation:',completedGate.reason);return;}
+    throw Error('Nonprospective completion: '+completedGate.reason);
+  }
+  origin.issued_at=completedAt;
+  origin.issue_ny_date=newYorkParts(completedAt).date;
+  origin.eligibility=completedGate;
   if(origin.model_status==="no_feasible")
     throw Error("Cannot seal a probability forecast without feasible model");
   writeFileSync(location,JSON.stringify(origin,null,2)+"\n",{flag:"wx"});

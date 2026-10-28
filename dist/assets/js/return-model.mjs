@@ -1,9 +1,9 @@
-import { observedBy } from "./observation.mjs?v=0.33.1";
-import { finite } from "./analytics.mjs?v=0.33.1";
-import { fundamentalForecast, bondAssumptions, assetAt } from "./research-model.mjs?v=0.33.1";
-import { DEFAULT_RESEARCH } from "./policy.mjs?v=0.33.1";
-import { normalCDF, normalGenerator } from "./random.mjs?v=0.33.1";
-import { actualHoldings } from "./economic-exposure.mjs?v=0.33.1";
+import { observedBy } from "./observation.mjs?v=0.34.0";
+import { finite } from "./analytics.mjs?v=0.34.0";
+import { fundamentalForecast, bondAssumptions, assetAt } from "./research-model.mjs?v=0.34.0";
+import { DEFAULT_RESEARCH } from "./policy.mjs?v=0.34.0";
+import { normalCDF, normalGenerator } from "./random.mjs?v=0.34.0";
+import { actualHoldings } from "./economic-exposure.mjs?v=0.34.0";
 
 /**
  * Annualized scenario return for a bond ETF under a parallel yield change.
@@ -390,6 +390,7 @@ export function sampleDrifts(
   settings,
   random,
   normal = normalGenerator(random),
+  normalFor = null,
 ) {
   const uncertain = settings.uncertainFundamentals !== false,
     marketShare = settings.fundamentalMarketShare ?? 0.35,
@@ -404,14 +405,15 @@ export function sampleDrifts(
     throw new Error(
       "Las participaciones de incertidumbre de mercado y sector deben sumar hasta 100%.",
     );
-  const market = normal(),
+  const draw = key => normalFor ? normalFor(key)() : normal();
+  const market = draw('market'),
     sectors = new Map();
   return anchors.map((anchor) => {
-    if (!sectors.has(anchor.sector)) sectors.set(anchor.sector, normal());
+    if (!sectors.has(anchor.sector)) sectors.set(anchor.sector, draw('sector:' + anchor.sector));
     const z =
       Math.sqrt(marketShare) * market +
       Math.sqrt(sectorShare) * sectors.get(anchor.sector) +
-      Math.sqrt(1 - marketShare - sectorShare) * normal();
+      Math.sqrt(1 - marketShare - sectorShare) * draw('asset:' + anchor.symbol);
     return Math.log1p(
       uncertain
         ? centeredTriangularQuantile(

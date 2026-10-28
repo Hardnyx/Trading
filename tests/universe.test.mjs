@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { selectCompositionUniverse, MAX_COMPOSITION_ASSETS } from "../dist/assets/js/universe.mjs";
-import {compositionUniverseLimit} from '../dist/assets/js/composer.mjs?v=0.33.1';
+import {compositionUniverseLimit} from '../dist/assets/js/composer.mjs?v=0.34.0';
 
 test('expanded search budget retains defaults and supports bounded 60/80-asset samples',()=>{
  assert.equal(compositionUniverseLimit(),40);

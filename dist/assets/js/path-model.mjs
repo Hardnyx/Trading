@@ -5,23 +5,24 @@ import {
   quantile,
   sum,
   normalizeWeights,
-} from "./analytics.mjs?v=0.33.1";
-import { seededRandom, normalGenerator, poisson } from "./random.mjs?v=0.33.1";
-import { ewmaCovariance, cholesky } from "./risk-math.mjs?v=0.33.1";
-import { buildReturnAnchors, sampleDrifts, bondScenarioAnnualReturn, bondRegimeShift } from "./return-model.mjs?v=0.33.1";
-import { distributionAccounting } from "./distribution-ledger.mjs?v=0.33.1";
-import { cashGrowth, uniformCashGrowth } from "./cashflows.mjs?v=0.33.1";
-import { copulaInnovationCovariance } from './copula-covariance.mjs?v=0.33.1';
-import { assetAt } from "./research-model.mjs?v=0.33.1";
-import { factorModel } from "./factors.mjs?v=0.33.1";
-import { conditionalRisk, updateGjrVariance, updateEwmaVariance, updateTargetedVariance, studentMarginal, HORIZON_PERSISTENCE } from "./conditional-risk.mjs?v=0.33.1";
-import { marketFactorCovariance, conditionalFactorization } from "./factor-covariance.mjs?v=0.33.1";
+} from "./analytics.mjs?v=0.34.0";
+import { seededRandom, namedRandom, normalGenerator, poisson } from "./random.mjs?v=0.34.0";
+import { ewmaCovariance, cholesky } from "./risk-math.mjs?v=0.34.0";
+import { buildReturnAnchors, sampleDrifts, bondScenarioAnnualReturn, bondRegimeShift } from "./return-model.mjs?v=0.34.0";
+import { distributionAccounting } from "./distribution-ledger.mjs?v=0.34.0";
+import { cashGrowth, uniformCashGrowth } from "./cashflows.mjs?v=0.34.0";
+import { copulaInnovationCovariance } from './copula-covariance.mjs?v=0.34.0';
+import { cvarStandardError } from './simulation-evidence.mjs?v=0.34.0';
+import { assetAt } from "./research-model.mjs?v=0.34.0";
+import { factorModel } from "./factors.mjs?v=0.34.0";
+import { conditionalRisk, updateGjrVariance, updateEwmaVariance, updateTargetedVariance, studentMarginal, HORIZON_PERSISTENCE } from "./conditional-risk.mjs?v=0.34.0";
+import { marketFactorCovariance, conditionalFactorization } from "./factor-covariance.mjs?v=0.34.0";
 import {
   mandate,
   regimes,
   withdrawalSchedule,
   DEFAULT_REGIMES,
-} from "./policy.mjs?v=0.33.1";
+} from "./policy.mjs?v=0.34.0";
 
 export const BASE_REGIME = {
   id: "base",
@@ -46,10 +47,13 @@ export function pathSettings(input = {}) {
     jumpVol: 0.08,
     uncertainFundamentals: true,
     volatilityMode: "hybrid",
+    innovationLaw: "gaussian",
     ...input,
   };
   if (
     !["gbm", "merton"].includes(s.model) ||
+    !["gaussian", "student-t-research"].includes(s.innovationLaw) ||
+    (s.innovationLaw === "student-t-research" && s.researchShadowMode !== true) ||
     !["ewma", "hybrid", "legacy"].includes(s.volatilityMode) ||
     !["fundamental", "manual"].includes(s.driftMode) ||
     !finite(s.horizon) ||
@@ -93,7 +97,8 @@ export function preparePaths(assets, options = {}, overrides = {}, references = 
     { ...settings, asOf });
   const covariance = conditional.covariance,
     factorization = conditionalFactorization(riskFactor, conditional.multipliers);
-  const innovationMoments=copulaInnovationCovariance(covariance,conditional.dynamic?conditional.fits:[]);
+  const innovationMoments=copulaInnovationCovariance(covariance,
+    conditional.dynamic && settings.innovationLaw === 'student-t-research' ? conditional.fits : []);
   const exposures = factorModel(
     clean,
     clean.map((a) => ({ symbol: a.symbol, weight: 1 / clean.length })),
@@ -228,198 +233,123 @@ export function jumpParameters(asset, anchor, options, regime) {
     compensator: Math.expm1(jumpMean + jumpVol ** 2 / 2),
   };
 }
-export function generatePaths(inputs, paths, seed, stepsPerYear = 52) {
+export const PRICE_KERNEL_VERSION = '1.0.0';
+export function generatePaths(inputs, paths, seed, stepsPerYear = 52, { maxSteps = null } = {}) {
   if (!Number.isInteger(paths) || paths < 100 || paths > 15000)
     throw new Error("Cantidad de escenarios fuera de rango.");
-  const { assets, covariance, anchors } = inputs,
-    options = pathSettings(inputs.options),
-    n = assets.length,
-    H = options.horizon,
-    steps = Math.max(1, Math.ceil(stepsPerYear * H)),
-    dt = H / steps;
+  const { assets, covariance, anchors } = inputs, options = pathSettings(inputs.options),
+    n = assets.length, H = options.horizon,
+    plannedSteps = Math.max(1, Math.ceil(stepsPerYear * H)),
+    steps = maxSteps === null ? plannedSteps : Math.min(plannedSteps, maxSteps), dt = H / plannedSteps;
+  if(!Number.isInteger(steps)||steps<1)throw new Error('Prefijo de simulación inválido');
   if (n * (steps + 1) * paths > 35000000)
-    throw new Error(
-      "Reduce las trayectorias o el horizonte para esta cantidad de activos.",
-    );
+    throw new Error("Reduce las trayectorias o el horizonte para esta cantidad de activos.");
+  if (new Set(assets.map(a => a.symbol)).size !== n)
+    throw new Error("Símbolos duplicados en la simulación.");
   const policy = mandate({ ...options.mandate, horizon: H }),
-    macro = regimes(inputs.regimes || [BASE_REGIME]),
-    factor = cholesky(covariance),
-    conditional = inputs.conditional,
-    dynamic = conditional?.dynamic === true,
-    factorization = inputs.factorization;
-  // Factorize the latent Gaussian covariance. Student-t marginal transforms
-  // change linear correlations; innovationCovariance reports their initial
-  // induced moments separately. Systematic exposure is never removed.
-  const correlation = dynamic
-    ? covariance.map((row, i) => row.map((v, j) =>
-        covariance[i][i] > 0 && covariance[j][j] > 0
-          ? v / Math.sqrt(covariance[i][i]*covariance[j][j]) : 0))
-    : null;
-  const correlationFactor = dynamic ? cholesky(correlation) : null;
-  const random = seededRandom(seed),
-    normal = normalGenerator(random),
-    intensity = dynamic ? 0 : options.model === "merton"
-      ? options.jumpIntensity : 0;
-  const marketIndex = assets.findIndex((a) => a.symbol === "SPY");
-  if (
-    policy.fxVolatility > 0 &&
-    policy.fxMarketCorrelation !== 0 &&
-    marketIndex < 0
-  )
-    throw new Error(
-      "La correlación FX requiere SPY como factor de mercado observado.",
-    );
-  const gross = Array.from(
-      { length: n },
-      () => new Float64Array(paths * (steps + 1)),
-    ),
-    fx = new Float64Array(paths * (steps + 1));
-  const scenarioCounts = Object.fromEntries(macro.map((r) => [r.id, 0]));
-  // Probability-weighted scenario effect per instrument, removed so that the
-  // anchor stays the expected return (uncentered scenarios cut the simulated
-  // equity mean by about 6 pp and acted as an undeclared pessimistic prior).
-  // Centered in terminal gross-return space: E[exp(H (condition - mean))] = 1.
-  const centered = assets.map((a, i) => centeredRegimeConditions(a, anchors[i], macro, H));
+    macro = regimes(inputs.regimes || [BASE_REGIME]).sort((a,b)=>a.id.localeCompare(b.id)), conditional = inputs.conditional,
+    dynamic = conditional?.dynamic === true, factorization = inputs.factorization,
+    studentStress = dynamic && options.innovationLaw === 'student-t-research';
+  // Canonical order, excluding deterministic cash: a permutation or a zero-risk
+  // position must never change another instrument's numerical experiment.
+  const order = assets.map((a, i) => i).filter(i => covariance[i][i] > 0 && assets[i].type !== 'cash')
+    .sort((i, j) => assets[i].symbol < assets[j].symbol ? -1 : assets[i].symbol > assets[j].symbol ? 1 : 0);
+  const stochastic = new Set(order);
+  const correlation = covariance.map((row, i) => row.map((v, j) =>
+    covariance[i][i] > 0 && covariance[j][j] > 0 ? v / Math.sqrt(covariance[i][i] * covariance[j][j]) : 0));
+  const source = dynamic ? factorization?.residualCovariance || correlation : covariance,
+    lower = order.length ? cholesky(order.map(i => order.map(j => source[i][j]))) : [];
+  const normals = new Map(), normalFor = name => {
+    if (!normals.has(name)) normals.set(name, normalGenerator(namedRandom(seed, name)));
+    return normals.get(name);
+  };
+  const regimeRandom = namedRandom(seed, 'regime'), driftRandom = namedRandom(seed, 'drift'),
+    intensity = dynamic ? 0 : options.model === 'merton' ? options.jumpIntensity : 0;
+  const marketIndex = assets.findIndex(a => a.symbol === 'SPY');
+  if (policy.fxVolatility > 0 && policy.fxMarketCorrelation !== 0 && marketIndex < 0)
+    throw new Error("La correlación FX requiere SPY como factor de mercado observado.");
+  const gross = Array.from({ length: n }, () => new Float64Array(paths * (steps + 1))),
+    fx = new Float64Array(paths * (steps + 1)),
+    scenarioCounts = Object.fromEntries(macro.map(r => [r.id, 0])),
+    centered = assets.map((a, i) => centeredRegimeConditions(a, anchors[i], macro, H)),
+    baseDaily = covariance.map((row, i) => Math.max(0, row[i] / 252)),
+    longRun = inputs.horizonVariance?.longRunDaily,
+    studentLaws = assets.map((a, i) => studentStress && stochastic.has(i)
+      ? studentMarginal(conditional.fits[i]?.nu ?? 4) : null),
+    shockScale = assets.map((a, i) => factorization
+      ? Math.sqrt(factorization.loading[i] ** 2 + factorization.residualCovariance[i][i]) : 1);
   for (let p = 0; p < paths; p++) {
-    let u = random(),
-      regime = macro.at(-1);
-    for (const row of macro) {
-      u -= row.probability;
-      if (u <= 0) {
-        regime = row;
-        break;
-      }
-    }
+    // A stopped prefix or a longer horizon cannot consume the next path's
+    // shocks. Path identity is part of each independent random substream.
+    const pathNormal = name => normalGenerator(namedRandom(seed,name+':path:'+p)),
+      primitive = order.map(i => pathNormal('price:'+assets[i].symbol)),
+      marketNormal = pathNormal('price:market-factor'), fxNormal = pathNormal('fx'),
+      jumpRandom = namedRandom(seed,'jumps:count:path:'+p), jumpNormal = pathNormal('jumps:size');
+    let u = regimeRandom(), regime = macro.at(-1);
+    for (const row of macro) { if(!row.probability)continue;u -= row.probability; if (u <= 0) { regime = row; break; } }
     scenarioCounts[regime.id]++;
-    const mu = sampleDrifts(anchors, options, random, normal),
-      jumps = assets.map((a, i) =>
-        jumpParameters(a, anchors[i], options, regime),
-      );
-    const regimeIndex = macro.indexOf(regime);
-    const drift = mu.map((v, i) => {
-      const condition = centered[i][regimeIndex];
-      return (
-        (v +
-          condition -
-          covariance[i][i] / 2 -
-          intensity * jumps[i].compensator) *
-        dt
-      );
-    });
-    const values = Array(n).fill(1);
-    const variances = dynamic
-      ? assets.map((a,i) => conditional.fits[i]?.hInitial ?? Math.max(0,covariance[i][i]/252))
-      : null;
-    const baseDailyVariances = covariance.map((row,i)=>Math.max(0,row[i]/252));
-    const longRun = inputs.horizonVariance?.longRunDaily;
-    // Accepted GJR fits were estimated and screened with standardized
-    // Student-t innovations; simulate that same marginal law. Fallback
-    // instruments keep Gaussian innovations.
-    const studentLaws = dynamic
-      ? assets.map((a,i) => conditional.fits[i]?.nu ? studentMarginal(conditional.fits[i].nu) : null)
-      : null;
-    const shockScale = dynamic
-      ? assets.map((a,i) => factorization
-          ? Math.sqrt(factorization.loading[i]**2 + factorization.residualCovariance[i][i])
-          : 1)
-      : null;
-    const annualLogDrift = dynamic
-      ? drift.map((v,i) => v/dt + covariance[i][i]/2) : null;
+    const mu = sampleDrifts(anchors, options, driftRandom, normalFor('drift:fallback'),
+      key => normalFor('drift:' + key)),
+      jumps = assets.map((a, i) => jumpParameters(a, anchors[i], options, regime)),
+      regimeIndex = macro.indexOf(regime),
+      annualDrift = mu.map((v, i) => v + centered[i][regimeIndex] - intensity * jumps[i].compensator),
+      values = Array(n).fill(1),
+      variances = dynamic ? assets.map((a, i) => conditional.fits[i]?.hInitial ?? baseDaily[i]) : null;
     let exchange = policy.fxSpot;
     for (let i = 0; i < n; i++) gross[i][p * (steps + 1)] = 1;
     fx[p * (steps + 1)] = exchange;
     for (let t = 1; t <= steps; t++) {
       if (dynamic) {
-        // Exact daily GJR recursion; store values at the existing weekly/monthly
-        // reporting grid. This avoids using weekly shocks in a daily equation.
-        const dayStart = Math.round((t-1) * 252 * dt);
-        const dayEnd = Math.round(t * 252 * dt);
-        const days = Math.max(1, dayEnd-dayStart);
-        let marketSum = 0;
+        const days = Math.max(1, Math.round(t * 252 * dt) - Math.round((t - 1) * 252 * dt));
         for (let day = 0; day < days; day++) {
-          // A single Gaussian SPY factor and PSD residual covariance are
-          // estimated on the same historical dates. There is NO global
-          // Student-t radial shock: its tail dependence was not calibrated.
-          const z = Array.from({ length:n }, normal),
-            marketZ = factorization ? normal() : 0;
-          for (let i = 0; i < n; i++) {
-            let shock = factorization ? factorization.loading[i]*marketZ : 0;
-            const lower = factorization
-              ? factorization.residualFactor[i] : correlationFactor[i];
-            for (let j = 0; j <= i; j++) shock += lower[j]*z[j];
-            const h = variances[i];
-            const innovation = studentLaws[i] && shockScale[i] > 0
-              ? Math.sqrt(Math.max(0,h))*studentLaws[i](shock/shockScale[i])
-              : factorization
-                ? shock/Math.sqrt(252) *
-                  (baseDailyVariances[i]>0
-                    ? Math.sqrt(Math.max(0,h)/baseDailyVariances[i]) : 0)
-                : Math.sqrt(Math.max(0,h))*shock;
-            values[i] *= Math.exp(annualLogDrift[i]/252-h/2+innovation);
-            variances[i] = conditional.fits[i]
-              ? updateGjrVariance(conditional.fits[i],h,innovation)
-              : Number.isFinite(longRun?.[i])
-                ? updateTargetedVariance(h,innovation,longRun[i],options.lambda,inputs.horizonVariance.persistence)
-                : updateEwmaVariance(h,innovation,options.lambda);
-            if (i === marketIndex && baseDailyVariances[i]>0)
-              marketSum += innovation/Math.sqrt(Math.max(h,1e-18));
+          const z = primitive.map(normal => normal()), marketZ = factorization ? marketNormal() : 0;
+          let latentMarket = marketZ;
+          for (let k = 0; k < order.length; k++) {
+            const i = order[k];
+            let shock = factorization ? factorization.loading[i] * marketZ : 0;
+            for (let j = 0; j <= k; j++) shock += lower[k][j] * z[j];
+            const h = variances[i], standardized = shock / (shockScale[i] || 1),
+              innovation = studentLaws[i] ? Math.sqrt(Math.max(0, h)) * studentLaws[i](standardized)
+                : factorization ? shock / Math.sqrt(252) * (baseDaily[i] > 0 ? Math.sqrt(Math.max(0, h) / baseDaily[i]) : 0)
+                  : Math.sqrt(Math.max(0, h)) * shock;
+            if (!factorization && i === marketIndex) latentMarket = shock;
+            // The Gaussian conditional exponential moment is exp(h/2).
+            // Student-t does NOT have this moment: that law is risk-only research.
+            values[i] *= Math.exp(annualDrift[i] / 252 - h / 2 + innovation);
+            variances[i] = conditional.fits[i] ? updateGjrVariance(conditional.fits[i], h, innovation)
+              : Number.isFinite(longRun?.[i]) ? updateTargetedVariance(h, innovation, longRun[i], options.lambda, inputs.horizonVariance.persistence)
+                : updateEwmaVariance(h, innovation, options.lambda);
           }
-          if (marketIndex < 0 && factorization) marketSum += marketZ;
+          for (let i = 0; i < n; i++) if (!stochastic.has(i)) values[i] *= Math.exp(annualDrift[i] / 252);
+          const fxZ = policy.fxMarketCorrelation * latentMarket + Math.sqrt(1 - policy.fxMarketCorrelation ** 2) * fxNormal();
+          exchange *= Math.exp((Math.log1p(policy.fxAnnualChange) - policy.fxVolatility ** 2 / 2) / 252 + policy.fxVolatility / Math.sqrt(252) * fxZ);
         }
-        for (let i=0;i<n;i++)
-          gross[i][p*(steps+1)+t] = values[i];
-        const fxZ = policy.fxMarketCorrelation * (marketSum / Math.sqrt(days)) +
-          Math.sqrt(1-policy.fxMarketCorrelation**2)*normal();
-        exchange *= Math.exp(
-          (Math.log1p(policy.fxAnnualChange)-policy.fxVolatility**2/2)*dt +
-          policy.fxVolatility*Math.sqrt(dt)*fxZ);
-        fx[p*(steps+1)+t]=exchange;
-        continue;
+      } else {
+        const z = primitive.map(normal => normal()), count = intensity ? poisson(jumpRandom, intensity * dt) : 0,
+          jumpZ = count ? jumpNormal() : 0;
+        let marketZ = 0;
+        for (let k = 0; k < order.length; k++) {
+          const i = order[k]; let diffusion = 0;
+          for (let j = 0; j <= k; j++) diffusion += lower[k][j] * z[j];
+          values[i] *= Math.exp((annualDrift[i] - covariance[i][i] / 2) * dt + Math.sqrt(dt) * diffusion + count * jumps[i].mean + Math.sqrt(count) * jumps[i].vol * jumpZ);
+          if (i === marketIndex) marketZ = diffusion / Math.sqrt(covariance[i][i]);
+        }
+        for (let i = 0; i < n; i++) if (!stochastic.has(i)) values[i] *= Math.exp(annualDrift[i] * dt+
+          count*jumps[i].mean+Math.sqrt(count)*jumps[i].vol*jumpZ);
+        const fxZ = policy.fxMarketCorrelation * marketZ + Math.sqrt(1 - policy.fxMarketCorrelation ** 2) * fxNormal();
+        exchange *= Math.exp((Math.log1p(policy.fxAnnualChange) - policy.fxVolatility ** 2 / 2) * dt + policy.fxVolatility * Math.sqrt(dt) * fxZ);
       }
-      const z = Array.from({ length: n }, normal),
-        count = intensity ? poisson(random, intensity * dt) : 0,
-        jumpZ = count ? normal() : 0;
-      for (let i = 0; i < n; i++) {
-        let diffusion = 0;
-        for (let j = 0; j <= i; j++) diffusion += factor[i][j] * z[j];
-        values[i] *= Math.exp(
-          drift[i] +
-            Math.sqrt(dt) * diffusion +
-            count * jumps[i].mean +
-            Math.sqrt(count) * jumps[i].vol * jumpZ,
-        );
-        gross[i][p * (steps + 1) + t] = values[i];
-      }
-      const k = marketIndex >= 0 ? marketIndex : 0;
-      let marketZ = 0;
-      for (let j = 0; j <= k; j++) marketZ += factor[k][j] * z[j];
-      marketZ =
-        covariance[k][k] > 0 ? marketZ / Math.sqrt(covariance[k][k]) : normal();
-      const fxZ =
-        policy.fxMarketCorrelation * marketZ +
-        Math.sqrt(1 - policy.fxMarketCorrelation ** 2) * normal();
-      exchange *= Math.exp(
-        (Math.log1p(policy.fxAnnualChange) - policy.fxVolatility ** 2 / 2) *
-          dt +
-          policy.fxVolatility * Math.sqrt(dt) * fxZ,
-      );
+      for (let i = 0; i < n; i++) gross[i][p * (steps + 1) + t] = values[i];
       fx[p * (steps + 1) + t] = exchange;
     }
   }
-  return {
-    gross,
-    fx,
-    assets,
-    steps,
-    dt,
-    paths,
-    seed,
-    policy,
+  return { gross, fx, assets, steps, dt, paths, seed, policy, partial: steps < plannedSteps,
+    priceKernelVersion: PRICE_KERNEL_VERSION,
     asOf: options.asOf || assets[0].price_date,
     informationAsOf: options.informationAsOf || options.asOf || assets[0].price_date,
-    scenarioCounts,
-    riskFreeRate: finite(options.yieldCurve?.DGS3MO) ? options.yieldCurve.DGS3MO / 100 : null,
-  };
+    scenarioCounts, meanPreservingPriceInnovations: !studentStress,
+    randomness: { method: 'named-streams-canonical-order-v1', seed },
+    riskFreeRate: finite(options.yieldCurve?.DGS3MO) ? options.yieldCurve.DGS3MO / 100 : null };
 }
 /** Increasing utility-to-money map shared by forecasts and decision evidence. */
 export function utilityCertaintyEquivalent(score, policy, capital) {
@@ -432,6 +362,9 @@ export function utilityCertaintyEquivalent(score, policy, capital) {
 }
 
 export function evaluatePaths(weights, sample, options = {}) {
+  if(sample.partial)throw new Error('Un prefijo de riesgo no evalúa un mandato económico completo');
+  if(sample.meanPreservingPriceInnovations===false&&options.riskOnly!==true)
+    throw new Error('Student-t en precios es solo estrés de riesgo, sin evaluación económica');
   const { assets, gross, fx, steps, paths, dt, policy } = sample,
     capital = options.capital ?? 100000,
     cost = options.cost ?? 0;
@@ -615,6 +548,7 @@ export function evaluatePaths(weights, sample, options = {}) {
     certaintyEquivalent = utilityCertaintyEquivalent(score, policy, capital);
   const result = {
     score,
+    deterministicCashPortfolio: selected.every(({i})=>assets[i].type==='cash') && policy.fxVolatility===0,
     ...(utilities ? { pathUtilities: utilities } : {}),
     certaintyEquivalent,
     dividendPolicy:policy.dividendPolicy,
@@ -644,6 +578,7 @@ export function evaluatePaths(weights, sample, options = {}) {
     p05: quantile(sorted, 0.05),
     p95: quantile(sorted, 0.95),
     cvar95: Math.max(0, -mean(tail)),
+    cvar95SE: cvarStandardError(sorted),
     var95: Math.max(0, -quantile(sorted, 0.05)),
     lossProbability,
     lossProbabilitySE: Math.sqrt(
@@ -682,7 +617,10 @@ export function evaluatePaths(weights, sample, options = {}) {
       })),
       samplePaths,
     });
-  return result;
+  return options.riskOnly ? Object.fromEntries([
+    'cvar95','cvar95SE','var95','lossProbability','lossProbabilitySE',
+    'drawdownProbability','liquidityFailureProbability','capitalFloorBreachProbability','paths','deterministicCashPortfolio',
+  ].map(key=>[key,result[key]])) : result;
 }
 export function marginalRisk(weights, covariance) {
   const gradient = weights.map((_, i) =>

@@ -1,8 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {prepareComposition,reviewSubstitutions,validWeights,SUBSTITUTION_Z,weightOverlap,reconcileStarts,startSeeds} from '../dist/assets/js/composer.mjs?v=0.33.1';
-import {generatePaths,evaluatePaths,BASE_REGIME} from '../dist/assets/js/path-model.mjs?v=0.33.1';
-import {tradePlan} from '../dist/assets/js/policy.mjs?v=0.33.1';
+import {prepareComposition,reviewSubstitutions,validWeights,SUBSTITUTION_Z,weightOverlap,reconcileBaseStarts as reconcileStarts,startSeeds} from '../dist/assets/js/composer.mjs?v=0.34.0';
+import {generatePaths,evaluatePaths,BASE_REGIME} from '../dist/assets/js/path-model.mjs?v=0.34.0';
+import {tradePlan} from '../dist/assets/js/policy.mjs?v=0.34.0';
 
 // Two stocks, at most two positions (cash + one): improving needs a full
 // substitution, which reallocating cash alone cannot find.
@@ -12,7 +12,9 @@ function universe() {
  const stock=symbol=>({symbol,type:'stock',sector:'Industrial',price:100,price_date:asOf,history,dividend_per_share:0,
   assumptions:{growth:.06,multiple:20,discount:.1,horizon:3},financials:{eps:{value:5,filed:'2026-08-01',period_end:'2026-06-30',method:'TTM'}}});
  return {snapshot:{price_as_of:asOf,generated_at:asOf+'T23:00:00Z',assets:[stock('AAA'),stock('BBB')],macro:[]},
-  settings:{horizon:1,seed:1,model:'gbm',volatilityMode:'legacy',uncertainFundamentals:false,macroRegimes:[BASE_REGIME],mandate:{minimumCash:.8},execution:{spreadBps:0,slippageBps:0}},
+  settings:{horizon:1,seed:1,model:'gbm',volatilityMode:'legacy',uncertainFundamentals:false,
+    fundamentalMarketShare:1,fundamentalSectorShare:0,
+    macroRegimes:[BASE_REGIME],mandate:{minimumCash:.8},execution:{spreadBps:0,slippageBps:0}},
   rules:{maxPositions:2,maxCorrelation:1}};
 }
 function fixture(terminal) {
@@ -103,10 +105,11 @@ test('independent searches are reconciled on common paths: equivalent winners, l
  assert.ok(byLast.z>SUBSTITUTION_Z);
  assert.deepEqual(st.winners.map(w=>w.seed),startSeeds(1,3));
  assert.equal(r.search.starts,3);
- // A single usable start still passes the ordinary model-uncertainty gate.
+  // This legacy base-model comparison is research only; the public pool
+  // and its independent confirmation are covered by reliable-selection tests.
  const single=reconcileStarts(snapshot,settings,{},rules,[aaa,{status:'infeasible'}],400);
  assert.deepEqual(single.positions,aaa.positions);
- assert.equal(single.diagnostics.robustDecision.status,'passed');
+  assert.equal(single.research_only,true);
  assert.deepEqual(aaa.diagnostics,{});
  assert.equal(startSeeds(20261024,3)[0],20261024);
 });

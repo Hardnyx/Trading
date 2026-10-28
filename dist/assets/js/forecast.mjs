@@ -5,12 +5,12 @@ import {
   finite,
   normalizeWeights,
   alignReturns,
-} from "./analytics.mjs?v=0.33.1";
-import { ewmaCovariance } from "./risk-math.mjs?v=0.33.1";
-import { preparePaths, generatePaths, evaluatePaths } from "./path-model.mjs?v=0.33.1";
-import { factorModel } from "./factors.mjs?v=0.33.1";
-export { seededRandom, normalGenerator, poisson } from "./random.mjs?v=0.33.1";
-export { ewmaCovariance, cholesky } from "./risk-math.mjs?v=0.33.1";
+} from "./analytics.mjs?v=0.34.0";
+import { ewmaCovariance } from "./risk-math.mjs?v=0.34.0";
+import { preparePaths, generatePaths, evaluatePaths } from "./path-model.mjs?v=0.34.0";
+import { factorModel } from "./factors.mjs?v=0.34.0";
+export { seededRandom, normalGenerator, poisson } from "./random.mjs?v=0.34.0";
+export { ewmaCovariance, cholesky } from "./risk-math.mjs?v=0.34.0";
 
 export function simulateForecast(
   assets,
@@ -78,7 +78,7 @@ export function simulateForecast(
       return kept;
     })(),
     volatility: {
-      mode: inputs.conditional.enabled ? "GJR-GARCH-t / EWMA" : "EWMA",
+      mode: inputs.conditional.enabled ? "Varianza GJR (ajuste t) / EWMA" : "EWMA",
       accepted: inputs.conditional.active,
       fallback: inputs.conditional.fallback,
       reason: inputs.conditional.reason,

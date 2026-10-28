@@ -1,6 +1,6 @@
 # Trading · lo que falta
 
-Backlog actualizado el 28 de octubre de 2026 para el motor 0.33.1, corte de
+Backlog actualizado el 28 de octubre de 2026 para el motor 0.34.0, corte de
 precios examinado del 27-oct, 260 instrumentos (160 acciones, 100 ETF).
 Consultar las pruebas y los cierres en `docs/estado-validacion.md`. Cero
 incidencias publicadas o pruebas de software aprobadas no acreditan datos
@@ -112,12 +112,20 @@ Este archivo lista **solo lo que falta**. Para el funcionamiento, consultar
   EWMA ni los límites exactos del simulador: falta validar también esa
   distribución y el CVaR de cartera. Pronósticos a 12 meses: 3 sellados y
   0 vencidos. Eventos verificados: 0.
-- **Falta (mientras se acumula):** gráfico de cobertura y QLIKE acumulados
-  en Riesgo, alertas cuando Kupiec o Christoffersen rechacen, y una regla
-  escrita que diga qué hacer al rechazar (volver a EWMA, recalibrar…).
-  Puntuación por horizonte semanal y mensual, no solo a una sesión.
-- **Terminado cuando:** el estado pasa a `evaluable` (≥ 20 sesiones y ≥ 500
-  activo-días) y existe una decisión documentada sobre GJR frente a EWMA.
+- **Avance 0.34.0:** registro del núcleo exacto 1.0.0 a 1/5/21 sesiones,
+  con origen futuro, cestas conjuntas y puntuación CRPS/QLIKE/cobertura/ES
+  frente a EWMA. No se reutilizan cohortes anteriores como evidencia de la
+  nueva ley de precios. No hay observaciones maduras del núcleo nuevo.
+- **Falta:** acumular resultados, intervalos de cobertura/ES y decisiones
+  mensuales predeterminadas; contrastar por subperiodo y con referencias.
+  Faltan gráficos acumulados, alertas Kupiec/Christoffersen y una regla
+  operativa de retirada/recalibración ante rechazos. Una prueba que no
+  rechace con poca muestra no acredita adecuación.
+- **Terminado cuando:** haya precisión y evidencia fuera de muestra suficiente
+  para cada afirmación, con comparación frente a EWMA y decisión documentada.
+  Veinte orígenes no superpuestos y 500 observaciones solo habilitan revisión
+  diagnóstica. La ventaja de asignación requiere resultados de cartera netos
+  maduros frente a mantener y referencias pasivas bajo el mismo mandato.
 
 ## P1 · Modelo frente al documento técnico (`docs/modelo-estocastico-eventos.md`)
 
@@ -186,32 +194,25 @@ Este archivo lista **solo lo que falta**. Para el funcionamiento, consultar
 
 ## P2 · Optimización y operativa
 
-20. **Estabilidad de la propuesta.** Desde 0.28.0, cada propuesta corre tres
-    búsquedas independientes y concilia sus ganadoras en escenarios comunes,
-    con la estabilidad visible en la propuesta. Al corte del 27-oct, el
-    objetivo es plano: carteras que comparten 40–75% de los pesos quedan a
-    USD 50–700 entre sí sobre USD 100.000. Falta: (a) variar también la
-    muestra de 40 activos, que hoy es la misma en las tres búsquedas; (b)
-    decidir si conviene proponer una mezcla de las ganadoras equivalentes
-    (cartera remuestreada), lo que choca con el máximo de posiciones; (c)
-    contrastar la estabilidad entre cortes consecutivos; (d) escalar el
-    presupuesto de búsqueda con el universo elegible. En 0.31.0, añadir tres
-    índices a la muestra hizo que las búsquedas no reencontraran una cartera
-    USD 161 mejor (z 1,88), sin que ninguno de los índices fuera elegido.
-    Doblar el presupuesto a 600 candidatas por búsqueda recuperó esa
-    familia de carteras (+USD 217 en escenarios comunes), pero no mejoró el
-    corte publicado (−USD 24, ruido) y cuesta 25–50% más de tiempo: no se
-    cambió el valor por defecto.
-21. **Comparación robusta** limitada a crecimiento en USD sin retiros, suelo
-    ni meta en el panel de búsqueda minimax. Desde 0.33.0, el control de una
-    transición ordinaria sí compara el mandato completo en los cinco modelos
-    y mantiene si alguno falla, incluidos costes, retiros, suelo y FX. Falta
-    extender la búsqueda robusta global y validar el conjunto de supuestos,
-    que hoy no cubre toda la incertidumbre de parámetros ni de cola.
-    En la captura del 28-oct a las 12:27 UTC, la candidata base desde efectivo
-    incumple CVaR en dos modelos (20,42% y 21,17%, límite 20%) y se conserva
-    el efectivo. Falta buscar una alternativa admisible cuando esa candidata
-    se rechaza; conservar no demuestra que no haya otra mezcla robusta.
+20. **Identificación de la propuesta (prioridad P0 de fiabilidad).** La
+    auditoría congelada de 0.33.1 mide 55–75% de capital cambiado entre
+    semillas. En 0.34.0 se corrigen aleatoriedad acoplada, centrado t de
+    precios y selección base seguida de veto de una sola candidata. Se
+    publica el conjunto de rankings no resueltos y su rango de pesos;
+    menor rotación y luego riesgo desempatan sin congelar la cartera.
+    **Falta:** contrastar universos, cortes nuevos, supuestos y cobertura de
+    la búsqueda finita, y atribuir cada cambio importante a datos, corrección
+    o evidencia. La coincidencia de semillas con la política nueva no prueba
+    que los pesos estén identificados ni que generen mejores retornos.
+21. **Comparación robusta.** La selección ordinaria evalúa todas las
+    candidatas descubiertas bajo cinco modelos, mandato completo y estrés
+    Student solo de riesgo; tiene confirmación independiente y cotas de
+    muestreo. El panel minimax separado sigue limitado a crecimiento USD
+    sin flujos. **Falta:** cobertura de toda incertidumbre de parámetros y
+    dependencia, demostración de convergencia o alcance de la búsqueda,
+    extensión del panel y validación económica fuera de muestra. Se retira
+    el pendiente de buscar alternativas cuando falla la única candidata
+    base: ya se contrasta un conjunto finito, sin afirmar óptimo global.
 22. **Topes prudenciales sin validar** (Treasury 60 %, renta variable 50 %,
     35 % por instrumento) y efectivo al 0 % por defecto. Con los anclajes
     del 27-oct, la reproducción con seis posiciones alcanza 50% en acciones.

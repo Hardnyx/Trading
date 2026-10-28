@@ -9,20 +9,20 @@ import {
   alignReturns,
   returnStats,
   validateSnapshot,
-} from "./analytics.mjs?v=0.33.1";
+} from "./analytics.mjs?v=0.34.0";
 import {
   registerPortfolio,
   reviewPortfolio,
   DEFAULT_RULES,
-} from "./monitor.mjs?v=0.33.1";
+} from "./monitor.mjs?v=0.34.0";
 
-import { fmt, pct, money, dateLabel } from "./ui/format.mjs?v=0.33.1";
-import { createViews, NAV } from "./ui/views.mjs?v=0.33.1";
-import { loadTemplates } from "./ui/templates.mjs?v=0.33.1";
-import { applyVisualValues, showStartupError } from "./ui/dom.mjs?v=0.33.1";
-import { createTickerRotation } from "./ui/ticker-rotation.mjs?v=0.33.1";
-import { createValueFlash } from "./ui/value-flash.mjs?v=0.33.1";
-import { DEFAULT_COMPOSITION_RULES, MULTI_START_COUNT, startSeeds } from "./composer.mjs?v=0.33.1";
+import { fmt, pct, money, dateLabel } from "./ui/format.mjs?v=0.34.0";
+import { createViews, NAV } from "./ui/views.mjs?v=0.34.0";
+import { loadTemplates } from "./ui/templates.mjs?v=0.34.0";
+import { applyVisualValues, showStartupError } from "./ui/dom.mjs?v=0.34.0";
+import { createTickerRotation } from "./ui/ticker-rotation.mjs?v=0.34.0";
+import { createValueFlash } from "./ui/value-flash.mjs?v=0.34.0";
+import { DEFAULT_COMPOSITION_RULES, MULTI_START_COUNT, startSeeds } from "./composer.mjs?v=0.34.0";
 
 import {
   DEFAULT_MANDATE,
@@ -36,22 +36,22 @@ import {
   informationDate,
   effectiveRegimes,
   MODEL_VERSION,
-} from "./policy.mjs?v=0.33.1";
-import { validateResearch } from "./research-model.mjs?v=0.33.1";
+} from "./policy.mjs?v=0.34.0";
+import { validateResearch } from "./research-model.mjs?v=0.34.0";
 import {
   journalOrigin,
   appendForecast,
   freezeMaturedOutcomes,
-} from "./journal.mjs?v=0.33.1";
+} from "./journal.mjs?v=0.34.0";
 
-import { openJournal, saveJournal } from "./journal-store.mjs?v=0.33.1";
+import { openJournal, saveJournal } from "./journal-store.mjs?v=0.34.0";
 
 let journalDBReady = false,
   storageErrorShown = false;
 
 const $ = (s, root = document) => root.querySelector(s);
 
-import { referenceRequest, REFERENCE_ID } from "./reference-preset.mjs?v=0.33.1";
+import { referenceRequest, REFERENCE_ID } from "./reference-preset.mjs?v=0.34.0";
 
 let saved = {};
 try {
@@ -438,7 +438,7 @@ function runForecast() {
       state.research,
     );
     worker ||= new Worker(
-      new URL("./forecast-worker.mjs?v=0.33.1", import.meta.url),
+      new URL("./forecast-worker.mjs?v=0.34.0", import.meta.url),
       {
         type: "module",
       },
@@ -573,7 +573,7 @@ function compositionPool() {
     (navigator.hardwareConcurrency || 2) - 1));
   while (compositionWorkers.length < size)
     compositionWorkers.push(new Worker(
-      new URL("./composer-worker.mjs?v=0.33.1", import.meta.url),
+      new URL("./composer-worker.mjs?v=0.34.0", import.meta.url),
       { type: "module" },
     ));
   return compositionWorkers;
@@ -611,7 +611,7 @@ function runRobustness(){
  }
  state.robustnessBusy=true;state.robustnessError=null;state.robustnessProgress='Preparando comparación';render();
  try{
-  robustWorker??=new Worker(new URL('./robust-worker.mjs?v=0.33.1',import.meta.url),{type:'module'});
+  robustWorker??=new Worker(new URL('./robust-worker.mjs?v=0.34.0',import.meta.url),{type:'module'});
   robustWorker.onmessage=({data:message})=>{
    if(message.id!==robustJob)return;
    if(proposalSignature()!==signature){
@@ -812,6 +812,13 @@ async function riskCalibration() {
     return null; // Missing evidence must not break the site.
   }
 }
+async function simulatorValidation() {
+  try {
+    const response=await fetch(new URL('../../data/simulator-validation.json',import.meta.url),{cache:'no-cache'});
+    if(!response.ok)return null;
+    const s=await response.json();return s.schema_version===1&&s.horizons?s:null;
+  } catch {return null;}
+}
 let marketETag = null;
 let marketURL = null;
 
@@ -843,6 +850,7 @@ async function loadData() {
   const checked=validateSnapshot(result.snapshot);
   checked.volatility=await matchingVolatility(checked);
   checked.riskCalibration=await riskCalibration();
+  checked.simulatorValidation=await simulatorValidation();
   data = withCashAsset(checked);
   if (state.proposal &&
       (state.proposal.model_version !== MODEL_VERSION ||
@@ -902,6 +910,7 @@ setInterval(async () => {
     const previous = monitoring()?.alerts.map((a) => a.id) || [];
     next.volatility=await matchingVolatility(next);
     next.riskCalibration=await riskCalibration();
+    next.simulatorValidation=await simulatorValidation();
     data = withCashAsset(next);
     if (state.proposal &&
         (state.proposal.model_version !== MODEL_VERSION ||
@@ -1029,7 +1038,7 @@ document.addEventListener("click", async (event) => {
   }
   if(action==='use-robust-weights'){
    const r=state.robustness;
-   if(!r?.candidate||r.signature!==proposalSignature()||r.snapshot_generated_at!==data.generated_at){
+   if(!r?.candidate||r.candidate.decisionAudit?.status!=='passed'||r.signature!==proposalSignature()||r.snapshot_generated_at!==data.generated_at){
     toast('La comparación cambió o está desactualizada. Vuelve a calcularla.');return;
    }
    state.positions=r.candidate.positions.map(p=>({...p}));
@@ -1044,6 +1053,7 @@ document.addEventListener("click", async (event) => {
   }
   if (action === "apply-proposal") {
     if (!state.proposal || state.proposal.status !== "proposed" ||
+        state.proposal.research_only === true ||
         state.proposal.diagnostics?.robustDecision?.status !== "passed" ||
         state.proposal.model_version !== MODEL_VERSION ||
         state.proposal.as_of !== data.price_as_of ||

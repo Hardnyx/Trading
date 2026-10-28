@@ -1,0 +1,1036 @@
+{
+  "method": "frozen-input-reliability-v1",
+  "engine": "0.34.0",
+  "market_collected_at": "2026-10-28T12:27:53.076354+00:00",
+  "input_hash": "416a981d0d9caa269c3b6db0cf82d61c4c7a52376e931943bfb0cc7181f2fefb",
+  "null_experiment": {
+    "changed_coordinates": 0,
+    "original": {
+      "score": 0.047689871690917165,
+      "deterministicCashPortfolio": false,
+      "certaintyEquivalent": 104884.53282523702,
+      "dividendPolicy": "cash",
+      "dividendWithholding": 0,
+      "cashYield": 0,
+      "expectedCashInterest": -7.003109203651547e-14,
+      "expectedGrossDistributions": 2599.565799112026,
+      "expectedNetDistributions": 2599.565799112026,
+      "expectedDividendWithholding": 0,
+      "expectedNetReinvestedDividends": 0,
+      "expectedGrossDividendCash": 2599.565799112026,
+      "expectedDividendReceivable": 0,
+      "dividendTiming": [
+        {
+          "symbol": "SPY",
+          "mode": "uniform-estimate",
+          "source_url": null,
+          "calendarObservedAt": null,
+          "events": [],
+          "cappedEvents": 0
+        },
+        {
+          "symbol": "SHY",
+          "mode": "issuer-calendar",
+          "source_url": "https://www.ishares.com/us/literature/shareholder-letters/isharesandblackrocketfsdistributionschedule.pdf",
+          "calendarObservedAt": "2026-10-26T17:29:30.680872+00:00",
+          "events": [
+            {
+              "ex_date": "2026-11-02",
+              "pay_date": "2026-11-05",
+              "amount_per_share": null,
+              "amount_basis": "trailing-yield-assumption"
+            },
+            {
+              "ex_date": "2026-12-01",
+              "pay_date": "2026-12-04",
+              "amount_per_share": null,
+              "amount_basis": "trailing-yield-assumption"
+            },
+            {
+              "ex_date": "2026-12-18",
+              "pay_date": "2026-12-23",
+              "amount_per_share": null,
+              "amount_basis": "trailing-yield-assumption"
+            },
+            {
+              "ex_date": "2027-02-01",
+              "pay_date": "2027-02-04",
+              "amount_per_share": null,
+              "amount_basis": "trailing-yield-assumption"
+            },
+            {
+              "ex_date": "2027-03-01",
+              "pay_date": "2027-03-04",
+              "amount_per_share": null,
+              "amount_basis": "trailing-yield-assumption"
+            },
+            {
+              "ex_date": "2027-04-01",
+              "pay_date": "2027-04-06",
+              "amount_per_share": null,
+              "amount_basis": "trailing-yield-assumption"
+            },
+            {
+              "ex_date": "2027-05-03",
+              "pay_date": "2027-05-06",
+              "amount_per_share": null,
+              "amount_basis": "trailing-yield-assumption"
+            },
+            {
+              "ex_date": "2027-06-01",
+              "pay_date": "2027-06-04",
+              "amount_per_share": null,
+              "amount_basis": "trailing-yield-assumption"
+            },
+            {
+              "ex_date": "2027-07-01",
+              "pay_date": "2027-07-07",
+              "amount_per_share": null,
+              "amount_basis": "trailing-yield-assumption"
+            },
+            {
+              "ex_date": "2027-08-02",
+              "pay_date": "2027-08-05",
+              "amount_per_share": null,
+              "amount_basis": "trailing-yield-assumption"
+            },
+            {
+              "ex_date": "2027-09-01",
+              "pay_date": "2027-09-07",
+              "amount_per_share": null,
+              "amount_basis": "trailing-yield-assumption"
+            },
+            {
+              "ex_date": "2027-10-01",
+              "pay_date": "2027-10-06",
+              "amount_per_share": null,
+              "amount_basis": "trailing-yield-assumption"
+            }
+          ],
+          "cappedEvents": 0
+        },
+        {
+          "symbol": "IEF",
+          "mode": "issuer-calendar",
+          "source_url": "https://www.ishares.com/us/literature/shareholder-letters/isharesandblackrocketfsdistributionschedule.pdf",
+          "calendarObservedAt": "2026-10-26T17:29:30.680872+00:00",
+          "events": [
+            {
+              "ex_date": "2026-11-02",
+              "pay_date": "2026-11-05",
+              "amount_per_share": null,
+              "amount_basis": "trailing-yield-assumption"
+            },
+            {
+              "ex_date": "2026-12-01",
+              "pay_date": "2026-12-04",
+              "amount_per_share": null,
+              "amount_basis": "trailing-yield-assumption"
+            },
+            {
+              "ex_date": "2026-12-18",
+              "pay_date": "2026-12-23",
+              "amount_per_share": null,
+              "amount_basis": "trailing-yield-assumption"
+            },
+            {
+              "ex_date": "2027-02-01",
+              "pay_date": "2027-02-04",
+              "amount_per_share": null,
+              "amount_basis": "trailing-yield-assumption"
+            },
+            {
+              "ex_date": "2027-03-01",
+              "pay_date": "2027-03-04",
+              "amount_per_share": null,
+              "amount_basis": "trailing-yield-assumption"
+            },
+            {
+              "ex_date": "2027-04-01",
+              "pay_date": "2027-04-06",
+              "amount_per_share": null,
+              "amount_basis": "trailing-yield-assumption"
+            },
+            {
+              "ex_date": "2027-05-03",
+              "pay_date": "2027-05-06",
+              "amount_per_share": null,
+              "amount_basis": "trailing-yield-assumption"
+            },
+            {
+              "ex_date": "2027-06-01",
+              "pay_date": "2027-06-04",
+              "amount_per_share": null,
+              "amount_basis": "trailing-yield-assumption"
+            },
+            {
+              "ex_date": "2027-07-01",
+              "pay_date": "2027-07-07",
+              "amount_per_share": null,
+              "amount_basis": "trailing-yield-assumption"
+            },
+            {
+              "ex_date": "2027-08-02",
+              "pay_date": "2027-08-05",
+              "amount_per_share": null,
+              "amount_basis": "trailing-yield-assumption"
+            },
+            {
+              "ex_date": "2027-09-01",
+              "pay_date": "2027-09-07",
+              "amount_per_share": null,
+              "amount_basis": "trailing-yield-assumption"
+            },
+            {
+              "ex_date": "2027-10-01",
+              "pay_date": "2027-10-06",
+              "amount_per_share": null,
+              "amount_basis": "trailing-yield-assumption"
+            }
+          ],
+          "cappedEvents": 0
+        }
+      ],
+      "expectedNetDividendCash": 2599.565799112026,
+      "expectedLogGrowth": 0.047689871690917165,
+      "meanReturn": 0.05143645407028043,
+      "medianReturn": 0.05063538442355864,
+      "p05": -0.06890979860109028,
+      "p95": 0.16925553650194342,
+      "cvar95": 0.09686166198310107,
+      "cvar95SE": 0.00492741595841118,
+      "var95": 0.06890979860109028,
+      "lossProbability": 0.24,
+      "lossProbabilitySE": 0.013505554412907307,
+      "shortfallRate": 0.042199999999999994,
+      "shortfallBasis": "bill",
+      "shortfallProbability": 0.452,
+      "shortfallProbabilitySE": 0.015738360778683402,
+      "drawdownProbability": 0,
+      "worstDrawdownP05": -0.09434532733908682,
+      "medianUnderwaterYears": 0.38461538461538464,
+      "recoveryProbability": 0.193,
+      "underwaterAtHorizonProbability": 0.807,
+      "liquidityFailureProbability": 0,
+      "capitalFloorBreachProbability": 0,
+      "goalProbability": 1,
+      "medianTerminalWealth": 105063.53844235587,
+      "p05TerminalWealth": 93109.02013989097,
+      "p95TerminalWealth": 116925.55365019431,
+      "paths": 1000
+    },
+    "augmented": {
+      "score": 0.047689871690917165,
+      "deterministicCashPortfolio": false,
+      "certaintyEquivalent": 104884.53282523702,
+      "dividendPolicy": "cash",
+      "dividendWithholding": 0,
+      "cashYield": 0,
+      "expectedCashInterest": -7.003109203651547e-14,
+      "expectedGrossDistributions": 2599.565799112026,
+      "expectedNetDistributions": 2599.565799112026,
+      "expectedDividendWithholding": 0,
+      "expectedNetReinvestedDividends": 0,
+      "expectedGrossDividendCash": 2599.565799112026,
+      "expectedDividendReceivable": 0,
+      "dividendTiming": [
+        {
+          "symbol": "SPY",
+          "mode": "uniform-estimate",
+          "source_url": null,
+          "calendarObservedAt": null,
+          "events": [],
+          "cappedEvents": 0
+        },
+        {
+          "symbol": "SHY",
+          "mode": "issuer-calendar",
+          "source_url": "https://www.ishares.com/us/literature/shareholder-letters/isharesandblackrocketfsdistributionschedule.pdf",
+          "calendarObservedAt": "2026-10-26T17:29:30.680872+00:00",
+          "events": [
+            {
+              "ex_date": "2026-11-02",
+              "pay_date": "2026-11-05",
+              "amount_per_share": null,
+              "amount_basis": "trailing-yield-assumption"
+            },
+            {
+              "ex_date": "2026-12-01",
+              "pay_date": "2026-12-04",
+              "amount_per_share": null,
+              "amount_basis": "trailing-yield-assumption"
+            },
+            {
+              "ex_date": "2026-12-18",
+              "pay_date": "2026-12-23",
+              "amount_per_share": null,
+              "amount_basis": "trailing-yield-assumption"
+            },
+            {
+              "ex_date": "2027-02-01",
+              "pay_date": "2027-02-04",
+              "amount_per_share": null,
+              "amount_basis": "trailing-yield-assumption"
+            },
+            {
+              "ex_date": "2027-03-01",
+              "pay_date": "2027-03-04",
+              "amount_per_share": null,
+              "amount_basis": "trailing-yield-assumption"
+            },
+            {
+              "ex_date": "2027-04-01",
+              "pay_date": "2027-04-06",
+              "amount_per_share": null,
+              "amount_basis": "trailing-yield-assumption"
+            },
+            {
+              "ex_date": "2027-05-03",
+              "pay_date": "2027-05-06",
+              "amount_per_share": null,
+              "amount_basis": "trailing-yield-assumption"
+            },
+            {
+              "ex_date": "2027-06-01",
+              "pay_date": "2027-06-04",
+              "amount_per_share": null,
+              "amount_basis": "trailing-yield-assumption"
+            },
+            {
+              "ex_date": "2027-07-01",
+              "pay_date": "2027-07-07",
+              "amount_per_share": null,
+              "amount_basis": "trailing-yield-assumption"
+            },
+            {
+              "ex_date": "2027-08-02",
+              "pay_date": "2027-08-05",
+              "amount_per_share": null,
+              "amount_basis": "trailing-yield-assumption"
+            },
+            {
+              "ex_date": "2027-09-01",
+              "pay_date": "2027-09-07",
+              "amount_per_share": null,
+              "amount_basis": "trailing-yield-assumption"
+            },
+            {
+              "ex_date": "2027-10-01",
+              "pay_date": "2027-10-06",
+              "amount_per_share": null,
+              "amount_basis": "trailing-yield-assumption"
+            }
+          ],
+          "cappedEvents": 0
+        },
+        {
+          "symbol": "IEF",
+          "mode": "issuer-calendar",
+          "source_url": "https://www.ishares.com/us/literature/shareholder-letters/isharesandblackrocketfsdistributionschedule.pdf",
+          "calendarObservedAt": "2026-10-26T17:29:30.680872+00:00",
+          "events": [
+            {
+              "ex_date": "2026-11-02",
+              "pay_date": "2026-11-05",
+              "amount_per_share": null,
+              "amount_basis": "trailing-yield-assumption"
+            },
+            {
+              "ex_date": "2026-12-01",
+              "pay_date": "2026-12-04",
+              "amount_per_share": null,
+              "amount_basis": "trailing-yield-assumption"
+            },
+            {
+              "ex_date": "2026-12-18",
+              "pay_date": "2026-12-23",
+              "amount_per_share": null,
+              "amount_basis": "trailing-yield-assumption"
+            },
+            {
+              "ex_date": "2027-02-01",
+              "pay_date": "2027-02-04",
+              "amount_per_share": null,
+              "amount_basis": "trailing-yield-assumption"
+            },
+            {
+              "ex_date": "2027-03-01",
+              "pay_date": "2027-03-04",
+              "amount_per_share": null,
+              "amount_basis": "trailing-yield-assumption"
+            },
+            {
+              "ex_date": "2027-04-01",
+              "pay_date": "2027-04-06",
+              "amount_per_share": null,
+              "amount_basis": "trailing-yield-assumption"
+            },
+            {
+              "ex_date": "2027-05-03",
+              "pay_date": "2027-05-06",
+              "amount_per_share": null,
+              "amount_basis": "trailing-yield-assumption"
+            },
+            {
+              "ex_date": "2027-06-01",
+              "pay_date": "2027-06-04",
+              "amount_per_share": null,
+              "amount_basis": "trailing-yield-assumption"
+            },
+            {
+              "ex_date": "2027-07-01",
+              "pay_date": "2027-07-07",
+              "amount_per_share": null,
+              "amount_basis": "trailing-yield-assumption"
+            },
+            {
+              "ex_date": "2027-08-02",
+              "pay_date": "2027-08-05",
+              "amount_per_share": null,
+              "amount_basis": "trailing-yield-assumption"
+            },
+            {
+              "ex_date": "2027-09-01",
+              "pay_date": "2027-09-07",
+              "amount_per_share": null,
+              "amount_basis": "trailing-yield-assumption"
+            },
+            {
+              "ex_date": "2027-10-01",
+              "pay_date": "2027-10-06",
+              "amount_per_share": null,
+              "amount_basis": "trailing-yield-assumption"
+            }
+          ],
+          "cappedEvents": 0
+        }
+      ],
+      "expectedNetDividendCash": 2599.565799112026,
+      "expectedLogGrowth": 0.047689871690917165,
+      "meanReturn": 0.05143645407028043,
+      "medianReturn": 0.05063538442355864,
+      "p05": -0.06890979860109028,
+      "p95": 0.16925553650194342,
+      "cvar95": 0.09686166198310107,
+      "cvar95SE": 0.00492741595841118,
+      "var95": 0.06890979860109028,
+      "lossProbability": 0.24,
+      "lossProbabilitySE": 0.013505554412907307,
+      "shortfallRate": 0.042199999999999994,
+      "shortfallBasis": "bill",
+      "shortfallProbability": 0.452,
+      "shortfallProbabilitySE": 0.015738360778683402,
+      "drawdownProbability": 0,
+      "worstDrawdownP05": -0.09434532733908682,
+      "medianUnderwaterYears": 0.38461538461538464,
+      "recoveryProbability": 0.193,
+      "underwaterAtHorizonProbability": 0.807,
+      "liquidityFailureProbability": 0,
+      "capitalFloorBreachProbability": 0,
+      "goalProbability": 1,
+      "medianTerminalWealth": 105063.53844235587,
+      "p05TerminalWealth": 93109.02013989097,
+      "p95TerminalWealth": 116925.55365019431,
+      "paths": 1000
+    },
+    "scenario_counts": {
+      "base": 591,
+      "expansion": 114,
+      "inflation": 167,
+      "recession": 128
+    }
+  },
+  "outcomes": [
+    {
+      "seed": 20261024,
+      "status": "proposed",
+      "positions": [
+        {
+          "symbol": "SGOV",
+          "weight": 0.35
+        },
+        {
+          "symbol": "CASH",
+          "weight": 0.05
+        },
+        {
+          "symbol": "IGSB",
+          "weight": 0.35
+        },
+        {
+          "symbol": "SHV",
+          "weight": 0.25
+        }
+      ],
+      "reason": null,
+      "robustDecision": "passed",
+      "minimumLowerGain": 3897.5123329711496,
+      "stability": {
+        "method": "robust-finite-pool",
+        "starts": 1,
+        "compared": 23,
+        "commonPaths": 1000,
+        "unresolved": 17,
+        "minimumOverlap": 0.05,
+        "ranges": [
+          {
+            "symbol": "SPY",
+            "minimum": 0,
+            "maximum": 0.35
+          },
+          {
+            "symbol": "TLT",
+            "minimum": 0,
+            "maximum": 0.35
+          },
+          {
+            "symbol": "SHY",
+            "minimum": 0,
+            "maximum": 0.35
+          },
+          {
+            "symbol": "VTI",
+            "minimum": 0,
+            "maximum": 0.1
+          },
+          {
+            "symbol": "AGG",
+            "minimum": 0,
+            "maximum": 0.35
+          },
+          {
+            "symbol": "IEF",
+            "minimum": 0,
+            "maximum": 0.35
+          },
+          {
+            "symbol": "SGOV",
+            "minimum": 0,
+            "maximum": 0.35
+          },
+          {
+            "symbol": "LQD",
+            "minimum": 0,
+            "maximum": 0.35
+          },
+          {
+            "symbol": "HYG",
+            "minimum": 0,
+            "maximum": 0.15
+          },
+          {
+            "symbol": "CASH",
+            "minimum": 0.05,
+            "maximum": 0.05
+          },
+          {
+            "symbol": "IGSB",
+            "minimum": 0,
+            "maximum": 0.35
+          },
+          {
+            "symbol": "TIP",
+            "minimum": 0,
+            "maximum": 0.25
+          },
+          {
+            "symbol": "IEI",
+            "minimum": 0,
+            "maximum": 0.25
+          },
+          {
+            "symbol": "SHV",
+            "minimum": 0,
+            "maximum": 0.3
+          },
+          {
+            "symbol": "ORCL",
+            "minimum": 0,
+            "maximum": 0.05
+          },
+          {
+            "symbol": "AMZN",
+            "minimum": 0,
+            "maximum": 0.05
+          },
+          {
+            "symbol": "GOOGL",
+            "minimum": 0,
+            "maximum": 0.15
+          },
+          {
+            "symbol": "MSFT",
+            "minimum": 0,
+            "maximum": 0.05
+          },
+          {
+            "symbol": "META",
+            "minimum": 0,
+            "maximum": 0.15
+          },
+          {
+            "symbol": "VIG",
+            "minimum": 0,
+            "maximum": 0.05
+          },
+          {
+            "symbol": "MDT",
+            "minimum": 0,
+            "maximum": 0.2
+          },
+          {
+            "symbol": "PEP",
+            "minimum": 0,
+            "maximum": 0.05
+          }
+        ],
+        "level": "low",
+        "scope": "Unresolved modelwise rankings; sampling uncertainty is not parameter or predictive validity"
+      },
+      "discovered": 277,
+      "seconds": 58.885
+    },
+    {
+      "seed": 20261025,
+      "status": "proposed",
+      "positions": [
+        {
+          "symbol": "SGOV",
+          "weight": 0.35
+        },
+        {
+          "symbol": "CASH",
+          "weight": 0.05
+        },
+        {
+          "symbol": "IGSB",
+          "weight": 0.35
+        },
+        {
+          "symbol": "SHV",
+          "weight": 0.25
+        }
+      ],
+      "reason": null,
+      "robustDecision": "passed",
+      "minimumLowerGain": 3897.5123329711496,
+      "stability": {
+        "method": "robust-finite-pool",
+        "starts": 1,
+        "compared": 23,
+        "commonPaths": 1000,
+        "unresolved": 8,
+        "minimumOverlap": 0.05,
+        "ranges": [
+          {
+            "symbol": "SPY",
+            "minimum": 0,
+            "maximum": 0.35
+          },
+          {
+            "symbol": "SHY",
+            "minimum": 0,
+            "maximum": 0.35
+          },
+          {
+            "symbol": "AGG",
+            "minimum": 0,
+            "maximum": 0.35
+          },
+          {
+            "symbol": "IEF",
+            "minimum": 0,
+            "maximum": 0.35
+          },
+          {
+            "symbol": "SGOV",
+            "minimum": 0,
+            "maximum": 0.35
+          },
+          {
+            "symbol": "LQD",
+            "minimum": 0,
+            "maximum": 0.35
+          },
+          {
+            "symbol": "CASH",
+            "minimum": 0.05,
+            "maximum": 0.05
+          },
+          {
+            "symbol": "IGSB",
+            "minimum": 0,
+            "maximum": 0.35
+          },
+          {
+            "symbol": "TIP",
+            "minimum": 0,
+            "maximum": 0.25
+          },
+          {
+            "symbol": "IEI",
+            "minimum": 0,
+            "maximum": 0.25
+          },
+          {
+            "symbol": "SHV",
+            "minimum": 0,
+            "maximum": 0.25
+          }
+        ],
+        "level": "low",
+        "scope": "Unresolved modelwise rankings; sampling uncertainty is not parameter or predictive validity"
+      },
+      "discovered": 274,
+      "seconds": 57.489
+    },
+    {
+      "seed": 20261026,
+      "status": "proposed",
+      "positions": [
+        {
+          "symbol": "SGOV",
+          "weight": 0.35
+        },
+        {
+          "symbol": "CASH",
+          "weight": 0.05
+        },
+        {
+          "symbol": "IGSB",
+          "weight": 0.35
+        },
+        {
+          "symbol": "SHV",
+          "weight": 0.25
+        }
+      ],
+      "reason": null,
+      "robustDecision": "passed",
+      "minimumLowerGain": 3897.5123329711496,
+      "stability": {
+        "method": "robust-finite-pool",
+        "starts": 1,
+        "compared": 23,
+        "commonPaths": 1000,
+        "unresolved": 17,
+        "minimumOverlap": 0.05,
+        "ranges": [
+          {
+            "symbol": "SPY",
+            "minimum": 0,
+            "maximum": 0.35
+          },
+          {
+            "symbol": "SHY",
+            "minimum": 0,
+            "maximum": 0.35
+          },
+          {
+            "symbol": "AGG",
+            "minimum": 0,
+            "maximum": 0.35
+          },
+          {
+            "symbol": "SGOV",
+            "minimum": 0,
+            "maximum": 0.35
+          },
+          {
+            "symbol": "LQD",
+            "minimum": 0,
+            "maximum": 0.35
+          },
+          {
+            "symbol": "CASH",
+            "minimum": 0.05,
+            "maximum": 0.05
+          },
+          {
+            "symbol": "IGSB",
+            "minimum": 0,
+            "maximum": 0.35
+          },
+          {
+            "symbol": "TIP",
+            "minimum": 0,
+            "maximum": 0.25
+          },
+          {
+            "symbol": "IEI",
+            "minimum": 0,
+            "maximum": 0.25
+          },
+          {
+            "symbol": "SHV",
+            "minimum": 0,
+            "maximum": 0.25
+          },
+          {
+            "symbol": "ORCL",
+            "minimum": 0,
+            "maximum": 0.05
+          },
+          {
+            "symbol": "AMZN",
+            "minimum": 0,
+            "maximum": 0.15
+          },
+          {
+            "symbol": "NKE",
+            "minimum": 0,
+            "maximum": 0.05
+          },
+          {
+            "symbol": "META",
+            "minimum": 0,
+            "maximum": 0.2
+          },
+          {
+            "symbol": "PGR",
+            "minimum": 0,
+            "maximum": 0.05
+          },
+          {
+            "symbol": "VIG",
+            "minimum": 0,
+            "maximum": 0.05
+          },
+          {
+            "symbol": "MDT",
+            "minimum": 0,
+            "maximum": 0.15
+          },
+          {
+            "symbol": "XLE",
+            "minimum": 0,
+            "maximum": 0.15
+          },
+          {
+            "symbol": "HON",
+            "minimum": 0,
+            "maximum": 0.05
+          },
+          {
+            "symbol": "PEP",
+            "minimum": 0,
+            "maximum": 0.1
+          }
+        ],
+        "level": "low",
+        "scope": "Unresolved modelwise rankings; sampling uncertainty is not parameter or predictive validity"
+      },
+      "discovered": 274,
+      "seconds": 77.175
+    },
+    {
+      "id": "VTI-eligibility-only",
+      "status": "proposed",
+      "positions": [
+        {
+          "symbol": "SGOV",
+          "weight": 0.35
+        },
+        {
+          "symbol": "CASH",
+          "weight": 0.05
+        },
+        {
+          "symbol": "IGSB",
+          "weight": 0.35
+        },
+        {
+          "symbol": "SHV",
+          "weight": 0.25
+        }
+      ],
+      "reason": null,
+      "robustDecision": "passed",
+      "stability": {
+        "method": "robust-finite-pool",
+        "starts": 1,
+        "compared": 23,
+        "commonPaths": 1000,
+        "unresolved": 17,
+        "minimumOverlap": 0.05,
+        "ranges": [
+          {
+            "symbol": "SPY",
+            "minimum": 0,
+            "maximum": 0.35
+          },
+          {
+            "symbol": "TLT",
+            "minimum": 0,
+            "maximum": 0.35
+          },
+          {
+            "symbol": "SHY",
+            "minimum": 0,
+            "maximum": 0.35
+          },
+          {
+            "symbol": "AGG",
+            "minimum": 0,
+            "maximum": 0.35
+          },
+          {
+            "symbol": "IEF",
+            "minimum": 0,
+            "maximum": 0.35
+          },
+          {
+            "symbol": "SGOV",
+            "minimum": 0,
+            "maximum": 0.35
+          },
+          {
+            "symbol": "LQD",
+            "minimum": 0,
+            "maximum": 0.35
+          },
+          {
+            "symbol": "CASH",
+            "minimum": 0.05,
+            "maximum": 0.05
+          },
+          {
+            "symbol": "IGSB",
+            "minimum": 0,
+            "maximum": 0.35
+          },
+          {
+            "symbol": "TIP",
+            "minimum": 0,
+            "maximum": 0.25
+          },
+          {
+            "symbol": "IEI",
+            "minimum": 0,
+            "maximum": 0.25
+          },
+          {
+            "symbol": "SHV",
+            "minimum": 0,
+            "maximum": 0.25
+          }
+        ],
+        "level": "low",
+        "scope": "Unresolved modelwise rankings; sampling uncertainty is not parameter or predictive validity"
+      }
+    },
+    {
+      "id": "declared-sensitivity-IGSB-yield-minus-300bp",
+      "status": "proposed",
+      "positions": [
+        {
+          "symbol": "AGG",
+          "weight": 0.35
+        },
+        {
+          "symbol": "SGOV",
+          "weight": 0.35
+        },
+        {
+          "symbol": "CASH",
+          "weight": 0.05
+        },
+        {
+          "symbol": "SHV",
+          "weight": 0.25
+        }
+      ],
+      "reason": null,
+      "robustDecision": "passed",
+      "scope": "Controlled assumption sensitivity, not a new observed market snapshot"
+    },
+    {
+      "id": "hypothetical-held-account",
+      "status": "hold",
+      "positions": [
+        {
+          "symbol": "SPY",
+          "quantity": 45.474626754430425,
+          "costBasis": 769.659973,
+          "value": 35000,
+          "price": 769.659973,
+          "weight": 0.35
+        },
+        {
+          "symbol": "SHY",
+          "quantity": 429.71149526254743,
+          "costBasis": 81.449997,
+          "value": 35000,
+          "price": 81.449997,
+          "weight": 0.35
+        },
+        {
+          "symbol": "IEF",
+          "quantity": 274.42371623323197,
+          "costBasis": 91.099998,
+          "value": 25000,
+          "price": 91.099998,
+          "weight": 0.25
+        },
+        {
+          "symbol": "CASH",
+          "weight": 0.05,
+          "quantity": 5000,
+          "costBasis": 1,
+          "price": 1
+        }
+      ],
+      "reason": "Mantener: ninguna transición del conjunto comprobado superó los controles. transición descartada en Base (mejora insuficiente); Sin re-rating (mejora insuficiente); Margen y crédito (mejora insuficiente); Combinado (mejora insuficiente); Baja convicción (mejora insuficiente).",
+      "cost": 0,
+      "scope": "Hypothetical account, not the user brokerage account"
+    }
+  ],
+  "overlaps": [
+    {
+      "seed": 20261025,
+      "weight_overlap": 1
+    },
+    {
+      "seed": 20261026,
+      "weight_overlap": 1
+    },
+    {
+      "id": "VTI-eligibility-only",
+      "weight_overlap": 1
+    },
+    {
+      "id": "declared-sensitivity-IGSB-yield-minus-300bp",
+      "weight_overlap": 0.6499999999999999
+    },
+    {
+      "id": "hypothetical-held-account",
+      "weight_overlap": 0.05
+    }
+  ],
+  "independent_confirmation_replicates": [
+    {
+      "seed": 1611599689,
+      "status": "passed",
+      "minimumLowerGain": 3871.8197150404885,
+      "worstCvarUpper": 0.00438627447097351
+    },
+    {
+      "seed": 1611599688,
+      "status": "passed",
+      "minimumLowerGain": 3848.0088388817676,
+      "worstCvarUpper": 0.006603627156451022
+    },
+    {
+      "seed": 1611599691,
+      "status": "passed",
+      "minimumLowerGain": 3807.0141945350188,
+      "worstCvarUpper": 0.0035866559536710282
+    }
+  ],
+  "predictive_validation": "not-established",
+  "scope": "Finite discovery, conditional simulated contrasts and independent Monte Carlo replicates. No historical trading superiority claim.",
+  "completed_at": "2026-10-28T18:41:47.112Z",
+  "resumed_confirmation_from_incremental_checkpoint": true,
+  "market_sha256": "14d9208e903fb57f8485b64e671fa0db88ea590afdc45dcf1c6ba737f3260a61",
+  "volatility_sha256": "c365b765a1139d29447739d86a6f94e693bcb9f7fcc6091357df984ea1218980"
+}

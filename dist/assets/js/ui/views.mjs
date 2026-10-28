@@ -7,7 +7,7 @@ import {
   resolveAssumptions,
   returnDecomposition,
   valuation,
-} from "../analytics.mjs?v=0.33.1";
+} from "../analytics.mjs?v=0.34.0";
 import {
   sparkline,
   portfolioChart,
@@ -16,7 +16,7 @@ import {
   scatter,
   forecastCone,
   histogram,
-} from "../charts.mjs?v=0.33.1";
+} from "../charts.mjs?v=0.34.0";
 import {
   esc,
   url,
@@ -27,16 +27,16 @@ import {
   color,
   dateLabel,
   timestampLabel,
-} from "./format.mjs?v=0.33.1";
-import { template } from "./templates.mjs?v=0.33.1";
-import { DEFAULT_COMPOSITION_RULES } from "../composer.mjs?v=0.33.1";
-import { factorModel } from "../factors.mjs?v=0.33.1";
-import { MODEL_VERSION, informationDate } from "../policy.mjs?v=0.33.1";
-import { fundamentalForecast } from "../research-model.mjs?v=0.33.1";
-import { financialFreshness } from '../financial-freshness.mjs?v=0.33.1';
-import { priceMonitor } from '../price-monitor.mjs?v=0.33.1';
+} from "./format.mjs?v=0.34.0";
+import { template } from "./templates.mjs?v=0.34.0";
+import { DEFAULT_COMPOSITION_RULES } from "../composer.mjs?v=0.34.0";
+import { factorModel } from "../factors.mjs?v=0.34.0";
+import { MODEL_VERSION, informationDate } from "../policy.mjs?v=0.34.0";
+import { fundamentalForecast } from "../research-model.mjs?v=0.34.0";
+import { financialFreshness } from '../financial-freshness.mjs?v=0.34.0';
+import { priceMonitor } from '../price-monitor.mjs?v=0.34.0';
 
-import { createDecisionViews } from "./decision-views.mjs?v=0.33.1";
+import { createDecisionViews } from "./decision-views.mjs?v=0.34.0";
 
 /**
  * Describes the process the Monte Carlo actually runs. Jumps and the GBM /
@@ -59,9 +59,9 @@ export function simulatedProcess(settings = {}, volatility = null) {
   const gjr = mode === "hybrid" && accepted > 0;
   return {
     legacy: false, jumps: false,
-    label: gjr ? `GJR-t validado (${accepted}) + EWMA con reversión` : "EWMA con reversión",
+    label: gjr ? `Varianza GJR (${accepted}) + EWMA con reversión` : "EWMA con reversión",
     subtitle: gjr
-      ? `Varianza GJR-t validada en ${accepted} activo${accepted === 1 ? "" : "s"}, con su innovación Student-t, y en los demás EWMA gaussiano que revierte a su varianza de 500 sesiones (persistencia diaria 0,99). Dependencia por cópula gaussiana; sin saltos.`
+      ? `Varianza GJR ajustada con verosimilitud t en ${accepted} activo${accepted === 1 ? "" : "s"}; EWMA con reversión para los demás. Innovaciones gaussianas en precios para preservar la media condicional; sin saltos; la cola Student se contrasta por separado como riesgo.`
       : "EWMA diario que revierte a la varianza de 500 sesiones (persistencia 0,99) sobre la covarianza total. Innovaciones conjuntas gaussianas; sin saltos.",
   };
 }
@@ -99,6 +99,12 @@ export function riskCalibrationNote(summary) {
       ? "Evaluable con cautelas: activos no independientes; no promueve parámetros."
       : `Acumulando: se interpreta desde ${summary.minimum_sessions} sesiones y ${summary.minimum_observations} observaciones.`);
 }
+export function simulatorValidationNote(s) {
+  if(!s)return 'El simulador exacto todavía no tiene un registro prospectivo disponible.';
+  const horizons=[1,5,21].map(h=>`${h} sesión${h===1?'':'es'}: ${s.horizons[h]?.scored_origins||0} orígenes puntuados`).join(' · ');
+  return `Simulador exacto, núcleo ${s.price_kernel_version}: ${s.sealed} sellos. ${horizons}. `+
+    'Retornos medidos desde un origen posterior a la publicación, comparados con EWMA sin retorno supuesto. Predicción y ventaja económica sin acreditar; el registro no valida la asignación de cartera.';
+}
 
 export function compositionValuationEvidence(signal) {
   if(!signal.filed)return "";
@@ -126,6 +132,7 @@ export function compositionStabilityNote(st){
   const tail='Selección experimental; depende de los supuestos y de una búsqueda limitada.';
   if(!st)return tail;
   const level={high:'alta',medium:'media',low:'baja'}[st.level];
+  if(st.method==='robust-finite-pool')return `Identificación de pesos ${level}: ${st.unresolved} alternativa${st.unresolved===1?'':'s'} sin una superioridad resuelta en todos los modelos; solapamiento mínimo ${pct(st.minimumOverlap,0)}. Se favorecen menor rotación y riesgo. No acredita un óptimo único ni capacidad predictiva.`;
   const chosen=st.winners.find(w=>w.chosen);
   const peers=st.winners.filter(w=>!w.chosen&&w.equivalent);
   const worse=st.winners.filter(w=>!w.chosen&&!w.equivalent);
@@ -194,6 +201,7 @@ export function compositionCashExplanation(proposal) {
   const label=`Efectivo ${pct(a.cashWeight,1)} · reserva exigida ${pct(a.requiredCash,1)}`;
   const reasons={
     required_reserve:'Se conserva el mínimo exigido por el mandato y los retiros.',
+    robust_pool:'El excedente procede de la selección conservadora entre candidatas admisibles; no es un óptimo certificado.',
     allocation_step:'El excedente es menor que el tramo de 5 puntos de la búsqueda.',
     structural_limits:'Los topes impiden las reasignaciones locales probadas.',
     risk_or_execution_limits:'Las reasignaciones probadas incumplen límites de riesgo, costes u operativa.',
@@ -267,7 +275,7 @@ export function robustnessView(report,{busy=false,error=null,progress='',fresh=t
   threshold:money(report.required_gain_dollars,0),cost:money(c?.cost,0),
   transition:robustTransitionView(c?.transition,good),
   missingMargins:report.scenarios.find(s=>s.id==='margin_stress')?.earnings_stresses.filter(r=>!r.available).map(r=>r.symbol).join(', ')||'ninguno',
-  copy:c?template('robustness-copy'):''
+  copy:c?.decisionAudit?.status==='passed'?template('robustness-copy'):''
  });
 }
 
@@ -899,6 +907,7 @@ export function createViews(context) {
           composeBusy: state.compositionBusy ? 'aria-busy="true"' : "",
           applyDisabled: state.proposal?.status === "proposed" &&
             state.proposal.diagnostics?.robustDecision?.status === "passed" &&
+            state.proposal.research_only !== true &&
             state.proposal.model_version === MODEL_VERSION &&
             state.proposal.as_of === data.price_as_of &&
             state.proposal.snapshot_generated_at === data.generated_at &&
@@ -1081,24 +1090,31 @@ export function createViews(context) {
       return template("composition-notice", {
         message: (p.reference_id ? "CONFIGURACIÓN BASE · " : "") + p.reason,
       });
+    const audit=p.diagnostics?.robustDecision,
+      riskRows=[...(audit?.models||[]).flatMap(m=>m.riskEvidence?.rows||[]),
+        ...(audit?.tailStress?.riskEvidence?.rows||[])],
+      upper=id=>{
+        const values=riskRows.filter(r=>r.id===id&&finite(r.upper)).map(r=>r.upper);
+        return values.length?Math.max(...values):null;
+      },cvarUpper=upper('CVaR'),lossUpper=upper('Pérdida');
     const metrics = [
       [
-        "RETORNO MEDIANO",
+        "RETORNO MEDIANO · BASE",
         pct(p.metrics.medianReturn, 1, true),
         color(p.metrics.medianReturn),
         `P05 ${pct(p.metrics.p05)} · P95 ${pct(p.metrics.p95)}`,
       ],
       [
-        "PROB. DE PÉRDIDA",
-        pct(p.metrics.lossProbability),
+        finite(lossUpper)?"PROB. PÉRDIDA · COTA MC":"PROB. DE PÉRDIDA",
+        pct(lossUpper??p.metrics.lossProbability),
         "",
-        shortfallDetail(p.metrics),
+        finite(lossUpper)?'Peor contraste · sin calibración predictiva':shortfallDetail(p.metrics),
       ],
       [
-        "CVAR 95% · SIMULADO",
-        pct(p.metrics.cvar95),
+        finite(cvarUpper)?"CVAR 95% · COTA MC":"CVAR 95% · SIMULADO",
+        pct(cvarUpper??p.metrics.cvar95),
         "negative",
-        `Límite ${pct(p.rules.cvarBudget, 0)}`,
+        `Límite ${pct(p.rules.cvarBudget, 0)}`+(finite(cvarUpper)?' · peor contraste · sin calibrar':''),
       ],
       [
         "ANÁLISIS EX ANTE",
@@ -1159,7 +1175,13 @@ export function createViews(context) {
         ` · máximo ${p.rules.maxPositions} posiciones · correlación ${fmt(p.rules.maxCorrelation,2)}`,
       cashExplanation:compositionCashExplanation(p),
       stabilityNote:compositionStabilityNote(p.diagnostics?.stability),
+      weightUncertainty:p.diagnostics?.stability?.method==='robust-finite-pool'&&p.diagnostics.stability.unresolved>0
+        ?template('composition-weight-uncertainty',{rows:p.diagnostics.stability.ranges.map(r=>
+          template('composition-weight-range',{symbol:r.symbol,minimum:pct(r.minimum,0),maximum:pct(r.maximum,0)})).join('')})
+        :'',
       cashAuditSummary:(()=>{
+        const selection=p.diagnostics?.reliableSelection;
+        if(selection)return `${selection.discovered} candidatas descubiertas, ${selection.finalists} finalistas contrastadas en cinco modelos y estrés de colas. Una transición llega a confirmación independiente. El efectivo procede de esa selección, con reserva mínima ${pct(p.diagnostics.cashAllocation?.requiredCash,1)}; no es un óptimo global.`;
         const a=p.diagnostics?.cashAllocation;
         return a?`${a.evaluated} reasignaciones evaluadas; ${a.structurallyBlocked} bloqueadas por los topes. `+
           `Efectivo antes de la revisión ${pct(a.initialCashWeight,1)}; después ${pct(a.cashWeight,1)}. `+
@@ -1304,7 +1326,7 @@ export function createViews(context) {
         " · Factorización latente: " + (p.diagnostics?.volatility?.factorMethod || "total")+
         (p.diagnostics?.volatility?.accepted>0?` · Cambio máximo de correlación lineal inicial tras las marginales: ${fmt(p.diagnostics.volatility.maxLinearCorrelationShift||0,3)}. La matriz latente y la inducida se registran por separado.`:''),
       stochasticTail: p.diagnostics?.volatility?.accepted > 0
-        ? "Marginales Student-t en GJR aceptados, gaussianas en los demás; dependencia por cópula gaussiana sin cola conjunta validada"
+        ? "Innovaciones gaussianas en precios; Student-t se contrasta aparte como riesgo, sin media económica"
         : p.diagnostics?.volatility?.additionalMertonJumps
           ? "Saltos genéricos de Merton (comparador)"
           : "Innovaciones gaussianas EWMA",
@@ -1313,7 +1335,7 @@ export function createViews(context) {
       model: p.diagnostics?.volatility?.additionalMertonJumps
         ? "con saltos genéricos de Merton"
         : p.diagnostics?.volatility?.accepted > 0
-          ? "con volatilidad condicional GJR-t; saltos Merton desactivados"
+          ? "con varianza condicional GJR; innovaciones gaussianas y sin saltos Merton"
           : "GBM/EWMA sin saltos",
     });
   }
@@ -1453,8 +1475,8 @@ export function createViews(context) {
             : "No existe un corte de volatilidad compatible. Simulación con EWMA y los supuestos previos, sin atribución automática de noticias.",
         }),
         "",
-        "QLIKE walk-forward frente a EWMA; Student-t solo para calibraciones aceptadas. La elección de la distribución y la cobertura del CVaR requieren validación continua. " +
-          riskCalibrationNote(data.riskCalibration)
+        "QLIKE walk-forward frente a EWMA para la varianza. Innovaciones gaussianas en precios; Student-t solo como estrés de riesgo. La elección de la distribución y la cobertura del CVaR requieren validación continua. " +
+          riskCalibrationNote(data.riskCalibration)+' '+simulatorValidationNote(data.simulatorValidation)
       ) +
       panel(
         "SHOCKS EXTREMOS · SIN ATRIBUCIÓN A NOTICIAS",

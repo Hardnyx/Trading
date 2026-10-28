@@ -22,7 +22,7 @@
           <div class="field">
             <label for="composition-volatility">VOLATILIDAD / RIESGO</label>
             <select id="composition-volatility" data-setting="volatilityMode">
-              <option value="hybrid" {{{volatilityHybridSelected}}}>GJR validado + EWMA (automático)</option>
+              <option value="hybrid" {{{volatilityHybridSelected}}}>Varianza GJR / EWMA (automático)</option>
               <option value="ewma" {{{volatilityEWMASelected}}}>EWMA con reversión, sin saltos no calibrados</option>
               <option value="legacy" {{{volatilityLegacySelected}}}>Merton legado · solo comparación (saltos no calibrados)</option>
             </select>
@@ -179,6 +179,18 @@
         <td>{{currentValue}}</td><td>{{targetValue}}</td><td>{{change}}</td><td>{{quantity}}</td><td>{{price}}</td><td>{{cost}}</td></tr>
     </template>
 
+    <template id="composition-weight-uncertainty">
+      <h3>PESOS SIN SUPERIORIDAD RESUELTA</h3>
+      <p>Rangos entre candidatas admisibles del conjunto comparado. Son composiciones alternativas, no intervalos de confianza ni pesos combinables libremente.</p>
+      <div class="table-wrap"><table class="composition-weight-ranges">
+        <thead><tr><th>ACTIVO</th><th>PESO MÍNIMO</th><th>PESO MÁXIMO</th></tr></thead>
+        <tbody>{{{rows}}}</tbody>
+      </table></div>
+    </template>
+    <template id="composition-weight-range">
+      <tr><td>{{symbol}}</td><td>{{minimum}}</td><td>{{maximum}}</td></tr>
+    </template>
+
     <template id="composition-report">
       <section class="panel composition-report">
         <div class="panel-header">
@@ -229,6 +241,7 @@
         </div>
         <details class="composition-method">
           <summary>FUENTES, SUPUESTOS Y COMPARACIONES · VER DETALLES</summary>
+          {{{weightUncertainty}}}
           <h3>EFECTIVO Y ALTERNATIVAS LOCALES</h3>
           <p>{{cashAuditSummary}}</p>
           <div class="table-wrap">

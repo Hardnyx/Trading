@@ -1,14 +1,14 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {
-  composePortfolio,
+  composeBasePortfolio as composePortfolio,
   prepareComposition,
   terminalScenarios,
   evaluateWeights,
   DEFAULT_COMPOSITION_RULES,
-} from "../dist/assets/js/composer.mjs?v=0.33.1";
-import { triangularQuantile, buildReturnAnchors } from "../dist/assets/js/return-model.mjs?v=0.33.1";
-import { mandate } from "../dist/assets/js/policy.mjs?v=0.33.1";
+} from "../dist/assets/js/composer.mjs?v=0.34.0";
+import { triangularQuantile, buildReturnAnchors } from "../dist/assets/js/return-model.mjs?v=0.34.0";
+import { mandate } from "../dist/assets/js/policy.mjs?v=0.34.0";
 
 function snapshot() {
   const asOf = "2026-10-23";

@@ -16,10 +16,13 @@ on:
       - 'scripts/news_garchx_research.py'
       - 'scripts/build_event_registry.py'
       - 'scripts/portfolio_stability.mjs'
+      - 'scripts/reliability_audit.mjs'
+      - 'scripts/simulator_validation.mjs'
       - 'scripts/portfolio_coverage.mjs'
       - 'data/events/verified.json'
       - 'dist/data/market.json'
       - 'dist/data/volatility.json'
+      - 'dist/assets/js/**'
       - 'tests/test_research_gate.py'
       - 'tests/test_earnings_history.py'
       - 'tests/test_multifactor_research.py'
@@ -67,6 +70,8 @@ jobs:
         run: python scripts/joint_tail_research.py
       - name: Audit optimizer robustness to candidates and seeds
         run: node scripts/portfolio_stability.mjs
+      - name: Check frozen-input invariants and separate discovery from confirmed decisions
+        run: node scripts/reliability_audit.mjs --quick
       - name: Check omitted candidates without promoting unverified trades
         run: node scripts/portfolio_coverage.mjs
       - name: Preserve evidence without publishing unvalidated models

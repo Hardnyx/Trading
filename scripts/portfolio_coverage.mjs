@@ -3,8 +3,8 @@
  */
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { dirname, resolve } from "node:path";
-import { composePortfolio } from "../dist/assets/js/composer.mjs?v=0.33.1";
-import { referenceRequest } from "../dist/assets/js/reference-preset.mjs?v=0.33.1";
+import { composeBasePortfolio as composePortfolio } from "../dist/assets/js/composer.mjs?v=0.34.0";
+import { referenceRequest } from "../dist/assets/js/reference-preset.mjs?v=0.34.0";
 
 const snapshot=JSON.parse(readFileSync("dist/data/market.json","utf8"));
 const volatility=JSON.parse(readFileSync("dist/data/volatility.json","utf8"));
@@ -40,7 +40,8 @@ for(const symbol of candidates){
     "CE",challenger.metrics?.certaintyEquivalent);
 }
 const report={
-  method:"iterative-omitted-assets-admission-shadow-v1",
+  method:"base-discovery-omitted-assets-admission-shadow-v2",
+  decision_scope:"Raw base-model discovery, not an authorized trade or the robust selected decision",
   as_of:snapshot.price_as_of,
   market_collected_at:snapshot.generated_at,
   not_promoted:true,

@@ -1,8 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { pairedDecisionEvidence, reviewRobustDecision } from '../dist/assets/js/robust-decision.mjs?v=0.33.1';
-import { prepareComposition, finalizeCompositionDecision } from '../dist/assets/js/composer.mjs?v=0.33.1';
-import { DEFAULT_MANDATE } from '../dist/assets/js/policy.mjs?v=0.33.1';
+import { pairedDecisionEvidence, reviewRobustDecision } from '../dist/assets/js/robust-decision.mjs?v=0.34.0';
+import { prepareComposition, finalizeCompositionDecision } from '../dist/assets/js/composer.mjs?v=0.34.0';
+import { DEFAULT_MANDATE } from '../dist/assets/js/policy.mjs?v=0.34.0';
 
 test('decision evidence uses the mandate utility rather than a log-return shortcut', () => {
   const growth = { ...DEFAULT_MANDATE };
@@ -23,7 +23,7 @@ function fixture() {
     date: new Date(Date.parse(cut + 'T12:00:00Z') - (300-k) * 86400000).toISOString().slice(0, 10),
     close: 100, adj_close: 100, volume: 1e6,
   }));
-  const snapshot = { price_as_of: cut, generated_at: cut + 'T23:00:00Z', macro: [], assets: [
+  const snapshot = { price_as_of: cut, generated_at: cut + 'T23:00:00Z', macro: [{id:'DGS3MO',date:cut,value:4}], assets: [
     { symbol: 'AAA', type: 'stock', sector: 'Industria', price: 100, price_date: cut, history,
       assumptions: { growth: -.05, multiple: 20, horizon: 3, discount: .1 }, dividend_per_share: 0,
       financials: { eps: { value: 10, filed: '2026-08-01', period_end: '2026-06-30', method: 'TTM' } } },
@@ -84,4 +84,11 @@ test('a generic anchor cannot supply evidence for liquidating an existing holdin
   assert.deepEqual(result.diagnostics.robustDecision.unanchoredIncumbents, ['SHY']);
   assert.equal(result.metrics, null);
   assert.equal(result.trade_plan.total, 0);
+});
+
+test('a missing observed short rate makes the economic comparison incomplete',()=>{
+  const x=fixture();x.riskFree=NaN;
+  const r=reviewRobustDecision(x,x.current.positions,{paths:1000});
+  assert.equal(r.status,'incomplete');assert.deepEqual(r.models,[]);
+  assert.match(r.missingEconomicInputs[0],/DGS3MO/);
 });

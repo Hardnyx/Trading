@@ -8,6 +8,16 @@ export function seededRandom(seed = 20261024) {
     return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
   };
 }
+/** Independent streams: another asset or component cannot consume these draws. */
+export function namedRandom(seed, name) {
+  let hash = (2166136261 ^ (seed >>> 0)) >>> 0;
+  for (let i = 0; i < name.length; i++) {
+    hash = Math.imul(hash ^ name.charCodeAt(i), 16777619) >>> 0;
+  }
+  hash = Math.imul(hash ^ (hash >>> 16), 0x85ebca6b);
+  hash = Math.imul(hash ^ (hash >>> 13), 0xc2b2ae35);
+  return seededRandom((hash ^ (hash >>> 16)) >>> 0);
+}
 export function normalGenerator(random) {
   let spare = null;
   return () => {

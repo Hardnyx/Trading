@@ -1,8 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { curveRecessionProbability, conditionedRegimes, effectiveRegimes, DEFAULT_REGIMES, regimes, CURVE_RECESSION_MODEL }
-  from "../dist/assets/js/policy.mjs?v=0.33.1";
-import { normalCDF } from "../dist/assets/js/random.mjs?v=0.33.1";
+  from "../dist/assets/js/policy.mjs?v=0.34.0";
+import { normalCDF } from "../dist/assets/js/random.mjs?v=0.34.0";
 
 const near = (a, b, tolerance = 1e-12) => assert.ok(Math.abs(a - b) <= tolerance, `${a} != ${b}`);
 const days = Array.from({ length: 40 }, (_, k) =>

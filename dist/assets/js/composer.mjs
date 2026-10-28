@@ -4,17 +4,19 @@ import {
   mean,
   quantile,
   normalizeWeights,
-} from "./analytics.mjs?v=0.33.1";
-import { seededRandom } from "./random.mjs?v=0.33.1";
-import { portfolioAttribution } from "./attribution.mjs?v=0.33.1";
-import { reviewRobustDecision, DECISION_MODEL_LABELS } from "./robust-decision.mjs?v=0.33.1";
+} from "./analytics.mjs?v=0.34.0";
+import { seededRandom } from "./random.mjs?v=0.34.0";
+import { portfolioAttribution } from "./attribution.mjs?v=0.34.0";
+import { selectReliableCandidate } from "./reliable-selection.mjs?v=0.34.0";
+import { riskSamplingEvidence } from "./simulation-evidence.mjs?v=0.34.0";
+import { reviewRobustDecision, DECISION_MODEL_LABELS, DECISION_EXPERIMENT_SEEDS } from "./robust-decision.mjs?v=0.34.0";
 import {
   preparePaths,
   generatePaths,
   evaluatePaths,
   marginalRisk,
   centeredRegimeConditions,
-} from "./path-model.mjs?v=0.33.1";
+} from "./path-model.mjs?v=0.34.0";
 import {
   withCashAsset,
   mandate,
@@ -25,12 +27,12 @@ import {
   effectiveRegimes,
   DEFAULT_REGIMES,
   MODEL_VERSION,
-} from "./policy.mjs?v=0.33.1";
-import { buildReturnAnchors, constituentForecasts, holdingsAnchor, valuationAnchor } from "./return-model.mjs?v=0.33.1";
-import { assetAt, fundamentalForecast, bondAssumptions } from "./research-model.mjs?v=0.33.1";
-import { selectCompositionUniverse } from "./universe.mjs?v=0.33.1";
-import { factorizeStressedCovariance } from "./factor-covariance.mjs?v=0.33.1";
-import { economicClass, outsideUS, exposureReport, rawCorrelation, qualifiedOpportunity, holdingsOverlap, knownFundOverlap } from "./economic-exposure.mjs?v=0.33.1";
+} from "./policy.mjs?v=0.34.0";
+import { buildReturnAnchors, constituentForecasts, holdingsAnchor, valuationAnchor } from "./return-model.mjs?v=0.34.0";
+import { assetAt, fundamentalForecast, bondAssumptions } from "./research-model.mjs?v=0.34.0";
+import { selectCompositionUniverse } from "./universe.mjs?v=0.34.0";
+import { factorizeStressedCovariance } from "./factor-covariance.mjs?v=0.34.0";
+import { economicClass, outsideUS, exposureReport, rawCorrelation, qualifiedOpportunity, holdingsOverlap, knownFundOverlap } from "./economic-exposure.mjs?v=0.34.0";
 
 export const DEFAULT_COMPOSITION_RULES = {
   maxPosition: 0.2,
@@ -692,28 +694,181 @@ function passiveCandidates(x) {
 // yet within USD 184 of each other on common paths.
 export const MULTI_START_COUNT = 3;
 
+export function compositionSignals(x, positions, overrides = x.valuationOverrides || {}) {
+  const weights = x.assets.map(a => positions.find(p=>p.symbol===a.symbol)?.weight || 0);
+  const risks = marginalRisk(weights, x.innovationCovariance||x.covariance);
+  // Bond scenario anchors as simulated: regime effects centered on the carry.
+  const bondScenarioAnchors = (asset, anchor) =>
+    centeredRegimeConditions(asset, anchor, x.regimes, x.options.horizon)
+      .map((condition) => Math.expm1(Math.log1p(anchor.annual) + condition));
+  const signals = positions.map((p) => {
+    const i = x.assets.findIndex((a) => a.symbol === p.symbol),
+      a = x.assets[i],
+      anchor = x.anchors[i];
+    return {
+      ...p,
+      sector: a.sector,
+      price: a.price,
+      price_date: a.price_date,
+      eps: a.financials?.eps?.value ?? null,
+      filed: a.financials?.eps?.filed ?? null,
+      financialPeriod: a.financials?.eps?.period_end ?? null,
+      financialMethod: a.financials?.eps?.method ?? null,
+      financialObservedAt: a.financials?.observed_at ?? null,
+      bondDate: anchor.bond?.date ?? a.bond_profile?.date ?? null,
+      holdingsCoverage: anchor.holdingsCoverage ?? null,
+      valuationDate: anchor.valuationDate ?? null,
+      anchor: anchor.annual,
+      adverseAnchor: anchor.bond ? Math.min(...bondScenarioAnchors(a, anchor)) : anchor.low,
+      favorableAnchor: anchor.bond ? Math.max(...bondScenarioAnchors(a, anchor)) : anchor.high,
+      confidence: anchor.confidence,
+      valuationEvidence: anchor.forecast?.valid ? {
+        source: anchor.forecast.source,
+        assumptions: { ...anchor.forecast.assumptions },
+        rawAnnualReturn: anchor.forecast.model.annualReturn,
+        effectiveBaseEPS: anchor.forecast.effectiveBaseEPS,
+        earningsBasis: anchor.forecast.earningsBasis,
+        accountingSensitivity: anchor.forecast.accountingSensitivity,
+        confidence: anchor.forecast.confidence,
+        prior: anchor.forecast.prior,
+        rerating: anchor.forecast.rerating,
+        decomposition: anchor.forecast.decomposition,
+        growthEvidence: anchor.forecast.growthEvidence,
+        refinement: anchor.refinement,
+      } : null,
+      source: anchor.bond
+        ? anchor.source + " · sensibilidad duración/convexidad por régimen; reinversión y curva completa no modeladas"
+        : anchor.source,
+      risk: risks[i],
+      assumptions: { ...a.assumptions, ...overrides[a.symbol] },
+    };
+  });
+  return signals;
+}
+
+export function compositionRiskDiagnostics(x, row) {
+    if (!row) return null;
+    const economic=exposureReport(x.assets,row.weights,x.asOf,x.informationAsOf,x.securitySectors);
+    const limits = [
+      ["CVaR 95", row.metrics.cvar95, x.rules.cvarBudget],
+      ["Prob. pérdida", row.metrics.lossProbability, x.rules.maxLossProbability],
+      ["Prob. drawdown", row.metrics.drawdownProbability, x.policy.maxDrawdownProbability],
+      ["Riesgo liquidez", row.metrics.liquidityFailureProbability, x.policy.maxLiquidityFailure],
+      ["Treasuries combinados",economic.sleeves.treasury,x.rules.maxTreasury],
+      ["Acciones combinadas",economic.sleeves.usEquity+economic.sleeves.globalEquity,x.rules.maxEquity],
+      ["Alto rendimiento y emergente",economic.sleeves.riskyCredit,x.rules.maxRiskyCredit],
+      ...x.assets.flatMap((a,i)=>a.type!=="cash"&&row.weights[i]>1e-8
+        ? [["Tope "+a.symbol,row.weights[i],positionLimit(a,x)]]:[]),
+      ...Object.entries(economic.sectorUpperBounds).map(([s,w])=>
+        ["Sector "+s+" (cota)",w,x.rules.maxSector]),
+      ["Emisores no identificados (cota)",economic.unclassifiedIssuerWeight,
+        Math.min(x.rules.maxPosition,x.rules.maxGlobal)],
+    ];
+    const nearby = limits.filter(([, used, limit]) => limit > 0 && used >= limit * 0.9)
+      .map(([name, used, limit]) => ({
+        name, observed: used, limit,
+      }));
+    return {
+      largestPosition: [...row.positions].sort((a, b) => b.weight - a.weight)[0] || null,
+      nearLimits: nearby,
+      uncalibratedEtfs: x.anchors.filter((a) =>
+        a.kind === "etf" && !a.bond && a.source === "Retorno y rango asumidos del ETF"
+      ).map((a) => a.symbol),
+    };
+  }
+
 /** Ordinary proposals pass the same model-uncertainty rule as transitions. */
-export function finalizeCompositionDecision(proposal, inputs, paths = 1000) {
-  if (proposal?.status !== 'proposed') return proposal;
-  const audit = reviewRobustDecision(inputs, proposal.positions,
-    { paths: Math.max(100, Math.min(1000, paths)), validWeights });
-  const diagnostics = { ...proposal.diagnostics, robustDecision: audit };
-  if (audit.status === 'passed') return { ...proposal, diagnostics };
-  const holdPlan = tradePlan(inputs.assets, inputs.current.positions, inputs.current.positions,
-    inputs.current.capital, inputs.costs);
-  return { ...proposal, status: 'hold', diagnostics: { ...diagnostics, attribution: null, cashAllocation: null },
-    reason: (audit.status === 'incomplete'
-      ? `Mantener: faltan anclas fundamentadas o expectativas explícitas para ${audit.unanchoredIncumbents.join(', ')}. Completar Research antes de evaluar una transición.`
-      : `Mantener: transición descartada en ${audit.models.filter(r => !r.passes)
-          .map(r => `${DECISION_MODEL_LABELS[r.id]} (${r.failures.length ? r.failures.join(', ') : 'mejora insuficiente'})`).join('; ')}.`) +
-      (audit.currentViolatesRisk ? ' La cartera actual también excede límites: requiere revisión del mandato o del riesgo.' : ''),
-    candidate_review: { positions: proposal.positions, metrics: proposal.metrics, benefit: proposal.benefit,
-      trade_plan: proposal.trade_plan },
-    positions: inputs.current.positions.map(p => ({ ...p })), signals: [],
-    metrics: audit.models.find(r => r.id === 'original')?.hold ?? null, trade_plan: holdPlan,
-    alternatives: audit.status === 'incomplete'
-      ? { ...proposal.alternatives, hold: { metrics: null, feasible: null } } : proposal.alternatives,
-    benefit: 0, hurdle: audit.hurdle, selected_kind: 'hold' };
+export function finalizeCompositionDecision(proposal, inputs, paths = 1000, proposals = [proposal]) {
+  if (!proposal) return proposal;
+  const x=inputs, count=Math.max(100,Math.min(1000,paths));
+  const hasPool=proposals.some(p=>p?.candidate_pool?.length);
+  const missing=!Number.isFinite(x.riskFree)||x.assets.some((a,i)=>a.type!=='cash'&&x.current.positions.some(p=>p.symbol===a.symbol&&p.weight>0)&&
+    !x.anchors[i].fundamental&&!x.anchors[i].bond&&
+    !(Number.isFinite(x.options.assetAssumptions?.[a.symbol]?.expectedReturn)&&x.options.assetAssumptions[a.symbol].uncertainty>0));
+  if(proposal.status!=='proposed'&&!hasPool)return proposal;
+  let chosen=proposal.positions, selection=null;
+  if(hasPool&&!missing){
+    const candidates=proposals.flatMap(p=>[p?.positions,...(p?.candidate_pool||[])]).filter(Boolean);
+    for(const w of passiveCandidates(x))candidates.push(x.assets.flatMap((a,i)=>w[i]>1e-9?[{symbol:a.symbol,weight:w[i]}]:[]));
+    // Deterministic reference combinations diversify the opportunity set; the
+    // economics of these references is tested, never presumed superior.
+    const funds=x.assets.map((a,i)=>i).filter(i=>x.buyAllowed[i]&&
+      (x.anchors[i].bond||x.assets[i].symbol===x.policy.benchmark));
+    const cash=x.assets.findIndex(a=>a.symbol==='CASH');
+    for(let a=0;a<funds.length;a++)for(let b=a+1;b<funds.length;b++){
+      const w=Array(x.assets.length).fill(0);w[funds[a]]=Math.min(.35,positionLimit(x.assets[funds[a]],x));
+      w[funds[b]]=Math.min(.35,positionLimit(x.assets[funds[b]],x));w[cash]=1-w[funds[a]]-w[funds[b]];
+      if(validWeights(w,x))candidates.push(x.assets.flatMap((asset,i)=>w[i]>1e-9?[{symbol:asset.symbol,weight:w[i]}]:[]));
+      for(let c=b+1;c<funds.length;c++){
+        const v=w.slice(),add=Math.max(0,Math.min(.25,positionLimit(x.assets[funds[c]],x),v[cash]-x.requiredCash));
+        v[funds[c]]=add;v[cash]-=add;
+        if(add>0&&validWeights(v,x))candidates.push(x.assets.flatMap((asset,i)=>v[i]>1e-9?[{symbol:asset.symbol,weight:v[i]}]:[]));
+      }
+    }
+    selection=selectReliableCandidate(x,candidates,{paths:count,validWeights,starts:proposals.length});
+    chosen=selection.positions;
+  }
+  const audit=selection?.audit||reviewRobustDecision(x,chosen,{paths:count,validWeights});
+  const {candidate_pool:_pool,...base}=proposal;
+  const diagnostics={...base.diagnostics,robustDecision:audit,
+    ...(selection?{stability:selection.stability,reliableSelection:selection.selection}:{} )};
+  const candidatePlan=tradePlan(x.assets,chosen,x.current.positions,x.current.capital,x.costs);
+  const confirmedBase=audit.models.find(r=>r.id==='original');
+  const confirmedAlternatives=(sample=null)=>{
+    if(!confirmedBase)return {hold:{metrics:null,feasible:null},passive:null};
+    const passive=base.alternatives?.passive?.positions,
+      plan=passive?tradePlan(x.assets,passive,x.current.positions,x.current.capital,x.costs):null,
+      weights=passive?x.assets.map(a=>passive.find(p=>p.symbol===a.symbol)?.weight||0):null,
+      metrics=passive?evaluatePaths(weights,sample||generatePaths(x,count,audit.seed,52),
+        {capital:x.current.capital,cost:plan.total}):null;
+    return {hold:{metrics:confirmedBase.hold,feasible:!confirmedBase.holdFailures.length},
+      passive:passive?{positions:passive,metrics,cost:plan.total,
+        feasible:validWeights(weights,x)&&!riskSamplingEvidence(metrics,x.rules,x.policy).failures.length}:null,
+      feasibilityScope:'base-model-on-confirmation-paths'};
+  };
+  if(audit.status==='passed'){
+    const metrics=audit.models.find(r=>r.id==='original').candidate,
+      sample=generatePaths(x,count,audit.seed,52),weights=x.assets.map(a=>chosen.find(p=>p.symbol===a.symbol)?.weight||0),
+      row={weights,positions:chosen,metrics,plan:candidatePlan};
+    const cashWeight=chosen.find(p=>p.symbol==='CASH')?.weight||0;
+    const shy=x.assets.findIndex(a=>a.symbol==='SHY');
+    return {...base,status:'proposed',reason:null,research_only:false,objective:x.policy.objective,positions:chosen,
+      signals:compositionSignals(x,chosen),metrics,trade_plan:candidatePlan,
+      benefit:audit.models.find(r=>r.id==='original').evidence.gain,hurdle:audit.hurdle,
+      selected_kind:'robust-finite-pool',sensitivity:[],
+      alternatives:confirmedAlternatives(sample),
+      verification:{seed:audit.seed,paths:count,stepsPerYear:52,stage:'independent-confirmation'},
+      diagnostics:{...diagnostics,selected:compositionRiskDiagnostics(x,row),
+        attribution:portfolioAttribution(x.assets,weights,sample,candidatePlan.total,x.current.capital),
+        economicExposure:exposureReport(x.assets,weights,x.asOf,x.informationAsOf,x.securitySectors),
+        etfCorrelations:[],substitutions:null,concentrationAudit:{
+          shyAnnualAnchor:shy>=0?x.anchors[shy].annual:null,shyAnchorSource:shy>=0?x.anchors[shy].source:null,
+          shyAnnualVolatility:shy>=0?Math.sqrt(x.covariance[shy][shy]):null,
+          shyMaxAllowed:x.rules.reserveCap,actualShyWeight:shy>=0?weights[shy]:0,
+          maximumStockPosition:x.rules.maxPosition,eligibleButNotSimulated:x.selection?.outsideSample?.length||0,
+          selectionMethod:x.selection?.preselectionMethod,comparedCaps:[],
+          note:'The base-model cap frontier is research only; the selected portfolio uses robust finite-pool evidence'},
+        cashAllocation:{status:cashWeight-x.requiredCash<1e-8?'required_reserve':'robust_pool',cashWeight,
+          initialCashWeight:cashWeight,minimumCash:x.policy.minimumCash,requiredCash:x.requiredCash,
+          excessCash:Math.max(0,cashWeight-x.requiredCash),cashYield:x.policy.cashYield,
+          evaluated:selection?.selection.discovered||1,structurallyBlocked:0,improvements:[],comparisons:[]}}};
+  }
+  const holdPlan=tradePlan(x.assets,x.current.positions,x.current.positions,x.current.capital,x.costs);
+  const reasons=audit.models.filter(r=>!r.passes).map(r=>`${DECISION_MODEL_LABELS[r.id]} (${r.failures.length?r.failures.join(', '):'mejora insuficiente'})`);
+  if(audit.tailStress?.passes===false)reasons.push(`Colas Student (${audit.tailStress.riskEvidence.failures.join(', ')})`);
+  return {...base,status:'hold',research_only:false,objective:x.policy.objective,
+    diagnostics:{...diagnostics,attribution:null,cashAllocation:null},
+    reason:(audit.status==='incomplete'
+      ?(audit.missingEconomicInputs?.length?`Mantener: falta ${audit.missingEconomicInputs.join(', ')}; comparación económica incompleta.`:
+        `Mantener: faltan anclas fundamentadas o expectativas explícitas para ${audit.unanchoredIncumbents.join(', ')}. Completar Research antes de evaluar una transición.`)
+      :`Mantener: ${selection&&!selection.selection.admissible?'ninguna transición del conjunto comprobado superó los controles. ':''}transición descartada en ${reasons.join('; ')}.`)+
+      (audit.currentViolatesRisk?' La cartera actual también excede límites: requiere revisión del mandato o del riesgo.':''),
+    candidate_review:{positions:chosen,metrics:audit.models.find(r=>r.id==='original')?.candidate??null,
+      benefit:audit.minimumGain,trade_plan:candidatePlan},
+    positions:x.current.positions.map(p=>({...p})),signals:[],
+    metrics:audit.models.find(r=>r.id==='original')?.hold??null,trade_plan:holdPlan,
+    alternatives:confirmedAlternatives(),
+    benefit:0,hurdle:audit.hurdle,selected_kind:'hold'};
 }
 export function startSeeds(seed, count = MULTI_START_COUNT) {
   return Array.from({ length: count }, (_, k) => (seed + k * 0x9e3779b9) >>> 0);
@@ -725,9 +880,9 @@ export function startSeeds(seed, count = MULTI_START_COUNT) {
  * overlap with the other winners measures how much the proposal depends on
  * the search's random draws.
  */
-export function reconcileStarts(snapshot, settings = {}, overrides = {}, rules = {}, proposals = [], finalPaths = 3000) {
+export function reconcileBaseStarts(snapshot, settings = {}, overrides = {}, rules = {}, proposals = [], finalPaths = 3000) {
   const x = prepareComposition(snapshot, settings, overrides, rules);
-  const finalize = p => finalizeCompositionDecision(p, x, finalPaths);
+  const finalize = p => ({...p,research_only:true});
   const usable = proposals.map((proposal, k) => ({ proposal, k }))
     .filter(({ proposal }) => proposal?.positions?.length);
   if (usable.length < 2) return finalize(proposals.find(p => p?.positions?.length) || proposals[0]);
@@ -772,6 +927,17 @@ export function reconcileStarts(snapshot, settings = {}, overrides = {}, rules =
   return finalize({ ...proposal, diagnostics: { ...proposal.diagnostics, stability },
     search: { ...proposal.search, starts: proposals.length } });
 }
+export function reconcileStarts(snapshot, settings = {}, overrides = {}, rules = {}, proposals = [], finalPaths = 3000) {
+  const x=prepareComposition(snapshot,settings,overrides,rules),
+    prototype=proposals.find(p=>p?.model_inputs)||proposals.find(p=>p?.positions?.length)||proposals[0];
+  if(!prototype)return null;
+  return finalizeCompositionDecision(prototype,x,finalPaths,proposals);
+}
+export function composePortfolio(snapshot, settings = {}, overrides = {}, rules = {}, search = {}) {
+  const base=composeBasePortfolio(snapshot,settings,overrides,rules,search);
+  if(search.deferRobustDecision)return base;
+  return finalizeCompositionDecision(base,prepareComposition(snapshot,settings,overrides,rules),search.finalPaths??3000);
+}
 /** Sequential multi-start (Node, tests); the browser runs the starts in parallel workers. */
 export function composeMultiStart(snapshot, settings = {}, overrides = {}, rules = {}, search = {}, count = MULTI_START_COUNT) {
   const seed = (settings.seed ?? 20261024) >>> 0;
@@ -780,7 +946,7 @@ export function composeMultiStart(snapshot, settings = {}, overrides = {}, rules
       { ...search, deferRobustDecision: true }));
   return reconcileStarts(snapshot, { ...settings, seed }, overrides, rules, proposals, search.finalPaths ?? 3000);
 }
-export function composePortfolio(
+export function composeBasePortfolio(
   snapshot,
   settings = {},
   overrides = {},
@@ -1090,36 +1256,6 @@ export function composePortfolio(
     });
   }).sort((a,b)=>b.positionPairWeight*Math.abs(b.totalCorrelation)-
                    a.positionPairWeight*Math.abs(a.totalCorrelation)).slice(0,12) : [];
-  const riskDiagnostics = (row) => {
-    if (!row) return null;
-    const economic=exposureReport(x.assets,row.weights,x.asOf,x.informationAsOf,x.securitySectors);
-    const limits = [
-      ["CVaR 95", row.metrics.cvar95, x.rules.cvarBudget],
-      ["Prob. pérdida", row.metrics.lossProbability, x.rules.maxLossProbability],
-      ["Prob. drawdown", row.metrics.drawdownProbability, x.policy.maxDrawdownProbability],
-      ["Riesgo liquidez", row.metrics.liquidityFailureProbability, x.policy.maxLiquidityFailure],
-      ["Treasuries combinados",economic.sleeves.treasury,x.rules.maxTreasury],
-      ["Acciones combinadas",economic.sleeves.usEquity+economic.sleeves.globalEquity,x.rules.maxEquity],
-      ["Alto rendimiento y emergente",economic.sleeves.riskyCredit,x.rules.maxRiskyCredit],
-      ...x.assets.flatMap((a,i)=>a.type!=="cash"&&row.weights[i]>1e-8
-        ? [["Tope "+a.symbol,row.weights[i],positionLimit(a,x)]]:[]),
-      ...Object.entries(economic.sectorUpperBounds).map(([s,w])=>
-        ["Sector "+s+" (cota)",w,x.rules.maxSector]),
-      ["Emisores no identificados (cota)",economic.unclassifiedIssuerWeight,
-        Math.min(x.rules.maxPosition,x.rules.maxGlobal)],
-    ];
-    const nearby = limits.filter(([, used, limit]) => limit > 0 && used >= limit * 0.9)
-      .map(([name, used, limit]) => ({
-        name, observed: used, limit,
-      }));
-    return {
-      largestPosition: [...row.positions].sort((a, b) => b.weight - a.weight)[0] || null,
-      nearLimits: nearby,
-      uncalibratedEtfs: x.anchors.filter((a) =>
-        a.kind === "etf" && !a.bond && a.source === "Retorno y rango asumidos del ETF"
-      ).map((a) => a.symbol),
-    };
-  };
   const attribution = best ? portfolioAttribution(
     x.assets, best.weights, verification,
     best.plan.total, x.current.capital) : {available:false};
@@ -1127,7 +1263,7 @@ export function composePortfolio(
     regimeProbabilities: x.regimeProbabilities,
     cashAllocation: cashReview.audit,
     substitutions: substitutionReview.audit,
-    selected: riskDiagnostics(best),
+    selected: compositionRiskDiagnostics(x, best),
     attribution,
     economicExposure: exposure,
     etfCorrelations,
@@ -1146,14 +1282,12 @@ export function composePortfolio(
     concentrationAudit,
     dependence: x.dependence,
     volatility: {
-      mode: x.conditional.enabled ? "GJR-GARCH-t / EWMA" : "EWMA",
+      mode: x.conditional.enabled ? "Varianza GJR (ajuste t) / EWMA" : "EWMA",
       accepted: x.conditional.active,
       fallback: x.conditional.fallback,
       studentNu: null,
       innovationLaw: x.conditional.dynamic
-        ? (x.conditional.active
-          ? "Gaussian-copula SPY factor + residuals; Student-t marginals for accepted GJR; daily GJR/EWMA variance"
-          : "Gaussian SPY factor + residuals; daily EWMA variance")
+        ? "Conditional Gaussian price innovations; GJR/EWMA daily variance; Student-t risk stress is separate"
         : "Legacy Merton diffusion with EWMA initialization",
       factorMethod: x.factorCovariance.method,
       factorObservations: x.factorCovariance.observations,
@@ -1175,6 +1309,7 @@ export function composePortfolio(
   } = x.options;
   const metadata = {
     version: 2,
+    research_only: true,
     model_version: MODEL_VERSION,
     method: "ex-ante-fundamental-monte-carlo",
     as_of: x.asOf,
@@ -1210,6 +1345,7 @@ export function composePortfolio(
       paths: finalPaths,
       stepsPerYear: 52,
     },
+    candidate_pool: [...ranked, ...pooledFinalists].map(r=>r.positions),
     alternatives: {
       hold: { metrics: holdVerified.metrics, feasible: holdVerified.feasible },
       passive: passiveVerified
@@ -1250,53 +1386,7 @@ export function composePortfolio(
       benefit,
       hurdle,
     };
-  const risks = marginalRisk(best.weights, x.innovationCovariance||x.covariance);
-  // Bond scenario anchors as simulated: regime effects centered on the carry.
-  const bondScenarioAnchors = (asset, anchor) =>
-    centeredRegimeConditions(asset, anchor, x.regimes, x.options.horizon)
-      .map((condition) => Math.expm1(Math.log1p(anchor.annual) + condition));
-  const signals = best.positions.map((p) => {
-    const i = x.assets.findIndex((a) => a.symbol === p.symbol),
-      a = x.assets[i],
-      anchor = x.anchors[i];
-    return {
-      ...p,
-      sector: a.sector,
-      price: a.price,
-      price_date: a.price_date,
-      eps: a.financials?.eps?.value ?? null,
-      filed: a.financials?.eps?.filed ?? null,
-      financialPeriod: a.financials?.eps?.period_end ?? null,
-      financialMethod: a.financials?.eps?.method ?? null,
-      financialObservedAt: a.financials?.observed_at ?? null,
-      bondDate: anchor.bond?.date ?? a.bond_profile?.date ?? null,
-      holdingsCoverage: anchor.holdingsCoverage ?? null,
-      valuationDate: anchor.valuationDate ?? null,
-      anchor: anchor.annual,
-      adverseAnchor: anchor.bond ? Math.min(...bondScenarioAnchors(a, anchor)) : anchor.low,
-      favorableAnchor: anchor.bond ? Math.max(...bondScenarioAnchors(a, anchor)) : anchor.high,
-      confidence: anchor.confidence,
-      valuationEvidence: anchor.forecast?.valid ? {
-        source: anchor.forecast.source,
-        assumptions: { ...anchor.forecast.assumptions },
-        rawAnnualReturn: anchor.forecast.model.annualReturn,
-        effectiveBaseEPS: anchor.forecast.effectiveBaseEPS,
-        earningsBasis: anchor.forecast.earningsBasis,
-        accountingSensitivity: anchor.forecast.accountingSensitivity,
-        confidence: anchor.forecast.confidence,
-        prior: anchor.forecast.prior,
-        rerating: anchor.forecast.rerating,
-        decomposition: anchor.forecast.decomposition,
-        growthEvidence: anchor.forecast.growthEvidence,
-        refinement: anchor.refinement,
-      } : null,
-      source: anchor.bond
-        ? anchor.source + " · sensibilidad duración/convexidad por régimen; reinversión y curva completa no modeladas"
-        : anchor.source,
-      risk: risks[i],
-      assumptions: { ...a.assumptions, ...overrides[a.symbol] },
-    };
-  });
+  const signals = compositionSignals(x, best.positions, overrides);
   const stress = [
     {
       label: "Crecimiento −3 pp / margen neto −2 pp",
@@ -1424,5 +1514,5 @@ export function composePortfolio(
       "Duración y convexidad proxy bajo shocks paralelos; no son curva completa, rolldown ni reinversión observada.",
     ],
   };
-  return search.deferRobustDecision ? proposal : finalizeCompositionDecision(proposal, x, finalPaths);
+  return { ...proposal, research_only: true };
 }

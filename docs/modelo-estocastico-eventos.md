@@ -10,9 +10,33 @@ Se propone un sistema predictivo para carteras multiactivo que distingue entre (
 
 **Palabras clave:** cálculo estocástico, GJR-GARCH, efectos asimétricos, regímenes, datos *point-in-time*, eventos, riesgo de cartera, CVaR.
 
-### Estado de implementación (28 de octubre de 2026 · motor 0.33.0)
+### Estado de implementación (28 de octubre de 2026 · motor 0.34.0)
 
-El motor 0.33.0 factoriza una matriz EWMA conjunta con SPY y residuo PSD; actualiza GJR en activos aceptados y una varianza con reversión hacia el nivel de 500 sesiones en los demás. Los primeros utilizan marginales Student-t mediante una cópula gaussiana. Se distingue su covarianza lineal inicial inducida de la matriz latente. Hay anclas compuestas por holdings para ETF de renta variable y perfiles de crédito para AGG, LQD e IGSB, con convenciones explícitas de pérdida y spread. La probabilidad de recesión se condiciona a la curva 10A − 3M al corte (0.29.0). La incertidumbre y el efecto macro se centran sobre las anclas en todo horizonte admitido (desde 0.26.0). Las anclas de acciones son equilibrio CAPM más un alfa de Grinold-Kahn con IC declarado (0.25.0). Desde 0.27.0 la búsqueda revisa intercambios y sustituciones completas con una prueba pareada. Desde 0.28.0 cada propuesta concilia tres búsquedas independientes en escenarios comunes y muestra su estabilidad; no hay garantía de óptimo global. El registro diario evalúa referencias estadísticas, cuyo centro y varianza difieren del simulador, y no valida por sí solo el CVaR de cartera. Se protegen las bases de BPA tras splits y se concilian los flujos de caja modelados. La historia anual SEC sigue siendo investigación reconstruida, sin sustituir las anclas ni certificar vintages históricos. **No** equivale al modelo factorial-GARCH completo: GJR sigue estimado sobre retornos totales; GJR residual, GARCH-X, DCC, saltos informativos, cobertura extrema y rentabilidad económica continúan pendientes de validación. El [estado consolidado](estado-validacion.md) separa implementación y evidencia.
+El núcleo de precios 1.0.0 conserva la matriz EWMA factorial conjunta con
+SPY, GJR para los 20 ajustes aceptados y varianza con reversión para los
+demás activos. La verosimilitud de ajuste GJR es t; las innovaciones de
+**precios económicos son gaussianas condicionales**, para preservar la media
+simple declarada. Se retira la exponencial de Student con compensador
+gaussiano; Student queda como estrés de riesgo, sin media ni utilidad (§3.2).
+Los parámetros GJR se congelan mensualmente; el estado de varianza se
+actualiza con precios nuevos. El GJR residual permanece en investigación.
+
+Las anclas incluyen CAPM más señal Grinold–Kahn con IC declarado, holdings
+y P/E de emisor para ETF elegibles y carry de bonos con pérdidas de crédito
+declaradas. No están predictivamente validadas. Las candidatas de las tres
+búsquedas y referencias sencillas se contrastan en cinco modelos; una sola
+transición llega a confirmación independiente, con márgenes de simulación
+tanto para mejora como para riesgo y un estrés Student adicional. Se hacen
+visibles las composiciones cuyo ranking no se resuelve; su desempate por
+rotación y riesgo es una política, no evidencia de equivalencia u óptimo.
+
+Se añaden sellos del núcleo exacto a 1/5/21 sesiones, con origen futuro,
+puntuaciones frente a EWMA y cestas conjuntas de referencia. Las cohortes
+anteriores no validan este núcleo cambiado. GARCH-X, DCC, saltos informativos,
+calibración de colas y rentabilidad económica continúan sin acreditar.
+El [estado consolidado](estado-validacion.md) recoge las medidas y los
+[criterios de confianza](criterios-confianza.md) distinguen cálculo, decisión
+y predicción.
 
 ## 1. Problema y pregunta de investigación
 
@@ -90,6 +114,23 @@ La ecuación anterior define un sistema **discreto** de pronóstico y control de
 ```
 
 donde $`\kappa_{i,t}=\mathbb E[J_{i,t}-1\mid\mathcal F_{t^-}]`$. Esta representación **no debe sumarse encima** de la simulación discreta previa: es otra especificación que necesitaría una correspondencia documentada de derivas, volatilidades, saltos y frecuencias.
+
+### 3.2. Correspondencia con la media económica del simulador
+
+Desde 0.34.0 se distingue el ancla simple anual de la media diaria de
+log-retornos de §3. Con una innovación gaussiana y varianza diaria conocida
+`h`, el incremento logarítmico de precios resta `h/2`; su momento exponencial
+condicional preserva el crecimiento económico declarado. GJR puede estimarse
+con verosimilitud t sin imponer esa misma distribución en precios.
+
+Una Student-t en log-retornos tiene media y varianza bajo las condiciones
+de §4, pero no el momento exponencial necesario para centrar su precio con
+la corrección gaussiana. El corte numérico de su tabla tampoco justifica
+restar `h/2`. Ese uso en producción se retira: permanece únicamente como
+estrés de colas, sin evaluación de rentabilidad media o utilidad económica.
+La simulación económica usa innovaciones gaussianas condicionadas a las
+varianzas GJR/EWMA. Esto corrige la correspondencia matemática; no acredita
+calibración predictiva de las trayectorias, de los parámetros ni del CVaR.
 
 ## 4. Volatilidad asimétrica: GJR-GARCH-t
 
@@ -311,11 +352,11 @@ Un candidato experimental no modifica composición ni señales. Su promoción ex
 | Fase | Contenido | Estado del objetivo |
 |---|---|---|
 | 0 | Este artículo; contratos de datos, supuestos y pruebas de aceptación | Documento |
-| 1 | GJR-GARCH-t, referencia EWMA, validación *walk-forward*, reporte de calibración y anomalías | Implementado sobre retornos totales; 20 aceptados de 260 al 27-oct; coeficientes congelados por mes desde 0.33.0 y estado actualizado a diario; validación del simulador exacto pendiente |
+| 1 | GJR-GARCH-t, referencia EWMA, validación *walk-forward*, reporte de calibración y anomalías | Implementado sobre retornos totales; 20 aceptados de 260 al 27-oct; coeficientes congelados por mes desde 0.33.0 y estado actualizado a diario; precios gaussianos condicionales y Student solo de riesgo; registro exacto 1/5/21 iniciado en 0.34.0, sin resultados maduros |
 | 2 | Registro de eventos point-in-time y prueba incremental de GARCH-X sin texto generativo como verdad | Pendiente |
 | 3 | Modelo factorial dinámico; volatilidades por factor y correlaciones residuales regularizadas | SPY y residuo PSD en el motor; DCC y factores estocásticos de tasas/crédito/USD pendientes |
 | 4 | Saltos y probabilidades condicionales con diagnóstico de doble conteo | Pendiente |
-| 5 | Integración aprobada a simulación y optimización, pruebas de decisiones netas de costos | Desde 0.33.0 la transición se verifica en cinco modelos para el mandato completo; minimax sigue siendo búsqueda experimental; superioridad económica, estabilidad y calibración de retornos pendientes |
+| 5 | Integración aprobada a simulación y optimización, pruebas de decisiones netas de costos | En 0.34.0 el conjunto de candidatas se selecciona bajo cinco modelos y estrés Student; una sola confirmación independiente con márgenes MC. Rankings no resueltos visibles. Superioridad económica, convergencia y calibración siguen pendientes |
 
 Se almacenarán capturas **raw** y normalizadas, pronósticos inmutables, versión de código y parámetros. Los archivos públicos jamás contendrán claves, suscripciones privadas o contenido restringido de Bloomberg.
 

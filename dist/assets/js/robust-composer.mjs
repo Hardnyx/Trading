@@ -1,11 +1,12 @@
-import {prepareComposition,validWeights} from "./composer.mjs?v=0.33.1";
-import {generatePaths,evaluatePaths} from "./path-model.mjs?v=0.33.1";
-import {distributionAccounting,distributionTerminalValue} from "./distribution-ledger.mjs?v=0.33.1";
-import {tradePlan,MODEL_VERSION} from "./policy.mjs?v=0.33.1";
-import {bondAssumptions} from "./research-model.mjs?v=0.33.1";
-import {seededRandom} from "./random.mjs?v=0.33.1";
-import {MODEL_VARIANTS,variantInputs,minimaxRegret,pairedUtilityEvidence} from "./robust-core.mjs?v=0.33.1";
-import {robustTransition} from './robust-transition.mjs?v=0.33.1';
+import {prepareComposition,validWeights} from "./composer.mjs?v=0.34.0";
+import {generatePaths,evaluatePaths} from "./path-model.mjs?v=0.34.0";
+import {distributionAccounting,distributionTerminalValue} from "./distribution-ledger.mjs?v=0.34.0";
+import {tradePlan,MODEL_VERSION} from "./policy.mjs?v=0.34.0";
+import {bondAssumptions} from "./research-model.mjs?v=0.34.0";
+import {seededRandom} from "./random.mjs?v=0.34.0";
+import {MODEL_VARIANTS,variantInputs,minimaxRegret,pairedUtilityEvidence} from "./robust-core.mjs?v=0.34.0";
+import {robustTransition} from './robust-transition.mjs?v=0.34.0';
+import {reviewRobustDecision} from './robust-decision.mjs?v=0.34.0';
 
 export function compareRobustPortfolio(snapshot,settings={},overrides={},rules={},options={}){
  const config={candidateCount:300,searchPaths:200,verificationPaths:1000,finalists:6,
@@ -16,6 +17,7 @@ export function compareRobustPortfolio(snapshot,settings={},overrides={},rules={
     config.verificationPaths>3000||config.searchPaths>1000||config.finalists>20||config.localRounds>4||config.localStarts>4)
    throw Error('Reduce el presupuesto de cálculo de robustez');
  const x=prepareComposition(snapshot,settings,overrides,rules);
+ if(!Number.isFinite(x.riskFree))throw Error('Falta tasa corta DGS3MO al corte; comparación económica incompleta.');
  x.valuationOverrides=overrides;
  if(x.policy.objective!=='growth'||x.policy.referenceCurrency!=='USD'||
     x.policy.monthlyWithdrawal||x.policy.withdrawals.length||x.policy.capitalFloor||x.policy.terminalTarget)
@@ -150,14 +152,15 @@ const best=ranked.best;
 const pairedGains=best?Object.fromEntries(ids.map(id=>[id,
  x.current.capital*(Math.exp(best.utilities[id])-Math.exp(incumbent.utilities[id]))])):null;
 const threshold=best?Math.max(x.costs.minBenefit,best.cost*x.costs.benefitCostRatio):null;
-const robustImprovement=best&&ids.every(id=>best.pairedMonteCarlo[id].lower_ce_gain_dollars>=threshold);
+const decisionAudit=best?reviewRobustDecision(x,best.positions,{paths:Math.max(1000,config.verificationPaths),validWeights}):null;
+const robustImprovement=best&&decisionAudit.status==='passed'&&ids.every(id=>best.pairedMonteCarlo[id].lower_ce_gain_dollars>=threshold);
 
  return {schema_version:1,model_version:MODEL_VERSION,method:'fixed-universe-minimax-regret',experimental:true,
    as_of:x.asOf,information_as_of:x.informationAsOf,snapshot_generated_at:snapshot.generated_at,
    horizon:x.options.horizon,capital:x.current.capital,config,universe:x.assets.map(a=>a.symbol),account_source:options.comparisonLabel||x.current.source,
    candidate_count:rows.length,screen_feasible:screened.ranking.length,verified_candidates:final.length,
    verification_feasible:ranked.ranking.length,rules:x.rules,
-   candidate:best?{...best,weights:undefined,screen:undefined,
+   candidate:best?{...best,weights:undefined,screen:undefined,decisionAudit,
     transition:robustTransition(x.assets,x.current.positions,best.positions,x.current.capital,x.costs)}:null,
    current:{...incumbent,weights:undefined,screen:undefined},
    scenarios:inputs.map((v,i)=>({id:ids[i],description:MODEL_VARIANTS[i].description,

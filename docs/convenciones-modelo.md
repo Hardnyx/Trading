@@ -1,6 +1,6 @@
 # Convenciones declaradas y reglas de revisión
 
-Vigente desde el motor 0.33.0. Una convención permite calcular escenarios
+Actualizado para el motor 0.34.0. Una convención permite calcular escenarios
 condicionales; **no acredita capacidad predictiva** ni se convierte en un
 estimador por aparecer en este registro. No se cambian reglas después de
 examinar un resultado para presentarlo como validación prospectiva.
@@ -29,6 +29,11 @@ Se distinguen cuatro categorías:
 | Escenarios macro | Probit de curva para recesión; resto y magnitudes declarados | Rechazo de calibración de probabilidades o de dispersión conjunta | Frecuencias y Brier por régimen; episodios de estrés separados. El probit no fecha con certeza una recesión |
 | Varianza a horizonte | Nivel de 500 sesiones, persistencia diaria 0,99 | QLIKE o cobertura peores en nuevos cortes | QLIKE a 21/63/252 sesiones frente a EWMA, con parámetros y ventanas fijados antes del resultado |
 | Topes y efectivo | Restricciones del mandato; efectivo 0% hasta consignar otra tasa | Mandato incompatible o condiciones contractuales distintas | Sensibilidad de límites; rendimiento neto observado de la cuenta. La T-bill no se imputa al saldo del broker |
+| Ley de precios | Gaussiana condicional; GJR estimado con verosimilitud t | Cobertura, ES o puntuaciones peores que EWMA; error matemático en el centrado | Registro inmutable del núcleo exacto; una futura ley de precios debe tener momento exponencial finito y compensador correcto |
+| Estrés de colas | Student solo para riesgo: ν ajustado o ν=4 declarado en fallback | Dependencia conjunta o riesgo observado incompatibles; no es una ley de precio medio | VaR/ES y coexcedencias fuera de muestra, sin usar su media para elegir una cartera |
+| Márgenes de simulación | Presupuesto nominal 0,025 para mejoras y 0,025 para riesgo; correcciones por modelos y restricciones | Fallo de cobertura en replicaciones independientes o muestras de cola insuficientes | Contrastes pareados; probabilidades con cota KL y CVaR con aproximación de influencia. No son una garantía de confianza predictiva del 95% |
+| Rankings no resueltos | Menor rotación, luego menor cota de riesgo; conjunto finito | Mejoras robustas, más evidencia o insuficiente cobertura de candidatas | Mostrar rangos de peso, perturbaciones de datos/mandato y búsquedas nuevas; no congelar posiciones ni afirmar equivalencia estadística |
+| Validación causal del núcleo | Origen dos sesiones observadas después del corte; 1/5/21 sesiones de retorno total | Publicación tardía, cambio material del núcleo o problemas de datos | Excluir el origen no prospectivo; separar cohortes. 20 orígenes no superpuestos y 500 observaciones solo habilitan revisión, sin promoción automática |
 
 El límite combinado de 20% para alto rendimiento/emergentes permanece.
 Los cinco modelos comparados no garantizan cobertura de toda incertidumbre

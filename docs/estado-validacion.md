@@ -1,6 +1,6 @@
 # Estado de validación de Trading
 
-**Actualizado:** 28 de octubre de 2026 · motor 0.33.1 · precios al 27-oct.
+**Actualizado:** 28 de octubre de 2026 · motor 0.34.0 · precios al 27-oct.
 **Estado:** escenarios condicionales de investigación; capacidad predictiva y
 ventaja económica sin acreditar. El [historial hasta 0.32.0](historial-validacion-hasta-0.32.md)
 conserva los cambios y cifras anteriores.
@@ -15,6 +15,39 @@ conserva los cambios y cifras anteriores.
 | Eventos verificados | 0 | GARCH-X y saltos informativos siguen bloqueados |
 | IC reconstruido del proxy anual | 0,037 a 252 sesiones; 36 orígenes | Intervalo por bloques [−0,082; 0,082]; no valida el IC declarado de 0,05 |
 | Candidato de oro con factores rezagados | 34 orígenes; R² fuera de muestra −0,057 frente a media histórica | Empeora el MSE un 5,7%; permanece en sombra |
+
+## Fiabilidad del cálculo y de los pesos (0.34.0)
+
+La auditoría conserva código y datos de 0.33.1 en
+[`auditorias/fiabilidad-0.33.1.json`](auditorias/fiabilidad-0.33.1.json).
+Con datos y mandato fijos, tres búsquedas base cambiaban entre el 55% y el
+75% del capital. Añadir un activo de peso y riesgo cero cambiaba 2.028.000
+coordenadas: la mediana de una cartera fija pasaba de 4,95% a 4,31% y el CVaR
+de 9,11% a 9,72%. Es un defecto de acoplamiento de aleatoriedad, corregido
+con flujos separados y orden canónico. También se corrige la dependencia de
+la frecuencia del informe y se verifica que un prefijo diario coincide con
+el mismo proceso completo.
+
+La exponencial de una Student-t no admite el centrado gaussiano que usaba
+el motor. El núcleo 1.0.0 usa innovaciones gaussianas condicionales de
+precios. La estimación GJR con verosimilitud t permanece; la Student se
+reserva para estrés de riesgo, con ν ajustado o ν=4 declarado donde hay
+fallback. No publica medias económicas ni utilidad de ese estrés. Es una
+corrección matemática: no una nueva ley predictivamente validada ni motivo
+para agrupar evidencia de núcleos distintos.
+
+La selección ya contrasta todas las candidatas descubiertas bajo los cinco
+modelos y añade combinaciones sencillas de fondos elegibles. Se separan
+cribado, selección y una única confirmación. Los riesgos incluyen cotas de
+muestreo: KL para probabilidades y aproximación de influencia para CVaR.
+Se informa el conjunto cuyos rankings no se resuelven, sin llamarlo
+estadísticamente equivalente. El desempate favorece menor rotación y luego
+riesgo; no bloquea una mejora respaldada ni garantiza óptimo global.
+
+El [protocolo de confianza](criterios-confianza.md) distingue corrección del
+software, admisibilidad condicional de una decisión y evidencia predictiva.
+**La tercera sigue sin acreditar.** La auditoría detallada de esta versión
+queda en [`auditoria-fiabilidad-0.34.md`](auditoria-fiabilidad-0.34.md).
 
 ## Decisión de operar
 
@@ -42,7 +75,7 @@ miden ruido de simulación, no toda la incertidumbre del modelo. La búsqueda
 minimax del panel separado continúa restringida a crecimiento USD sin
 flujos; no se presenta como el óptimo robusto global de todos los mandatos.
 
-### Comprobación con una cuenta de prueba
+### Comprobación histórica de 0.33.0 con una cuenta de prueba
 
 Cuenta hipotética: SPY 35%, SHY 35%, IEF 25%, CASH 5%, USD 100.000; no es una
 cuenta real ni una recomendación de pesos. Con el corte conservado, la
@@ -58,17 +91,30 @@ Sobre los escenarios pareados de verificación:
 | Combinado | USD 194 | USD −703 |
 | Baja convicción | USD −652 | USD −1.554 |
 
-Con la captura anterior (información del 27-oct), el candidato desde efectivo
-superaba los cinco modelos: menor cota de mejora USD 2.324 sobre USD 100.000.
-La captura nueva del 28-oct a las 12:27 UTC, con los mismos precios del
-27-oct y VTI ya elegible, cambia la familia hallada por la búsqueda base.
-La candidata supera el umbral económico, pero su CVaR es 20,42% en Combinado
-y 21,17% en Baja convicción, frente al límite de 20%. La decisión vigente
-es **mantener el 100% del efectivo inicial**, sin operaciones. No significa
-que no exista una alternativa robusta: solo que esta candidata no cumple;
-la búsqueda sigue optimizando el modelo base. La interfaz distingue el
-rechazo por riesgo de una mejora insuficiente. Estas comprobaciones no son
-evidencia de rentabilidad futura.
+En 0.33.1, la candidata base desde efectivo sobre la captura del 28-oct
+incumplía CVaR en dos modelos (20,42% y 21,17%, límite 20%) y se conservaba
+el efectivo. Era un rechazo de **una candidata**, no prueba de inexistencia
+de alternativas robustas. En 0.34.0 se corrige esa limitación: selección del
+conjunto descubierto bajo todos los modelos y confirmación independiente.
+Las cifras anteriores describen sus versiones; no son la cartera vigente.
+
+## Registro del simulador exacto
+
+`simulator_validation.mjs` conserva la primera distribución por corte,
+versión del núcleo, hashes y fecha real de finalización. Emplea los mismos
+prefijos diarios que la simulación, a 1/5/21 sesiones, con origen futuro dos
+sesiones observadas después del corte; cualquier origen que no empiece
+estrictamente después de la fecha de emisión se excluye. Evalúa activos y
+cestas conjuntas estáticas, frente a EWMA sin retorno económico supuesto.
+Puntúa CRPS aproximado, cobertura, QLIKE y residuo de ES. Se separan activos
+y carteras, orígenes superpuestos y cohortes con cambios de núcleo.
+
+Este registro empieza con la publicación de 0.34.0; no contiene resultados
+maduros del núcleo nuevo. Los registros diarios anteriores son comparadores,
+no evidencia de esta ley de precios. Alcanzar 20 orígenes no superpuestos y
+500 observaciones habilita una revisión diagnóstica, **no** una declaración
+de validez predictiva. Faltan precisión, mejora frente a referencias,
+consistencia por periodos y resultados económicos netos maduros.
 
 ## VTI y oro
 
@@ -144,9 +190,10 @@ npm run check
 python scripts/anchor_information_research.py
 python scripts/gold_research.py
 python scripts/build_volatility.py
+node scripts/reliability_audit.mjs --full
 ```
 
-**Verificación local:** 218 pruebas JavaScript, 137 Python y `npm run check` aprobados.
+**Verificación local:** 235 pruebas JavaScript, 137 Python y `npm run check` aprobados.
 
 Las pruebas cubren rechazo de mejoras aparentes bajo otro modelo, costes
 cero al mantener, mandato completo, anclas ausentes, constituyentes fuera de

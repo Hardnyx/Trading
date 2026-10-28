@@ -2,7 +2,7 @@
 
 Research, composición y seguimiento de una cartera personal de acciones y ETFs de Estados Unidos.
 
-**Motor 0.33.1.** Una transición debe superar mantener la cuenta, neta de costes, en cinco modelos alternativos; de lo contrario se conserva la cartera. El control respeta retiros, meta y moneda. Se incorpora el P/E oficial de Vanguard para VTI y se congelan por mes los coeficientes GJR, actualizando su varianza a diario. El IC reconstruido y el candidato de oro permanecen en investigación. Véanse [el estado vigente](docs/estado-validacion.md), [las convenciones y sus criterios de revisión](docs/convenciones-modelo.md) y [los pendientes](docs/pendientes.md).
+**Motor 0.34.0.** Se corrigen artefactos de Monte Carlo y la correspondencia entre anclas y ley de precios. La selección compara un conjunto finito en cinco modelos económicos, confirma una única candidata en escenarios separados y añade margen por error de simulación y un estrés de colas. Se informa cuándo los pesos quedan sin identificar. Comienza la validación prospectiva del simulador exacto a 1/5/21 sesiones, con origen futuro y referencia EWMA. La capacidad predictiva y la ventaja económica siguen sin acreditar. Véanse [los criterios de confianza](docs/criterios-confianza.md), [el estado vigente](docs/estado-validacion.md) y [los pendientes](docs/pendientes.md).
 
 [Abrir aplicación](https://hardnyx.github.io/Trading/)
 
