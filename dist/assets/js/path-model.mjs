@@ -5,23 +5,23 @@ import {
   quantile,
   sum,
   normalizeWeights,
-} from "./analytics.mjs?v=0.29.0";
-import { seededRandom, normalGenerator, poisson } from "./random.mjs?v=0.29.0";
-import { ewmaCovariance, cholesky } from "./risk-math.mjs?v=0.29.0";
-import { buildReturnAnchors, sampleDrifts, bondScenarioAnnualReturn, bondRegimeShift } from "./return-model.mjs?v=0.29.0";
-import { distributionAccounting } from "./distribution-ledger.mjs?v=0.29.0";
-import { cashGrowth, uniformCashGrowth } from "./cashflows.mjs?v=0.29.0";
-import { copulaInnovationCovariance } from './copula-covariance.mjs?v=0.29.0';
-import { assetAt } from "./research-model.mjs?v=0.29.0";
-import { factorModel } from "./factors.mjs?v=0.29.0";
-import { conditionalRisk, updateGjrVariance, updateEwmaVariance, updateTargetedVariance, studentMarginal, HORIZON_PERSISTENCE } from "./conditional-risk.mjs?v=0.29.0";
-import { marketFactorCovariance, conditionalFactorization } from "./factor-covariance.mjs?v=0.29.0";
+} from "./analytics.mjs?v=0.30.0";
+import { seededRandom, normalGenerator, poisson } from "./random.mjs?v=0.30.0";
+import { ewmaCovariance, cholesky } from "./risk-math.mjs?v=0.30.0";
+import { buildReturnAnchors, sampleDrifts, bondScenarioAnnualReturn, bondRegimeShift } from "./return-model.mjs?v=0.30.0";
+import { distributionAccounting } from "./distribution-ledger.mjs?v=0.30.0";
+import { cashGrowth, uniformCashGrowth } from "./cashflows.mjs?v=0.30.0";
+import { copulaInnovationCovariance } from './copula-covariance.mjs?v=0.30.0';
+import { assetAt } from "./research-model.mjs?v=0.30.0";
+import { factorModel } from "./factors.mjs?v=0.30.0";
+import { conditionalRisk, updateGjrVariance, updateEwmaVariance, updateTargetedVariance, studentMarginal, HORIZON_PERSISTENCE } from "./conditional-risk.mjs?v=0.30.0";
+import { marketFactorCovariance, conditionalFactorization } from "./factor-covariance.mjs?v=0.30.0";
 import {
   mandate,
   regimes,
   withdrawalSchedule,
   DEFAULT_REGIMES,
-} from "./policy.mjs?v=0.29.0";
+} from "./policy.mjs?v=0.30.0";
 
 export const BASE_REGIME = {
   id: "base",

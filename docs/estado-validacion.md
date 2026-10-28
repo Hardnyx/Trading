@@ -863,3 +863,23 @@ tope del 35%: es el instrumento con mejor carry neto por unidad de
 volatilidad histórica. Esa volatilidad se mide en dos años sin crisis
 emergentes y con cópula gaussiana. La concentración en deuda soberana
 emergente es la principal advertencia de esta versión (pendientes 7 y 22).
+
+### 0.30.0 — Tope prudencial para alto rendimiento y emergente
+
+Con los perfiles nuevos, al corte del 27-oct las tres búsquedas llevaban
+EMB a su tope por instrumento del 35%. Por defecto quedaban AGG 10, EMB 35,
+efectivo 5, NVDA 20, AMZN 15, GOOGL 5 y TGT 10, con CVaR 18,3% y
+equivalente cierto USD 106.100. EMB tiene el mejor carry neto por unidad
+de volatilidad del universo. Pero esa volatilidad se mide en dos años sin
+crisis emergentes ni de impagos (2022 queda fuera de la ventana de 500
+sesiones), y la cópula gaussiana no reproduce su dependencia de cola con
+la renta variable. Alargar la ventana no se puede validar fuera de
+muestra: con cinco años de historia quedarían muy pocos orígenes.
+
+Se añade a las reglas de composición un tope combinado de 20% para HYG,
+JNK, BKLN y EMB, editable como los demás. Es un límite de política, como
+los de Treasuries y acciones, no una estimación. Con él, la propuesta por
+defecto pasa a LQD 25, EMB 20, efectivo 5, NVDA 20, AMZN 15, GOOGL 5 y TGT
+10. El equivalente cierto queda en USD 106.125: la concentración en EMB no
+aportaba utilidad medible dentro del error de Monte Carlo. CVaR 18,3%,
+estabilidad baja (la otra ganadora equivalente comparte 55%).

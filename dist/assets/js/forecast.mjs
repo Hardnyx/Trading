@@ -5,12 +5,12 @@ import {
   finite,
   normalizeWeights,
   alignReturns,
-} from "./analytics.mjs?v=0.29.0";
-import { ewmaCovariance } from "./risk-math.mjs?v=0.29.0";
-import { preparePaths, generatePaths, evaluatePaths } from "./path-model.mjs?v=0.29.0";
-import { factorModel } from "./factors.mjs?v=0.29.0";
-export { seededRandom, normalGenerator, poisson } from "./random.mjs?v=0.29.0";
-export { ewmaCovariance, cholesky } from "./risk-math.mjs?v=0.29.0";
+} from "./analytics.mjs?v=0.30.0";
+import { ewmaCovariance } from "./risk-math.mjs?v=0.30.0";
+import { preparePaths, generatePaths, evaluatePaths } from "./path-model.mjs?v=0.30.0";
+import { factorModel } from "./factors.mjs?v=0.30.0";
+export { seededRandom, normalGenerator, poisson } from "./random.mjs?v=0.30.0";
+export { ewmaCovariance, cholesky } from "./risk-math.mjs?v=0.30.0";
 
 export function simulateForecast(
   assets,

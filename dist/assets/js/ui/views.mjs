@@ -7,7 +7,7 @@ import {
   resolveAssumptions,
   returnDecomposition,
   valuation,
-} from "../analytics.mjs?v=0.29.0";
+} from "../analytics.mjs?v=0.30.0";
 import {
   sparkline,
   portfolioChart,
@@ -16,7 +16,7 @@ import {
   scatter,
   forecastCone,
   histogram,
-} from "../charts.mjs?v=0.29.0";
+} from "../charts.mjs?v=0.30.0";
 import {
   esc,
   url,
@@ -27,16 +27,16 @@ import {
   color,
   dateLabel,
   timestampLabel,
-} from "./format.mjs?v=0.29.0";
-import { template } from "./templates.mjs?v=0.29.0";
-import { DEFAULT_COMPOSITION_RULES } from "../composer.mjs?v=0.29.0";
-import { factorModel } from "../factors.mjs?v=0.29.0";
-import { MODEL_VERSION, informationDate } from "../policy.mjs?v=0.29.0";
-import { fundamentalForecast } from "../research-model.mjs?v=0.29.0";
-import { financialFreshness } from '../financial-freshness.mjs?v=0.29.0';
-import { priceMonitor } from '../price-monitor.mjs?v=0.29.0';
+} from "./format.mjs?v=0.30.0";
+import { template } from "./templates.mjs?v=0.30.0";
+import { DEFAULT_COMPOSITION_RULES } from "../composer.mjs?v=0.30.0";
+import { factorModel } from "../factors.mjs?v=0.30.0";
+import { MODEL_VERSION, informationDate } from "../policy.mjs?v=0.30.0";
+import { fundamentalForecast } from "../research-model.mjs?v=0.30.0";
+import { financialFreshness } from '../financial-freshness.mjs?v=0.30.0';
+import { priceMonitor } from '../price-monitor.mjs?v=0.30.0';
 
-import { createDecisionViews } from "./decision-views.mjs?v=0.29.0";
+import { createDecisionViews } from "./decision-views.mjs?v=0.30.0";
 
 /**
  * Describes the process the Monte Carlo actually runs. Jumps and the GBM /
@@ -1005,6 +1005,7 @@ export function createViews(context) {
       ["maxOpportunity", "TOPE POR OPORTUNIDAD VALIDADA", 5, 75, 5, 100, "%"],
       ["maxTreasury", "MÁX. TREASURIES COMBINADOS", 5, 100, 5, 100, "%"],
       ["maxEquity", "MÁX. ACCIONES COMBINADAS", 5, 100, 5, 100, "%"],
+      ["maxRiskyCredit", "MÁX. ALTO RENDIMIENTO Y EMERGENTE", 5, 100, 5, 100, "%"],
       ["maxSector", "MÁX. SECTOR · ACCIÓN + ETF", 10, 100, 5, 100, "%"],
       ["reserveCap", "MÁX. RESERVA SHY", 5, 100, 5, 100, "%"],
       ["maxPositions", "MÁX. POSICIONES", 2, 12, 1, 1, ""],
@@ -1240,7 +1241,7 @@ export function createViews(context) {
           amount:e.amount_per_share===null?"Importe supuesto":money(e.amount_per_share),
           sourceUrl:url(r.source_url),
         }))).join(""),
-      globalLimitNote: `Límite global ${pct(p.rules.maxGlobal,0)} por instrumento; tope de excepción ${pct(p.rules.maxOpportunity,0)} únicamente con validación prospectiva independiente. Treasuries combinados ${pct(p.rules.maxTreasury,0)}. Acciones combinadas ${pct(p.rules.maxEquity,0)}. Excepciones aprobadas: ${(p.diagnostics?.concentrationPolicy?.qualified||[]).join(", ")||"ninguna"}.`,
+      globalLimitNote: `Límite global ${pct(p.rules.maxGlobal,0)} por instrumento; tope de excepción ${pct(p.rules.maxOpportunity,0)} únicamente con validación prospectiva independiente. Treasuries combinados ${pct(p.rules.maxTreasury,0)}. Acciones combinadas ${pct(p.rules.maxEquity,0)}. Alto rendimiento y emergente ${pct(p.rules.maxRiskyCredit??.2,0)}. Excepciones aprobadas: ${(p.diagnostics?.concentrationPolicy?.qualified||[]).join(", ")||"ninguna"}.`,
       concentration: p.diagnostics?.selected?.largestPosition
         ? `${p.diagnostics.selected.largestPosition.symbol} ${pct(p.diagnostics.selected.largestPosition.weight, 1)}`
         : "No determinada",

@@ -1,6 +1,6 @@
 # Trading · lo que falta
 
-Backlog actualizado el 28 de octubre de 2026 para el motor 0.29.0, corte de
+Backlog actualizado el 28 de octubre de 2026 para el motor 0.30.0, corte de
 precios examinado del 27-oct, 260 instrumentos (160 acciones, 100 ETF).
 Consultar las pruebas y los cierres en `docs/estado-validacion.md`. Cero
 incidencias publicadas o pruebas de software aprobadas no acreditan datos
@@ -181,9 +181,9 @@ Este archivo lista **solo lo que falta**. Para el funcionamiento, consultar
     35 % por instrumento) y efectivo al 0 % por defecto. Con los anclajes
     del 27-oct, la reproducción con seis posiciones alcanza 50% en acciones.
     Falta un análisis de sensibilidad de los topes, o que el usuario los
-    confirme explícitamente. Desde 0.29.0 la propuesta lleva EMB a su tope de
-    35%: no hay un límite por tipo de crédito (alto rendimiento, emergente)
-    ni por riesgo país.
+    confirme explícitamente. Desde 0.30.0, alto rendimiento y emergente
+    (HYG, JNK, BKLN, EMB) tienen un tope combinado de 20%, editable; tampoco
+    está validado. Falta un límite por riesgo país.
 23. **Operativa.** Faltan lotes enteros y precios ejecutables, conciliación
     con el broker, una política integrada de salida/reentrada por tesis
     invalidada y deshacer cambios de composición.

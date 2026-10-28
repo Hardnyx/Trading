@@ -1,7 +1,10 @@
-import { observedBy } from "./observation.mjs?v=0.29.0";
+import { observedBy } from "./observation.mjs?v=0.30.0";
 /* Economic ETF exposure. Never invent missing issuer holdings. */
 export const TREASURY=new Set(["SHY","SGOV","BIL","IEI","IEF","TLT","TIP","VGSH","VGIT","VGLT","SHV"]);
 const CREDIT=new Set(["LQD","HYG","EMB","IGSB","VCIT","VCSH","JNK","BKLN"]);
+// Credit below investment grade or emerging-market sovereign: a sub-sleeve
+// of credit with its own prudential cap.
+export const RISKY_CREDIT=new Set(["HYG","JNK","BKLN","EMB"]);
 const MIXED=new Set(["AGG","BND","BNDX"]);
 const GOLD=new Set(["GLD","IAU"]);
 const INTL=new Set(["VXUS","VEA","VWO","EFA","EEM","EWJ","EWZ","EWW","ECH","EPU","INDA","MCHI","FXI","EWG","EWU","EWC","EWA","EWT","KWEB"]);
@@ -58,13 +61,14 @@ export function exposureReport(assets,weights,asOf,informationAsOf=asOf,universe
   ...Object.entries(universeSectors).map(([s,v])=>[issuerKey(s),v]),
   ...assets.filter(a=>a.type==="stock").map(a=>[issuerKey(a.symbol),a.sector]),
  ]);
- const sleeves={treasury:0,credit:0,mixedBonds:0,municipalBonds:0,usEquity:0,globalEquity:0,gold:0,silver:0,unknownEtf:0},sectors={},issuers={},unknown=[],funds=[],unknownIssuerBlocks=[];
+ const sleeves={treasury:0,credit:0,riskyCredit:0,mixedBonds:0,municipalBonds:0,usEquity:0,globalEquity:0,gold:0,silver:0,unknownEtf:0},sectors={},issuers={},unknown=[],funds=[],unknownIssuerBlocks=[];
  let unclassifiedSectorWeight=0;
  for(let i=0;i<assets.length;i++){
   const a=assets[i],w=weights[i]||0;if(w<=1e-8)continue;
   const k=economicClass(a);
   if(k==="treasury")sleeves.treasury+=w;
   if(k==="credit")sleeves.credit+=w;
+  if(RISKY_CREDIT.has(a.symbol))sleeves.riskyCredit+=w;
   if(k==="mixed-bond")sleeves.mixedBonds+=w;
   if(k==="municipal-bond")sleeves.municipalBonds+=w;
   if(k==="us-equity"||k==="direct-equity")sleeves.usEquity+=w;

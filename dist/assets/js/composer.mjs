@@ -4,16 +4,16 @@ import {
   mean,
   quantile,
   normalizeWeights,
-} from "./analytics.mjs?v=0.29.0";
-import { seededRandom } from "./random.mjs?v=0.29.0";
-import { portfolioAttribution } from "./attribution.mjs?v=0.29.0";
+} from "./analytics.mjs?v=0.30.0";
+import { seededRandom } from "./random.mjs?v=0.30.0";
+import { portfolioAttribution } from "./attribution.mjs?v=0.30.0";
 import {
   preparePaths,
   generatePaths,
   evaluatePaths,
   marginalRisk,
   centeredRegimeConditions,
-} from "./path-model.mjs?v=0.29.0";
+} from "./path-model.mjs?v=0.30.0";
 import {
   withCashAsset,
   mandate,
@@ -24,12 +24,12 @@ import {
   effectiveRegimes,
   DEFAULT_REGIMES,
   MODEL_VERSION,
-} from "./policy.mjs?v=0.29.0";
-import { buildReturnAnchors, constituentForecasts, holdingsAnchor, valuationAnchor } from "./return-model.mjs?v=0.29.0";
-import { assetAt, fundamentalForecast, bondAssumptions } from "./research-model.mjs?v=0.29.0";
-import { selectCompositionUniverse } from "./universe.mjs?v=0.29.0";
-import { factorizeStressedCovariance } from "./factor-covariance.mjs?v=0.29.0";
-import { economicClass, exposureReport, rawCorrelation, qualifiedOpportunity, holdingsOverlap, knownFundOverlap } from "./economic-exposure.mjs?v=0.29.0";
+} from "./policy.mjs?v=0.30.0";
+import { buildReturnAnchors, constituentForecasts, holdingsAnchor, valuationAnchor } from "./return-model.mjs?v=0.30.0";
+import { assetAt, fundamentalForecast, bondAssumptions } from "./research-model.mjs?v=0.30.0";
+import { selectCompositionUniverse } from "./universe.mjs?v=0.30.0";
+import { factorizeStressedCovariance } from "./factor-covariance.mjs?v=0.30.0";
+import { economicClass, exposureReport, rawCorrelation, qualifiedOpportunity, holdingsOverlap, knownFundOverlap } from "./economic-exposure.mjs?v=0.30.0";
 
 export const DEFAULT_COMPOSITION_RULES = {
   maxPosition: 0.2,
@@ -38,6 +38,10 @@ export const DEFAULT_COMPOSITION_RULES = {
   maxOpportunity: 0.5,
   maxTreasury: 0.6,
   maxEquity: 0.5,
+  // High-yield and EM debt combined: a prudential policy limit, not an
+  // estimate. Their volatility is measured over two years without an EM or
+  // default crisis.
+  maxRiskyCredit: 0.2,
   maxSector: 0.35,
   maxCorrelation: 0.95,
   cvarBudget: 0.2,
@@ -53,6 +57,7 @@ function validateRules(rules) {
     "maxOpportunity",
     "maxTreasury",
     "maxEquity",
+    "maxRiskyCredit",
     "maxSector",
     "maxCorrelation",
     "cvarBudget",
@@ -363,6 +368,7 @@ export function validWeights(w,x){
  if(exposure.sleeves.unknownEtf>1e-8)return false;
  if(exposure.sleeves.treasury>x.rules.maxTreasury+1e-8)return false;
  if(exposure.sleeves.usEquity+exposure.sleeves.globalEquity>x.rules.maxEquity+1e-8)return false;
+ if(exposure.sleeves.riskyCredit>(x.rules.maxRiskyCredit??DEFAULT_COMPOSITION_RULES.maxRiskyCredit)+1e-8)return false;
  if(exposure.unclassifiedSectorWeight>x.rules.maxSector+1e-8 ||
     Object.values(exposure.sectorUpperBounds).some(v=>v>x.rules.maxSector+1e-8))return false;
  if(exposure.unclassifiedIssuerWeight>Math.min(x.rules.maxPosition,x.rules.maxGlobal)+1e-8)return false;
@@ -1064,6 +1070,7 @@ export function composePortfolio(
       ["Riesgo liquidez", row.metrics.liquidityFailureProbability, x.policy.maxLiquidityFailure],
       ["Treasuries combinados",economic.sleeves.treasury,x.rules.maxTreasury],
       ["Acciones combinadas",economic.sleeves.usEquity+economic.sleeves.globalEquity,x.rules.maxEquity],
+      ["Alto rendimiento y emergente",economic.sleeves.riskyCredit,x.rules.maxRiskyCredit],
       ...x.assets.flatMap((a,i)=>a.type!=="cash"&&row.weights[i]>1e-8
         ? [["Tope "+a.symbol,row.weights[i],positionLimit(a,x)]]:[]),
       ...Object.entries(economic.sectorUpperBounds).map(([s,w])=>
@@ -1099,6 +1106,7 @@ export function composePortfolio(
       opportunity:x.rules.maxOpportunity,
       treasury:x.rules.maxTreasury,
       equity:x.rules.maxEquity,
+      riskyCredit:x.rules.maxRiskyCredit,
       qualified:best?.positions.filter(p=>qualifiedOpportunity(
         x.assets.find(a=>a.symbol===p.symbol),
         x.opportunityEvidence[p.symbol],x.asOf)).map(p=>p.symbol)||[],
