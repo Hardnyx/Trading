@@ -1,7 +1,7 @@
-/** Experimental model uncertainty. No changes to market facts or live defaults. */
-import { assetAt } from './research-model.mjs?v=0.32.0';
-import { resolveAssumptions } from './analytics.mjs?v=0.32.0';
-import { buildReturnAnchors } from './return-model.mjs?v=0.32.0';
+/** Declared sensitivity models shared by the decision gate and research search. */
+import { assetAt } from './research-model.mjs?v=0.33.0';
+import { resolveAssumptions } from './analytics.mjs?v=0.33.0';
+import { buildReturnAnchors } from './return-model.mjs?v=0.33.0';
 
 export function operatingMarginStress(original, priceAsOf, informationAsOf) {
   const asset=assetAt(original,priceAsOf,informationAsOf),f=asset.financials||{};
@@ -34,15 +34,15 @@ export function operatingMarginStress(original, priceAsOf, informationAsOf) {
 export const MODEL_VARIANTS=[
   {id:'original',description:'Current priors and valuation assumptions'},
   {id:'no_rerating',noRerating:true,description:'No expansion above the observed earnings multiple'},
-  {id:'margin_stress',marginStress:true,description:'Multi-year operating-margin ratio stress on EPS'},
-  {id:'combined',noRerating:true,marginStress:true,description:'Margin stress plus no multiple expansion'},
-  {id:'low_conviction',noRerating:true,marginStress:true,confidence:.3,equityPremium:0,
+  {id:'margin_stress',marginStress:true,creditStress:true,description:'Operating-margin stress; doubled expected credit loss and 1.5x spread exposure'},
+  {id:'combined',noRerating:true,marginStress:true,creditStress:true,description:'Margin and credit stress plus no multiple expansion'},
+  {id:'low_conviction',noRerating:true,marginStress:true,creditStress:true,confidence:.3,equityPremium:0,informationCoefficient:0,
     description:'Combined stress, assigned confidence 30%, zero assumed broad-market equity premium'},
 ];
 
 export function variantInputs(inputs,variant){
   const evidence=[],overrides=structuredClone(inputs.valuationOverrides||{}),research=structuredClone(inputs.options.research||{});
-  const assets=inputs.assets.map(original=>{
+  const universe=(inputs.anchorUniverse||inputs.assets).map(original=>{
     if(original.type!=='stock')return original;
     const asset=assetAt(original,inputs.asOf,inputs.informationAsOf);
     const eps=asset.financials?.eps?.value;
@@ -63,9 +63,22 @@ export function variantInputs(inputs,variant){
     for(const symbol of ['VTI','SPY'])if(assetAssumptions[symbol])
       assetAssumptions[symbol].expectedReturn=Math.min(assetAssumptions[symbol].expectedReturn,inputs.riskFree+variant.equityPremium);
   }
-  const options={...inputs.options,research,assetAssumptions};
-  const anchors=buildReturnAnchors(assets,options,overrides,inputs.anchorUniverse||assets);
-  return {...inputs,assets,options,anchors,variant:variant.id,stressEvidence:evidence};
+  const bySymbol=new Map(universe.map(a=>[a.symbol,a]));
+  const assets=inputs.assets.map(a=>bySymbol.get(a.symbol)||a);
+  const options={...inputs.options,research,assetAssumptions,
+    ...(variant.creditStress?{creditStress:{lossMultiplier:2,spreadMultiplier:1.5}}:{}),
+    ...(variant.equityPremium!==undefined?{equityPremium:variant.equityPremium}:{}),
+    ...(variant.informationCoefficient!==undefined?{informationCoefficient:variant.informationCoefficient}:{})};
+  const anchors=buildReturnAnchors(assets,options,overrides,universe);
+  if(variant.equityPremium!==undefined) for(let i=0;i<anchors.length;i++) {
+    const asset=assets[i],a=anchors[i];
+    if(asset.type!=='etf'||a.bond)continue;
+    if(!a.holdingsCoverage&&!a.valuationDate)continue;
+    const cap=inputs.riskFree+variant.equityPremium;
+    if(a.annual>cap){const shift=cap-a.annual;anchors[i]={...a,annual:cap,mu:Math.log1p(cap),
+      distributionMean:cap,low:a.low+shift,high:a.high+shift};}
+  }
+  return {...inputs,assets,options,anchors,anchorUniverse:universe,variant:variant.id,stressEvidence:evidence};
 }
 
 export function minimaxRegret(rows,scenarioIds,feasible=r=>r.feasible){

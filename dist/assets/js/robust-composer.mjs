@@ -1,11 +1,11 @@
-import {prepareComposition,validWeights} from "./composer.mjs?v=0.32.0";
-import {generatePaths,evaluatePaths} from "./path-model.mjs?v=0.32.0";
-import {distributionAccounting,distributionTerminalValue} from "./distribution-ledger.mjs?v=0.32.0";
-import {tradePlan,MODEL_VERSION} from "./policy.mjs?v=0.32.0";
-import {bondAssumptions} from "./research-model.mjs?v=0.32.0";
-import {seededRandom} from "./random.mjs?v=0.32.0";
-import {MODEL_VARIANTS,variantInputs,minimaxRegret,pairedUtilityEvidence} from "./robust-core.mjs?v=0.32.0";
-import {robustTransition} from './robust-transition.mjs?v=0.32.0';
+import {prepareComposition,validWeights} from "./composer.mjs?v=0.33.0";
+import {generatePaths,evaluatePaths} from "./path-model.mjs?v=0.33.0";
+import {distributionAccounting,distributionTerminalValue} from "./distribution-ledger.mjs?v=0.33.0";
+import {tradePlan,MODEL_VERSION} from "./policy.mjs?v=0.33.0";
+import {bondAssumptions} from "./research-model.mjs?v=0.33.0";
+import {seededRandom} from "./random.mjs?v=0.33.0";
+import {MODEL_VARIANTS,variantInputs,minimaxRegret,pairedUtilityEvidence} from "./robust-core.mjs?v=0.33.0";
+import {robustTransition} from './robust-transition.mjs?v=0.33.0';
 
 export function compareRobustPortfolio(snapshot,settings={},overrides={},rules={},options={}){
  const config={candidateCount:300,searchPaths:200,verificationPaths:1000,finalists:6,
@@ -23,7 +23,8 @@ export function compareRobustPortfolio(snapshot,settings={},overrides={},rules={
  for(const a of x.assets){
    if(a.type!=='etf'||!x.current.positions.some(p=>p.symbol===a.symbol&&p.weight>0))continue;
    const own=x.options.assetAssumptions?.[a.symbol];
-   if(!bondAssumptions(a,x.options)&&!(Number.isFinite(own?.expectedReturn)&&own?.uncertainty>0))
+   if(!x.anchors.find(row=>row.symbol===a.symbol)?.fundamental&&
+      !bondAssumptions(a,x.options)&&!(Number.isFinite(own?.expectedReturn)&&own?.uncertainty>0))
      throw Error('Completa retorno esperado e incertidumbre de '+a.symbol+' en Research antes de comparar robustez.');
  }
  const progress=options.onProgress||(()=>{});

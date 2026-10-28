@@ -1,4 +1,4 @@
-import { composePortfolio, reconcileStarts } from "./composer.mjs?v=0.32.0";
+import { composePortfolio, reconcileStarts } from "./composer.mjs?v=0.33.0";
 
 // One independent search per message, or the reconciliation of their winners
 // on common paths (multi-start, see reconcileStarts).
@@ -9,7 +9,7 @@ self.onmessage = (event) => {
       id,
       proposal: kind === "reconcile"
         ? reconcileStarts(snapshot, settings, overrides, rules, proposals)
-        : composePortfolio(snapshot, settings, overrides, rules),
+        : composePortfolio(snapshot, settings, overrides, rules, { deferRobustDecision: true }),
     });
   } catch (error) {
     self.postMessage({ id, error: error.message });

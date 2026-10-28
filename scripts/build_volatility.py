@@ -7,6 +7,8 @@ import argparse
 from datetime import datetime, timezone
 import json
 import math
+import hashlib
+import copy
 from pathlib import Path
 
 if __package__:
@@ -152,6 +154,48 @@ def compact_volatility(snapshot, *, limit=None, test_days=126,
     return result
 
 
+def advance_frozen_parameters(snapshot, frozen):
+    """Update state from new observations; never re-estimate coefficients."""
+    cut, origin = snapshot["price_as_of"], frozen["as_of"]
+    if origin > cut or origin[:7] != cut[:7]:
+        raise ValueError("Monthly parameter archive does not match the requested cut")
+    if frozen.get("source_market_generated_at") and snapshot.get("generated_at"):
+        trained = datetime.fromisoformat(frozen["source_market_generated_at"].replace("Z", "+00:00"))
+        observed = datetime.fromisoformat(snapshot["generated_at"].replace("Z", "+00:00"))
+        if trained > observed:
+            raise ValueError("Parameter archive was first observed after the requested snapshot")
+    result = copy.deepcopy(frozen)
+    result.update(as_of=cut, source_market_generated_at=snapshot["generated_at"],
+                  parameter_fit_through=origin,
+                  reestimation_schedule="first observed market close of each calendar month; immutable bootstrap")
+    assets = {a["symbol"]: a for a in snapshot.get("assets", [])}
+    for symbol, fit in result["instruments"].items():
+        if fit.get("status") == "unavailable":
+            continue
+        try:
+            dates, returns = prices_to_returns(assets[symbol].get("history", []), cut)
+            if dates[-1] != cut or (cut > origin and origin not in dates):
+                raise ValueError("Missing original training cut or current close")
+            variance = fit["variance_next_pct2"]
+            for day, value in zip(dates, returns):
+                if day <= origin:
+                    continue
+                error = 100 * value - fit["mean_pct"]
+                variance = fit["omega"] + (fit["alpha"] + (fit["gamma"] if error < 0 else 0)) * error ** 2 + fit["beta"] * variance
+                if not math.isfinite(variance) or variance <= 0:
+                    raise ValueError("Invalid frozen-parameter variance")
+            fit.update(variance_next_pct2=variance,
+                       annualized_volatility_next=math.sqrt(variance * 252) / 100,
+                       fitted_through=cut, last_price_date=cut, parameter_fit_through=origin)
+            fit["verification_as_of"] = origin
+        except (KeyError, ValueError, IndexError):
+            fit.update(status="unavailable", reason="Frozen parameters cannot be advanced from the archived cut")
+    states = [f["status"] for f in result["instruments"].values()]
+    result["summary"] = {"eligible": states.count("accepted"), "research_only": states.count("research_only"),
+                         "unavailable": states.count("unavailable"), "evaluated": len(states)}
+    return result
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--snapshot", default=str(ROOT / "dist/data/market.json"))
@@ -159,12 +203,36 @@ def main():
     p.add_argument("--symbols", default="")
     p.add_argument("--train-window", type=int, default=500)
     p.add_argument("--test-days", type=int, default=126)
+    p.add_argument("--parameter-dir", default=str(ROOT / "data/volatility-parameters"))
     args = p.parse_args()
+    if args.symbols and Path(args.output).resolve() == (ROOT / "dist/data/volatility.json").resolve():
+        p.error("Las ejecuciones parciales requieren --output fuera de dist/data/volatility.json")
     snapshot = json.loads(Path(args.snapshot).read_text(encoding="utf-8"))
-    result = compact_volatility(
-        snapshot, limit=[s.strip().upper() for s in args.symbols.split(",") if s.strip()] or None,
-        train_window=args.train_window, test_days=args.test_days,
-    )
+    if args.symbols:
+        # Partial research runs never create or replace the production archive.
+        result = compact_volatility(snapshot,
+            limit=[s.strip().upper() for s in args.symbols.split(",") if s.strip()],
+            train_window=args.train_window, test_days=args.test_days)
+    else:
+        archive = Path(args.parameter_dir) / (snapshot["price_as_of"][:7] + ".json")
+        if archive.exists():
+            frozen = json.loads(archive.read_text(encoding="utf-8"))
+        else:
+            previous_path = Path(args.output)
+            previous = json.loads(previous_path.read_text(encoding="utf-8")) if previous_path.exists() else None
+            compatible = (previous and previous.get("as_of") == snapshot["price_as_of"] and
+                          previous.get("source_market_generated_at") == snapshot["generated_at"] and
+                          previous.get("training_window") == args.train_window and
+                          previous.get("walkforward_days") == args.test_days)
+            frozen = previous if compatible else compact_volatility(snapshot,
+                train_window=args.train_window, test_days=args.test_days)
+            archive.parent.mkdir(parents=True, exist_ok=True)
+            # One immutable bootstrap, then the first observed close of each new
+            # calendar month. No same-month optimisation or silent replacement.
+            with archive.open("x", encoding="utf-8") as handle:
+                json.dump(frozen, handle, ensure_ascii=False, allow_nan=False, separators=(",", ":"))
+        result = advance_frozen_parameters(snapshot, frozen)
+        result["parameter_archive_sha256"] = hashlib.sha256(archive.read_bytes()).hexdigest()
     path = Path(args.output)
     path.parent.mkdir(parents=True, exist_ok=True)
     encoded = json.dumps(result, ensure_ascii=False, separators=(",", ":"), allow_nan=False)

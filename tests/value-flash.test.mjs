@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {trackChanges} from '../dist/assets/js/ui/value-flash.mjs?v=0.32.0';
+import {trackChanges} from '../dist/assets/js/ui/value-flash.mjs?v=0.33.0';
 test('values seen for the first time never flash',()=>{
  const seen=new Map();
  assert.deepEqual(trackChanges(seen,[{key:'a',value:'1%'}],1000),[Infinity]);

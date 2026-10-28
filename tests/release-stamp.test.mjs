@@ -10,20 +10,20 @@ test("deploy stamping creates distinct cache keys for each commit", () => {
   try {
     mkdirSync(join(root, "assets", "js"), { recursive: true });
     writeFileSync(join(root, "index.html"),
-      '<script type="module" src="./assets/js/app.mjs?v=0.32.0"></script>');
+      '<script type="module" src="./assets/js/app.mjs?v=0.33.0"></script>');
     writeFileSync(join(root, "assets", "js", "app.mjs"),
-      'import "./composer.mjs?v=0.32.0";');
+      'import "./composer.mjs?v=0.33.0";');
     const sha = "1abcdecaf123456789012345678901234567890";
-    const changed = stampRelease(root, "0.32.0", sha);
+    const changed = stampRelease(root, "0.33.0", sha);
     assert.equal(changed.length, 2);
     assert.ok(readFileSync(join(root, "index.html"), "utf8").includes(
-      "app.mjs?v=0.32.0-1abcdecaf123"));
+      "app.mjs?v=0.33.0-1abcdecaf123"));
     assert.ok(readFileSync(join(root, "assets","js","app.mjs"),"utf8").includes(
-      "composer.mjs?v=0.32.0-1abcdecaf123"));
+      "composer.mjs?v=0.33.0-1abcdecaf123"));
     const build = JSON.parse(readFileSync(join(root, "build.json"), "utf8"));
-    assert.equal(build.model_version, "0.32.0");
+    assert.equal(build.model_version, "0.33.0");
     assert.equal(build.commit, sha);
-    assert.throws(() => stampRelease(root, "0.32.0", "notasha"), /invalid/);
+    assert.throws(() => stampRelease(root, "0.33.0", "notasha"), /invalid/);
   } finally {
     rmSync(root, {recursive:true,force:true});
   }

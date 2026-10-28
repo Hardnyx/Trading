@@ -1,9 +1,9 @@
-import { observedBy } from "./observation.mjs?v=0.32.0";
-import { finite } from "./analytics.mjs?v=0.32.0";
-import { fundamentalForecast, bondAssumptions, assetAt } from "./research-model.mjs?v=0.32.0";
-import { DEFAULT_RESEARCH } from "./policy.mjs?v=0.32.0";
-import { normalCDF, normalGenerator } from "./random.mjs?v=0.32.0";
-import { actualHoldings } from "./economic-exposure.mjs?v=0.32.0";
+import { observedBy } from "./observation.mjs?v=0.33.0";
+import { finite } from "./analytics.mjs?v=0.33.0";
+import { fundamentalForecast, bondAssumptions, assetAt } from "./research-model.mjs?v=0.33.0";
+import { DEFAULT_RESEARCH } from "./policy.mjs?v=0.33.0";
+import { normalCDF, normalGenerator } from "./random.mjs?v=0.33.0";
+import { actualHoldings } from "./economic-exposure.mjs?v=0.33.0";
 
 /**
  * Annualized scenario return for a bond ETF under a parallel yield change.
@@ -42,8 +42,8 @@ export const HOLDINGS_UNCOVERED_BAND = 0.15;
 // return is a signal, not an expected return. Its cross-section is rescaled to
 // alpha = IC x residual volatility x score around a CAPM equilibrium, so the
 // spread between stocks is the one a stated skill level can support. IC is a
-// declared convention (0.05 is what a good active manager attains), not an
-// estimate: there is no out-of-sample forecast error yet.
+// declared convention, not a measured skill estimate. Prospective economic
+// forecast errors are not yet mature.
 export const ALPHA_INFORMATION_COEFFICIENT = 0.05;
 export const BLUME_BETA_WEIGHT = 2 / 3;
 export const ALPHA_WINDOW = 500;
@@ -116,7 +116,8 @@ export function crossSectionalRefinement(universe, settings, lookup) {
     weight += w; alpha += w * r.alpha; beta += w * r.adjustedBeta; market += w * r.forecast.central;
   }
   if (!(weight > 0) || !(beta > 0)) return null;
-  const riskFree = rate / 100, marketReturn = market / weight,
+  const riskFree = rate / 100, marketReturn = finite(settings.equityPremium)
+      ? riskFree + settings.equityPremium : market / weight,
     benchmarkAlpha = alpha / weight, benchmarkBeta = beta / weight;
   const result = new Map();
   for (const r of rows) {
@@ -137,7 +138,7 @@ export function crossSectionalRefinement(universe, settings, lookup) {
 
 function forecastContext(universe, settings, overrides) {
   const key = JSON.stringify([settings.asOf, settings.informationAsOf, settings.research || {},
-    overrides, settings.yieldCurve?.DGS3MO ?? null, settings.informationCoefficient ?? null,
+    overrides, settings.yieldCurve?.DGS3MO ?? null, settings.informationCoefficient ?? null, settings.equityPremium ?? null,
     settings.mandate?.benchmark ?? null, settings.driftMode ?? null]);
   let byKey = contexts.get(universe);
   if (!byKey) contexts.set(universe, byKey = new Map());
@@ -250,7 +251,7 @@ export function valuationAnchor(asset, settings = {}) {
   return {
     annual, low: annual - HOLDINGS_UNCOVERED_BAND, high: annual + HOLDINGS_UNCOVERED_BAND,
     earningsYield, inflation, expenseRatio: v.expenseRatio, date: v.date,
-    source: `iShares, P/E ${v.priceEarnings.toFixed(1)} al ${v.date}: rendimiento de beneficios ${(earningsYield * 100).toFixed(1)}% + inflación implícita ${(inflation * 100).toFixed(1)}% (paridad de poder adquisitivo para la divisa), contraído al prior ${(prior * 100).toFixed(0)}% con confianza ${(confidence * 100).toFixed(0)}%; gastos ${(v.expenseRatio * 100).toFixed(2)}% descontados; banda ±${HOLDINGS_UNCOVERED_BAND * 100} pp`,
+    source: `${v.issuer === 'Vanguard' ? 'Vanguard' : 'iShares'}, P/E ${v.priceEarnings.toFixed(1)} al ${v.date}: rendimiento de beneficios ${(earningsYield * 100).toFixed(1)}% + inflación implícita ${(inflation * 100).toFixed(1)}% (paridad de poder adquisitivo para la divisa), contraído al prior ${(prior * 100).toFixed(0)}% con confianza ${(confidence * 100).toFixed(0)}%; gastos ${(v.expenseRatio * 100).toFixed(2)}% descontados; banda ±${HOLDINGS_UNCOVERED_BAND * 100} pp`,
   };
 }
 export function buildReturnAnchors(assets, settings = {}, overrides = {}, universe = assets) {

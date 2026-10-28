@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {tickerLayout} from '../dist/assets/js/ui/ticker-rotation.mjs?v=0.32.0';
+import {tickerLayout} from '../dist/assets/js/ui/ticker-rotation.mjs?v=0.33.0';
 test('the market strip stays on one row while every reference fits',()=>{
  assert.deepEqual(tickerLayout(6,1460,156),{perRow:6,rows:1});
  assert.deepEqual(tickerLayout(6,936,156),{perRow:6,rows:1});

@@ -1,7 +1,7 @@
 import test from 'node:test';import assert from 'node:assert/strict';
-import {calibrationAudit} from '../dist/assets/js/calibration-audit.mjs?v=0.32.0';
+import {calibrationAudit} from '../dist/assets/js/calibration-audit.mjs?v=0.33.0';
 const row=(id,start,end,realized=.1)=>({id,status:'scored',maturity:end,realized,
- origin:{prospective:true,model_version:'0.32.0',price_as_of:start,settings:{model:'merton',driftMode:'fundamental',volatilityMode:'hybrid',mandate:{referenceCurrency:'USD'}}},
+ origin:{prospective:true,model_version:'0.33.0',price_as_of:start,settings:{model:'merton',driftMode:'fundamental',volatilityMode:'hybrid',mandate:{referenceCurrency:'USD'}}},
  prediction:{model:'merton',horizon:1,mean:.05,p05:-.1,p95:.2,lossProbability:.3}});
 test('overlapping forecasts and repeated seeds do not inflate calibration sample',()=>{
  const rows=[row('a','2024-01-01','2025-01-01'),row('b','2024-06-01','2025-06-01'),row('c','2025-01-01','2026-01-01')];

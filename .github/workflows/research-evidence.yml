@@ -7,6 +7,8 @@ on:
       - 'scripts/research_gate.py'
       - 'scripts/earnings_history.py'
       - 'scripts/earnings_growth_research.py'
+      - 'scripts/anchor_information_research.py'
+      - 'scripts/gold_research.py'
       - 'scripts/run_research_audit.py'
       - 'scripts/multifactor_research.py'
       - 'scripts/tail_research.py'
@@ -49,6 +51,10 @@ jobs:
         run: python scripts/run_research_audit.py --limit 8
       - name: Diagnose annual EPS growth on dated reconstructed filings
         run: python scripts/earnings_growth_research.py
+      - name: Measure reconstructed rank IC without changing the declared coefficient
+        run: python scripts/anchor_information_research.py
+      - name: Contrast lagged gold factors without promoting a gold anchor
+        run: python scripts/gold_research.py
       - name: Generate SEC first-seen event ledger
         run: python scripts/build_event_registry.py --limit 8
       - name: Compare multifactor residual GJR against EWMA

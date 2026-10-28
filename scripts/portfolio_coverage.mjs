@@ -3,8 +3,8 @@
  */
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { dirname, resolve } from "node:path";
-import { composePortfolio } from "../dist/assets/js/composer.mjs?v=0.32.0";
-import { referenceRequest } from "../dist/assets/js/reference-preset.mjs?v=0.32.0";
+import { composePortfolio } from "../dist/assets/js/composer.mjs?v=0.33.0";
+import { referenceRequest } from "../dist/assets/js/reference-preset.mjs?v=0.33.0";
 
 const snapshot=JSON.parse(readFileSync("dist/data/market.json","utf8"));
 const volatility=JSON.parse(readFileSync("dist/data/volatility.json","utf8"));

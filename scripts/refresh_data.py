@@ -1037,9 +1037,9 @@ def main():
         errors.extend("Distribuciones: "+message for message in distributions["errors"])
         valuations = enrich_equity_valuations(assets, old_assets, args.as_of, dt.datetime.now(UTC).isoformat(),
             lambda url, key: download(url, key, max_age=3600))
-        providers.append({"id":"equity_valuation", "name":"iShares · valoración de índices",
+        providers.append({"id":"equity_valuation", "name":"Emisores · valoración de índices",
             "status":"ok" if not valuations["errors"] else "partial" if valuations["found"] else "error",
-            "detail":f'{valuations["found"]}/{valuations["requested"]} P/E fechados de fondos internacionales',
+            "detail":f'{valuations["found"]}/{valuations["requested"]} P/E y gastos fechados de índices, incluidos EE. UU.',
             "checked_at":dt.datetime.now(UTC).isoformat()})
         errors.extend("Valoración: "+message for message in valuations["errors"])
     snapshot["methodology"]["distributions"] = "Fechas previstas y cantidades declaradas separadas. El importe futuro no declarado es una hipótesis. El índice de ex-dates de Yahoo no confirma una fecha de pago."

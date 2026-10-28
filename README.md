@@ -2,7 +2,7 @@
 
 Research, composición y seguimiento de una cartera personal de acciones y ETFs de Estados Unidos.
 
-**Motor 0.32.0.** Propuesta más breve, con la explicación de la mezcla y del efectivo a la vista, y fuentes y supuestos en un desplegable. La búsqueda comprueba reasignaciones locales desde el efectivo antes de cerrar la propuesta. Se conservan la historia de BPA, las protecciones contables y las anclas existentes. El modelo sigue siendo experimental. Véanse [el estado actual, las comprobaciones y los pendientes](docs/estado-validacion.md).
+**Motor 0.33.0.** Una transición debe superar mantener la cuenta, neta de costes, en cinco modelos alternativos; de lo contrario se conserva la cartera. El control respeta retiros, meta y moneda. Se incorpora el P/E oficial de Vanguard para VTI y se congelan por mes los coeficientes GJR, actualizando su varianza a diario. El IC reconstruido y el candidato de oro permanecen en investigación. Véanse [el estado vigente](docs/estado-validacion.md), [las convenciones y sus criterios de revisión](docs/convenciones-modelo.md) y [los pendientes](docs/pendientes.md).
 
 [Abrir aplicación](https://hardnyx.github.io/Trading/)
 

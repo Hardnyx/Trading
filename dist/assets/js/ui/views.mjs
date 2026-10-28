@@ -7,7 +7,7 @@ import {
   resolveAssumptions,
   returnDecomposition,
   valuation,
-} from "../analytics.mjs?v=0.32.0";
+} from "../analytics.mjs?v=0.33.0";
 import {
   sparkline,
   portfolioChart,
@@ -16,7 +16,7 @@ import {
   scatter,
   forecastCone,
   histogram,
-} from "../charts.mjs?v=0.32.0";
+} from "../charts.mjs?v=0.33.0";
 import {
   esc,
   url,
@@ -27,16 +27,16 @@ import {
   color,
   dateLabel,
   timestampLabel,
-} from "./format.mjs?v=0.32.0";
-import { template } from "./templates.mjs?v=0.32.0";
-import { DEFAULT_COMPOSITION_RULES } from "../composer.mjs?v=0.32.0";
-import { factorModel } from "../factors.mjs?v=0.32.0";
-import { MODEL_VERSION, informationDate } from "../policy.mjs?v=0.32.0";
-import { fundamentalForecast } from "../research-model.mjs?v=0.32.0";
-import { financialFreshness } from '../financial-freshness.mjs?v=0.32.0';
-import { priceMonitor } from '../price-monitor.mjs?v=0.32.0';
+} from "./format.mjs?v=0.33.0";
+import { template } from "./templates.mjs?v=0.33.0";
+import { DEFAULT_COMPOSITION_RULES } from "../composer.mjs?v=0.33.0";
+import { factorModel } from "../factors.mjs?v=0.33.0";
+import { MODEL_VERSION, informationDate } from "../policy.mjs?v=0.33.0";
+import { fundamentalForecast } from "../research-model.mjs?v=0.33.0";
+import { financialFreshness } from '../financial-freshness.mjs?v=0.33.0';
+import { priceMonitor } from '../price-monitor.mjs?v=0.33.0';
 
-import { createDecisionViews } from "./decision-views.mjs?v=0.32.0";
+import { createDecisionViews } from "./decision-views.mjs?v=0.33.0";
 
 /**
  * Describes the process the Monte Carlo actually runs. Jumps and the GBM /
@@ -898,6 +898,7 @@ export function createViews(context) {
           robustBusy: state.robustnessBusy ? 'aria-busy="true"' : "",
           composeBusy: state.compositionBusy ? 'aria-busy="true"' : "",
           applyDisabled: state.proposal?.status === "proposed" &&
+            state.proposal.diagnostics?.robustDecision?.status === "passed" &&
             state.proposal.model_version === MODEL_VERSION &&
             state.proposal.as_of === data.price_as_of &&
             state.proposal.snapshot_generated_at === data.generated_at &&

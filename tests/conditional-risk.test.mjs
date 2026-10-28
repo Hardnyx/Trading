@@ -1,8 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { conditionalRisk, studentScale, updateGjrVariance, studentMarginal, studentUpperTail, normalUpperTail, updateTargetedVariance, updateEwmaVariance } from "../dist/assets/js/conditional-risk.mjs";
-import { preparePaths, generatePaths } from "../dist/assets/js/path-model.mjs?v=0.32.0";
-import { seededRandom, normalGenerator } from "../dist/assets/js/random.mjs?v=0.32.0";
+import { preparePaths, generatePaths } from "../dist/assets/js/path-model.mjs?v=0.33.0";
+import { seededRandom, normalGenerator } from "../dist/assets/js/random.mjs?v=0.33.0";
 
 const DATE="2026-10-23";
 function accepted(symbol,variance=1.8) {

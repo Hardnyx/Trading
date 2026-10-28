@@ -1,6 +1,6 @@
 # Trading · lo que falta
 
-Backlog actualizado el 28 de octubre de 2026 para el motor 0.32.0, corte de
+Backlog actualizado el 28 de octubre de 2026 para el motor 0.33.0, corte de
 precios examinado del 27-oct, 260 instrumentos (160 acciones, 100 ETF).
 Consultar las pruebas y los cierres en `docs/estado-validacion.md`. Cero
 incidencias publicadas o pruebas de software aprobadas no acreditan datos
@@ -46,6 +46,12 @@ Este archivo lista **solo lo que falta**. Para el funcionamiento, consultar
   el candidato y sus bandas no se promueven por generar un error histórico.
   También falta normalización de beneficios, cobertura de pérdidas y
   validación del crecimiento al horizonte de inversión, no solo anual.
+- **Contraste en 0.33.0:** proxy de señal con BPA anual presentado y precios
+  ajustados, 36 orígenes mensuales a 252 sesiones: IC medio 0,037, intervalo
+  por bloques [−0,082; 0,082]. No es la señal TTM exacta ni acredita vintages
+  o universo histórico. Falta esa reconstrucción completa y el contraste
+  prospectivo; no se cambia el IC por el punto estimado del proxy. La
+  decisión incluye desde ahora un modelo con IC cero.
 - **Terminado cuando:** cada ancla de crecimiento indica su fuente y vintage,
   y existe un error de previsión medido fuera de muestra.
 
@@ -61,6 +67,10 @@ Este archivo lista **solo lo que falta**. Para el funcionamiento, consultar
   de gastos).
 - **Avance en 0.31.0:** ACWX, IJH e IJR toman el mismo ancla, con URLs del
   catálogo oficial de iShares.
+- **Avance en 0.33.0:** VTI obtiene un P/E y gastos oficiales de Vanguard,
+  con fechas e identidad comprobadas. Usa el mismo bloque de rendimiento de
+  beneficios, sin rebajar cobertura ni inventar la distribución de holdings
+  ausentes. El colector lo añade en las capturas nuevas.
 - **Desde 0.32.0 el mandato por defecto es solo EE. UU.:** lo internacional
   queda fuera de las compras salvo que el usuario elija «global».
 - **Falta (para un mandato global):** los fondos país (EWJ, EWZ, INDA, MCHI…) siguen en observación
@@ -113,7 +123,7 @@ Este archivo lista **solo lo que falta**. Para el funcionamiento, consultar
 
 5. **GJR sobre residuos factoriales (§4, Fase 1).** En producción se estima
    sobre retornos totales; el GJR residual solo existe en investigación
-   (`multifactor_research.py`). 19 de 260 activos aceptados; 66 ajustes con ν
+   (`multifactor_research.py`). 20 de 260 activos aceptados; 65 ajustes con ν
    en el borde (4,0) y 21 con persistencia ≥ 0,99. Falta promover el residual
    con la misma regla walk-forward y reestimar los ajustes en el borde.
 6. **Modelo factorial dinámico (§7, Fase 3).** En el navegador solo están SPY
@@ -130,9 +140,12 @@ Este archivo lista **solo lo que falta**. Para el funcionamiento, consultar
 9. **Eventos y GARCH-X (§5, Fase 2).** `data/events/verified.json` está
    vacío y no hay consenso macro previo al dato. Bloqueado por datos. Falta
    una fuente de consenso con timestamp y la prueba incremental en holdout.
-10. **Oro.** Usa el supuesto genérico de ETF y un ajuste −0,5 × cambio de
-    tasas. Falta un modelo con tasas reales (DFII10) y dólar (DTWEXBGS); hoy
-    no se descarga ninguna de las dos series.
+10. **Oro.** DFII10 y DTWEXBGS se añaden al colector en 0.33.0. El candidato
+    con cambios rezagados de tasa real y dólar empeora el MSE frente a una
+    media histórica en 34 orígenes (R² fuera de muestra −0,057); queda en
+    sombra. Falta un ancla económica y contraste de la señal exacta. No se
+    habilitan compras con un retorno genérico ni se adopta inflación menos
+    gastos como esperanza validada.
 11. **Regímenes macro.** Desde 0.23.0 se aplican centrados: añaden
     dispersión y colas, pero no mueven el retorno esperado. Desde 0.29.0 la
     probabilidad de recesión sale de la curva al corte (probit de la Fed de
@@ -190,7 +203,11 @@ Este archivo lista **solo lo que falta**. Para el funcionamiento, consultar
     corte publicado (−USD 24, ruido) y cuesta 25–50% más de tiempo: no se
     cambió el valor por defecto.
 21. **Comparación robusta** limitada a crecimiento en USD sin retiros, suelo
-    ni meta. Falta extenderla a los demás mandatos.
+    ni meta en el panel de búsqueda minimax. Desde 0.33.0, el control de una
+    transición ordinaria sí compara el mandato completo en los cinco modelos
+    y mantiene si alguno falla, incluidos costes, retiros, suelo y FX. Falta
+    extender la búsqueda robusta global y validar el conjunto de supuestos,
+    que hoy no cubre toda la incertidumbre de parámetros ni de cola.
 22. **Topes prudenciales sin validar** (Treasury 60 %, renta variable 50 %,
     35 % por instrumento) y efectivo al 0 % por defecto. Con los anclajes
     del 27-oct, la reproducción con seis posiciones alcanza 50% en acciones.

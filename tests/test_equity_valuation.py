@@ -14,6 +14,28 @@ def page(symbol="EFA", pe=18.7678, day=20261026, fee="0.32%", label="P/E Ratio",
 
 
 class EquityValuation(unittest.TestCase):
+    def test_vti_uses_its_own_official_fundamentals_and_fee_with_separate_dates(self):
+        values = {
+            "__INITIAL_FUND_DATA__": {"fundIdentifier": "VTI", "portId": "0970", "isEquity": True, "isETF": True},
+            "__FUNDAMENTALS_DATA__": {"peRatio": {"value": "24.05722"}},
+            "__PORTFOLIO_STATISTICS__": {"effectiveDate": "2026-09-30"},
+            "__FEES_AND_EXPENSE__": {"adjustedExpenseRatio": {"value": "0.03", "effectiveDate": "2026-04-28"}},
+        }
+        def html():
+            return "".join(f"<script>window.{key} = {json.dumps(value)};</script>" for key, value in values.items())
+        r = parse_valuation(html(), "VTI", "2026-10-27", "2026-10-28T14:00:00Z", VALUATION_URLS["VTI"])
+        self.assertAlmostEqual(r["priceEarnings"], 24.05722)
+        self.assertAlmostEqual(r["expenseRatio"], .0003)
+        self.assertEqual(r["date"], "2026-09-30")
+        self.assertEqual(r["issuer"], "Vanguard")
+        values["__PORTFOLIO_STATISTICS__"]["effectiveDate"] = "2026-11-30"
+        with self.assertRaises(ValueError):
+            parse_valuation(html(), "VTI", "2026-10-27", "2026-10-28T14:00:00Z", VALUATION_URLS["VTI"])
+        values["__PORTFOLIO_STATISTICS__"]["effectiveDate"] = "2026-09-30"
+        values["__INITIAL_FUND_DATA__"]["fundIdentifier"] = "VOO"
+        with self.assertRaises(ValueError):
+            parse_valuation(html(), "VTI", "2026-10-27", "2026-10-28T14:00:00Z", VALUATION_URLS["VTI"])
+
     def test_dated_pe_and_expense_with_identity_checks(self):
         r = parse_valuation(page(), "EFA", "2026-10-27", "2026-10-28T00:00:00Z", VALUATION_URLS["EFA"])
         self.assertAlmostEqual(r["priceEarnings"], 18.7678)

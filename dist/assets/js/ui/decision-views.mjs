@@ -1,6 +1,7 @@
-import { template as t } from "./templates.mjs?v=0.32.0";
-import { pct, fmt, money, dateLabel, timestampLabel } from "./format.mjs?v=0.32.0";
-import { finite, sum, normalizeWeights } from "../analytics.mjs?v=0.32.0";
+import { template as t } from "./templates.mjs?v=0.33.0";
+import { DECISION_MODEL_LABELS } from "../robust-decision.mjs?v=0.33.0";
+import { pct, fmt, money, dateLabel, timestampLabel } from "./format.mjs?v=0.33.0";
+import { finite, sum, normalizeWeights } from "../analytics.mjs?v=0.33.0";
 import {
   DEFAULT_MANDATE,
   DEFAULT_EXECUTION,
@@ -10,18 +11,18 @@ import {
   informationDate,
   effectiveRegimes,
   curveRecessionProbability,
-} from "../policy.mjs?v=0.32.0";
+} from "../policy.mjs?v=0.33.0";
 import {
   fundamentalForecast,
   businessQuality,
   evaluateThesis,
   bondAssumptions,
-} from "../research-model.mjs?v=0.32.0";
-import { dilutedEarningsBridge } from '../earnings-normalization.mjs?v=0.32.0';
-import { growthEvidence } from '../growth-evidence.mjs?v=0.32.0';
-import { factorModel, factorAttribution } from "../factors.mjs?v=0.32.0";
-import { calibrationAudit } from "../calibration-audit.mjs?v=0.32.0";
-import { evaluateJournal } from "../journal.mjs?v=0.32.0";
+} from "../research-model.mjs?v=0.33.0";
+import { dilutedEarningsBridge } from '../earnings-normalization.mjs?v=0.33.0';
+import { growthEvidence } from '../growth-evidence.mjs?v=0.33.0';
+import { factorModel, factorAttribution } from "../factors.mjs?v=0.33.0";
+import { calibrationAudit } from "../calibration-audit.mjs?v=0.33.0";
+import { evaluateJournal } from "../journal.mjs?v=0.33.0";
 const objectives = {
   growth: "Crecimiento logarítmico",
   preservation: "Preservación · utilidad CRRA",
@@ -794,7 +795,10 @@ export function createDecisionViews({ state = {}, data, asset }) {
             : "—",
           "Después de retiros",
         ],
-        ["MEJORA EQUIVALENTE", money(p.benefit), `Umbral ${money(p.hurdle)}`],
+        p.diagnostics?.robustDecision
+          ? ["MEJORA MÍNIMA · CINCO MODELOS", money(p.diagnostics.robustDecision.minimumLowerGain),
+              `Cota de simulación neta de costes · umbral ${money(p.diagnostics.robustDecision.hurdle)}`]
+          : ["MEJORA EQUIVALENTE", money(p.benefit), `Umbral ${money(p.hurdle)}`],
         [
           "TIEMPO MÁXIMO BAJO MÁXIMOS · MEDIANA",
           finite(p.metrics?.medianUnderwaterYears)
@@ -815,6 +819,11 @@ export function createDecisionViews({ state = {}, data, asset }) {
           "Capital final después de retiros",
         ],
       ]) +
+        (p.diagnostics?.robustDecision ? table(
+          ["MODELO", "MEJORA NETA · USD", "COTA INFERIOR · USD", "CVAR PROPUESTA", "SUPERA EL UMBRAL"],
+          p.diagnostics.robustDecision.models.map(row => [DECISION_MODEL_LABELS[row.id], fmt(row.evidence.gain),
+            fmt(row.evidence.lowerGain), pct(row.candidate.cvar95), row.passes ? "Sí" : "No"]),
+        ) + message("La transición debe superar mantener en todos los supuestos comparados. Las cotas miden ruido de simulación; el conjunto de modelos no cubre toda la incertidumbre.") : "") +
         table(
           [
             "ALTERNATIVA",

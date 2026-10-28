@@ -62,6 +62,20 @@ test('combined variant preserves asset order, risk state and reported market fac
  close(r.anchors[0].forecast.assumptions.multiple,10);
 });
 
+test('model stress reaches ETF constituents outside the simulated sample and leaves original facts intact',()=>{
+ const a=cyclical();
+ const fund={symbol:'QQQ',type:'etf',price:100,price_date:'2026-10-23',sector:'Tecnología',
+  holdings:{as_of:'2026-10-23',observed_at:'2026-10-23T20:00:00Z',positions:[{symbol:'CYCLE',weight:.9}],expense_ratio:.002}};
+ const x={assets:[fund],anchorUniverse:[a,fund],asOf:'2026-10-23',informationAsOf:'2026-10-26',riskFree:.04,
+  options:{asOf:'2026-10-23',informationAsOf:'2026-10-26',research:{},assetAssumptions:{},yieldCurve:{DGS3MO:4}}};
+ const base=variantInputs(x,{id:'base'}),stress=variantInputs(x,{id:'stress',marginStress:true});
+ assert.ok(stress.anchors[0].annual<base.anchors[0].annual);
+ assert.equal(stress.anchorUniverse[0].financials.eps.value,4);
+ assert.equal(x.anchorUniverse[0].financials.eps.value,10);
+ const low=variantInputs(x,{id:'low',equityPremium:0,informationCoefficient:0});
+ assert.ok(low.anchors[0].annual<=.04);
+});
+
 test('variants retain user growth and valuation overrides and never raise a lower assigned confidence',()=>{
  const a=cyclical(),x={assets:[a],asOf:'2026-10-23',informationAsOf:'2026-10-26',riskFree:.04,
   valuationOverrides:{CYCLE:{multiple:6,growth:.13,horizon:2}},
@@ -77,8 +91,8 @@ test('variants retain user growth and valuation overrides and never raise a lowe
 
 test('shared browser comparison preserves its inputs and reports the same fixed universe in every model',async()=>{
  const {readFileSync}=await import('node:fs');
- const {compareRobustPortfolio}=await import('../dist/assets/js/robust-composer.mjs?v=0.32.0');
- const {referenceRequest}=await import('../dist/assets/js/reference-preset.mjs?v=0.32.0');
+ const {compareRobustPortfolio}=await import('../dist/assets/js/robust-composer.mjs?v=0.33.0');
+ const {referenceRequest}=await import('../dist/assets/js/reference-preset.mjs?v=0.33.0');
  const market=JSON.parse(readFileSync(new URL('../dist/data/market.json',import.meta.url)));
  market.volatility=JSON.parse(readFileSync(new URL('../dist/data/volatility.json',import.meta.url)));
  const p=referenceRequest(market),before=JSON.stringify(p);

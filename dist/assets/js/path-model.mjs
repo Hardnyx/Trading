@@ -5,23 +5,23 @@ import {
   quantile,
   sum,
   normalizeWeights,
-} from "./analytics.mjs?v=0.32.0";
-import { seededRandom, normalGenerator, poisson } from "./random.mjs?v=0.32.0";
-import { ewmaCovariance, cholesky } from "./risk-math.mjs?v=0.32.0";
-import { buildReturnAnchors, sampleDrifts, bondScenarioAnnualReturn, bondRegimeShift } from "./return-model.mjs?v=0.32.0";
-import { distributionAccounting } from "./distribution-ledger.mjs?v=0.32.0";
-import { cashGrowth, uniformCashGrowth } from "./cashflows.mjs?v=0.32.0";
-import { copulaInnovationCovariance } from './copula-covariance.mjs?v=0.32.0';
-import { assetAt } from "./research-model.mjs?v=0.32.0";
-import { factorModel } from "./factors.mjs?v=0.32.0";
-import { conditionalRisk, updateGjrVariance, updateEwmaVariance, updateTargetedVariance, studentMarginal, HORIZON_PERSISTENCE } from "./conditional-risk.mjs?v=0.32.0";
-import { marketFactorCovariance, conditionalFactorization } from "./factor-covariance.mjs?v=0.32.0";
+} from "./analytics.mjs?v=0.33.0";
+import { seededRandom, normalGenerator, poisson } from "./random.mjs?v=0.33.0";
+import { ewmaCovariance, cholesky } from "./risk-math.mjs?v=0.33.0";
+import { buildReturnAnchors, sampleDrifts, bondScenarioAnnualReturn, bondRegimeShift } from "./return-model.mjs?v=0.33.0";
+import { distributionAccounting } from "./distribution-ledger.mjs?v=0.33.0";
+import { cashGrowth, uniformCashGrowth } from "./cashflows.mjs?v=0.33.0";
+import { copulaInnovationCovariance } from './copula-covariance.mjs?v=0.33.0';
+import { assetAt } from "./research-model.mjs?v=0.33.0";
+import { factorModel } from "./factors.mjs?v=0.33.0";
+import { conditionalRisk, updateGjrVariance, updateEwmaVariance, updateTargetedVariance, studentMarginal, HORIZON_PERSISTENCE } from "./conditional-risk.mjs?v=0.33.0";
+import { marketFactorCovariance, conditionalFactorization } from "./factor-covariance.mjs?v=0.33.0";
 import {
   mandate,
   regimes,
   withdrawalSchedule,
   DEFAULT_REGIMES,
-} from "./policy.mjs?v=0.32.0";
+} from "./policy.mjs?v=0.33.0";
 
 export const BASE_REGIME = {
   id: "base",
@@ -421,6 +421,16 @@ export function generatePaths(inputs, paths, seed, stepsPerYear = 52) {
     riskFreeRate: finite(options.yieldCurve?.DGS3MO) ? options.yieldCurve.DGS3MO / 100 : null,
   };
 }
+/** Increasing utility-to-money map shared by forecasts and decision evidence. */
+export function utilityCertaintyEquivalent(score, policy, capital) {
+  const gamma = policy.riskAversion;
+  return policy.objective === "target"
+    ? policy.terminalTarget / policy.fxSpot - capital * Math.sqrt(Math.max(0, -score))
+    : policy.objective === "preservation" && gamma !== 1
+      ? capital * Math.max(1e-12, 1 + (1 - gamma) * score) ** (1 / (1 - gamma))
+      : capital * Math.exp(score);
+}
+
 export function evaluatePaths(weights, sample, options = {}) {
   const { assets, gross, fx, steps, paths, dt, policy } = sample,
     capital = options.capital ?? 100000,
@@ -602,14 +612,7 @@ export function evaluatePaths(weights, sample, options = {}) {
     tail = sorted.slice(0, Math.max(1, Math.ceil(paths * 0.05))),
     lossProbability = losses / paths;
   const score = utility / paths,
-    certaintyEquivalent =
-      policy.objective === "target"
-        ? policy.terminalTarget / startFX -
-          capital * Math.sqrt(Math.max(0, -score))
-        : policy.objective === "preservation" && gamma !== 1
-          ? capital *
-            Math.max(1e-12, 1 + (1 - gamma) * score) ** (1 / (1 - gamma))
-          : capital * Math.exp(score);
+    certaintyEquivalent = utilityCertaintyEquivalent(score, policy, capital);
   const result = {
     score,
     ...(utilities ? { pathUtilities: utilities } : {}),

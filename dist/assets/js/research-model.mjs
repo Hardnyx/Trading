@@ -1,9 +1,9 @@
-import { observedBy } from "./observation.mjs?v=0.32.0";
-import { finite, metrics, valuation, scenarios, resolveAssumptions, returnDecomposition } from "./analytics.mjs?v=0.32.0";
-import { DEFAULT_RESEARCH } from "./policy.mjs?v=0.32.0";
-import { dilutedEarningsBridge } from './earnings-normalization.mjs?v=0.32.0';
-import { financialFreshness } from './financial-freshness.mjs?v=0.32.0';
-import { growthEvidence } from './growth-evidence.mjs?v=0.32.0';
+import { observedBy } from "./observation.mjs?v=0.33.0";
+import { finite, metrics, valuation, scenarios, resolveAssumptions, returnDecomposition } from "./analytics.mjs?v=0.33.0";
+import { DEFAULT_RESEARCH } from "./policy.mjs?v=0.33.0";
+import { dilutedEarningsBridge } from './earnings-normalization.mjs?v=0.33.0';
+import { financialFreshness } from './financial-freshness.mjs?v=0.33.0';
+import { growthEvidence } from './growth-evidence.mjs?v=0.33.0';
 
 const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
 const years = (a, b) =>
@@ -582,6 +582,11 @@ export function bondAssumptions(asset, settings = {}) {
     proxy = asset.symbol === "SHY" ? curve.DGS2 : curve.DGS30;
   const stale = usable && years(usable.date, asOf) * 365.25 > 45;
   const credit = CREDIT_CONVENTIONS[asset.symbol] || null;
+  const lossMultiplier = settings.creditStress?.lossMultiplier ?? 1;
+  const spreadMultiplier = settings.creditStress?.spreadMultiplier ?? 1;
+  if (![lossMultiplier, spreadMultiplier].every(v => finite(v) && v >= 1 && v <= 3))
+    throw Error('Estrés de crédito fuera de rango');
+  const expectedLoss = (credit?.expectedLoss ?? 0) * lossMultiplier;
   // A Treasury curve point is no proxy for a credit fund's yield.
   if (credit && !finite(supplied.yieldToMaturity) && (!usable || stale)) return null;
   // Inflation-linked: real yield plus the inflation expected at the cut
@@ -627,14 +632,14 @@ export function bondAssumptions(asset, settings = {}) {
     yieldToMaturity: yieldRate,
     duration,
     expenseRatio: expense,
-    expectedLoss: credit?.expectedLoss ?? 0,
-    spreadBeta: credit?.spreadBeta ?? 0,
-    carry: yieldRate - expense - (credit?.expectedLoss ?? 0),
+    expectedLoss,
+    spreadBeta: (credit?.spreadBeta ?? 0) * spreadMultiplier,
+    carry: yieldRate - expense - expectedLoss,
     date: usable?.date || null,
     source: finite(supplied.yieldToMaturity)
       ? "TIR y duración ingresadas"
       : credit
-        ? `iShares: TIR bruta menos gastos y pérdida esperada de crédito ${(credit.expectedLoss * 100).toFixed(2)}% (convención); diferencial por escenario`
+        ? `iShares: TIR bruta menos gastos y pérdida esperada de crédito ${(expectedLoss * 100).toFixed(2)}% (${lossMultiplier === 1 ? 'convención' : 'estrés sobre la convención'}); diferencial por escenario`
         : finite(proxy) && (!usable || stale)
           ? "Curva Treasury próxima / duración del perfil"
           : "iShares: TIR bruta menos gastos",

@@ -4,16 +4,17 @@ import {
   mean,
   quantile,
   normalizeWeights,
-} from "./analytics.mjs?v=0.32.0";
-import { seededRandom } from "./random.mjs?v=0.32.0";
-import { portfolioAttribution } from "./attribution.mjs?v=0.32.0";
+} from "./analytics.mjs?v=0.33.0";
+import { seededRandom } from "./random.mjs?v=0.33.0";
+import { portfolioAttribution } from "./attribution.mjs?v=0.33.0";
+import { reviewRobustDecision, DECISION_MODEL_LABELS } from "./robust-decision.mjs?v=0.33.0";
 import {
   preparePaths,
   generatePaths,
   evaluatePaths,
   marginalRisk,
   centeredRegimeConditions,
-} from "./path-model.mjs?v=0.32.0";
+} from "./path-model.mjs?v=0.33.0";
 import {
   withCashAsset,
   mandate,
@@ -24,12 +25,12 @@ import {
   effectiveRegimes,
   DEFAULT_REGIMES,
   MODEL_VERSION,
-} from "./policy.mjs?v=0.32.0";
-import { buildReturnAnchors, constituentForecasts, holdingsAnchor, valuationAnchor } from "./return-model.mjs?v=0.32.0";
-import { assetAt, fundamentalForecast, bondAssumptions } from "./research-model.mjs?v=0.32.0";
-import { selectCompositionUniverse } from "./universe.mjs?v=0.32.0";
-import { factorizeStressedCovariance } from "./factor-covariance.mjs?v=0.32.0";
-import { economicClass, outsideUS, exposureReport, rawCorrelation, qualifiedOpportunity, holdingsOverlap, knownFundOverlap } from "./economic-exposure.mjs?v=0.32.0";
+} from "./policy.mjs?v=0.33.0";
+import { buildReturnAnchors, constituentForecasts, holdingsAnchor, valuationAnchor } from "./return-model.mjs?v=0.33.0";
+import { assetAt, fundamentalForecast, bondAssumptions } from "./research-model.mjs?v=0.33.0";
+import { selectCompositionUniverse } from "./universe.mjs?v=0.33.0";
+import { factorizeStressedCovariance } from "./factor-covariance.mjs?v=0.33.0";
+import { economicClass, outsideUS, exposureReport, rawCorrelation, qualifiedOpportunity, holdingsOverlap, knownFundOverlap } from "./economic-exposure.mjs?v=0.33.0";
 
 export const DEFAULT_COMPOSITION_RULES = {
   maxPosition: 0.2,
@@ -262,6 +263,7 @@ export function prepareComposition(
   );
   return {
     ...paths,
+    valuationOverrides: overrides,
     rules: limits,
     securitySectors:Object.fromEntries(snapshot.assets.filter(a=>a.type==="stock")
       .map(a=>[a.symbol,a.sector])),
@@ -689,6 +691,29 @@ function passiveCandidates(x) {
 // on the 27-Oct cut, four seeds gave winners sharing 45-65% of their weights
 // yet within USD 184 of each other on common paths.
 export const MULTI_START_COUNT = 3;
+
+/** Ordinary proposals pass the same model-uncertainty rule as transitions. */
+export function finalizeCompositionDecision(proposal, inputs, paths = 1000) {
+  if (proposal?.status !== 'proposed') return proposal;
+  const audit = reviewRobustDecision(inputs, proposal.positions,
+    { paths: Math.max(100, Math.min(1000, paths)), validWeights });
+  const diagnostics = { ...proposal.diagnostics, robustDecision: audit };
+  if (audit.status === 'passed') return { ...proposal, diagnostics };
+  const holdPlan = tradePlan(inputs.assets, inputs.current.positions, inputs.current.positions,
+    inputs.current.capital, inputs.costs);
+  return { ...proposal, status: 'hold', diagnostics: { ...diagnostics, attribution: null, cashAllocation: null },
+    reason: (audit.status === 'incomplete'
+      ? `Mantener: faltan anclas fundamentadas o expectativas explícitas para ${audit.unanchoredIncumbents.join(', ')}. Completar Research antes de evaluar una transición.`
+      : `Mantener: la transición no supera el umbral neto en todos los modelos (${audit.failingModels.map(id => DECISION_MODEL_LABELS[id]).join(', ')}).`) +
+      (audit.currentViolatesRisk ? ' La cartera actual también excede límites: requiere revisión del mandato o del riesgo.' : ''),
+    candidate_review: { positions: proposal.positions, metrics: proposal.metrics, benefit: proposal.benefit,
+      trade_plan: proposal.trade_plan },
+    positions: inputs.current.positions.map(p => ({ ...p })), signals: [],
+    metrics: audit.models.find(r => r.id === 'original')?.hold ?? null, trade_plan: holdPlan,
+    alternatives: audit.status === 'incomplete'
+      ? { ...proposal.alternatives, hold: { metrics: null, feasible: null } } : proposal.alternatives,
+    benefit: 0, hurdle: audit.hurdle, selected_kind: 'hold' };
+}
 export function startSeeds(seed, count = MULTI_START_COUNT) {
   return Array.from({ length: count }, (_, k) => (seed + k * 0x9e3779b9) >>> 0);
 }
@@ -700,10 +725,11 @@ export function startSeeds(seed, count = MULTI_START_COUNT) {
  * the search's random draws.
  */
 export function reconcileStarts(snapshot, settings = {}, overrides = {}, rules = {}, proposals = [], finalPaths = 3000) {
+  const x = prepareComposition(snapshot, settings, overrides, rules);
+  const finalize = p => finalizeCompositionDecision(p, x, finalPaths);
   const usable = proposals.map((proposal, k) => ({ proposal, k }))
     .filter(({ proposal }) => proposal?.positions?.length);
-  if (usable.length < 2) return proposals.find(p => p?.positions?.length) || proposals[0];
-  const x = prepareComposition(snapshot, settings, overrides, rules);
+  if (usable.length < 2) return finalize(proposals.find(p => p?.positions?.length) || proposals[0]);
   const common = generatePaths(x, finalPaths, ((x.options.seed >>> 0) ^ 0x2545f491) >>> 0, 52);
   const rows = usable.map(({ proposal, k }) => {
     const bySymbol = new Map(proposal.positions.map(p => [p.symbol, p.weight]));
@@ -712,7 +738,7 @@ export function reconcileStarts(snapshot, settings = {}, overrides = {}, rules =
     const result = assess(weights, x, common, proposal.status === "hold");
     return { proposal, k, weights, covered, result, utilities: pathUtilities(result, x, common) };
   }).filter(row => row.covered);
-  if (rows.length < 2) return usable[0].proposal;
+  if (rows.length < 2) return finalize(usable[0].proposal);
   const top = rows.reduce((a, b) => b.result.metrics.score > a.result.metrics.score ? b : a);
   for (const row of rows)
     row.z = row === top ? 0 : pairedUtilityTest(top.utilities, row.utilities).z;
@@ -742,14 +768,15 @@ export function reconcileStarts(snapshot, settings = {}, overrides = {}, rules =
     scope: "Winners of independent searches on fresh common paths; Monte Carlo error of the same model and data, not parameter error",
   };
   const proposal = chosen.proposal;
-  return { ...proposal, diagnostics: { ...proposal.diagnostics, stability },
-    search: { ...proposal.search, starts: proposals.length } };
+  return finalize({ ...proposal, diagnostics: { ...proposal.diagnostics, stability },
+    search: { ...proposal.search, starts: proposals.length } });
 }
 /** Sequential multi-start (Node, tests); the browser runs the starts in parallel workers. */
 export function composeMultiStart(snapshot, settings = {}, overrides = {}, rules = {}, search = {}, count = MULTI_START_COUNT) {
   const seed = (settings.seed ?? 20261024) >>> 0;
   const proposals = startSeeds(seed, count).map(start =>
-    composePortfolio(snapshot, { ...settings, seed: start }, overrides, rules, search));
+    composePortfolio(snapshot, { ...settings, seed: start }, overrides, rules,
+      { ...search, deferRobustDecision: true }));
   return reconcileStarts(snapshot, { ...settings, seed }, overrides, rules, proposals, search.finalPaths ?? 3000);
 }
 export function composePortfolio(
@@ -1350,7 +1377,7 @@ export function composePortfolio(
       note: "Reelección entre las 20 candidatas base y mantener; sensibilidad local, sin promesa de robustez global.",
     };
   });
-  return {
+  const proposal = {
     ...metadata,
     status: "proposed",
     positions: best.positions,
@@ -1396,4 +1423,5 @@ export function composePortfolio(
       "Duración y convexidad proxy bajo shocks paralelos; no son curva completa, rolldown ni reinversión observada.",
     ],
   };
+  return search.deferRobustDecision ? proposal : finalizeCompositionDecision(proposal, x, finalPaths);
 }

@@ -13,6 +13,8 @@ FRED_SERIES = [
     ("UNRATE", "UNRATE", "Desempleo", "%", "Tasa de desempleo desestacionalizada"),
     ("DFF", "DFF", "Fed funds efectiva", "%", "Tasa efectiva de fondos federales"),
     ("T10YIE", "T10YIE", "Breakeven 10Y", "%", "Compensación por inflación a diez años"),
+    ("DFII10", "DFII10", "Tasa real Treasury 10Y", "%", "Rendimiento real diario a diez años; H.15"),
+    ("DTWEXBGS", "DTWEXBGS", "Dólar amplio nominal", "índice", "Índice nominal amplio del dólar; H.10"),
     ("PAYEMS", "PAYEMS", "Nóminas no agrícolas", "miles de personas", "Empleo total no agrícola desestacionalizado"),
     ("INDPRO", "INDPRO", "Producción industrial", "índice", "Índice de producción industrial desestacionalizado"),
 ]

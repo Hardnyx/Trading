@@ -1,8 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { crossSectionalRefinement, marketExposure, ALPHA_SCORE_LIMIT, BLUME_BETA_WEIGHT }
-  from "../dist/assets/js/return-model.mjs?v=0.32.0";
-import { seededRandom, normalGenerator } from "../dist/assets/js/random.mjs?v=0.32.0";
+  from "../dist/assets/js/return-model.mjs?v=0.33.0";
+import { seededRandom, normalGenerator } from "../dist/assets/js/random.mjs?v=0.33.0";
 
 const near = (a, b, tolerance = 1e-10) =>
   assert.ok(Math.abs(a - b) <= tolerance, `${a} != ${b}`);

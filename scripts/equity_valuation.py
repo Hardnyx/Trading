@@ -7,6 +7,9 @@ cut or first observed after it.
 """
 import hashlib
 import math
+import datetime as dt
+import json
+import re
 
 try:
     from .bond_profiles import _Components
@@ -20,12 +23,39 @@ except ImportError:
 # out because the issuer's P/E excludes loss-making companies, about 40% of
 # the Russell 2000; S&P 400 and 600 require profitability for inclusion.
 VALUATION_URLS = {
+    "VTI": "https://advisors.vanguard.com/investments/products/vti/vanguard-total-stock-market-etf",
     "EFA": "https://www.ishares.com/us/products/239623/ishares-msci-eafe-etf",
     "EEM": "https://www.ishares.com/us/products/239637/ishares-msci-emerging-markets-etf",
     "ACWX": "https://www.ishares.com/us/products/239594/ishares-msci-acwi-ex-u-s-etf",
     "IJH": "https://www.ishares.com/us/products/239763/ishares-core-s-p-mid-cap-etf",
     "IJR": "https://www.ishares.com/us/products/239774/ishares-core-s-p-small-cap-etf",
 }
+
+
+def parse_vanguard_valuation(html, symbol, cutoff, observed_at, source_url):
+    """Issuer-embedded JSON only; scripts are never executed."""
+    def payload(name):
+        match = re.search(r"window\." + name + r"\s*=\s*", html)
+        if not match:
+            raise ValueError("Missing Vanguard characteristic: " + name)
+        value, _ = json.JSONDecoder().raw_decode(html[match.end():])
+        return value
+    identity = payload("__INITIAL_FUND_DATA__")
+    if symbol != "VTI" or identity.get("fundIdentifier") != symbol or identity.get("portId") != "0970" or not identity.get("isEquity") or not identity.get("isETF"):
+        raise ValueError("Vanguard page identity does not match the fund")
+    fundamentals = payload("__FUNDAMENTALS_DATA__")
+    day = dt.date.fromisoformat(payload("__PORTFOLIO_STATISTICS__")["effectiveDate"]).isoformat()
+    expense = payload("__FEES_AND_EXPENSE__")["adjustedExpenseRatio"]
+    fee_day = dt.date.fromisoformat(expense["effectiveDate"]).isoformat()
+    pe, fee = float(fundamentals["peRatio"]["value"]), float(expense["value"]) / 100
+    observation = dt.datetime.fromisoformat(observed_at.replace("Z", "+00:00"))
+    if observation.tzinfo is None or day > cutoff or fee_day > cutoff:
+        raise ValueError("Issuer valuation is after the requested cutoff or lacks a timestamp")
+    if not math.isfinite(pe) or not 3 <= pe <= 80 or not math.isfinite(fee) or not 0 <= fee <= .03:
+        raise ValueError("Invalid Vanguard P/E or expense ratio")
+    return {"priceEarnings": pe, "date": day, "expenseRatio": fee, "expense_date": fee_day,
+            "issuer": "Vanguard", "observed_at": observed_at, "source_url": source_url,
+            "source_sha256": hashlib.sha256(html.encode("utf-8")).hexdigest()}
 
 
 def _date(value):
@@ -36,6 +66,8 @@ def _date(value):
 
 
 def parse_valuation(html, symbol, cutoff, observed_at, source_url):
+    if symbol == "VTI":
+        return parse_vanguard_valuation(html, symbol, cutoff, observed_at, source_url)
     parser = _Components()
     parser.feed(html)
     product = source_url.split("/products/")[1].split("/")[0]

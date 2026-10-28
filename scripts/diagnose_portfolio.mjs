@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
-import { composePortfolio } from "../dist/assets/js/composer.mjs?v=0.32.0";
-import { actualHoldings } from "../dist/assets/js/economic-exposure.mjs?v=0.32.0";
-import { informationDate } from "../dist/assets/js/policy.mjs?v=0.32.0";
+import { composePortfolio } from "../dist/assets/js/composer.mjs?v=0.33.0";
+import { actualHoldings } from "../dist/assets/js/economic-exposure.mjs?v=0.33.0";
+import { informationDate } from "../dist/assets/js/policy.mjs?v=0.33.0";
 
 // Reproducible diagnostic on the actual published cut. Not a backtest
 // or a recommendation to buy the positions selected.

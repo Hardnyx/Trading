@@ -14,6 +14,7 @@ on:
       - 'scripts/distributions.py'
       - 'scripts/data_providers.py'
       - 'scripts/bond_profiles.py'
+      - 'scripts/equity_valuation.py'
       - 'scripts/universe.py'
       - 'scripts/volatility_research.py'
       - 'scripts/build_volatility.py'
@@ -92,6 +93,7 @@ jobs:
         id: snapshot
         run: |
           git add dist/data/market.json dist/data/market.json.gz dist/data/volatility.json data/snapshots
+          if [ -d data/volatility-parameters ]; then git add data/volatility-parameters; fi
           git add data/forecasts data/holdings || true
           git add dist/data/risk-calibration.json
           if [ -d data/risk-forecasts ]; then git add data/risk-forecasts; fi

@@ -1,8 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {prepareComposition,reviewSubstitutions,validWeights,SUBSTITUTION_Z,weightOverlap,reconcileStarts,startSeeds} from '../dist/assets/js/composer.mjs?v=0.32.0';
-import {generatePaths,evaluatePaths,BASE_REGIME} from '../dist/assets/js/path-model.mjs?v=0.32.0';
-import {tradePlan} from '../dist/assets/js/policy.mjs?v=0.32.0';
+import {prepareComposition,reviewSubstitutions,validWeights,SUBSTITUTION_Z,weightOverlap,reconcileStarts,startSeeds} from '../dist/assets/js/composer.mjs?v=0.33.0';
+import {generatePaths,evaluatePaths,BASE_REGIME} from '../dist/assets/js/path-model.mjs?v=0.33.0';
+import {tradePlan} from '../dist/assets/js/policy.mjs?v=0.33.0';
 
 // Two stocks, at most two positions (cash + one): improving needs a full
 // substitution, which reallocating cash alone cannot find.
@@ -103,7 +103,10 @@ test('independent searches are reconciled on common paths: equivalent winners, l
  assert.ok(byLast.z>SUBSTITUTION_Z);
  assert.deepEqual(st.winners.map(w=>w.seed),startSeeds(1,3));
  assert.equal(r.search.starts,3);
- // A single usable start passes through untouched.
- assert.equal(reconcileStarts(snapshot,settings,{},rules,[aaa,{status:'infeasible'}],400),aaa);
+ // A single usable start still passes the ordinary model-uncertainty gate.
+ const single=reconcileStarts(snapshot,settings,{},rules,[aaa,{status:'infeasible'}],400);
+ assert.deepEqual(single.positions,aaa.positions);
+ assert.equal(single.diagnostics.robustDecision.status,'passed');
+ assert.deepEqual(aaa.diagnostics,{});
  assert.equal(startSeeds(20261024,3)[0],20261024);
 });
