@@ -54,6 +54,21 @@ const data = JSON.parse(
   await readFile(new URL("../dist/data/market.json", import.meta.url), "utf8"),
 );
 
+test("an incomplete incumbent comparison renders unavailable metrics without certifying safety", async () => {
+  const { createDecisionViews } = await import("../dist/assets/js/ui/decision-views.mjs?v=0.33.0");
+  const views = createDecisionViews({ data, asset: () => null, state: {
+    proposal: { status: "hold", reason: "Mantener: faltan anclas para GLD.", metrics: null,
+      alternatives: { hold: { metrics: null, feasible: null } },
+      diagnostics: { robustDecision: { status: "incomplete", models: [],
+        minimumLowerGain: null, hurdle: null } },
+      trade_plan: { total: 0, turnover: 0, rows: [] } },
+  } });
+  const html = views.decisionReport();
+  assert.match(html, /Mantener: faltan anclas para GLD/);
+  assert.match(html, /Sin evaluar/);
+  assert.doesNotMatch(html, /NaN|undefined/);
+});
+
 test("footer version is rendered from the actual engine, never hardcoded", () => {
   const views = createViews({
     state: { view: "portfolio", busy: false, forecastError: null },

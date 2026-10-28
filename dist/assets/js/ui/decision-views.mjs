@@ -835,16 +835,16 @@ export function createDecisionViews({ state = {}, data, asset }) {
           [
             [
               "Mantener",
-              pct(alternatives.hold?.metrics.medianReturn),
-              pct(alternatives.hold?.metrics.cvar95),
-              pct(alternatives.hold?.metrics.drawdownProbability),
-              alternatives.hold?.feasible ? "Sí" : "No",
+              pct(alternatives.hold?.metrics?.medianReturn),
+              pct(alternatives.hold?.metrics?.cvar95),
+              pct(alternatives.hold?.metrics?.drawdownProbability),
+              alternatives.hold?.feasible == null ? "Sin evaluar" : alternatives.hold.feasible ? "Sí" : "No",
             ],
             [
               "ETF / SHY / efectivo",
-              pct(alternatives.passive?.metrics.medianReturn),
-              pct(alternatives.passive?.metrics.cvar95),
-              pct(alternatives.passive?.metrics.drawdownProbability),
+              pct(alternatives.passive?.metrics?.medianReturn),
+              pct(alternatives.passive?.metrics?.cvar95),
+              pct(alternatives.passive?.metrics?.drawdownProbability),
               alternatives.passive
                 ? alternatives.passive.feasible
                   ? "Sí"

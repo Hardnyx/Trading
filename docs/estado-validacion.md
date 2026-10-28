@@ -138,7 +138,7 @@ python scripts/gold_research.py
 python scripts/build_volatility.py
 ```
 
-**Verificación local:** 216 pruebas JavaScript, 137 Python y `npm run check` aprobados.
+**Verificación local:** 217 pruebas JavaScript, 137 Python y `npm run check` aprobados.
 
 Las pruebas cubren rechazo de mejoras aparentes bajo otro modelo, costes
 cero al mantener, mandato completo, anclas ausentes, constituyentes fuera de
