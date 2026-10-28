@@ -1,9 +1,10 @@
 import { chromium } from "playwright";
 import { spawn } from "node:child_process";
 import { readFileSync, mkdirSync } from "node:fs";
-import { composeMultiStart } from "../dist/assets/js/composer.mjs?v=0.34.0";
-import { referenceRequest } from "../dist/assets/js/reference-preset.mjs?v=0.34.0";
-import { exposureReport } from "../dist/assets/js/economic-exposure.mjs?v=0.34.0";
+import { composeMultiStart } from "../dist/assets/js/composer.mjs?v=0.34.1";
+import { referenceRequest } from "../dist/assets/js/reference-preset.mjs?v=0.34.1";
+import { exposureReport } from "../dist/assets/js/economic-exposure.mjs?v=0.34.1";
+import { MODEL_VERSION } from "../dist/assets/js/policy.mjs?v=0.34.1";
 
 const market=JSON.parse(readFileSync("dist/data/market.json","utf8"));
 const volatility=JSON.parse(readFileSync("dist/data/volatility.json","utf8"));
@@ -51,7 +52,7 @@ try {
   const issues=[];
   page.on("pageerror",e=>issues.push(e.message));
   page.on("console",e=>{if(e.type()==="error")issues.push(e.text())});
-  await page.goto("http://127.0.0.1:8813/?build=0.34.0#portfolio",
+  await page.goto(`http://127.0.0.1:8813/?build=${MODEL_VERSION}#portfolio`,
     {waitUntil:"networkidle",timeout:60000});
   const button=page.locator('[data-action="compose-reference"]');
   await button.waitFor({state:"visible",timeout:45000});
@@ -79,16 +80,16 @@ try {
     throw Error('Financial coverage does not include the stock universe');
   await page.locator('.financial-coverage > summary').click();
   const actualFooter=await page.locator(".footer-right").innerText();
-  if(!actualFooter.includes("v0.34.0") || actualFooter.includes("v0.6.0"))
+  if(!actualFooter.includes('v'+MODEL_VERSION) || actualFooter.includes("v0.6.0"))
     throw Error("La etiqueta de versión del pie de página no corresponde al motor: "+
       actualFooter);
 
   // Simulate a genuine long-lived user workspace: previously selected stock,
   // different seed, tighter reserve cap, custom macro weights and broker holdings.
-  await page.evaluate(()=>{
+  await page.evaluate(modelVersion=>{
     const key="trading-workspace-v1";
     const stored=JSON.parse(localStorage.getItem(key)||"{}");
-    stored.workspaceVersion="0.34.0";
+    stored.workspaceVersion=modelVersion;
     stored.positions=[{symbol:"NVDA",weight:1}];
     stored.settings={...stored.settings,seed:20261025,volatilityMode:"ewma"};
     stored.compositionRules={...stored.compositionRules,reserveCap:0.1,
@@ -97,7 +98,7 @@ try {
       {symbol:"NVDA",quantity:3,costBasis:100}
     ]};
     localStorage.setItem(key,JSON.stringify(stored));
-  });
+  },MODEL_VERSION);
   await page.reload({waitUntil:"networkidle"});
   await button.waitFor({state:"visible",timeout:45000});
   const baselineStorage=await page.evaluate(()=>{
@@ -243,8 +244,8 @@ try {
      baselineStorage.account.positions[0].symbol!=="NVDA")
     throw Error("La prueba no restauró realmente la sesión personalizada");
   const detailedReport=await page.locator('body').innerText();
-  if(!detailedReport.includes("MOTOR 0.34.0") && !detailedReport.includes("Motor 0.34.0"))
-    throw Error("El informe no identifica el motor 0.34.0");
+  if(!detailedReport.includes('MOTOR '+MODEL_VERSION) && !detailedReport.includes('Motor '+MODEL_VERSION))
+    throw Error('El informe no identifica el motor '+MODEL_VERSION);
   // The real worker must compare the preserved session and keep all account
   // quantities, settings and working weights unchanged.
   await page.locator('[data-action="compare-robustness"]').click();
