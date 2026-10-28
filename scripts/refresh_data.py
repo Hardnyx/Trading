@@ -1032,7 +1032,7 @@ def main():
             clock=lambda:dt.datetime.now(UTC).isoformat())
         providers.append({"id":"distributions", "name":"iShares · distribuciones",
             "status":"ok" if not distributions["errors"] else "partial" if distributions["calendar_funds"] or distributions["histories"] else "error",
-            "detail":f'{distributions["calendar_funds"]} calendarios mensuales; {distributions["histories"]}/{distributions["requested_histories"]} historiales con importes y pagos; {distributions["profiles"]} perfiles Treasury',
+            "detail":f'{distributions["calendar_funds"]} calendarios mensuales; {distributions["histories"]}/{distributions["requested_histories"]} historiales con importes y pagos; {distributions["profiles"]} perfiles de renta fija',
             "checked_at":dt.datetime.now(UTC).isoformat()})
         errors.extend("Distribuciones: "+message for message in distributions["errors"])
         valuations = enrich_equity_valuations(assets, old_assets, args.as_of, dt.datetime.now(UTC).isoformat(),
