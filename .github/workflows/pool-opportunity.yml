@@ -1,0 +1,42 @@
+name: Finite-pool opportunity uncertainty (shadow)
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows: [Refresh market data]
+    types: [completed]
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/pool_opportunity_audit.mjs'
+      - 'tests/pool-opportunity.test.mjs'
+      - 'docs/auditorias/policy-pool-0.34.1.json'
+      - 'docs/auditorias/allocation-cuts-0.35.0.json'
+      - 'dist/data/market.json'
+      - 'dist/data/volatility.json'
+      - 'dist/assets/js/**'
+      - '.github/workflows/pool-opportunity.yml'
+permissions:
+  contents: read
+concurrency:
+  group: finite-pool-opportunity-shadow
+  cancel-in-progress: true
+jobs:
+  audit:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test tests/pool-opportunity.test.mjs
+      - name: Freeze and assess every alternative with two predeclared seeds
+        run: node scripts/pool_opportunity_audit.mjs
+      - name: Preserve uncertainty without authorizing trades
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: finite-pool-opportunity
+          path: out/pool-opportunity-audit.json
+          retention-days: 90

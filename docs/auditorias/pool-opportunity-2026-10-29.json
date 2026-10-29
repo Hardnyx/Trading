@@ -1,0 +1,1729 @@
+{
+ "method": "finite-pool-opportunity-v1",
+ "engine": "0.35.0",
+ "price_cut": "2026-10-28",
+ "capital": 100000,
+ "pool_size": 19,
+ "excluded": [],
+ "runs": [
+  {
+   "seed": 1218542633,
+   "paths": 2000,
+   "familySize": 18050,
+   "pointLeader": "CASH:0.05|IGSB:0.35|SHV:0.25|SHY:0.35",
+   "threshold": 100,
+   "rows": [
+    {
+     "key": "CASH:1",
+     "worstCertaintyEquivalent": 100000,
+     "estimatedOpportunityLoss": 4180.971968286991,
+     "lowerOpportunityLoss": 3985.3807396701013,
+     "upperOpportunityLoss": 5120.869184625437,
+     "resolvedWithinThreshold": false,
+     "positions": [
+      {
+       "symbol": "CASH",
+       "weight": 1
+      }
+     ],
+     "riskFailures": [],
+     "largest_upper_comparison": {
+      "key": "CASH:0.05|LQD:0.35|SPY:0.35|TIP:0.25",
+      "gain": 4159.1497555249225,
+      "lowerGain": 3206.2288101839076,
+      "upperGain": 5120.869184625437,
+      "lowerUtilityGain": 0.031559021925808,
+      "upperUtilityGain": 0.04994063721312567,
+      "familySize": 18050,
+      "scope": "Paired cross-model Monte Carlo approximation with plug-in certainty-equivalent conversion; not predictive confidence"
+     }
+    },
+    {
+     "key": "AGG:0.1|CASH:0.05|LQD:0.15|MDT:0.15|META:0.15|ORCL:0.05|SGOV:0.25|VTI:0.1",
+     "worstCertaintyEquivalent": 103385.88968214883,
+     "estimatedOpportunityLoss": 795.0822861381603,
+     "lowerOpportunityLoss": 0,
+     "upperOpportunityLoss": 1981.0405894036812,
+     "resolvedWithinThreshold": false,
+     "positions": [
+      {
+       "symbol": "VTI",
+       "weight": 0.1
+      },
+      {
+       "symbol": "AGG",
+       "weight": 0.1
+      },
+      {
+       "symbol": "SGOV",
+       "weight": 0.25
+      },
+      {
+       "symbol": "LQD",
+       "weight": 0.15
+      },
+      {
+       "symbol": "CASH",
+       "weight": 0.05
+      },
+      {
+       "symbol": "ORCL",
+       "weight": 0.05
+      },
+      {
+       "symbol": "META",
+       "weight": 0.15
+      },
+      {
+       "symbol": "MDT",
+       "weight": 0.15
+      }
+     ],
+     "riskFailures": [],
+     "largest_upper_comparison": {
+      "key": "CASH:0.05|IGSB:0.35|SGOV:0.35|TIP:0.25",
+      "gain": 780.9889440126426,
+      "lowerGain": -405.3949979737954,
+      "upperGain": 1981.0405894036812,
+      "lowerUtilityGain": -0.003928891041996346,
+      "upperUtilityGain": 0.018980342996467947,
+      "familySize": 18050,
+      "scope": "Paired cross-model Monte Carlo approximation with plug-in certainty-equivalent conversion; not predictive confidence"
+     }
+    },
+    {
+     "key": "CASH:0.05|LQD:0.2|META:0.15|ORCL:0.1|SHY:0.2|TGT:0.15|TIP:0.1|VIG:0.05",
+     "worstCertaintyEquivalent": 103200.36922830594,
+     "estimatedOpportunityLoss": 980.6027399810555,
+     "lowerOpportunityLoss": 0,
+     "upperOpportunityLoss": 2341.851907152406,
+     "resolvedWithinThreshold": false,
+     "positions": [
+      {
+       "symbol": "SHY",
+       "weight": 0.2
+      },
+      {
+       "symbol": "LQD",
+       "weight": 0.2
+      },
+      {
+       "symbol": "CASH",
+       "weight": 0.05
+      },
+      {
+       "symbol": "TIP",
+       "weight": 0.1
+      },
+      {
+       "symbol": "ORCL",
+       "weight": 0.1
+      },
+      {
+       "symbol": "META",
+       "weight": 0.15
+      },
+      {
+       "symbol": "TGT",
+       "weight": 0.15
+      },
+      {
+       "symbol": "VIG",
+       "weight": 0.05
+      }
+     ],
+     "riskFailures": [],
+     "largest_upper_comparison": {
+      "key": "CASH:0.05|IGSB:0.35|SGOV:0.35|TIP:0.25",
+      "gain": 966.5093978555378,
+      "lowerGain": -390.9107387877448,
+      "upperGain": 2341.851907152406,
+      "lowerUtilityGain": -0.003795073393295243,
+      "upperUtilityGain": 0.022438642358699558,
+      "familySize": 18050,
+      "scope": "Paired cross-model Monte Carlo approximation with plug-in certainty-equivalent conversion; not predictive confidence"
+     }
+    },
+    {
+     "key": "CASH:0.65|SHV:0.2|SHY:0.15",
+     "worstCertaintyEquivalent": 101443.30910047468,
+     "estimatedOpportunityLoss": 2737.662867812309,
+     "lowerOpportunityLoss": 2578.9869034642325,
+     "upperOpportunityLoss": 3668.868249956402,
+     "resolvedWithinThreshold": false,
+     "positions": [
+      {
+       "symbol": "SHY",
+       "weight": 0.15
+      },
+      {
+       "symbol": "CASH",
+       "weight": 0.65
+      },
+      {
+       "symbol": "SHV",
+       "weight": 0.2
+      }
+     ],
+     "riskFailures": [],
+     "largest_upper_comparison": {
+      "key": "CASH:0.05|LQD:0.35|SPY:0.35|TIP:0.25",
+      "gain": 2715.8406550502405,
+      "lowerGain": 1771.4539390559949,
+      "upperGain": 3668.868249956402,
+      "lowerUtilityGain": 0.01731178410955313,
+      "upperUtilityGain": 0.03552802417461001,
+      "familySize": 18050,
+      "scope": "Paired cross-model Monte Carlo approximation with plug-in certainty-equivalent conversion; not predictive confidence"
+     }
+    },
+    {
+     "key": "CASH:0.05|HYG:0.15|IEF:0.15|LQD:0.15|META:0.15|TIP:0.2|VUG:0.15",
+     "worstCertaintyEquivalent": 103616.19244527425,
+     "estimatedOpportunityLoss": 564.7795230127376,
+     "lowerOpportunityLoss": 0,
+     "upperOpportunityLoss": 1639.0512546355603,
+     "resolvedWithinThreshold": false,
+     "positions": [
+      {
+       "symbol": "IEF",
+       "weight": 0.15
+      },
+      {
+       "symbol": "LQD",
+       "weight": 0.15
+      },
+      {
+       "symbol": "HYG",
+       "weight": 0.15
+      },
+      {
+       "symbol": "CASH",
+       "weight": 0.05
+      },
+      {
+       "symbol": "TIP",
+       "weight": 0.2
+      },
+      {
+       "symbol": "META",
+       "weight": 0.15
+      },
+      {
+       "symbol": "VUG",
+       "weight": 0.15
+      }
+     ],
+     "riskFailures": [],
+     "largest_upper_comparison": {
+      "key": "CASH:0.05|IGSB:0.35|SGOV:0.35|TIP:0.25",
+      "gain": 550.68618088722,
+      "lowerGain": -526.424930662979,
+      "upperGain": 1639.0512546355603,
+      "lowerUtilityGain": -0.005093477409881647,
+      "upperUtilityGain": 0.015694677351790705,
+      "familySize": 18050,
+      "scope": "Paired cross-model Monte Carlo approximation with plug-in certainty-equivalent conversion; not predictive confidence"
+     }
+    },
+    {
+     "key": "CASH:0.05|MDT:0.05|META:0.1|ORCL:0.05|SHV:0.35|SPY:0.05|TLT:0.1|VTI:0.25",
+     "worstCertaintyEquivalent": 103424.23443708062,
+     "estimatedOpportunityLoss": 756.7375312063668,
+     "lowerOpportunityLoss": 0,
+     "upperOpportunityLoss": 1937.3973688733531,
+     "resolvedWithinThreshold": false,
+     "positions": [
+      {
+       "symbol": "SPY",
+       "weight": 0.05
+      },
+      {
+       "symbol": "TLT",
+       "weight": 0.1
+      },
+      {
+       "symbol": "VTI",
+       "weight": 0.25
+      },
+      {
+       "symbol": "CASH",
+       "weight": 0.05
+      },
+      {
+       "symbol": "SHV",
+       "weight": 0.35
+      },
+      {
+       "symbol": "ORCL",
+       "weight": 0.05
+      },
+      {
+       "symbol": "META",
+       "weight": 0.1
+      },
+      {
+       "symbol": "MDT",
+       "weight": 0.05
+      }
+     ],
+     "riskFailures": [],
+     "largest_upper_comparison": {
+      "key": "CASH:0.05|IGSB:0.35|SGOV:0.35|TIP:0.25",
+      "gain": 742.6441890808346,
+      "lowerGain": -438.5610308314208,
+      "upperGain": 1937.3973688733531,
+      "lowerUtilityGain": -0.004249424800975602,
+      "upperUtilityGain": 0.018559235009725623,
+      "familySize": 18050,
+      "scope": "Paired cross-model Monte Carlo approximation with plug-in certainty-equivalent conversion; not predictive confidence"
+     }
+    },
+    {
+     "key": "AGG:0.35|CASH:0.05|IGSB:0.05|LQD:0.05|MSFT:0.1|ORCL:0.1|SPY:0.05|XLE:0.25",
+     "worstCertaintyEquivalent": 103630.8555346267,
+     "estimatedOpportunityLoss": 550.1164336603251,
+     "lowerOpportunityLoss": 0,
+     "upperOpportunityLoss": 1817.3655375751405,
+     "resolvedWithinThreshold": false,
+     "positions": [
+      {
+       "symbol": "SPY",
+       "weight": 0.05
+      },
+      {
+       "symbol": "AGG",
+       "weight": 0.35
+      },
+      {
+       "symbol": "LQD",
+       "weight": 0.05
+      },
+      {
+       "symbol": "CASH",
+       "weight": 0.05
+      },
+      {
+       "symbol": "IGSB",
+       "weight": 0.05
+      },
+      {
+       "symbol": "ORCL",
+       "weight": 0.1
+      },
+      {
+       "symbol": "MSFT",
+       "weight": 0.1
+      },
+      {
+       "symbol": "XLE",
+       "weight": 0.25
+      }
+     ],
+     "riskFailures": [],
+     "largest_upper_comparison": {
+      "key": "CASH:0.05|IGSB:0.35|SGOV:0.35|TIP:0.25",
+      "gain": 536.0230915347784,
+      "lowerGain": -729.7492628783366,
+      "upperGain": 1817.3655375751405,
+      "lowerUtilityGain": -0.007066725105223536,
+      "upperUtilityGain": 0.017384918084768795,
+      "familySize": 18050,
+      "scope": "Paired cross-model Monte Carlo approximation with plug-in certainty-equivalent conversion; not predictive confidence"
+     }
+    },
+    {
+     "key": "AGG:0.35|CASH:0.05|IGSB:0.05|LQD:0.05|MSFT:0.1|ORCL:0.1|SHV:0.05|XLE:0.25",
+     "worstCertaintyEquivalent": 103660.03272436214,
+     "estimatedOpportunityLoss": 520.9392439248477,
+     "lowerOpportunityLoss": 0,
+     "upperOpportunityLoss": 1726.62731739234,
+     "resolvedWithinThreshold": false,
+     "positions": [
+      {
+       "symbol": "AGG",
+       "weight": 0.35
+      },
+      {
+       "symbol": "LQD",
+       "weight": 0.05
+      },
+      {
+       "symbol": "CASH",
+       "weight": 0.05
+      },
+      {
+       "symbol": "IGSB",
+       "weight": 0.05
+      },
+      {
+       "symbol": "SHV",
+       "weight": 0.05
+      },
+      {
+       "symbol": "ORCL",
+       "weight": 0.1
+      },
+      {
+       "symbol": "MSFT",
+       "weight": 0.1
+      },
+      {
+       "symbol": "XLE",
+       "weight": 0.25
+      }
+     ],
+     "riskFailures": [],
+     "largest_upper_comparison": {
+      "key": "CASH:0.05|IGSB:0.35|SGOV:0.35|TIP:0.25",
+      "gain": 506.84590179933,
+      "lowerGain": -698.8173445563589,
+      "upperGain": 1726.62731739234,
+      "lowerUtilityGain": -0.00676426084453252,
+      "upperUtilityGain": 0.01651943457758418,
+      "familySize": 18050,
+      "scope": "Paired cross-model Monte Carlo approximation with plug-in certainty-equivalent conversion; not predictive confidence"
+     }
+    },
+    {
+     "key": "AGG:0.35|CASH:0.05|IGSB:0.05|LQD:0.05|MSFT:0.1|ORCL:0.1|SGOV:0.05|XLE:0.25",
+     "worstCertaintyEquivalent": 103656.59400391053,
+     "estimatedOpportunityLoss": 524.3779643764574,
+     "lowerOpportunityLoss": 2.0692319751542527,
+     "upperOpportunityLoss": 1730.1564758259628,
+     "resolvedWithinThreshold": false,
+     "positions": [
+      {
+       "symbol": "AGG",
+       "weight": 0.35
+      },
+      {
+       "symbol": "SGOV",
+       "weight": 0.05
+      },
+      {
+       "symbol": "LQD",
+       "weight": 0.05
+      },
+      {
+       "symbol": "CASH",
+       "weight": 0.05
+      },
+      {
+       "symbol": "IGSB",
+       "weight": 0.05
+      },
+      {
+       "symbol": "ORCL",
+       "weight": 0.1
+      },
+      {
+       "symbol": "MSFT",
+       "weight": 0.1
+      },
+      {
+       "symbol": "XLE",
+       "weight": 0.25
+      }
+     ],
+     "riskFailures": [],
+     "largest_upper_comparison": {
+      "key": "CASH:0.05|IGSB:0.35|SGOV:0.35|TIP:0.25",
+      "gain": 510.28462225092517,
+      "lowerGain": -695.4669806059537,
+      "upperGain": 1730.1564758259628,
+      "lowerUtilityGain": -0.006731945388232441,
+      "upperUtilityGain": 0.016553466341112995,
+      "familySize": 18050,
+      "scope": "Paired cross-model Monte Carlo approximation with plug-in certainty-equivalent conversion; not predictive confidence"
+     }
+    },
+    {
+     "key": "AGG:0.35|CASH:0.05|IGSB:0.05|MSFT:0.1|ORCL:0.1|SGOV:0.05|SPY:0.05|XLE:0.25",
+     "worstCertaintyEquivalent": 103580.85441641138,
+     "estimatedOpportunityLoss": 600.1175518756063,
+     "lowerOpportunityLoss": 0,
+     "upperOpportunityLoss": 1859.4839208623016,
+     "resolvedWithinThreshold": false,
+     "positions": [
+      {
+       "symbol": "SPY",
+       "weight": 0.05
+      },
+      {
+       "symbol": "AGG",
+       "weight": 0.35
+      },
+      {
+       "symbol": "SGOV",
+       "weight": 0.05
+      },
+      {
+       "symbol": "CASH",
+       "weight": 0.05
+      },
+      {
+       "symbol": "IGSB",
+       "weight": 0.05
+      },
+      {
+       "symbol": "ORCL",
+       "weight": 0.1
+      },
+      {
+       "symbol": "MSFT",
+       "weight": 0.1
+      },
+      {
+       "symbol": "XLE",
+       "weight": 0.25
+      }
+     ],
+     "riskFailures": [],
+     "largest_upper_comparison": {
+      "key": "CASH:0.05|IGSB:0.35|SGOV:0.35|TIP:0.25",
+      "gain": 586.0242097500886,
+      "lowerGain": -672.0552430909738,
+      "upperGain": 1859.4839208623016,
+      "lowerUtilityGain": -0.0065093587443148275,
+      "upperUtilityGain": 0.01779276974551755,
+      "familySize": 18050,
+      "scope": "Paired cross-model Monte Carlo approximation with plug-in certainty-equivalent conversion; not predictive confidence"
+     }
+    },
+    {
+     "key": "AGG:0.35|CASH:0.05|HON:0.05|MSFT:0.1|ORCL:0.1|SGOV:0.05|TIP:0.05|XLE:0.25",
+     "worstCertaintyEquivalent": 103588.51505556173,
+     "estimatedOpportunityLoss": 592.4569127252616,
+     "lowerOpportunityLoss": 0,
+     "upperOpportunityLoss": 1822.0128415874642,
+     "resolvedWithinThreshold": false,
+     "positions": [
+      {
+       "symbol": "AGG",
+       "weight": 0.35
+      },
+      {
+       "symbol": "SGOV",
+       "weight": 0.05
+      },
+      {
+       "symbol": "CASH",
+       "weight": 0.05
+      },
+      {
+       "symbol": "TIP",
+       "weight": 0.05
+      },
+      {
+       "symbol": "ORCL",
+       "weight": 0.1
+      },
+      {
+       "symbol": "MSFT",
+       "weight": 0.1
+      },
+      {
+       "symbol": "XLE",
+       "weight": 0.25
+      },
+      {
+       "symbol": "HON",
+       "weight": 0.05
+      }
+     ],
+     "riskFailures": [],
+     "largest_upper_comparison": {
+      "key": "CASH:0.05|IGSB:0.35|SGOV:0.35|TIP:0.25",
+      "gain": 578.363570599744,
+      "lowerGain": -650.6129391365102,
+      "upperGain": 1822.0128415874642,
+      "lowerUtilityGain": -0.00630055079948308,
+      "upperUtilityGain": 0.01743605114819212,
+      "familySize": 18050,
+      "scope": "Paired cross-model Monte Carlo approximation with plug-in certainty-equivalent conversion; not predictive confidence"
+     }
+    },
+    {
+     "key": "AGG:0.2|CASH:0.05|GOOGL:0.15|HYG:0.1|IJR:0.05|LQD:0.3|META:0.15",
+     "worstCertaintyEquivalent": 103555.12095945312,
+     "estimatedOpportunityLoss": 625.8510088338662,
+     "lowerOpportunityLoss": 0,
+     "upperOpportunityLoss": 1919.5945621172286,
+     "resolvedWithinThreshold": false,
+     "positions": [
+      {
+       "symbol": "AGG",
+       "weight": 0.2
+      },
+      {
+       "symbol": "LQD",
+       "weight": 0.3
+      },
+      {
+       "symbol": "HYG",
+       "weight": 0.1
+      },
+      {
+       "symbol": "CASH",
+       "weight": 0.05
+      },
+      {
+       "symbol": "IJR",
+       "weight": 0.05
+      },
+      {
+       "symbol": "GOOGL",
+       "weight": 0.15
+      },
+      {
+       "symbol": "META",
+       "weight": 0.15
+      }
+     ],
+     "riskFailures": [],
+     "largest_upper_comparison": {
+      "key": "CASH:0.05|IGSB:0.35|SGOV:0.35|TIP:0.25",
+      "gain": 611.7576667083486,
+      "lowerGain": -679.862665929686,
+      "upperGain": 1919.5945621172286,
+      "lowerUtilityGain": -0.006586870851865882,
+      "upperUtilityGain": 0.018367220292544683,
+      "familySize": 18050,
+      "scope": "Paired cross-model Monte Carlo approximation with plug-in certainty-equivalent conversion; not predictive confidence"
+     }
+    },
+    {
+     "key": "AGG:0.2|CASH:0.05|IEF:0.15|IEI:0.25|META:0.15|QQQ:0.15|SHY:0.05",
+     "worstCertaintyEquivalent": 103868.52984189971,
+     "estimatedOpportunityLoss": 312.44212638727913,
+     "lowerOpportunityLoss": 0,
+     "upperOpportunityLoss": 1368.2289373834938,
+     "resolvedWithinThreshold": false,
+     "positions": [
+      {
+       "symbol": "QQQ",
+       "weight": 0.15
+      },
+      {
+       "symbol": "SHY",
+       "weight": 0.05
+      },
+      {
+       "symbol": "AGG",
+       "weight": 0.2
+      },
+      {
+       "symbol": "IEF",
+       "weight": 0.15
+      },
+      {
+       "symbol": "CASH",
+       "weight": 0.05
+      },
+      {
+       "symbol": "IEI",
+       "weight": 0.25
+      },
+      {
+       "symbol": "META",
+       "weight": 0.15
+      }
+     ],
+     "riskFailures": [],
+     "largest_upper_comparison": {
+      "key": "CASH:0.05|IGSB:0.35|SGOV:0.35|TIP:0.25",
+      "gain": 298.3487842617469,
+      "lowerGain": -760.6545273901284,
+      "upperGain": 1368.2289373834938,
+      "lowerUtilityGain": -0.007350190002197433,
+      "upperUtilityGain": 0.013086694013671678,
+      "familySize": 18050,
+      "scope": "Paired cross-model Monte Carlo approximation with plug-in certainty-equivalent conversion; not predictive confidence"
+     }
+    },
+    {
+     "key": "CASH:0.05|IGSB:0.35|SHV:0.25|SHY:0.35",
+     "worstCertaintyEquivalent": 104180.97196828699,
+     "estimatedOpportunityLoss": 0,
+     "lowerOpportunityLoss": 0,
+     "upperOpportunityLoss": 862.2957679052051,
+     "resolvedWithinThreshold": false,
+     "positions": [
+      {
+       "symbol": "SHY",
+       "weight": 0.35
+      },
+      {
+       "symbol": "CASH",
+       "weight": 0.05
+      },
+      {
+       "symbol": "IGSB",
+       "weight": 0.35
+      },
+      {
+       "symbol": "SHV",
+       "weight": 0.25
+      }
+     ],
+     "riskFailures": [],
+     "largest_upper_comparison": {
+      "key": "CASH:0.05|LQD:0.35|SPY:0.35|TIP:0.25",
+      "gain": -21.822212762068375,
+      "lowerGain": -898.4988350197527,
+      "upperGain": 862.2957679052051,
+      "lowerUtilityGain": -0.008661809816263858,
+      "upperUtilityGain": 0.008242836981625413,
+      "familySize": 18050,
+      "scope": "Paired cross-model Monte Carlo approximation with plug-in certainty-equivalent conversion; not predictive confidence"
+     }
+    },
+    {
+     "key": "CASH:0.3|IGSB:0.35|SGOV:0.35",
+     "worstCertaintyEquivalent": 102997.89984027417,
+     "estimatedOpportunityLoss": 1183.07212801282,
+     "lowerOpportunityLoss": 1094.8653213300422,
+     "upperOpportunityLoss": 2053.8582256020454,
+     "resolvedWithinThreshold": false,
+     "positions": [
+      {
+       "symbol": "SGOV",
+       "weight": 0.35
+      },
+      {
+       "symbol": "CASH",
+       "weight": 0.3
+      },
+      {
+       "symbol": "IGSB",
+       "weight": 0.35
+      }
+     ],
+     "riskFailures": [],
+     "largest_upper_comparison": {
+      "key": "CASH:0.05|LQD:0.35|SPY:0.35|TIP:0.25",
+      "gain": 1161.2499152507517,
+      "lowerGain": 276.22595770205953,
+      "upperGain": 2053.8582256020454,
+      "lowerUtilityGain": 0.0026782703273936174,
+      "upperUtilityGain": 0.01974456454470648,
+      "familySize": 18050,
+      "scope": "Paired cross-model Monte Carlo approximation with plug-in certainty-equivalent conversion; not predictive confidence"
+     }
+    },
+    {
+     "key": "CASH:0.05|IGSB:0.35|SGOV:0.35|TIP:0.25",
+     "worstCertaintyEquivalent": 104166.87862616147,
+     "estimatedOpportunityLoss": 14.093342125517665,
+     "lowerOpportunityLoss": 0,
+     "upperOpportunityLoss": 884.9132483167632,
+     "resolvedWithinThreshold": false,
+     "positions": [
+      {
+       "symbol": "SGOV",
+       "weight": 0.35
+      },
+      {
+       "symbol": "CASH",
+       "weight": 0.05
+      },
+      {
+       "symbol": "IGSB",
+       "weight": 0.35
+      },
+      {
+       "symbol": "TIP",
+       "weight": 0.25
+      }
+     ],
+     "riskFailures": [],
+     "largest_upper_comparison": {
+      "key": "CASH:0.05|LQD:0.35|SPY:0.35|TIP:0.25",
+      "gain": -7.72887063655071,
+      "lowerGain": -892.7860646846384,
+      "upperGain": 884.9132483167632,
+      "lowerUtilityGain": -0.00860766869651863,
+      "upperUtilityGain": 0.008459269176782466,
+      "familySize": 18050,
+      "scope": "Paired cross-model Monte Carlo approximation with plug-in certainty-equivalent conversion; not predictive confidence"
+     }
+    },
+    {
+     "key": "CASH:0.05|IGSB:0.35|SGOV:0.35|SHV:0.25",
+     "worstCertaintyEquivalent": 103968.1725802946,
+     "estimatedOpportunityLoss": 212.7993879924179,
+     "lowerOpportunityLoss": 130.2416432205937,
+     "upperOpportunityLoss": 1083.658267373583,
+     "resolvedWithinThreshold": false,
+     "positions": [
+      {
+       "symbol": "SGOV",
+       "weight": 0.35
+      },
+      {
+       "symbol": "CASH",
+       "weight": 0.05
+      },
+      {
+       "symbol": "IGSB",
+       "weight": 0.35
+      },
+      {
+       "symbol": "SHV",
+       "weight": 0.25
+      }
+     ],
+     "riskFailures": [],
+     "largest_upper_comparison": {
+      "key": "CASH:0.05|LQD:0.35|SPY:0.35|TIP:0.25",
+      "gain": 190.97717523033498,
+      "lowerGain": -694.1183324843587,
+      "upperGain": 1083.658267373583,
+      "lowerUtilityGain": -0.006698643791239044,
+      "upperUtilityGain": 0.010369036062412993,
+      "familySize": 18050,
+      "scope": "Paired cross-model Monte Carlo approximation with plug-in certainty-equivalent conversion; not predictive confidence"
+     }
+    },
+    {
+     "key": "CASH:0.3|IGSB:0.35|SHV:0.35",
+     "worstCertaintyEquivalent": 103021.6776014191,
+     "estimatedOpportunityLoss": 1159.2943668678927,
+     "lowerOpportunityLoss": 1077.942653437247,
+     "upperOpportunityLoss": 2029.524928665167,
+     "resolvedWithinThreshold": false,
+     "positions": [
+      {
+       "symbol": "CASH",
+       "weight": 0.3
+      },
+      {
+       "symbol": "IGSB",
+       "weight": 0.35
+      },
+      {
+       "symbol": "SHV",
+       "weight": 0.35
+      }
+     ],
+     "riskFailures": [],
+     "largest_upper_comparison": {
+      "key": "CASH:0.05|LQD:0.35|SPY:0.35|TIP:0.25",
+      "gain": 1137.4721541058243,
+      "lowerGain": 252.99433474388206,
+      "upperGain": 2029.524928665167,
+      "lowerUtilityGain": 0.0024527284379278064,
+      "upperUtilityGain": 0.019508446206619717,
+      "familySize": 18050,
+      "scope": "Paired cross-model Monte Carlo approximation with plug-in certainty-equivalent conversion; not predictive confidence"
+     }
+    },
+    {
+     "key": "CASH:0.05|LQD:0.35|SPY:0.35|TIP:0.25",
+     "worstCertaintyEquivalent": 104159.14975552492,
+     "estimatedOpportunityLoss": 21.822212762068375,
+     "lowerOpportunityLoss": 0,
+     "upperOpportunityLoss": 906.1254235385131,
+     "resolvedWithinThreshold": false,
+     "positions": [
+      {
+       "symbol": "SPY",
+       "weight": 0.35
+      },
+      {
+       "symbol": "LQD",
+       "weight": 0.35
+      },
+      {
+       "symbol": "CASH",
+       "weight": 0.05
+      },
+      {
+       "symbol": "TIP",
+       "weight": 0.25
+      }
+     ],
+     "riskFailures": [],
+     "largest_upper_comparison": {
+      "key": "CASH:0.05|IGSB:0.35|SHV:0.25|SHY:0.35",
+      "gain": 21.822212762068375,
+      "lowerGain": -855.0380805779714,
+      "upperGain": 906.1254235385131,
+      "lowerUtilityGain": -0.008242836981625413,
+      "upperUtilityGain": 0.008661809816263858,
+      "familySize": 18050,
+      "scope": "Paired cross-model Monte Carlo approximation with plug-in certainty-equivalent conversion; not predictive confidence"
+     }
+    }
+   ],
+   "scope": "Approximate simultaneous Monte Carlo bounds within this finite pool and these declared models. Plug-in monetary conversion; no parameter, predictive or global-optimality guarantee."
+  },
+  {
+   "seed": 1536675889,
+   "paths": 2000,
+   "familySize": 18050,
+   "pointLeader": "CASH:0.05|IGSB:0.35|SGOV:0.35|TIP:0.25",
+   "threshold": 100,
+   "rows": [
+    {
+     "key": "CASH:1",
+     "worstCertaintyEquivalent": 100000,
+     "estimatedOpportunityLoss": 4179.527155716321,
+     "lowerOpportunityLoss": 3965.93915125521,
+     "upperOpportunityLoss": 5013.443736876128,
+     "resolvedWithinThreshold": false,
+     "positions": [
+      {
+       "symbol": "CASH",
+       "weight": 1
+      }
+     ],
+     "riskFailures": [],
+     "largest_upper_comparison": {
+      "key": "CASH:0.05|LQD:0.35|SPY:0.35|TIP:0.25",
+      "gain": 4059.535890633124,
+      "lowerGain": 3114.2930319073785,
+      "upperGain": 5013.443736876128,
+      "lowerUtilityGain": 0.03066782813140971,
+      "upperUtilityGain": 0.04891819156287207,
+      "familySize": 18050,
+      "scope": "Paired cross-model Monte Carlo approximation with plug-in certainty-equivalent conversion; not predictive confidence"
+     }
+    },
+    {
+     "key": "AGG:0.1|CASH:0.05|LQD:0.15|MDT:0.15|META:0.15|ORCL:0.05|SGOV:0.25|VTI:0.1",
+     "worstCertaintyEquivalent": 103312.54451451666,
+     "estimatedOpportunityLoss": 866.9826411996619,
+     "lowerOpportunityLoss": 0,
+     "upperOpportunityLoss": 2073.8587182683696,
+     "resolvedWithinThreshold": false,
+     "positions": [
+      {
+       "symbol": "VTI",
+       "weight": 0.1
+      },
+      {
+       "symbol": "AGG",
+       "weight": 0.1
+      },
+      {
+       "symbol": "SGOV",
+       "weight": 0.25
+      },
+      {
+       "symbol": "LQD",
+       "weight": 0.15
+      },
+      {
+       "symbol": "CASH",
+       "weight": 0.05
+      },
+      {
+       "symbol": "ORCL",
+       "weight": 0.05
+      },
+      {
+       "symbol": "META",
+       "weight": 0.15
+      },
+      {
+       "symbol": "MDT",
+       "weight": 0.15
+      }
+     ],
+     "riskFailures": [],
+     "largest_upper_comparison": {
+      "key": "CASH:0.05|IGSB:0.35|SGOV:0.35|TIP:0.25",
+      "gain": 866.9826411996619,
+      "lowerGain": -326.07239424773434,
+      "upperGain": 2073.8587182683696,
+      "lowerUtilityGain": -0.0031611654878687806,
+      "upperUtilityGain": 0.01987481974569732,
+      "familySize": 18050,
+      "scope": "Paired cross-model Monte Carlo approximation with plug-in certainty-equivalent conversion; not predictive confidence"
+     }
+    },
+    {
+     "key": "CASH:0.05|LQD:0.2|META:0.15|ORCL:0.1|SHY:0.2|TGT:0.15|TIP:0.1|VIG:0.05",
+     "worstCertaintyEquivalent": 103559.56754013858,
+     "estimatedOpportunityLoss": 619.9596155777253,
+     "lowerOpportunityLoss": 0,
+     "upperOpportunityLoss": 2001.9267684418155,
+     "resolvedWithinThreshold": false,
+     "positions": [
+      {
+       "symbol": "SHY",
+       "weight": 0.2
+      },
+      {
+       "symbol": "LQD",
+       "weight": 0.2
+      },
+      {
+       "symbol": "CASH",
+       "weight": 0.05
+      },
+      {
+       "symbol": "TIP",
+       "weight": 0.1
+      },
+      {
+       "symbol": "ORCL",
+       "weight": 0.1
+      },
+      {
+       "symbol": "META",
+       "weight": 0.15
+      },
+      {
+       "symbol": "TGT",
+       "weight": 0.15
+      },
+      {
+       "symbol": "VIG",
+       "weight": 0.05
+      }
+     ],
+     "riskFailures": [],
+     "largest_upper_comparison": {
+      "key": "CASH:0.05|IGSB:0.35|SGOV:0.35|TIP:0.25",
+      "gain": 619.9596155777253,
+      "lowerGain": -743.9153984425066,
+      "upperGain": 2001.9267684418155,
+      "lowerUtilityGain": -0.00720937932063233,
+      "upperUtilityGain": 0.019146688607188357,
+      "familySize": 18050,
+      "scope": "Paired cross-model Monte Carlo approximation with plug-in certainty-equivalent conversion; not predictive confidence"
+     }
+    },
+    {
+     "key": "CASH:0.65|SHV:0.2|SHY:0.15",
+     "worstCertaintyEquivalent": 101442.12030584281,
+     "estimatedOpportunityLoss": 2737.406849873514,
+     "lowerOpportunityLoss": 2563.1761714142776,
+     "upperOpportunityLoss": 3560.959774592324,
+     "resolvedWithinThreshold": false,
+     "positions": [
+      {
+       "symbol": "SHY",
+       "weight": 0.15
+      },
+      {
+       "symbol": "CASH",
+       "weight": 0.65
+      },
+      {
+       "symbol": "SHV",
+       "weight": 0.2
+      }
+     ],
+     "riskFailures": [],
+     "largest_upper_comparison": {
+      "key": "CASH:0.05|LQD:0.35|SPY:0.35|TIP:0.25",
+      "gain": 2617.4155847903457,
+      "lowerGain": 1682.349961878237,
+      "upperGain": 3560.959774592324,
+      "lowerUtilityGain": 0.016448315304684928,
+      "upperUtilityGain": 0.034501291287559056,
+      "familySize": 18050,
+      "scope": "Paired cross-model Monte Carlo approximation with plug-in certainty-equivalent conversion; not predictive confidence"
+     }
+    },
+    {
+     "key": "CASH:0.05|HYG:0.15|IEF:0.15|LQD:0.15|META:0.15|TIP:0.2|VUG:0.15",
+     "worstCertaintyEquivalent": 103616.41921195696,
+     "estimatedOpportunityLoss": 563.107943759358,
+     "lowerOpportunityLoss": 0,
+     "upperOpportunityLoss": 1642.717375305947,
+     "resolvedWithinThreshold": false,
+     "positions": [
+      {
+       "symbol": "IEF",
+       "weight": 0.15
+      },
+      {
+       "symbol": "LQD",
+       "weight": 0.15
+      },
+      {
+       "symbol": "HYG",
+       "weight": 0.15
+      },
+      {
+       "symbol": "CASH",
+       "weight": 0.05
+      },
+      {
+       "symbol": "TIP",
+       "weight": 0.2
+      },
+      {
+       "symbol": "META",
+       "weight": 0.15
+      },
+      {
+       "symbol": "VUG",
+       "weight": 0.15
+      }
+     ],
+     "riskFailures": [],
+     "largest_upper_comparison": {
+      "key": "CASH:0.05|IGSB:0.35|SGOV:0.35|TIP:0.25",
+      "gain": 563.107943759358,
+      "lowerGain": -505.4282777792978,
+      "upperGain": 1642.717375305947,
+      "lowerUtilityGain": -0.004889813929360153,
+      "upperUtilityGain": 0.01572947335529936,
+      "familySize": 18050,
+      "scope": "Paired cross-model Monte Carlo approximation with plug-in certainty-equivalent conversion; not predictive confidence"
+     }
+    },
+    {
+     "key": "CASH:0.05|MDT:0.05|META:0.1|ORCL:0.05|SHV:0.35|SPY:0.05|TLT:0.1|VTI:0.25",
+     "worstCertaintyEquivalent": 103310.61088768665,
+     "estimatedOpportunityLoss": 868.9162680296722,
+     "lowerOpportunityLoss": 15.247624572570203,
+     "upperOpportunityLoss": 2080.810060672622,
+     "resolvedWithinThreshold": false,
+     "positions": [
+      {
+       "symbol": "SPY",
+       "weight": 0.05
+      },
+      {
+       "symbol": "TLT",
+       "weight": 0.1
+      },
+      {
+       "symbol": "VTI",
+       "weight": 0.25
+      },
+      {
+       "symbol": "CASH",
+       "weight": 0.05
+      },
+      {
+       "symbol": "SHV",
+       "weight": 0.35
+      },
+      {
+       "symbol": "ORCL",
+       "weight": 0.05
+      },
+      {
+       "symbol": "META",
+       "weight": 0.1
+      },
+      {
+       "symbol": "MDT",
+       "weight": 0.05
+      }
+     ],
+     "riskFailures": [],
+     "largest_upper_comparison": {
+      "key": "CASH:0.05|IGSB:0.35|SGOV:0.35|TIP:0.25",
+      "gain": 868.9162680296722,
+      "lowerGain": -329.0419826931902,
+      "upperGain": 2080.810060672622,
+      "lowerUtilityGain": -0.003190060447902014,
+      "upperUtilityGain": 0.019941147622216215,
+      "familySize": 18050,
+      "scope": "Paired cross-model Monte Carlo approximation with plug-in certainty-equivalent conversion; not predictive confidence"
+     }
+    },
+    {
+     "key": "AGG:0.35|CASH:0.05|IGSB:0.05|LQD:0.05|MSFT:0.1|ORCL:0.1|SPY:0.05|XLE:0.25",
+     "worstCertaintyEquivalent": 103655.82629692311,
+     "estimatedOpportunityLoss": 523.7008587932069,
+     "lowerOpportunityLoss": 0,
+     "upperOpportunityLoss": 1814.445773352767,
+     "resolvedWithinThreshold": false,
+     "positions": [
+      {
+       "symbol": "SPY",
+       "weight": 0.05
+      },
+      {
+       "symbol": "AGG",
+       "weight": 0.35
+      },
+      {
+       "symbol": "LQD",
+       "weight": 0.05
+      },
+      {
+       "symbol": "CASH",
+       "weight": 0.05
+      },
+      {
+       "symbol": "IGSB",
+       "weight": 0.05
+      },
+      {
+       "symbol": "ORCL",
+       "weight": 0.1
+      },
+      {
+       "symbol": "MSFT",
+       "weight": 0.1
+      },
+      {
+       "symbol": "XLE",
+       "weight": 0.25
+      }
+     ],
+     "riskFailures": [],
+     "largest_upper_comparison": {
+      "key": "CASH:0.05|IGSB:0.35|SGOV:0.35|TIP:0.25",
+      "gain": 523.7008587932069,
+      "lowerGain": -751.2479228678712,
+      "upperGain": 1814.445773352767,
+      "lowerUtilityGain": -0.007273913279045389,
+      "upperUtilityGain": 0.017353083323607105,
+      "familySize": 18050,
+      "scope": "Paired cross-model Monte Carlo approximation with plug-in certainty-equivalent conversion; not predictive confidence"
+     }
+    },
+    {
+     "key": "AGG:0.35|CASH:0.05|IGSB:0.05|LQD:0.05|MSFT:0.1|ORCL:0.1|SHV:0.05|XLE:0.25",
+     "worstCertaintyEquivalent": 103704.43561298393,
+     "estimatedOpportunityLoss": 475.09154273239255,
+     "lowerOpportunityLoss": 0,
+     "upperOpportunityLoss": 1702.4019222719944,
+     "resolvedWithinThreshold": false,
+     "positions": [
+      {
+       "symbol": "AGG",
+       "weight": 0.35
+      },
+      {
+       "symbol": "LQD",
+       "weight": 0.05
+      },
+      {
+       "symbol": "CASH",
+       "weight": 0.05
+      },
+      {
+       "symbol": "IGSB",
+       "weight": 0.05
+      },
+      {
+       "symbol": "SHV",
+       "weight": 0.05
+      },
+      {
+       "symbol": "ORCL",
+       "weight": 0.1
+      },
+      {
+       "symbol": "MSFT",
+       "weight": 0.1
+      },
+      {
+       "symbol": "XLE",
+       "weight": 0.25
+      }
+     ],
+     "riskFailures": [],
+     "largest_upper_comparison": {
+      "key": "CASH:0.05|IGSB:0.35|SGOV:0.35|TIP:0.25",
+      "gain": 475.09154273239255,
+      "lowerGain": -737.9285800938378,
+      "upperGain": 1702.4019222719944,
+      "lowerUtilityGain": -0.007141126919687326,
+      "upperUtilityGain": 0.016282618423462056,
+      "familySize": 18050,
+      "scope": "Paired cross-model Monte Carlo approximation with plug-in certainty-equivalent conversion; not predictive confidence"
+     }
+    },
+    {
+     "key": "AGG:0.35|CASH:0.05|IGSB:0.05|LQD:0.05|MSFT:0.1|ORCL:0.1|SGOV:0.05|XLE:0.25",
+     "worstCertaintyEquivalent": 103701.22065448559,
+     "estimatedOpportunityLoss": 478.3065012307343,
+     "lowerOpportunityLoss": 1.7685879802884301,
+     "upperOpportunityLoss": 1705.70687092749,
+     "resolvedWithinThreshold": false,
+     "positions": [
+      {
+       "symbol": "AGG",
+       "weight": 0.35
+      },
+      {
+       "symbol": "SGOV",
+       "weight": 0.05
+      },
+      {
+       "symbol": "LQD",
+       "weight": 0.05
+      },
+      {
+       "symbol": "CASH",
+       "weight": 0.05
+      },
+      {
+       "symbol": "IGSB",
+       "weight": 0.05
+      },
+      {
+       "symbol": "ORCL",
+       "weight": 0.1
+      },
+      {
+       "symbol": "MSFT",
+       "weight": 0.1
+      },
+      {
+       "symbol": "XLE",
+       "weight": 0.25
+      }
+     ],
+     "riskFailures": [],
+     "largest_upper_comparison": {
+      "key": "CASH:0.05|IGSB:0.35|SGOV:0.35|TIP:0.25",
+      "gain": 478.3065012307343,
+      "lowerGain": -734.8015282669367,
+      "upperGain": 1705.70687092749,
+      "lowerUtilityGain": -0.007110979013227338,
+      "upperUtilityGain": 0.016314473811539575,
+      "familySize": 18050,
+      "scope": "Paired cross-model Monte Carlo approximation with plug-in certainty-equivalent conversion; not predictive confidence"
+     }
+    },
+    {
+     "key": "AGG:0.35|CASH:0.05|IGSB:0.05|MSFT:0.1|ORCL:0.1|SGOV:0.05|SPY:0.05|XLE:0.25",
+     "worstCertaintyEquivalent": 103606.77052790277,
+     "estimatedOpportunityLoss": 572.7566278135491,
+     "lowerOpportunityLoss": 0,
+     "upperOpportunityLoss": 1855.4794985853368,
+     "resolvedWithinThreshold": false,
+     "positions": [
+      {
+       "symbol": "SPY",
+       "weight": 0.05
+      },
+      {
+       "symbol": "AGG",
+       "weight": 0.35
+      },
+      {
+       "symbol": "SGOV",
+       "weight": 0.05
+      },
+      {
+       "symbol": "CASH",
+       "weight": 0.05
+      },
+      {
+       "symbol": "IGSB",
+       "weight": 0.05
+      },
+      {
+       "symbol": "ORCL",
+       "weight": 0.1
+      },
+      {
+       "symbol": "MSFT",
+       "weight": 0.1
+      },
+      {
+       "symbol": "XLE",
+       "weight": 0.25
+      }
+     ],
+     "riskFailures": [],
+     "largest_upper_comparison": {
+      "key": "CASH:0.05|IGSB:0.35|SGOV:0.35|TIP:0.25",
+      "gain": 572.7566278135491,
+      "lowerGain": -694.364660754276,
+      "upperGain": 1855.4794985853368,
+      "lowerUtilityGain": -0.0067244823400242305,
+      "upperUtilityGain": 0.01775038895332271,
+      "familySize": 18050,
+      "scope": "Paired cross-model Monte Carlo approximation with plug-in certainty-equivalent conversion; not predictive confidence"
+     }
+    },
+    {
+     "key": "AGG:0.35|CASH:0.05|HON:0.05|MSFT:0.1|ORCL:0.1|SGOV:0.05|TIP:0.05|XLE:0.25",
+     "worstCertaintyEquivalent": 103651.19560582415,
+     "estimatedOpportunityLoss": 528.3315498921729,
+     "lowerOpportunityLoss": 0,
+     "upperOpportunityLoss": 1777.63348359894,
+     "resolvedWithinThreshold": false,
+     "positions": [
+      {
+       "symbol": "AGG",
+       "weight": 0.35
+      },
+      {
+       "symbol": "SGOV",
+       "weight": 0.05
+      },
+      {
+       "symbol": "CASH",
+       "weight": 0.05
+      },
+      {
+       "symbol": "TIP",
+       "weight": 0.05
+      },
+      {
+       "symbol": "ORCL",
+       "weight": 0.1
+      },
+      {
+       "symbol": "MSFT",
+       "weight": 0.1
+      },
+      {
+       "symbol": "XLE",
+       "weight": 0.25
+      },
+      {
+       "symbol": "HON",
+       "weight": 0.05
+      }
+     ],
+     "riskFailures": [],
+     "largest_upper_comparison": {
+      "key": "CASH:0.05|IGSB:0.35|SGOV:0.35|TIP:0.25",
+      "gain": 528.3315498921729,
+      "lowerGain": -706.1665077301732,
+      "upperGain": 1777.63348359894,
+      "lowerUtilityGain": -0.00683622615955183,
+      "upperUtilityGain": 0.017004745634870432,
+      "familySize": 18050,
+      "scope": "Paired cross-model Monte Carlo approximation with plug-in certainty-equivalent conversion; not predictive confidence"
+     }
+    },
+    {
+     "key": "AGG:0.2|CASH:0.05|GOOGL:0.15|HYG:0.1|IJR:0.05|LQD:0.3|META:0.15",
+     "worstCertaintyEquivalent": 103573.58228041523,
+     "estimatedOpportunityLoss": 605.9448753010947,
+     "lowerOpportunityLoss": 0,
+     "upperOpportunityLoss": 1903.2912043397519,
+     "resolvedWithinThreshold": false,
+     "positions": [
+      {
+       "symbol": "AGG",
+       "weight": 0.2
+      },
+      {
+       "symbol": "LQD",
+       "weight": 0.3
+      },
+      {
+       "symbol": "HYG",
+       "weight": 0.1
+      },
+      {
+       "symbol": "CASH",
+       "weight": 0.05
+      },
+      {
+       "symbol": "IJR",
+       "weight": 0.05
+      },
+      {
+       "symbol": "GOOGL",
+       "weight": 0.15
+      },
+      {
+       "symbol": "META",
+       "weight": 0.15
+      }
+     ],
+     "riskFailures": [],
+     "largest_upper_comparison": {
+      "key": "CASH:0.05|IGSB:0.35|SGOV:0.35|TIP:0.25",
+      "gain": 605.9448753010947,
+      "lowerGain": -675.4443302292348,
+      "upperGain": 1903.2912043397519,
+      "lowerUtilityGain": -0.00654275306067762,
+      "upperUtilityGain": 0.018209420196324093,
+      "familySize": 18050,
+      "scope": "Paired cross-model Monte Carlo approximation with plug-in certainty-equivalent conversion; not predictive confidence"
+     }
+    },
+    {
+     "key": "AGG:0.2|CASH:0.05|IEF:0.15|IEI:0.25|META:0.15|QQQ:0.15|SHY:0.05",
+     "worstCertaintyEquivalent": 103811.82087660242,
+     "estimatedOpportunityLoss": 367.7062791139033,
+     "lowerOpportunityLoss": 0,
+     "upperOpportunityLoss": 1417.4973858933372,
+     "resolvedWithinThreshold": false,
+     "positions": [
+      {
+       "symbol": "QQQ",
+       "weight": 0.15
+      },
+      {
+       "symbol": "SHY",
+       "weight": 0.05
+      },
+      {
+       "symbol": "AGG",
+       "weight": 0.2
+      },
+      {
+       "symbol": "IEF",
+       "weight": 0.15
+      },
+      {
+       "symbol": "CASH",
+       "weight": 0.05
+      },
+      {
+       "symbol": "IEI",
+       "weight": 0.25
+      },
+      {
+       "symbol": "META",
+       "weight": 0.15
+      }
+     ],
+     "riskFailures": [],
+     "largest_upper_comparison": {
+      "key": "CASH:0.05|IGSB:0.35|SGOV:0.35|TIP:0.25",
+      "gain": 367.7062791139033,
+      "lowerGain": -671.6118778634263,
+      "upperGain": 1417.4973858933372,
+      "lowerUtilityGain": -0.0064905305448325415,
+      "upperUtilityGain": 0.013562106659414569,
+      "familySize": 18050,
+      "scope": "Paired cross-model Monte Carlo approximation with plug-in certainty-equivalent conversion; not predictive confidence"
+     }
+    },
+    {
+     "key": "CASH:0.05|IGSB:0.35|SHV:0.25|SHY:0.35",
+     "worstCertaintyEquivalent": 104170.52303623073,
+     "estimatedOpportunityLoss": 9.004119485573028,
+     "lowerOpportunityLoss": 0,
+     "upperOpportunityLoss": 759.7251571692905,
+     "resolvedWithinThreshold": false,
+     "positions": [
+      {
+       "symbol": "SHY",
+       "weight": 0.35
+      },
+      {
+       "symbol": "CASH",
+       "weight": 0.05
+      },
+      {
+       "symbol": "IGSB",
+       "weight": 0.35
+      },
+      {
+       "symbol": "SHV",
+       "weight": 0.25
+      }
+     ],
+     "riskFailures": [],
+     "largest_upper_comparison": {
+      "key": "CASH:0.05|LQD:0.35|SPY:0.35|TIP:0.25",
+      "gain": -110.98714559760992,
+      "lowerGain": -974.4742685212841,
+      "upperGain": 759.7251571692905,
+      "lowerUtilityGain": -0.009398635791002672,
+      "upperUtilityGain": 0.007266625519675742,
+      "familySize": 18050,
+      "scope": "Paired cross-model Monte Carlo approximation with plug-in certainty-equivalent conversion; not predictive confidence"
+     }
+    },
+    {
+     "key": "CASH:0.3|IGSB:0.35|SGOV:0.35",
+     "worstCertaintyEquivalent": 102989.24651615586,
+     "estimatedOpportunityLoss": 1190.2806395604566,
+     "lowerOpportunityLoss": 1088.1612449575332,
+     "upperOpportunityLoss": 1952.5578658805753,
+     "resolvedWithinThreshold": false,
+     "positions": [
+      {
+       "symbol": "SGOV",
+       "weight": 0.35
+      },
+      {
+       "symbol": "CASH",
+       "weight": 0.3
+      },
+      {
+       "symbol": "IGSB",
+       "weight": 0.35
+      }
+     ],
+     "riskFailures": [],
+     "largest_upper_comparison": {
+      "key": "CASH:0.05|LQD:0.35|SPY:0.35|TIP:0.25",
+      "gain": 1070.2893744772882,
+      "lowerGain": 195.43830547781545,
+      "upperGain": 1952.5578658805753,
+      "lowerUtilityGain": 0.0018958591199968403,
+      "upperUtilityGain": 0.01878137250342702,
+      "familySize": 18050,
+      "scope": "Paired cross-model Monte Carlo approximation with plug-in certainty-equivalent conversion; not predictive confidence"
+     }
+    },
+    {
+     "key": "CASH:0.05|IGSB:0.35|SGOV:0.35|TIP:0.25",
+     "worstCertaintyEquivalent": 104179.52715571632,
+     "estimatedOpportunityLoss": 0,
+     "lowerOpportunityLoss": 0,
+     "upperOpportunityLoss": 763.7189435402397,
+     "resolvedWithinThreshold": false,
+     "positions": [
+      {
+       "symbol": "SGOV",
+       "weight": 0.35
+      },
+      {
+       "symbol": "CASH",
+       "weight": 0.05
+      },
+      {
+       "symbol": "IGSB",
+       "weight": 0.35
+      },
+      {
+       "symbol": "TIP",
+       "weight": 0.25
+      }
+     ],
+     "riskFailures": [],
+     "largest_upper_comparison": {
+      "key": "CASH:0.05|LQD:0.35|SPY:0.35|TIP:0.25",
+      "gain": -119.9912650831684,
+      "lowerGain": -996.2598920721939,
+      "upperGain": 763.7189435402397,
+      "lowerUtilityGain": -0.009608932599228862,
+      "upperUtilityGain": 0.007304057104535904,
+      "familySize": 18050,
+      "scope": "Paired cross-model Monte Carlo approximation with plug-in certainty-equivalent conversion; not predictive confidence"
+     }
+    },
+    {
+     "key": "CASH:0.05|IGSB:0.35|SGOV:0.35|SHV:0.25",
+     "worstCertaintyEquivalent": 103958.08948505962,
+     "estimatedOpportunityLoss": 221.43767065669817,
+     "lowerOpportunityLoss": 125.43479800059868,
+     "upperOpportunityLoss": 983.7941734964988,
+     "resolvedWithinThreshold": false,
+     "positions": [
+      {
+       "symbol": "SGOV",
+       "weight": 0.35
+      },
+      {
+       "symbol": "CASH",
+       "weight": 0.05
+      },
+      {
+       "symbol": "IGSB",
+       "weight": 0.35
+      },
+      {
+       "symbol": "SHV",
+       "weight": 0.25
+      }
+     ],
+     "riskFailures": [],
+     "largest_upper_comparison": {
+      "key": "CASH:0.05|LQD:0.35|SPY:0.35|TIP:0.25",
+      "gain": 101.44640557352977,
+      "lowerGain": -773.4826125003601,
+      "upperGain": 983.7941734964988,
+      "lowerUtilityGain": -0.0074681484895902945,
+      "upperUtilityGain": 0.009418875759604229,
+      "familySize": 18050,
+      "scope": "Paired cross-model Monte Carlo approximation with plug-in certainty-equivalent conversion; not predictive confidence"
+     }
+    },
+    {
+     "key": "CASH:0.3|IGSB:0.35|SHV:0.35",
+     "worstCertaintyEquivalent": 103011.56395170806,
+     "estimatedOpportunityLoss": 1167.9632040082652,
+     "lowerOpportunityLoss": 1073.2670169537741,
+     "upperOpportunityLoss": 1929.382802754364,
+     "resolvedWithinThreshold": false,
+     "positions": [
+      {
+       "symbol": "CASH",
+       "weight": 0.3
+      },
+      {
+       "symbol": "IGSB",
+       "weight": 0.35
+      },
+      {
+       "symbol": "SHV",
+       "weight": 0.35
+      }
+     ],
+     "riskFailures": [],
+     "largest_upper_comparison": {
+      "key": "CASH:0.05|LQD:0.35|SPY:0.35|TIP:0.25",
+      "gain": 1047.9719389250968,
+      "lowerGain": 173.9641444877343,
+      "upperGain": 1929.382802754364,
+      "lowerUtilityGain": 0.0016873582845959162,
+      "upperUtilityGain": 0.01855652677890297,
+      "familySize": 18050,
+      "scope": "Paired cross-model Monte Carlo approximation with plug-in certainty-equivalent conversion; not predictive confidence"
+     }
+    },
+    {
+     "key": "CASH:0.05|LQD:0.35|SPY:0.35|TIP:0.25",
+     "worstCertaintyEquivalent": 104059.53589063312,
+     "estimatedOpportunityLoss": 119.9912650831975,
+     "lowerOpportunityLoss": 0,
+     "upperOpportunityLoss": 1004.7204817676102,
+     "resolvedWithinThreshold": false,
+     "positions": [
+      {
+       "symbol": "SPY",
+       "weight": 0.35
+      },
+      {
+       "symbol": "LQD",
+       "weight": 0.35
+      },
+      {
+       "symbol": "CASH",
+       "weight": 0.05
+      },
+      {
+       "symbol": "TIP",
+       "weight": 0.25
+      }
+     ],
+     "riskFailures": [],
+     "largest_upper_comparison": {
+      "key": "CASH:0.05|IGSB:0.35|SGOV:0.35|TIP:0.25",
+      "gain": 119.9912650831975,
+      "lowerGain": -757.2877890637465,
+      "upperGain": 1004.7204817676102,
+      "lowerUtilityGain": -0.007304057104535904,
+      "upperUtilityGain": 0.009608932599228862,
+      "familySize": 18050,
+      "scope": "Paired cross-model Monte Carlo approximation with plug-in certainty-equivalent conversion; not predictive confidence"
+     }
+    }
+   ],
+   "scope": "Approximate simultaneous Monte Carlo bounds within this finite pool and these declared models. Plug-in monetary conversion; no parameter, predictive or global-optimality guarantee."
+  }
+ ],
+ "prospective": false,
+ "production_eligible": false,
+ "automatic_promotion": false,
+ "scope": "Frozen exposure pool chosen ex post; no discovery rerun. All assessable alternatives enter the conservative opportunity envelope, including any risk failures shown separately. No proof of constrained optimality, predictive skill or economic performance. Seeds compare MC sensitivity on identical data; they are not independent market observations.",
+ "inputs": {
+  "market_sha256": "51b818b130765be9d3906dedf5d978446de51c44cde19588159a079dd3370415",
+  "volatility_sha256": "2b577f7ef219f5077c1a181bc2760a70d6c5e953488efcd3588173ef03ac494f",
+  "pool_sha256": "c0a6edfcf5162307c0709ae18832c4f3180eb09ecfdb1318c25603f8f82da0ff",
+  "allocations_sha256": "93750090c082422c9516753a6904058d5464f922c9543616eaee32656af9e3c6",
+  "source_sha256": "f7e06e90c49574a08738981916630d520614fe2e8f5869e8ec8a13dbb3243424"
+ },
+ "complete_output_sha256": "33f4c5b05a251a02d2ef0c66746b0c76f5f691f7f3fd4e9ba58734edf768a689",
+ "source_git_commit": "72c273b59242fecc665248d34cc0c42eed6c9056"
+}

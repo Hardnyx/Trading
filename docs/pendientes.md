@@ -1,6 +1,6 @@
 # Trading · lo que falta
 
-Backlog actualizado el 28 de octubre de 2026 para el motor 0.35.0, corte de
+Backlog actualizado el 29 de octubre de 2026 para el motor 0.35.0, corte de
 precios examinado del 28-oct, 260 instrumentos (160 acciones, 100 ETF).
 Consultar las pruebas y los cierres en `docs/estado-validacion.md`. Cero
 incidencias publicadas o pruebas de software aprobadas no acreditan datos
@@ -215,8 +215,13 @@ Este archivo lista **solo lo que falta**. Para el funcionamiento, consultar
     nueva información económica justifique el giro; los pesos siguen poco
     determinados. Véase `auditorias/allocation-cuts-0.35.0.json`.
     **Falta:** contrastar universos, cortes nuevos, supuestos y cobertura de
-    la búsqueda finita. La cota del desempate compara con el líder estimado,
-    no con el verdadero mejor candidato: falta acotar esa incertidumbre.
+    la búsqueda finita. La cota del desempate compara con el líder estimado.
+    Desde el 29-oct hay un diagnóstico separado de todo el conjunto finito:
+    19 cestas, dos semillas de 2.000 escenarios por modelo, líderes que
+    reasignan el 60% y cotas superiores de oportunidad USD 862/764 frente
+    al umbral USD 100. Ninguna cesta resuelve ese umbral. Se cuantifica esa
+    incertidumbre de Monte Carlo aproximada; falta reducirla y extenderla
+    a búsqueda y parámetros. Véase `auditoria-incertidumbre-seleccion-0.35.md`.
     También falta atribuir cada cambio importante a datos, corrección
     o evidencia. La coincidencia de semillas con la política nueva no prueba
     que los pesos estén identificados ni que generen mejores retornos.

@@ -1,6 +1,6 @@
 # Estado de validación de Trading
 
-**Actualizado:** 28 de octubre de 2026 · motor 0.35.0 · precios al 28-oct.
+**Actualizado:** 29 de octubre de 2026 · motor 0.35.0 · precios al 28-oct.
 **Estado:** escenarios condicionales de investigación; capacidad predictiva y
 ventaja económica sin acreditar. El [historial hasta 0.32.0](historial-validacion-hasta-0.32.md)
 conserva los cambios y cifras anteriores.
@@ -104,6 +104,20 @@ ex post, sin acreditar vintages, estrategia histórica, dividendos en efectivo,
 costes ejecutados o CVaR a doce meses. Los resultados no promueven cambios
 a la ley de precios ni acreditan la ventaja de las decisiones. Véase la
 [auditoría completa](auditoria-decision-riesgo-0.35.md).
+
+## Incertidumbre frente a todo el conjunto (29-oct-2026)
+
+Con datos fijos del commit `72c273b`, 19 cestas y dos semillas prefijadas de
+2.000 escenarios por modelo, los líderes estimados cambian el 60% del
+capital. Sus cotas superiores de pérdida de oportunidad frente al conjunto
+son USD 862,30 y USD 763,72 para USD 100.000. Ninguna candidata acota esa
+pérdida dentro del umbral de USD 100 en ninguno de los experimentos. Son
+cotas aproximadas de Monte Carlo, no pérdidas observadas ni prueba de que
+una candidata sea inferior. El diagnóstico compara todas las alternativas;
+la auto-comparación del líder no se presenta como precisión del conjunto.
+La [auditoría](auditoria-incertidumbre-seleccion-0.35.md) conserva resultados,
+límites y reproducción. No cambia pesos ni autoriza operaciones. Siguen
+abiertas la cobertura de búsqueda, los parámetros y la validación prospectiva.
 
 ## Decisión de operar
 
