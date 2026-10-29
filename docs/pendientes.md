@@ -60,9 +60,15 @@ Este archivo lista **solo lo que falta**. Para el funcionamiento, consultar
   a BPA/precio, diferencia 0,022, banda [−0,070; 0,100]: no se resuelve
   valor incremental. El catálogo y universo siguen siendo actuales; no se
   acredita vintage original, el ancla completa ni un IC calibrado. Falta
-  sellar y evaluar score/confianza/exposición de la señal completa, además
+  evaluar score/confianza/exposición de la señal completa, además
   de validar el nivel de crecimiento y retorno del benchmark. Véase
   `auditoria-senal-ttm-0.35.md`. No se promueven parámetros.
+- **Registro prospectivo incorporado:** primera emisión mensual, señal y
+  ancla completas, referencia con IC cero, BPA/precio y ancla SPY. Se
+  conservan datos y código por cohorte, se verifica la primera publicación
+  Git y se esperan 21/63/252 sesiones sin sustituir sellos o resultados.
+  Falta acumular y evaluar resultados maduros; no valida el IC ni el nivel
+  de las anclas. Véase `validacion-prospectiva-senales.md`.
 - **Terminado cuando:** cada ancla de crecimiento indica su fuente y vintage,
   y existe un error de previsión medido fuera de muestra.
 

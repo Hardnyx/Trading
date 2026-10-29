@@ -79,6 +79,13 @@ de muestra, netos de costes y rotación, comparados con mantener y referencias
 pasivas bajo el mismo mandato. Los horizontes cortos de riesgo no sustituyen
 esa evidencia ni acreditan el IC, el re-rating o una prima de renta variable.
 
+El [registro de señales completas](validacion-prospectiva-senales.md) conserva
+la primera emisión mensual, score, confianza, anclas y datos originales por
+cohorte. Evalúa el valor incremental frente a BPA/precio y al mismo modelo
+con IC cero, además del error del ancla SPY. Verifica la primera publicación
+Git antes del inicio del retorno y congela el primer resultado maduro.
+Permite empezar a contrastar esas afirmaciones, sin declararlas validadas.
+
 ## Cómo interpretar la salida actual
 
 - **Admisible bajo los contrastes:** pasa controles condicionales; la

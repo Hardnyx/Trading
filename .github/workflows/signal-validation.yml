@@ -1,0 +1,71 @@
+name: Stock signal validation (prospective)
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows: [Refresh market data]
+    types: [completed]
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/signal_ledger.mjs'
+      - 'tests/signal-ledger.test.mjs'
+      - 'dist/assets/js/**'
+      - '.github/workflows/signal-validation.yml'
+permissions:
+  contents: read
+concurrency:
+  group: stock-signal-ledger-writer
+  cancel-in-progress: false
+jobs:
+  ledger:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify causal windows, frozen forecasts and matched diagnostics
+        run: node --test tests/signal-ledger.test.mjs
+      - name: Seal the first eligible monthly signal and score mature cohorts
+        id: seal
+        run: |
+          export SIGNAL_SOURCE_COMMIT="$(git rev-parse HEAD)"
+          mkdir -p out
+          node scripts/signal_ledger.mjs > out/signal-ledger-run.json
+          cat out/signal-ledger-run.json
+          node -e 'const fs=require("fs"),r=JSON.parse(fs.readFileSync("out/signal-ledger-run.json")); fs.appendFileSync(process.env.GITHUB_OUTPUT,"new_seal="+(r.issuance==="sealed")+"\n");'
+      - name: Preserve the immutable evidence on main
+        run: |
+          git add data/signal-validation dist/data/signal-validation.json
+          if git diff --cached --quiet; then exit 0; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'chore(validation): record prospective stock signal evidence'
+          for attempt in 1 2 3; do
+            git fetch origin main
+            # Conflicts are reviewed, never auto-resolved over a sealed file.
+            git rebase origin/main
+            if git push origin HEAD:main; then exit 0; fi
+            if [ "$attempt" -eq 3 ]; then exit 1; fi
+          done
+      - name: Verify the actual first publication without changing the forecast
+        if: steps.seal.outputs.new_seal == 'true'
+        run: |
+          export SIGNAL_SOURCE_COMMIT="$(git rev-parse HEAD)"
+          node scripts/signal_ledger.mjs
+          git add dist/data/signal-validation.json
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'chore(validation): verify first stock-signal publication'
+          for attempt in 1 2 3; do
+            git fetch origin main
+            git rebase origin/main
+            if git push origin HEAD:main; then exit 0; fi
+            if [ "$attempt" -eq 3 ]; then exit 1; fi
+          done

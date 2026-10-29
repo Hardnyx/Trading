@@ -174,6 +174,18 @@ conserva protocolo, fuentes y exclusiones. Sigue pendiente evaluar señales
 individuales emitidas prospectivamente, por cohorte, y calibrar el nivel de
 las anclas. La cartera y los parámetros de producción permanecen sin cambios.
 
+## Señales completas emitidas prospectivamente (29-oct-2026)
+
+Se incorpora un registro mensual del universo de acciones: señal, score,
+confianza, refinamiento transversal y ancla final, con una referencia del
+mismo modelo con IC cero. También conserva el ancla SPY. Los datos completos
+y el código identifican la cohorte; una actualización no reemplaza la emisión
+anterior. La primera publicación Git debe preceder al origen del retorno.
+Se esperan 21/63/252 sesiones y se conservan los faltantes y la primera
+puntuación madura. No hay promociones automáticas. El
+[protocolo](validacion-prospectiva-senales.md) define frecuencia, comparadores,
+errores y límites de inferencia. La evidencia madura continúa pendiente.
+
 ## Decisión de operar
 
 Desde 0.33.0, la propuesta ordinaria debe mejorar frente a mantener en los
