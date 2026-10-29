@@ -1,0 +1,2632 @@
+{
+ "method": "antithetic-equal-cost-selection-v1",
+ "pairs": 1000,
+ "price_cut": "2026-10-28",
+ "poolSize": 19,
+ "excluded": [],
+ "runs": [
+  {
+   "seed": 1218542633,
+   "independentSeed": 430718295,
+   "trajectoryEvaluationsPerMethod": 2000,
+   "independentPairs": 1000,
+   "plain": {
+    "familySize": 36100,
+    "pointLeader": "CASH:0.05|IGSB:0.35|SHV:0.25|SHY:0.35",
+    "threshold": 100,
+    "rows": [
+     {
+      "key": "CASH:1",
+      "worstCertaintyEquivalent": 100000,
+      "estimatedOpportunityLoss": 4192.501149317191,
+      "lowerOpportunityLoss": 3991.0349484917388,
+      "upperOpportunityLoss": 5119.923918447865,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "CASH",
+        "weight": 1
+       }
+      ]
+     },
+     {
+      "key": "AGG:0.1|CASH:0.05|LQD:0.15|MDT:0.15|META:0.15|ORCL:0.05|SGOV:0.25|VTI:0.1",
+      "worstCertaintyEquivalent": 103419.81668388653,
+      "estimatedOpportunityLoss": 772.6844654306624,
+      "lowerOpportunityLoss": 0,
+      "upperOpportunityLoss": 2004.8243509376625,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "VTI",
+        "weight": 0.1
+       },
+       {
+        "symbol": "AGG",
+        "weight": 0.1
+       },
+       {
+        "symbol": "SGOV",
+        "weight": 0.25
+       },
+       {
+        "symbol": "LQD",
+        "weight": 0.15
+       },
+       {
+        "symbol": "CASH",
+        "weight": 0.05
+       },
+       {
+        "symbol": "ORCL",
+        "weight": 0.05
+       },
+       {
+        "symbol": "META",
+        "weight": 0.15
+       },
+       {
+        "symbol": "MDT",
+        "weight": 0.15
+       }
+      ]
+     },
+     {
+      "key": "CASH:0.05|LQD:0.2|META:0.15|ORCL:0.1|SHY:0.2|TGT:0.15|TIP:0.1|VIG:0.05",
+      "worstCertaintyEquivalent": 103399.40115903075,
+      "estimatedOpportunityLoss": 793.0999902864423,
+      "lowerOpportunityLoss": 0,
+      "upperOpportunityLoss": 2195.757842404535,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "SHY",
+        "weight": 0.2
+       },
+       {
+        "symbol": "LQD",
+        "weight": 0.2
+       },
+       {
+        "symbol": "CASH",
+        "weight": 0.05
+       },
+       {
+        "symbol": "TIP",
+        "weight": 0.1
+       },
+       {
+        "symbol": "ORCL",
+        "weight": 0.1
+       },
+       {
+        "symbol": "META",
+        "weight": 0.15
+       },
+       {
+        "symbol": "TGT",
+        "weight": 0.15
+       },
+       {
+        "symbol": "VIG",
+        "weight": 0.05
+       }
+      ]
+     },
+     {
+      "key": "CASH:0.65|SHV:0.2|SHY:0.15",
+      "worstCertaintyEquivalent": 101443.54621402542,
+      "estimatedOpportunityLoss": 2748.9549352917675,
+      "lowerOpportunityLoss": 2585.452521463856,
+      "upperOpportunityLoss": 3666.6704585416155,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "SHY",
+        "weight": 0.15
+       },
+       {
+        "symbol": "CASH",
+        "weight": 0.65
+       },
+       {
+        "symbol": "SHV",
+        "weight": 0.2
+       }
+      ]
+     },
+     {
+      "key": "CASH:0.05|HYG:0.15|IEF:0.15|LQD:0.15|META:0.15|TIP:0.2|VUG:0.15",
+      "worstCertaintyEquivalent": 103714.99350555618,
+      "estimatedOpportunityLoss": 477.5076437610114,
+      "lowerOpportunityLoss": 0,
+      "upperOpportunityLoss": 1608.6310057865194,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "IEF",
+        "weight": 0.15
+       },
+       {
+        "symbol": "LQD",
+        "weight": 0.15
+       },
+       {
+        "symbol": "HYG",
+        "weight": 0.15
+       },
+       {
+        "symbol": "CASH",
+        "weight": 0.05
+       },
+       {
+        "symbol": "TIP",
+        "weight": 0.2
+       },
+       {
+        "symbol": "META",
+        "weight": 0.15
+       },
+       {
+        "symbol": "VUG",
+        "weight": 0.15
+       }
+      ]
+     },
+     {
+      "key": "CASH:0.05|MDT:0.05|META:0.1|ORCL:0.05|SHV:0.35|SPY:0.05|TLT:0.1|VTI:0.25",
+      "worstCertaintyEquivalent": 103339.67159925397,
+      "estimatedOpportunityLoss": 852.829550063223,
+      "lowerOpportunityLoss": 32.75042519357521,
+      "upperOpportunityLoss": 2092.056271665395,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "SPY",
+        "weight": 0.05
+       },
+       {
+        "symbol": "TLT",
+        "weight": 0.1
+       },
+       {
+        "symbol": "VTI",
+        "weight": 0.25
+       },
+       {
+        "symbol": "CASH",
+        "weight": 0.05
+       },
+       {
+        "symbol": "SHV",
+        "weight": 0.35
+       },
+       {
+        "symbol": "ORCL",
+        "weight": 0.05
+       },
+       {
+        "symbol": "META",
+        "weight": 0.1
+       },
+       {
+        "symbol": "MDT",
+        "weight": 0.05
+       }
+      ]
+     },
+     {
+      "key": "AGG:0.35|CASH:0.05|IGSB:0.05|LQD:0.05|MSFT:0.1|ORCL:0.1|SPY:0.05|XLE:0.25",
+      "worstCertaintyEquivalent": 103604.61535701597,
+      "estimatedOpportunityLoss": 587.8857923012256,
+      "lowerOpportunityLoss": 0,
+      "upperOpportunityLoss": 1871.1308126598597,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "SPY",
+        "weight": 0.05
+       },
+       {
+        "symbol": "AGG",
+        "weight": 0.35
+       },
+       {
+        "symbol": "LQD",
+        "weight": 0.05
+       },
+       {
+        "symbol": "CASH",
+        "weight": 0.05
+       },
+       {
+        "symbol": "IGSB",
+        "weight": 0.05
+       },
+       {
+        "symbol": "ORCL",
+        "weight": 0.1
+       },
+       {
+        "symbol": "MSFT",
+        "weight": 0.1
+       },
+       {
+        "symbol": "XLE",
+        "weight": 0.25
+       }
+      ]
+     },
+     {
+      "key": "AGG:0.35|CASH:0.05|IGSB:0.05|LQD:0.05|MSFT:0.1|ORCL:0.1|SHV:0.05|XLE:0.25",
+      "worstCertaintyEquivalent": 103645.86188098861,
+      "estimatedOpportunityLoss": 546.6392683285812,
+      "lowerOpportunityLoss": 0,
+      "upperOpportunityLoss": 1764.4111519777798,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "AGG",
+        "weight": 0.35
+       },
+       {
+        "symbol": "LQD",
+        "weight": 0.05
+       },
+       {
+        "symbol": "CASH",
+        "weight": 0.05
+       },
+       {
+        "symbol": "IGSB",
+        "weight": 0.05
+       },
+       {
+        "symbol": "SHV",
+        "weight": 0.05
+       },
+       {
+        "symbol": "ORCL",
+        "weight": 0.1
+       },
+       {
+        "symbol": "MSFT",
+        "weight": 0.1
+       },
+       {
+        "symbol": "XLE",
+        "weight": 0.25
+       }
+      ]
+     },
+     {
+      "key": "AGG:0.35|CASH:0.05|IGSB:0.05|LQD:0.05|MSFT:0.1|ORCL:0.1|SGOV:0.05|XLE:0.25",
+      "worstCertaintyEquivalent": 103642.31647282804,
+      "estimatedOpportunityLoss": 550.1846764891525,
+      "lowerOpportunityLoss": 2.112612572062062,
+      "upperOpportunityLoss": 1768.0571974009508,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "AGG",
+        "weight": 0.35
+       },
+       {
+        "symbol": "SGOV",
+        "weight": 0.05
+       },
+       {
+        "symbol": "LQD",
+        "weight": 0.05
+       },
+       {
+        "symbol": "CASH",
+        "weight": 0.05
+       },
+       {
+        "symbol": "IGSB",
+        "weight": 0.05
+       },
+       {
+        "symbol": "ORCL",
+        "weight": 0.1
+       },
+       {
+        "symbol": "MSFT",
+        "weight": 0.1
+       },
+       {
+        "symbol": "XLE",
+        "weight": 0.25
+       }
+      ]
+     },
+     {
+      "key": "AGG:0.35|CASH:0.05|IGSB:0.05|MSFT:0.1|ORCL:0.1|SGOV:0.05|SPY:0.05|XLE:0.25",
+      "worstCertaintyEquivalent": 103548.84016648878,
+      "estimatedOpportunityLoss": 643.6609828284127,
+      "lowerOpportunityLoss": 2.578502456191927,
+      "upperOpportunityLoss": 1918.7348187076714,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "SPY",
+        "weight": 0.05
+       },
+       {
+        "symbol": "AGG",
+        "weight": 0.35
+       },
+       {
+        "symbol": "SGOV",
+        "weight": 0.05
+       },
+       {
+        "symbol": "CASH",
+        "weight": 0.05
+       },
+       {
+        "symbol": "IGSB",
+        "weight": 0.05
+       },
+       {
+        "symbol": "ORCL",
+        "weight": 0.1
+       },
+       {
+        "symbol": "MSFT",
+        "weight": 0.1
+       },
+       {
+        "symbol": "XLE",
+        "weight": 0.25
+       }
+      ]
+     },
+     {
+      "key": "AGG:0.35|CASH:0.05|HON:0.05|MSFT:0.1|ORCL:0.1|SGOV:0.05|TIP:0.05|XLE:0.25",
+      "worstCertaintyEquivalent": 103546.76030525359,
+      "estimatedOpportunityLoss": 645.7408440636063,
+      "lowerOpportunityLoss": 0,
+      "upperOpportunityLoss": 1883.075163063986,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "AGG",
+        "weight": 0.35
+       },
+       {
+        "symbol": "SGOV",
+        "weight": 0.05
+       },
+       {
+        "symbol": "CASH",
+        "weight": 0.05
+       },
+       {
+        "symbol": "TIP",
+        "weight": 0.05
+       },
+       {
+        "symbol": "ORCL",
+        "weight": 0.1
+       },
+       {
+        "symbol": "MSFT",
+        "weight": 0.1
+       },
+       {
+        "symbol": "XLE",
+        "weight": 0.25
+       },
+       {
+        "symbol": "HON",
+        "weight": 0.05
+       }
+      ]
+     },
+     {
+      "key": "AGG:0.2|CASH:0.05|GOOGL:0.15|HYG:0.1|IJR:0.05|LQD:0.3|META:0.15",
+      "worstCertaintyEquivalent": 103673.5605149463,
+      "estimatedOpportunityLoss": 518.9406343708979,
+      "lowerOpportunityLoss": 0,
+      "upperOpportunityLoss": 1867.4279818183131,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "AGG",
+        "weight": 0.2
+       },
+       {
+        "symbol": "LQD",
+        "weight": 0.3
+       },
+       {
+        "symbol": "HYG",
+        "weight": 0.1
+       },
+       {
+        "symbol": "CASH",
+        "weight": 0.05
+       },
+       {
+        "symbol": "IJR",
+        "weight": 0.05
+       },
+       {
+        "symbol": "GOOGL",
+        "weight": 0.15
+       },
+       {
+        "symbol": "META",
+        "weight": 0.15
+       }
+      ]
+     },
+     {
+      "key": "AGG:0.2|CASH:0.05|IEF:0.15|IEI:0.25|META:0.15|QQQ:0.15|SHY:0.05",
+      "worstCertaintyEquivalent": 103889.20083868122,
+      "estimatedOpportunityLoss": 303.30031063596834,
+      "lowerOpportunityLoss": 0,
+      "upperOpportunityLoss": 1410.6828145827749,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "QQQ",
+        "weight": 0.15
+       },
+       {
+        "symbol": "SHY",
+        "weight": 0.05
+       },
+       {
+        "symbol": "AGG",
+        "weight": 0.2
+       },
+       {
+        "symbol": "IEF",
+        "weight": 0.15
+       },
+       {
+        "symbol": "CASH",
+        "weight": 0.05
+       },
+       {
+        "symbol": "IEI",
+        "weight": 0.25
+       },
+       {
+        "symbol": "META",
+        "weight": 0.15
+       }
+      ]
+     },
+     {
+      "key": "CASH:0.05|IGSB:0.35|SHV:0.25|SHY:0.35",
+      "worstCertaintyEquivalent": 104192.50114931719,
+      "estimatedOpportunityLoss": 0,
+      "lowerOpportunityLoss": 0,
+      "upperOpportunityLoss": 845.5682686072541,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "SHY",
+        "weight": 0.35
+       },
+       {
+        "symbol": "CASH",
+        "weight": 0.05
+       },
+       {
+        "symbol": "IGSB",
+        "weight": 0.35
+       },
+       {
+        "symbol": "SHV",
+        "weight": 0.25
+       }
+      ]
+     },
+     {
+      "key": "CASH:0.3|IGSB:0.35|SGOV:0.35",
+      "worstCertaintyEquivalent": 103011.60139789703,
+      "estimatedOpportunityLoss": 1180.899751420162,
+      "lowerOpportunityLoss": 1089.8012843239994,
+      "upperOpportunityLoss": 2037.4651089834952,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "SGOV",
+        "weight": 0.35
+       },
+       {
+        "symbol": "CASH",
+        "weight": 0.3
+       },
+       {
+        "symbol": "IGSB",
+        "weight": 0.35
+       }
+      ]
+     },
+     {
+      "key": "CASH:0.05|IGSB:0.35|SGOV:0.35|TIP:0.25",
+      "worstCertaintyEquivalent": 104190.51402362254,
+      "estimatedOpportunityLoss": 1.987125694649876,
+      "lowerOpportunityLoss": 0,
+      "upperOpportunityLoss": 857.187630725166,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "SGOV",
+        "weight": 0.35
+       },
+       {
+        "symbol": "CASH",
+        "weight": 0.05
+       },
+       {
+        "symbol": "IGSB",
+        "weight": 0.35
+       },
+       {
+        "symbol": "TIP",
+        "weight": 0.25
+       }
+      ]
+     },
+     {
+      "key": "CASH:0.05|IGSB:0.35|SGOV:0.35|SHV:0.25",
+      "worstCertaintyEquivalent": 103983.38456631581,
+      "estimatedOpportunityLoss": 209.11658300137788,
+      "lowerOpportunityLoss": 123.75921936013037,
+      "upperOpportunityLoss": 1065.8663608045026,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "SGOV",
+        "weight": 0.35
+       },
+       {
+        "symbol": "CASH",
+        "weight": 0.05
+       },
+       {
+        "symbol": "IGSB",
+        "weight": 0.35
+       },
+       {
+        "symbol": "SHV",
+        "weight": 0.25
+       }
+      ]
+     },
+     {
+      "key": "CASH:0.3|IGSB:0.35|SHV:0.35",
+      "worstCertaintyEquivalent": 103036.12456960957,
+      "estimatedOpportunityLoss": 1156.3765797076194,
+      "lowerOpportunityLoss": 1072.3737937121768,
+      "upperOpportunityLoss": 2012.1915382089792,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "CASH",
+        "weight": 0.3
+       },
+       {
+        "symbol": "IGSB",
+        "weight": 0.35
+       },
+       {
+        "symbol": "SHV",
+        "weight": 0.35
+       }
+      ]
+     },
+     {
+      "key": "CASH:0.05|LQD:0.35|SPY:0.35|TIP:0.25",
+      "worstCertaintyEquivalent": 104133.22705435079,
+      "estimatedOpportunityLoss": 59.2740949664003,
+      "lowerOpportunityLoss": 0,
+      "upperOpportunityLoss": 972.2646505597077,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "SPY",
+        "weight": 0.35
+       },
+       {
+        "symbol": "LQD",
+        "weight": 0.35
+       },
+       {
+        "symbol": "CASH",
+        "weight": 0.05
+       },
+       {
+        "symbol": "TIP",
+        "weight": 0.25
+       }
+      ]
+     }
+    ],
+    "scope": "Approximate simultaneous Monte Carlo bounds within this finite pool and these declared models. Plug-in monetary conversion; no parameter, predictive or global-optimality guarantee."
+   },
+   "antithetic": {
+    "familySize": 36100,
+    "pointLeader": "CASH:0.05|IGSB:0.35|SHV:0.25|SHY:0.35",
+    "threshold": 100,
+    "rows": [
+     {
+      "key": "CASH:1",
+      "worstCertaintyEquivalent": 100000,
+      "estimatedOpportunityLoss": 4155.324127269181,
+      "lowerOpportunityLoss": 4103.7550713854,
+      "upperOpportunityLoss": 4501.772159245898,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "CASH",
+        "weight": 1
+       }
+      ]
+     },
+     {
+      "key": "AGG:0.1|CASH:0.05|LQD:0.15|MDT:0.15|META:0.15|ORCL:0.05|SGOV:0.25|VTI:0.1",
+      "worstCertaintyEquivalent": 103351.02846895745,
+      "estimatedOpportunityLoss": 804.2956583117339,
+      "lowerOpportunityLoss": 311.1759372236702,
+      "upperOpportunityLoss": 1409.1614637174207,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "VTI",
+        "weight": 0.1
+       },
+       {
+        "symbol": "AGG",
+        "weight": 0.1
+       },
+       {
+        "symbol": "SGOV",
+        "weight": 0.25
+       },
+       {
+        "symbol": "LQD",
+        "weight": 0.15
+       },
+       {
+        "symbol": "CASH",
+        "weight": 0.05
+       },
+       {
+        "symbol": "ORCL",
+        "weight": 0.05
+       },
+       {
+        "symbol": "META",
+        "weight": 0.15
+       },
+       {
+        "symbol": "MDT",
+        "weight": 0.15
+       }
+      ]
+     },
+     {
+      "key": "CASH:0.05|LQD:0.2|META:0.15|ORCL:0.1|SHY:0.2|TGT:0.15|TIP:0.1|VIG:0.05",
+      "worstCertaintyEquivalent": 103187.1697380046,
+      "estimatedOpportunityLoss": 968.1543892645859,
+      "lowerOpportunityLoss": 334.45938656690123,
+      "upperOpportunityLoss": 1668.3865311907139,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "SHY",
+        "weight": 0.2
+       },
+       {
+        "symbol": "LQD",
+        "weight": 0.2
+       },
+       {
+        "symbol": "CASH",
+        "weight": 0.05
+       },
+       {
+        "symbol": "TIP",
+        "weight": 0.1
+       },
+       {
+        "symbol": "ORCL",
+        "weight": 0.1
+       },
+       {
+        "symbol": "META",
+        "weight": 0.15
+       },
+       {
+        "symbol": "TGT",
+        "weight": 0.15
+       },
+       {
+        "symbol": "VIG",
+        "weight": 0.05
+       }
+      ]
+     },
+     {
+      "key": "CASH:0.65|SHV:0.2|SHY:0.15",
+      "worstCertaintyEquivalent": 101436.94148151878,
+      "estimatedOpportunityLoss": 2718.3826457504038,
+      "lowerOpportunityLoss": 2688.657283211287,
+      "upperOpportunityLoss": 3061.083099473326,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "SHY",
+        "weight": 0.15
+       },
+       {
+        "symbol": "CASH",
+        "weight": 0.65
+       },
+       {
+        "symbol": "SHV",
+        "weight": 0.2
+       }
+      ]
+     },
+     {
+      "key": "CASH:0.05|HYG:0.15|IEF:0.15|LQD:0.15|META:0.15|TIP:0.2|VUG:0.15",
+      "worstCertaintyEquivalent": 103611.62959078887,
+      "estimatedOpportunityLoss": 543.6945364803105,
+      "lowerOpportunityLoss": 113.5270601760567,
+      "upperOpportunityLoss": 1028.0567111912387,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "IEF",
+        "weight": 0.15
+       },
+       {
+        "symbol": "LQD",
+        "weight": 0.15
+       },
+       {
+        "symbol": "HYG",
+        "weight": 0.15
+       },
+       {
+        "symbol": "CASH",
+        "weight": 0.05
+       },
+       {
+        "symbol": "TIP",
+        "weight": 0.2
+       },
+       {
+        "symbol": "META",
+        "weight": 0.15
+       },
+       {
+        "symbol": "VUG",
+        "weight": 0.15
+       }
+      ]
+     },
+     {
+      "key": "CASH:0.05|MDT:0.05|META:0.1|ORCL:0.05|SHV:0.35|SPY:0.05|TLT:0.1|VTI:0.25",
+      "worstCertaintyEquivalent": 103185.78389153139,
+      "estimatedOpportunityLoss": 969.5402357377898,
+      "lowerOpportunityLoss": 559.6290651940508,
+      "upperOpportunityLoss": 1519.2931290480337,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "SPY",
+        "weight": 0.05
+       },
+       {
+        "symbol": "TLT",
+        "weight": 0.1
+       },
+       {
+        "symbol": "VTI",
+        "weight": 0.25
+       },
+       {
+        "symbol": "CASH",
+        "weight": 0.05
+       },
+       {
+        "symbol": "SHV",
+        "weight": 0.35
+       },
+       {
+        "symbol": "ORCL",
+        "weight": 0.05
+       },
+       {
+        "symbol": "META",
+        "weight": 0.1
+       },
+       {
+        "symbol": "MDT",
+        "weight": 0.05
+       }
+      ]
+     },
+     {
+      "key": "AGG:0.35|CASH:0.05|IGSB:0.05|LQD:0.05|MSFT:0.1|ORCL:0.1|SPY:0.05|XLE:0.25",
+      "worstCertaintyEquivalent": 103443.36565913248,
+      "estimatedOpportunityLoss": 711.9584681366978,
+      "lowerOpportunityLoss": 158.33695275777427,
+      "upperOpportunityLoss": 1400.6473237192695,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "SPY",
+        "weight": 0.05
+       },
+       {
+        "symbol": "AGG",
+        "weight": 0.35
+       },
+       {
+        "symbol": "LQD",
+        "weight": 0.05
+       },
+       {
+        "symbol": "CASH",
+        "weight": 0.05
+       },
+       {
+        "symbol": "IGSB",
+        "weight": 0.05
+       },
+       {
+        "symbol": "ORCL",
+        "weight": 0.1
+       },
+       {
+        "symbol": "MSFT",
+        "weight": 0.1
+       },
+       {
+        "symbol": "XLE",
+        "weight": 0.25
+       }
+      ]
+     },
+     {
+      "key": "AGG:0.35|CASH:0.05|IGSB:0.05|LQD:0.05|MSFT:0.1|ORCL:0.1|SHV:0.05|XLE:0.25",
+      "worstCertaintyEquivalent": 103494.5896268169,
+      "estimatedOpportunityLoss": 660.7345004522795,
+      "lowerOpportunityLoss": 112.74966917467827,
+      "upperOpportunityLoss": 1309.9527463654085,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "AGG",
+        "weight": 0.35
+       },
+       {
+        "symbol": "LQD",
+        "weight": 0.05
+       },
+       {
+        "symbol": "CASH",
+        "weight": 0.05
+       },
+       {
+        "symbol": "IGSB",
+        "weight": 0.05
+       },
+       {
+        "symbol": "SHV",
+        "weight": 0.05
+       },
+       {
+        "symbol": "ORCL",
+        "weight": 0.1
+       },
+       {
+        "symbol": "MSFT",
+        "weight": 0.1
+       },
+       {
+        "symbol": "XLE",
+        "weight": 0.25
+       }
+      ]
+     },
+     {
+      "key": "AGG:0.35|CASH:0.05|IGSB:0.05|LQD:0.05|MSFT:0.1|ORCL:0.1|SGOV:0.05|XLE:0.25",
+      "worstCertaintyEquivalent": 103491.30305079177,
+      "estimatedOpportunityLoss": 664.0210764774092,
+      "lowerOpportunityLoss": 116.20099737719283,
+      "upperOpportunityLoss": 1313.0880261841667,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "AGG",
+        "weight": 0.35
+       },
+       {
+        "symbol": "SGOV",
+        "weight": 0.05
+       },
+       {
+        "symbol": "LQD",
+        "weight": 0.05
+       },
+       {
+        "symbol": "CASH",
+        "weight": 0.05
+       },
+       {
+        "symbol": "IGSB",
+        "weight": 0.05
+       },
+       {
+        "symbol": "ORCL",
+        "weight": 0.1
+       },
+       {
+        "symbol": "MSFT",
+        "weight": 0.1
+       },
+       {
+        "symbol": "XLE",
+        "weight": 0.25
+       }
+      ]
+     },
+     {
+      "key": "AGG:0.35|CASH:0.05|IGSB:0.05|MSFT:0.1|ORCL:0.1|SGOV:0.05|SPY:0.05|XLE:0.25",
+      "worstCertaintyEquivalent": 103393.62650184923,
+      "estimatedOpportunityLoss": 761.6976254199544,
+      "lowerOpportunityLoss": 214.80027520626027,
+      "upperOpportunityLoss": 1431.0927392615558,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "SPY",
+        "weight": 0.05
+       },
+       {
+        "symbol": "AGG",
+        "weight": 0.35
+       },
+       {
+        "symbol": "SGOV",
+        "weight": 0.05
+       },
+       {
+        "symbol": "CASH",
+        "weight": 0.05
+       },
+       {
+        "symbol": "IGSB",
+        "weight": 0.05
+       },
+       {
+        "symbol": "ORCL",
+        "weight": 0.1
+       },
+       {
+        "symbol": "MSFT",
+        "weight": 0.1
+       },
+       {
+        "symbol": "XLE",
+        "weight": 0.25
+       }
+      ]
+     },
+     {
+      "key": "AGG:0.35|CASH:0.05|HON:0.05|MSFT:0.1|ORCL:0.1|SGOV:0.05|TIP:0.05|XLE:0.25",
+      "worstCertaintyEquivalent": 103428.6400849018,
+      "estimatedOpportunityLoss": 726.6840423673857,
+      "lowerOpportunityLoss": 175.95878371411527,
+      "upperOpportunityLoss": 1388.1020141278277,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "AGG",
+        "weight": 0.35
+       },
+       {
+        "symbol": "SGOV",
+        "weight": 0.05
+       },
+       {
+        "symbol": "CASH",
+        "weight": 0.05
+       },
+       {
+        "symbol": "TIP",
+        "weight": 0.05
+       },
+       {
+        "symbol": "ORCL",
+        "weight": 0.1
+       },
+       {
+        "symbol": "MSFT",
+        "weight": 0.1
+       },
+       {
+        "symbol": "XLE",
+        "weight": 0.25
+       },
+       {
+        "symbol": "HON",
+        "weight": 0.05
+       }
+      ]
+     },
+     {
+      "key": "AGG:0.2|CASH:0.05|GOOGL:0.15|HYG:0.1|IJR:0.05|LQD:0.3|META:0.15",
+      "worstCertaintyEquivalent": 103523.80750957668,
+      "estimatedOpportunityLoss": 631.5166176924977,
+      "lowerOpportunityLoss": 167.54457023568102,
+      "upperOpportunityLoss": 1245.6644954020157,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "AGG",
+        "weight": 0.2
+       },
+       {
+        "symbol": "LQD",
+        "weight": 0.3
+       },
+       {
+        "symbol": "HYG",
+        "weight": 0.1
+       },
+       {
+        "symbol": "CASH",
+        "weight": 0.05
+       },
+       {
+        "symbol": "IJR",
+        "weight": 0.05
+       },
+       {
+        "symbol": "GOOGL",
+        "weight": 0.15
+       },
+       {
+        "symbol": "META",
+        "weight": 0.15
+       }
+      ]
+     },
+     {
+      "key": "AGG:0.2|CASH:0.05|IEF:0.15|IEI:0.25|META:0.15|QQQ:0.15|SHY:0.05",
+      "worstCertaintyEquivalent": 103762.75871917976,
+      "estimatedOpportunityLoss": 392.56540808941645,
+      "lowerOpportunityLoss": 0,
+      "upperOpportunityLoss": 884.7153095762187,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "QQQ",
+        "weight": 0.15
+       },
+       {
+        "symbol": "SHY",
+        "weight": 0.05
+       },
+       {
+        "symbol": "AGG",
+        "weight": 0.2
+       },
+       {
+        "symbol": "IEF",
+        "weight": 0.15
+       },
+       {
+        "symbol": "CASH",
+        "weight": 0.05
+       },
+       {
+        "symbol": "IEI",
+        "weight": 0.25
+       },
+       {
+        "symbol": "META",
+        "weight": 0.15
+       }
+      ]
+     },
+     {
+      "key": "CASH:0.05|IGSB:0.35|SHV:0.25|SHY:0.35",
+      "worstCertaintyEquivalent": 104155.32412726918,
+      "estimatedOpportunityLoss": 0,
+      "lowerOpportunityLoss": 0,
+      "upperOpportunityLoss": 291.6220766276092,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "SHY",
+        "weight": 0.35
+       },
+       {
+        "symbol": "CASH",
+        "weight": 0.05
+       },
+       {
+        "symbol": "IGSB",
+        "weight": 0.35
+       },
+       {
+        "symbol": "SHV",
+        "weight": 0.25
+       }
+      ]
+     },
+     {
+      "key": "CASH:0.3|IGSB:0.35|SGOV:0.35",
+      "worstCertaintyEquivalent": 102987.94523862308,
+      "estimatedOpportunityLoss": 1167.378888646097,
+      "lowerOpportunityLoss": 1138.243717659585,
+      "upperOpportunityLoss": 1459.1056832454778,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "SGOV",
+        "weight": 0.35
+       },
+       {
+        "symbol": "CASH",
+        "weight": 0.3
+       },
+       {
+        "symbol": "IGSB",
+        "weight": 0.35
+       }
+      ]
+     },
+     {
+      "key": "CASH:0.05|IGSB:0.35|SGOV:0.35|TIP:0.25",
+      "worstCertaintyEquivalent": 104154.70068993565,
+      "estimatedOpportunityLoss": 0.6234373335464625,
+      "lowerOpportunityLoss": 0,
+      "upperOpportunityLoss": 318.26062462291156,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "SGOV",
+        "weight": 0.35
+       },
+       {
+        "symbol": "CASH",
+        "weight": 0.05
+       },
+       {
+        "symbol": "IGSB",
+        "weight": 0.35
+       },
+       {
+        "symbol": "TIP",
+        "weight": 0.25
+       }
+      ]
+     },
+     {
+      "key": "CASH:0.05|IGSB:0.35|SGOV:0.35|SHV:0.25",
+      "worstCertaintyEquivalent": 103958.16899556865,
+      "estimatedOpportunityLoss": 197.155131700536,
+      "lowerOpportunityLoss": 169.25344653673528,
+      "upperOpportunityLoss": 488.82186949545576,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "SGOV",
+        "weight": 0.35
+       },
+       {
+        "symbol": "CASH",
+        "weight": 0.05
+       },
+       {
+        "symbol": "IGSB",
+        "weight": 0.35
+       },
+       {
+        "symbol": "SHV",
+        "weight": 0.25
+       }
+      ]
+     },
+     {
+      "key": "CASH:0.3|IGSB:0.35|SHV:0.35",
+      "worstCertaintyEquivalent": 103010.90300128446,
+      "estimatedOpportunityLoss": 1144.4211259847216,
+      "lowerOpportunityLoss": 1116.0454463472415,
+      "upperOpportunityLoss": 1435.697010002521,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "CASH",
+        "weight": 0.3
+       },
+       {
+        "symbol": "IGSB",
+        "weight": 0.35
+       },
+       {
+        "symbol": "SHV",
+        "weight": 0.35
+       }
+      ]
+     },
+     {
+      "key": "CASH:0.05|LQD:0.35|SPY:0.35|TIP:0.25",
+      "worstCertaintyEquivalent": 104014.41956106803,
+      "estimatedOpportunityLoss": 140.90456620114855,
+      "lowerOpportunityLoss": 0,
+      "upperOpportunityLoss": 599.4413038720377,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "SPY",
+        "weight": 0.35
+       },
+       {
+        "symbol": "LQD",
+        "weight": 0.35
+       },
+       {
+        "symbol": "CASH",
+        "weight": 0.05
+       },
+       {
+        "symbol": "TIP",
+        "weight": 0.25
+       }
+      ]
+     }
+    ],
+    "scope": "Approximate simultaneous Monte Carlo bounds within this finite pool and these declared models. Plug-in monetary conversion; no parameter, predictive or global-optimality guarantee."
+   }
+  },
+  {
+   "seed": 1536675889,
+   "independentSeed": 770270119,
+   "trajectoryEvaluationsPerMethod": 2000,
+   "independentPairs": 1000,
+   "plain": {
+    "familySize": 36100,
+    "pointLeader": "CASH:0.05|IGSB:0.35|SHV:0.25|SHY:0.35",
+    "threshold": 100,
+    "rows": [
+     {
+      "key": "CASH:1",
+      "worstCertaintyEquivalent": 100000,
+      "estimatedOpportunityLoss": 4140.1410124199465,
+      "lowerOpportunityLoss": 3936.2889829440246,
+      "upperOpportunityLoss": 5279.889233571259,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "CASH",
+        "weight": 1
+       }
+      ]
+     },
+     {
+      "key": "AGG:0.1|CASH:0.05|LQD:0.15|MDT:0.15|META:0.15|ORCL:0.05|SGOV:0.25|VTI:0.1",
+      "worstCertaintyEquivalent": 103357.85831675978,
+      "estimatedOpportunityLoss": 782.2826956601639,
+      "lowerOpportunityLoss": 0,
+      "upperOpportunityLoss": 1973.6011858580605,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "VTI",
+        "weight": 0.1
+       },
+       {
+        "symbol": "AGG",
+        "weight": 0.1
+       },
+       {
+        "symbol": "SGOV",
+        "weight": 0.25
+       },
+       {
+        "symbol": "LQD",
+        "weight": 0.15
+       },
+       {
+        "symbol": "CASH",
+        "weight": 0.05
+       },
+       {
+        "symbol": "ORCL",
+        "weight": 0.05
+       },
+       {
+        "symbol": "META",
+        "weight": 0.15
+       },
+       {
+        "symbol": "MDT",
+        "weight": 0.15
+       }
+      ]
+     },
+     {
+      "key": "CASH:0.05|LQD:0.2|META:0.15|ORCL:0.1|SHY:0.2|TGT:0.15|TIP:0.1|VIG:0.05",
+      "worstCertaintyEquivalent": 103505.0652986297,
+      "estimatedOpportunityLoss": 635.0757137902401,
+      "lowerOpportunityLoss": 0,
+      "upperOpportunityLoss": 2016.8661090733076,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "SHY",
+        "weight": 0.2
+       },
+       {
+        "symbol": "LQD",
+        "weight": 0.2
+       },
+       {
+        "symbol": "CASH",
+        "weight": 0.05
+       },
+       {
+        "symbol": "TIP",
+        "weight": 0.1
+       },
+       {
+        "symbol": "ORCL",
+        "weight": 0.1
+       },
+       {
+        "symbol": "META",
+        "weight": 0.15
+       },
+       {
+        "symbol": "TGT",
+        "weight": 0.15
+       },
+       {
+        "symbol": "VIG",
+        "weight": 0.05
+       }
+      ]
+     },
+     {
+      "key": "CASH:0.65|SHV:0.2|SHY:0.15",
+      "worstCertaintyEquivalent": 101432.97884256401,
+      "estimatedOpportunityLoss": 2707.162169855932,
+      "lowerOpportunityLoss": 2542.3737890061893,
+      "upperOpportunityLoss": 3839.626219047481,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "SHY",
+        "weight": 0.15
+       },
+       {
+        "symbol": "CASH",
+        "weight": 0.65
+       },
+       {
+        "symbol": "SHV",
+        "weight": 0.2
+       }
+      ]
+     },
+     {
+      "key": "CASH:0.05|HYG:0.15|IEF:0.15|LQD:0.15|META:0.15|TIP:0.2|VUG:0.15",
+      "worstCertaintyEquivalent": 103525.71024865098,
+      "estimatedOpportunityLoss": 614.4307637689635,
+      "lowerOpportunityLoss": 0,
+      "upperOpportunityLoss": 1745.5202186069655,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "IEF",
+        "weight": 0.15
+       },
+       {
+        "symbol": "LQD",
+        "weight": 0.15
+       },
+       {
+        "symbol": "HYG",
+        "weight": 0.15
+       },
+       {
+        "symbol": "CASH",
+        "weight": 0.05
+       },
+       {
+        "symbol": "TIP",
+        "weight": 0.2
+       },
+       {
+        "symbol": "META",
+        "weight": 0.15
+       },
+       {
+        "symbol": "VUG",
+        "weight": 0.15
+       }
+      ]
+     },
+     {
+      "key": "CASH:0.05|MDT:0.05|META:0.1|ORCL:0.05|SHV:0.35|SPY:0.05|TLT:0.1|VTI:0.25",
+      "worstCertaintyEquivalent": 103306.06619396339,
+      "estimatedOpportunityLoss": 834.07481845656,
+      "lowerOpportunityLoss": 0,
+      "upperOpportunityLoss": 2038.4381291756144,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "SPY",
+        "weight": 0.05
+       },
+       {
+        "symbol": "TLT",
+        "weight": 0.1
+       },
+       {
+        "symbol": "VTI",
+        "weight": 0.25
+       },
+       {
+        "symbol": "CASH",
+        "weight": 0.05
+       },
+       {
+        "symbol": "SHV",
+        "weight": 0.35
+       },
+       {
+        "symbol": "ORCL",
+        "weight": 0.05
+       },
+       {
+        "symbol": "META",
+        "weight": 0.1
+       },
+       {
+        "symbol": "MDT",
+        "weight": 0.05
+       }
+      ]
+     },
+     {
+      "key": "AGG:0.35|CASH:0.05|IGSB:0.05|LQD:0.05|MSFT:0.1|ORCL:0.1|SPY:0.05|XLE:0.25",
+      "worstCertaintyEquivalent": 103933.60123527073,
+      "estimatedOpportunityLoss": 206.53977714921348,
+      "lowerOpportunityLoss": 0,
+      "upperOpportunityLoss": 1520.7560374906607,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "SPY",
+        "weight": 0.05
+       },
+       {
+        "symbol": "AGG",
+        "weight": 0.35
+       },
+       {
+        "symbol": "LQD",
+        "weight": 0.05
+       },
+       {
+        "symbol": "CASH",
+        "weight": 0.05
+       },
+       {
+        "symbol": "IGSB",
+        "weight": 0.05
+       },
+       {
+        "symbol": "ORCL",
+        "weight": 0.1
+       },
+       {
+        "symbol": "MSFT",
+        "weight": 0.1
+       },
+       {
+        "symbol": "XLE",
+        "weight": 0.25
+       }
+      ]
+     },
+     {
+      "key": "AGG:0.35|CASH:0.05|IGSB:0.05|LQD:0.05|MSFT:0.1|ORCL:0.1|SHV:0.05|XLE:0.25",
+      "worstCertaintyEquivalent": 103976.40345918215,
+      "estimatedOpportunityLoss": 163.73755323779187,
+      "lowerOpportunityLoss": 0,
+      "upperOpportunityLoss": 1415.4458982475771,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "AGG",
+        "weight": 0.35
+       },
+       {
+        "symbol": "LQD",
+        "weight": 0.05
+       },
+       {
+        "symbol": "CASH",
+        "weight": 0.05
+       },
+       {
+        "symbol": "IGSB",
+        "weight": 0.05
+       },
+       {
+        "symbol": "SHV",
+        "weight": 0.05
+       },
+       {
+        "symbol": "ORCL",
+        "weight": 0.1
+       },
+       {
+        "symbol": "MSFT",
+        "weight": 0.1
+       },
+       {
+        "symbol": "XLE",
+        "weight": 0.25
+       }
+      ]
+     },
+     {
+      "key": "AGG:0.35|CASH:0.05|IGSB:0.05|LQD:0.05|MSFT:0.1|ORCL:0.1|SGOV:0.05|XLE:0.25",
+      "worstCertaintyEquivalent": 103973.28041548273,
+      "estimatedOpportunityLoss": 166.86059693721472,
+      "lowerOpportunityLoss": 1.6713463687483454,
+      "upperOpportunityLoss": 1418.6974560896633,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "AGG",
+        "weight": 0.35
+       },
+       {
+        "symbol": "SGOV",
+        "weight": 0.05
+       },
+       {
+        "symbol": "LQD",
+        "weight": 0.05
+       },
+       {
+        "symbol": "CASH",
+        "weight": 0.05
+       },
+       {
+        "symbol": "IGSB",
+        "weight": 0.05
+       },
+       {
+        "symbol": "ORCL",
+        "weight": 0.1
+       },
+       {
+        "symbol": "MSFT",
+        "weight": 0.1
+       },
+       {
+        "symbol": "XLE",
+        "weight": 0.25
+       }
+      ]
+     },
+     {
+      "key": "AGG:0.35|CASH:0.05|IGSB:0.05|MSFT:0.1|ORCL:0.1|SGOV:0.05|SPY:0.05|XLE:0.25",
+      "worstCertaintyEquivalent": 103884.71936366001,
+      "estimatedOpportunityLoss": 255.4216487599333,
+      "lowerOpportunityLoss": 0,
+      "upperOpportunityLoss": 1562.7344769710035,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "SPY",
+        "weight": 0.05
+       },
+       {
+        "symbol": "AGG",
+        "weight": 0.35
+       },
+       {
+        "symbol": "SGOV",
+        "weight": 0.05
+       },
+       {
+        "symbol": "CASH",
+        "weight": 0.05
+       },
+       {
+        "symbol": "IGSB",
+        "weight": 0.05
+       },
+       {
+        "symbol": "ORCL",
+        "weight": 0.1
+       },
+       {
+        "symbol": "MSFT",
+        "weight": 0.1
+       },
+       {
+        "symbol": "XLE",
+        "weight": 0.25
+       }
+      ]
+     },
+     {
+      "key": "AGG:0.35|CASH:0.05|HON:0.05|MSFT:0.1|ORCL:0.1|SGOV:0.05|TIP:0.05|XLE:0.25",
+      "worstCertaintyEquivalent": 103908.32729538495,
+      "estimatedOpportunityLoss": 231.81371703499462,
+      "lowerOpportunityLoss": 0,
+      "upperOpportunityLoss": 1508.2392936275282,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "AGG",
+        "weight": 0.35
+       },
+       {
+        "symbol": "SGOV",
+        "weight": 0.05
+       },
+       {
+        "symbol": "CASH",
+        "weight": 0.05
+       },
+       {
+        "symbol": "TIP",
+        "weight": 0.05
+       },
+       {
+        "symbol": "ORCL",
+        "weight": 0.1
+       },
+       {
+        "symbol": "MSFT",
+        "weight": 0.1
+       },
+       {
+        "symbol": "XLE",
+        "weight": 0.25
+       },
+       {
+        "symbol": "HON",
+        "weight": 0.05
+       }
+      ]
+     },
+     {
+      "key": "AGG:0.2|CASH:0.05|GOOGL:0.15|HYG:0.1|IJR:0.05|LQD:0.3|META:0.15",
+      "worstCertaintyEquivalent": 103669.16676472488,
+      "estimatedOpportunityLoss": 470.97424769506324,
+      "lowerOpportunityLoss": 0,
+      "upperOpportunityLoss": 1767.3699349125382,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "AGG",
+        "weight": 0.2
+       },
+       {
+        "symbol": "LQD",
+        "weight": 0.3
+       },
+       {
+        "symbol": "HYG",
+        "weight": 0.1
+       },
+       {
+        "symbol": "CASH",
+        "weight": 0.05
+       },
+       {
+        "symbol": "IJR",
+        "weight": 0.05
+       },
+       {
+        "symbol": "GOOGL",
+        "weight": 0.15
+       },
+       {
+        "symbol": "META",
+        "weight": 0.15
+       }
+      ]
+     },
+     {
+      "key": "AGG:0.2|CASH:0.05|IEF:0.15|IEI:0.25|META:0.15|QQQ:0.15|SHY:0.05",
+      "worstCertaintyEquivalent": 103700.42868615351,
+      "estimatedOpportunityLoss": 439.71232626643905,
+      "lowerOpportunityLoss": 0,
+      "upperOpportunityLoss": 1578.2862136711483,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "QQQ",
+        "weight": 0.15
+       },
+       {
+        "symbol": "SHY",
+        "weight": 0.05
+       },
+       {
+        "symbol": "AGG",
+        "weight": 0.2
+       },
+       {
+        "symbol": "IEF",
+        "weight": 0.15
+       },
+       {
+        "symbol": "CASH",
+        "weight": 0.05
+       },
+       {
+        "symbol": "IEI",
+        "weight": 0.25
+       },
+       {
+        "symbol": "META",
+        "weight": 0.15
+       }
+      ]
+     },
+     {
+      "key": "CASH:0.05|IGSB:0.35|SHV:0.25|SHY:0.35",
+      "worstCertaintyEquivalent": 104140.14101241995,
+      "estimatedOpportunityLoss": 0,
+      "lowerOpportunityLoss": 0,
+      "upperOpportunityLoss": 1096.0658815139614,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "SHY",
+        "weight": 0.35
+       },
+       {
+        "symbol": "CASH",
+        "weight": 0.05
+       },
+       {
+        "symbol": "IGSB",
+        "weight": 0.35
+       },
+       {
+        "symbol": "SHV",
+        "weight": 0.25
+       }
+      ]
+     },
+     {
+      "key": "CASH:0.3|IGSB:0.35|SGOV:0.35",
+      "worstCertaintyEquivalent": 102982.60022263227,
+      "estimatedOpportunityLoss": 1157.540789787672,
+      "lowerOpportunityLoss": 1064.9565915545681,
+      "upperOpportunityLoss": 2257.2951864563947,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "SGOV",
+        "weight": 0.35
+       },
+       {
+        "symbol": "CASH",
+        "weight": 0.3
+       },
+       {
+        "symbol": "IGSB",
+        "weight": 0.35
+       }
+      ]
+     },
+     {
+      "key": "CASH:0.05|IGSB:0.35|SGOV:0.35|TIP:0.25",
+      "worstCertaintyEquivalent": 104119.52355569624,
+      "estimatedOpportunityLoss": 20.61745672370307,
+      "lowerOpportunityLoss": 0,
+      "upperOpportunityLoss": 1146.527834233857,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "SGOV",
+        "weight": 0.35
+       },
+       {
+        "symbol": "CASH",
+        "weight": 0.05
+       },
+       {
+        "symbol": "IGSB",
+        "weight": 0.35
+       },
+       {
+        "symbol": "TIP",
+        "weight": 0.25
+       }
+      ]
+     },
+     {
+      "key": "CASH:0.05|IGSB:0.35|SGOV:0.35|SHV:0.25",
+      "worstCertaintyEquivalent": 103952.29638839747,
+      "estimatedOpportunityLoss": 187.844624022473,
+      "lowerOpportunityLoss": 101.11191760473594,
+      "upperOpportunityLoss": 1286.2079599676945,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "SGOV",
+        "weight": 0.35
+       },
+       {
+        "symbol": "CASH",
+        "weight": 0.05
+       },
+       {
+        "symbol": "IGSB",
+        "weight": 0.35
+       },
+       {
+        "symbol": "SHV",
+        "weight": 0.25
+       }
+      ]
+     },
+     {
+      "key": "CASH:0.3|IGSB:0.35|SHV:0.35",
+      "worstCertaintyEquivalent": 103004.00298330138,
+      "estimatedOpportunityLoss": 1136.1380291185633,
+      "lowerOpportunityLoss": 1050.7970163918653,
+      "upperOpportunityLoss": 2236.4698987498414,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "CASH",
+        "weight": 0.3
+       },
+       {
+        "symbol": "IGSB",
+        "weight": 0.35
+       },
+       {
+        "symbol": "SHV",
+        "weight": 0.35
+       }
+      ]
+     },
+     {
+      "key": "CASH:0.05|LQD:0.35|SPY:0.35|TIP:0.25",
+      "worstCertaintyEquivalent": 104034.26155664226,
+      "estimatedOpportunityLoss": 105.87945577768551,
+      "lowerOpportunityLoss": 0,
+      "upperOpportunityLoss": 1085.5107970606914,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "SPY",
+        "weight": 0.35
+       },
+       {
+        "symbol": "LQD",
+        "weight": 0.35
+       },
+       {
+        "symbol": "CASH",
+        "weight": 0.05
+       },
+       {
+        "symbol": "TIP",
+        "weight": 0.25
+       }
+      ]
+     }
+    ],
+    "scope": "Approximate simultaneous Monte Carlo bounds within this finite pool and these declared models. Plug-in monetary conversion; no parameter, predictive or global-optimality guarantee."
+   },
+   "antithetic": {
+    "familySize": 36100,
+    "pointLeader": "CASH:0.05|IGSB:0.35|SHV:0.25|SHY:0.35",
+    "threshold": 100,
+    "rows": [
+     {
+      "key": "CASH:1",
+      "worstCertaintyEquivalent": 100000,
+      "estimatedOpportunityLoss": 4173.860916223566,
+      "lowerOpportunityLoss": 4114.670920021774,
+      "upperOpportunityLoss": 4661.578607862713,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "CASH",
+        "weight": 1
+       }
+      ]
+     },
+     {
+      "key": "AGG:0.1|CASH:0.05|LQD:0.15|MDT:0.15|META:0.15|ORCL:0.05|SGOV:0.25|VTI:0.1",
+      "worstCertaintyEquivalent": 103599.55482766831,
+      "estimatedOpportunityLoss": 574.306088555255,
+      "lowerOpportunityLoss": 159.44389621946902,
+      "upperOpportunityLoss": 1224.3313072184246,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "VTI",
+        "weight": 0.1
+       },
+       {
+        "symbol": "AGG",
+        "weight": 0.1
+       },
+       {
+        "symbol": "SGOV",
+        "weight": 0.25
+       },
+       {
+        "symbol": "LQD",
+        "weight": 0.15
+       },
+       {
+        "symbol": "CASH",
+        "weight": 0.05
+       },
+       {
+        "symbol": "ORCL",
+        "weight": 0.05
+       },
+       {
+        "symbol": "META",
+        "weight": 0.15
+       },
+       {
+        "symbol": "MDT",
+        "weight": 0.15
+       }
+      ]
+     },
+     {
+      "key": "CASH:0.05|LQD:0.2|META:0.15|ORCL:0.1|SHY:0.2|TGT:0.15|TIP:0.1|VIG:0.05",
+      "worstCertaintyEquivalent": 103530.53272294914,
+      "estimatedOpportunityLoss": 643.3281932744285,
+      "lowerOpportunityLoss": 88.20581087749451,
+      "upperOpportunityLoss": 1385.4493092268385,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "SHY",
+        "weight": 0.2
+       },
+       {
+        "symbol": "LQD",
+        "weight": 0.2
+       },
+       {
+        "symbol": "CASH",
+        "weight": 0.05
+       },
+       {
+        "symbol": "TIP",
+        "weight": 0.1
+       },
+       {
+        "symbol": "ORCL",
+        "weight": 0.1
+       },
+       {
+        "symbol": "META",
+        "weight": 0.15
+       },
+       {
+        "symbol": "TGT",
+        "weight": 0.15
+       },
+       {
+        "symbol": "VIG",
+        "weight": 0.05
+       }
+      ]
+     },
+     {
+      "key": "CASH:0.65|SHV:0.2|SHY:0.15",
+      "worstCertaintyEquivalent": 101437.7436332338,
+      "estimatedOpportunityLoss": 2736.1172829897696,
+      "lowerOpportunityLoss": 2697.8287368299207,
+      "upperOpportunityLoss": 3220.183873900387,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "SHY",
+        "weight": 0.15
+       },
+       {
+        "symbol": "CASH",
+        "weight": 0.65
+       },
+       {
+        "symbol": "SHV",
+        "weight": 0.2
+       }
+      ]
+     },
+     {
+      "key": "CASH:0.05|HYG:0.15|IEF:0.15|LQD:0.15|META:0.15|TIP:0.2|VUG:0.15",
+      "worstCertaintyEquivalent": 103777.6033521719,
+      "estimatedOpportunityLoss": 396.2575640516734,
+      "lowerOpportunityLoss": 39.01194061167189,
+      "upperOpportunityLoss": 909.6194990455406,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "IEF",
+        "weight": 0.15
+       },
+       {
+        "symbol": "LQD",
+        "weight": 0.15
+       },
+       {
+        "symbol": "HYG",
+        "weight": 0.15
+       },
+       {
+        "symbol": "CASH",
+        "weight": 0.05
+       },
+       {
+        "symbol": "TIP",
+        "weight": 0.2
+       },
+       {
+        "symbol": "META",
+        "weight": 0.15
+       },
+       {
+        "symbol": "VUG",
+        "weight": 0.15
+       }
+      ]
+     },
+     {
+      "key": "CASH:0.05|MDT:0.05|META:0.1|ORCL:0.05|SHV:0.35|SPY:0.05|TLT:0.1|VTI:0.25",
+      "worstCertaintyEquivalent": 103434.34558861908,
+      "estimatedOpportunityLoss": 739.5153276044875,
+      "lowerOpportunityLoss": 422.46193039826176,
+      "upperOpportunityLoss": 1318.2155287663627,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "SPY",
+        "weight": 0.05
+       },
+       {
+        "symbol": "TLT",
+        "weight": 0.1
+       },
+       {
+        "symbol": "VTI",
+        "weight": 0.25
+       },
+       {
+        "symbol": "CASH",
+        "weight": 0.05
+       },
+       {
+        "symbol": "SHV",
+        "weight": 0.35
+       },
+       {
+        "symbol": "ORCL",
+        "weight": 0.05
+       },
+       {
+        "symbol": "META",
+        "weight": 0.1
+       },
+       {
+        "symbol": "MDT",
+        "weight": 0.05
+       }
+      ]
+     },
+     {
+      "key": "AGG:0.35|CASH:0.05|IGSB:0.05|LQD:0.05|MSFT:0.1|ORCL:0.1|SPY:0.05|XLE:0.25",
+      "worstCertaintyEquivalent": 103633.57636427275,
+      "estimatedOpportunityLoss": 540.2845519508119,
+      "lowerOpportunityLoss": 98.97749486204702,
+      "upperOpportunityLoss": 1246.4041947936057,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "SPY",
+        "weight": 0.05
+       },
+       {
+        "symbol": "AGG",
+        "weight": 0.35
+       },
+       {
+        "symbol": "LQD",
+        "weight": 0.05
+       },
+       {
+        "symbol": "CASH",
+        "weight": 0.05
+       },
+       {
+        "symbol": "IGSB",
+        "weight": 0.05
+       },
+       {
+        "symbol": "ORCL",
+        "weight": 0.1
+       },
+       {
+        "symbol": "MSFT",
+        "weight": 0.1
+       },
+       {
+        "symbol": "XLE",
+        "weight": 0.25
+       }
+      ]
+     },
+     {
+      "key": "AGG:0.35|CASH:0.05|IGSB:0.05|LQD:0.05|MSFT:0.1|ORCL:0.1|SHV:0.05|XLE:0.25",
+      "worstCertaintyEquivalent": 103667.3716417377,
+      "estimatedOpportunityLoss": 506.4892744858662,
+      "lowerOpportunityLoss": 72.69536079454701,
+      "upperOpportunityLoss": 1171.3575670096907,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "AGG",
+        "weight": 0.35
+       },
+       {
+        "symbol": "LQD",
+        "weight": 0.05
+       },
+       {
+        "symbol": "CASH",
+        "weight": 0.05
+       },
+       {
+        "symbol": "IGSB",
+        "weight": 0.05
+       },
+       {
+        "symbol": "SHV",
+        "weight": 0.05
+       },
+       {
+        "symbol": "ORCL",
+        "weight": 0.1
+       },
+       {
+        "symbol": "MSFT",
+        "weight": 0.1
+       },
+       {
+        "symbol": "XLE",
+        "weight": 0.25
+       }
+      ]
+     },
+     {
+      "key": "AGG:0.35|CASH:0.05|IGSB:0.05|LQD:0.05|MSFT:0.1|ORCL:0.1|SGOV:0.05|XLE:0.25",
+      "worstCertaintyEquivalent": 103664.04127657511,
+      "estimatedOpportunityLoss": 509.81963964845636,
+      "lowerOpportunityLoss": 76.1606300463609,
+      "upperOpportunityLoss": 1174.5504412957089,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "AGG",
+        "weight": 0.35
+       },
+       {
+        "symbol": "SGOV",
+        "weight": 0.05
+       },
+       {
+        "symbol": "LQD",
+        "weight": 0.05
+       },
+       {
+        "symbol": "CASH",
+        "weight": 0.05
+       },
+       {
+        "symbol": "IGSB",
+        "weight": 0.05
+       },
+       {
+        "symbol": "ORCL",
+        "weight": 0.1
+       },
+       {
+        "symbol": "MSFT",
+        "weight": 0.1
+       },
+       {
+        "symbol": "XLE",
+        "weight": 0.25
+       }
+      ]
+     },
+     {
+      "key": "AGG:0.35|CASH:0.05|IGSB:0.05|MSFT:0.1|ORCL:0.1|SGOV:0.05|SPY:0.05|XLE:0.25",
+      "worstCertaintyEquivalent": 103576.45286378183,
+      "estimatedOpportunityLoss": 597.4080524417368,
+      "lowerOpportunityLoss": 162.98813618317945,
+      "upperOpportunityLoss": 1284.075592791938,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "SPY",
+        "weight": 0.05
+       },
+       {
+        "symbol": "AGG",
+        "weight": 0.35
+       },
+       {
+        "symbol": "SGOV",
+        "weight": 0.05
+       },
+       {
+        "symbol": "CASH",
+        "weight": 0.05
+       },
+       {
+        "symbol": "IGSB",
+        "weight": 0.05
+       },
+       {
+        "symbol": "ORCL",
+        "weight": 0.1
+       },
+       {
+        "symbol": "MSFT",
+        "weight": 0.1
+       },
+       {
+        "symbol": "XLE",
+        "weight": 0.25
+       }
+      ]
+     },
+     {
+      "key": "AGG:0.35|CASH:0.05|HON:0.05|MSFT:0.1|ORCL:0.1|SGOV:0.05|TIP:0.05|XLE:0.25",
+      "worstCertaintyEquivalent": 103591.2076073403,
+      "estimatedOpportunityLoss": 582.6533088832657,
+      "lowerOpportunityLoss": 149.21669138043944,
+      "upperOpportunityLoss": 1259.0303702715319,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "AGG",
+        "weight": 0.35
+       },
+       {
+        "symbol": "SGOV",
+        "weight": 0.05
+       },
+       {
+        "symbol": "CASH",
+        "weight": 0.05
+       },
+       {
+        "symbol": "TIP",
+        "weight": 0.05
+       },
+       {
+        "symbol": "ORCL",
+        "weight": 0.1
+       },
+       {
+        "symbol": "MSFT",
+        "weight": 0.1
+       },
+       {
+        "symbol": "XLE",
+        "weight": 0.25
+       },
+       {
+        "symbol": "HON",
+        "weight": 0.05
+       }
+      ]
+     },
+     {
+      "key": "AGG:0.2|CASH:0.05|GOOGL:0.15|HYG:0.1|IJR:0.05|LQD:0.3|META:0.15",
+      "worstCertaintyEquivalent": 103846.42411893807,
+      "estimatedOpportunityLoss": 327.43679728546704,
+      "lowerOpportunityLoss": 0,
+      "upperOpportunityLoss": 978.6586158296413,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "AGG",
+        "weight": 0.2
+       },
+       {
+        "symbol": "LQD",
+        "weight": 0.3
+       },
+       {
+        "symbol": "HYG",
+        "weight": 0.1
+       },
+       {
+        "symbol": "CASH",
+        "weight": 0.05
+       },
+       {
+        "symbol": "IJR",
+        "weight": 0.05
+       },
+       {
+        "symbol": "GOOGL",
+        "weight": 0.15
+       },
+       {
+        "symbol": "META",
+        "weight": 0.15
+       }
+      ]
+     },
+     {
+      "key": "AGG:0.2|CASH:0.05|IEF:0.15|IEI:0.25|META:0.15|QQQ:0.15|SHY:0.05",
+      "worstCertaintyEquivalent": 103944.04242692597,
+      "estimatedOpportunityLoss": 229.81848929759872,
+      "lowerOpportunityLoss": 0,
+      "upperOpportunityLoss": 748.3978646501782,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "QQQ",
+        "weight": 0.15
+       },
+       {
+        "symbol": "SHY",
+        "weight": 0.05
+       },
+       {
+        "symbol": "AGG",
+        "weight": 0.2
+       },
+       {
+        "symbol": "IEF",
+        "weight": 0.15
+       },
+       {
+        "symbol": "CASH",
+        "weight": 0.05
+       },
+       {
+        "symbol": "IEI",
+        "weight": 0.25
+       },
+       {
+        "symbol": "META",
+        "weight": 0.15
+       }
+      ]
+     },
+     {
+      "key": "CASH:0.05|IGSB:0.35|SHV:0.25|SHY:0.35",
+      "worstCertaintyEquivalent": 104173.86091622357,
+      "estimatedOpportunityLoss": 0,
+      "lowerOpportunityLoss": 0,
+      "upperOpportunityLoss": 431.90135911614925,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "SHY",
+        "weight": 0.35
+       },
+       {
+        "symbol": "CASH",
+        "weight": 0.05
+       },
+       {
+        "symbol": "IGSB",
+        "weight": 0.35
+       },
+       {
+        "symbol": "SHV",
+        "weight": 0.25
+       }
+      ]
+     },
+     {
+      "key": "CASH:0.3|IGSB:0.35|SGOV:0.35",
+      "worstCertaintyEquivalent": 103005.13258177502,
+      "estimatedOpportunityLoss": 1168.7283344485186,
+      "lowerOpportunityLoss": 1131.13683214692,
+      "upperOpportunityLoss": 1601.145754186684,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "SGOV",
+        "weight": 0.35
+       },
+       {
+        "symbol": "CASH",
+        "weight": 0.3
+       },
+       {
+        "symbol": "IGSB",
+        "weight": 0.35
+       }
+      ]
+     },
+     {
+      "key": "CASH:0.05|IGSB:0.35|SGOV:0.35|TIP:0.25",
+      "worstCertaintyEquivalent": 104164.89117424746,
+      "estimatedOpportunityLoss": 8.969741976106889,
+      "lowerOpportunityLoss": 0,
+      "upperOpportunityLoss": 467.6401227776805,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "SGOV",
+        "weight": 0.35
+       },
+       {
+        "symbol": "CASH",
+        "weight": 0.05
+       },
+       {
+        "symbol": "IGSB",
+        "weight": 0.35
+       },
+       {
+        "symbol": "TIP",
+        "weight": 0.25
+       }
+      ]
+     },
+     {
+      "key": "CASH:0.05|IGSB:0.35|SGOV:0.35|SHV:0.25",
+      "worstCertaintyEquivalent": 103975.48673379928,
+      "estimatedOpportunityLoss": 198.37418242428976,
+      "lowerOpportunityLoss": 161.9903160118556,
+      "upperOpportunityLoss": 630.7335382837628,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "SGOV",
+        "weight": 0.35
+       },
+       {
+        "symbol": "CASH",
+        "weight": 0.05
+       },
+       {
+        "symbol": "IGSB",
+        "weight": 0.35
+       },
+       {
+        "symbol": "SHV",
+        "weight": 0.25
+       }
+      ]
+     },
+     {
+      "key": "CASH:0.3|IGSB:0.35|SHV:0.35",
+      "worstCertaintyEquivalent": 103028.17109600398,
+      "estimatedOpportunityLoss": 1145.689820219588,
+      "lowerOpportunityLoss": 1108.8245681732515,
+      "upperOpportunityLoss": 1577.6461388263997,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "CASH",
+        "weight": 0.3
+       },
+       {
+        "symbol": "IGSB",
+        "weight": 0.35
+       },
+       {
+        "symbol": "SHV",
+        "weight": 0.35
+       }
+      ]
+     },
+     {
+      "key": "CASH:0.05|LQD:0.35|SPY:0.35|TIP:0.25",
+      "worstCertaintyEquivalent": 104160.78552478211,
+      "estimatedOpportunityLoss": 13.075391441452666,
+      "lowerOpportunityLoss": 0,
+      "upperOpportunityLoss": 475.87001625687117,
+      "resolvedWithinThreshold": false,
+      "positions": [
+       {
+        "symbol": "SPY",
+        "weight": 0.35
+       },
+       {
+        "symbol": "LQD",
+        "weight": 0.35
+       },
+       {
+        "symbol": "CASH",
+        "weight": 0.05
+       },
+       {
+        "symbol": "TIP",
+        "weight": 0.25
+       }
+      ]
+     }
+    ],
+    "scope": "Approximate simultaneous Monte Carlo bounds within this finite pool and these declared models. Plug-in monetary conversion; no parameter, predictive or global-optimality guarantee."
+   }
+  }
+ ],
+ "production_eligible": false,
+ "prospective": false,
+ "automatic_promotion": false,
+ "scope": "Same marginal law: reflect independent Gaussian primitives and uniform regime/jump draws; update each variance path separately. Error uses independent pair means, not 2n independent paths. Fixed ex-post pool, same marginal payoff-evaluation budget. Plain and antithetic estimates share one arm. No risk probabilities or CVaR are estimated from pair means. No evidence of parameter calibration, predictive skill, constrained/global optimum, or net market performance.",
+ "hashes": {
+  "dist/data/market.json": "51b818b130765be9d3906dedf5d978446de51c44cde19588159a079dd3370415",
+  "dist/data/volatility.json": "2b577f7ef219f5077c1a181bc2760a70d6c5e953488efcd3588173ef03ac494f",
+  "dist/assets/js/path-model.mjs": "5257972822683cc807a67dfd19c7cdd1f02026bbfbb3f7bce405904af91076f7",
+  "scripts/antithetic_selection_research.mjs": "095884edfe3aa53885c24f02719e1b7bb26fff01ee88f1d1a19d44d5711ad401",
+  "scripts/pool_opportunity_audit.mjs": "f7e06e90c49574a08738981916630d520614fe2e8f5869e8ec8a13dbb3243424",
+  "docs/auditorias/policy-pool-0.34.1.json": "c0a6edfcf5162307c0709ae18832c4f3180eb09ecfdb1318c25603f8f82da0ff",
+  "docs/auditorias/allocation-cuts-0.35.0.json": "93750090c082422c9516753a6904058d5464f922c9543616eaee32656af9e3c6"
+ },
+ "default_parity": {
+  "baseline": "1ffeb475833f8878f5cfe3657d4f4f995aeddb90",
+  "rows": [
+   {
+    "dynamic": false,
+    "uncertain": false,
+    "identical": true,
+    "sha256": "0de37c2bffb92f528e901a7530c480cd528e6c397285138bff5810ed2af342a5"
+   },
+   {
+    "dynamic": false,
+    "uncertain": true,
+    "identical": true,
+    "sha256": "a0ef293f6732a0b86cd0d8dfd2a7a0fc44528e00a4c24d68bdf746a921707280"
+   },
+   {
+    "dynamic": true,
+    "uncertain": false,
+    "identical": true,
+    "sha256": "59583f6ca9927c0186af0cf1b976ee9b1fd386d09a0dfe7d3309ce3fd2f13074"
+   },
+   {
+    "dynamic": true,
+    "uncertain": true,
+    "identical": true,
+    "sha256": "7485b61e93a12f5a7e073061163d937fd97c53db8145623fa1695bb67fe31687"
+   }
+  ]
+ },
+ "market_git_commit": "1ffeb475833f8878f5cfe3657d4f4f995aeddb90"
+}

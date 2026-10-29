@@ -8,6 +8,8 @@ on:
     branches: [main]
     paths:
       - 'scripts/pool_opportunity_audit.mjs'
+      - 'scripts/antithetic_selection_research.mjs'
+      - 'tests/antithetic-selection.test.mjs'
       - 'tests/pool-opportunity.test.mjs'
       - 'docs/auditorias/policy-pool-0.34.1.json'
       - 'docs/auditorias/allocation-cuts-0.35.0.json'
@@ -33,10 +35,14 @@ jobs:
       - run: node --test tests/pool-opportunity.test.mjs
       - name: Freeze and assess every alternative with two predeclared seeds
         run: node scripts/pool_opportunity_audit.mjs
+      - name: Compare ordinary and antithetic estimates at equal payoff cost
+        run: node scripts/antithetic_selection_research.mjs
       - name: Preserve uncertainty without authorizing trades
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: finite-pool-opportunity
-          path: out/pool-opportunity-audit.json
+          path: |
+            out/pool-opportunity-audit.json
+            out/antithetic-selection.json
           retention-days: 90

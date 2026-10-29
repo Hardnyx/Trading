@@ -222,6 +222,11 @@ Este archivo lista **solo lo que falta**. Para el funcionamiento, consultar
     al umbral USD 100. Ninguna cesta resuelve ese umbral. Se cuantifica esa
     incertidumbre de Monte Carlo aproximada; falta reducirla y extenderla
     a búsqueda y parámetros. Véase `auditoria-incertidumbre-seleccion-0.35.md`.
+    Un ensayo antitético reduce las cotas mínimas a USD 292/432 con igual
+    coste de evaluaciones, todavía sobre USD 100. Queda en sombra; faltan
+    cortes, mandatos y comparación con mayor presupuesto independiente
+    antes de incorporarlo a selección o confirmación. Véase
+    `auditoria-reduccion-ruido-0.35.md`.
     También falta atribuir cada cambio importante a datos, corrección
     o evidencia. La coincidencia de semillas con la política nueva no prueba
     que los pesos estén identificados ni que generen mejores retornos.

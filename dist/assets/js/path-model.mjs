@@ -234,13 +234,16 @@ export function jumpParameters(asset, anchor, options, regime) {
   };
 }
 export const PRICE_KERNEL_VERSION = '1.0.0';
-export function generatePaths(inputs, paths, seed, stepsPerYear = 52, { maxSteps = null } = {}) {
+export function generatePaths(inputs, paths, seed, stepsPerYear = 52, { maxSteps = null, researchMirror = false } = {}) {
   if (!Number.isInteger(paths) || paths < 100 || paths > 15000)
     throw new Error("Cantidad de escenarios fuera de rango.");
   const { assets, covariance, anchors } = inputs, options = pathSettings(inputs.options),
     n = assets.length, H = options.horizon,
     plannedSteps = Math.max(1, Math.ceil(stepsPerYear * H)),
     steps = maxSteps === null ? plannedSteps : Math.min(plannedSteps, maxSteps), dt = H / plannedSteps;
+  if(typeof researchMirror!=='boolean'||(researchMirror&&options.researchShadowMode!==true))throw new Error('El espejo antitético requiere investigación explícita');
+  const signedNormal=random=>{const draw=normalGenerator(random);return researchMirror?()=>-draw():draw;},
+    randomFor=name=>{const draw=namedRandom(seed,name);return researchMirror?()=>1-1/4294967296-draw():draw;};
   if(!Number.isInteger(steps)||steps<1)throw new Error('Prefijo de simulación inválido');
   if (n * (steps + 1) * paths > 35000000)
     throw new Error("Reduce las trayectorias o el horizonte para esta cantidad de activos.");
@@ -260,10 +263,10 @@ export function generatePaths(inputs, paths, seed, stepsPerYear = 52, { maxSteps
   const source = dynamic ? factorization?.residualCovariance || correlation : covariance,
     lower = order.length ? cholesky(order.map(i => order.map(j => source[i][j]))) : [];
   const normals = new Map(), normalFor = name => {
-    if (!normals.has(name)) normals.set(name, normalGenerator(namedRandom(seed, name)));
+    if (!normals.has(name)) normals.set(name, signedNormal(namedRandom(seed, name)));
     return normals.get(name);
   };
-  const regimeRandom = namedRandom(seed, 'regime'), driftRandom = namedRandom(seed, 'drift'),
+  const regimeRandom = randomFor('regime'), driftRandom = randomFor('drift'),
     intensity = dynamic ? 0 : options.model === 'merton' ? options.jumpIntensity : 0;
   const marketIndex = assets.findIndex(a => a.symbol === 'SPY');
   if (policy.fxVolatility > 0 && policy.fxMarketCorrelation !== 0 && marketIndex < 0)
@@ -281,10 +284,10 @@ export function generatePaths(inputs, paths, seed, stepsPerYear = 52, { maxSteps
   for (let p = 0; p < paths; p++) {
     // A stopped prefix or a longer horizon cannot consume the next path's
     // shocks. Path identity is part of each independent random substream.
-    const pathNormal = name => normalGenerator(namedRandom(seed,name+':path:'+p)),
+    const pathNormal = name => signedNormal(namedRandom(seed,name+':path:'+p)),
       primitive = order.map(i => pathNormal('price:'+assets[i].symbol)),
       marketNormal = pathNormal('price:market-factor'), fxNormal = pathNormal('fx'),
-      jumpRandom = namedRandom(seed,'jumps:count:path:'+p), jumpNormal = pathNormal('jumps:size');
+      jumpRandom = randomFor('jumps:count:path:'+p), jumpNormal = pathNormal('jumps:size');
     let u = regimeRandom(), regime = macro.at(-1);
     for (const row of macro) { if(!row.probability)continue;u -= row.probability; if (u <= 0) { regime = row; break; } }
     scenarioCounts[regime.id]++;

@@ -119,6 +119,17 @@ La [auditoría](auditoria-incertidumbre-seleccion-0.35.md) conserva resultados,
 límites y reproducción. No cambia pesos ni autoriza operaciones. Siguen
 abiertas la cobertura de búsqueda, los parámetros y la validación prospectiva.
 
+## Reducción de ruido ensayada (29-oct-2026)
+
+Un estimador antitético en sombra reduce, a igual número de trayectorias,
+la menor cota superior de oportunidad del conjunto: USD 845,57 → 291,62 y
+USD 1.085,51 → 431,90 en los dos experimentos prefijados. El error se calcula
+por pareja independiente, no por sus dos trayectorias dependientes. Ninguna
+cesta alcanza todavía el umbral USD 100. Se conserva el cálculo ordinario
+de selección, confirmación y riesgo. La [auditoría del estimador](auditoria-reduccion-ruido-0.35.md)
+documenta resultados, paridad exacta del modo ordinario y límites. No hay
+promoción predictiva ni se cambia la ley marginal de precios.
+
 ## Decisión de operar
 
 Desde 0.33.0, la propuesta ordinaria debe mejorar frente a mantener en los
