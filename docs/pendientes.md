@@ -224,8 +224,12 @@ Este archivo lista **solo lo que falta**. Para el funcionamiento, consultar
     a búsqueda y parámetros. Véase `auditoria-incertidumbre-seleccion-0.35.md`.
     Un ensayo antitético reduce las cotas mínimas a USD 292/432 con igual
     coste de evaluaciones, todavía sobre USD 100. Queda en sombra; faltan
-    cortes, mandatos y comparación con mayor presupuesto independiente
-    antes de incorporarlo a selección o confirmación. Véase
+    más cortes, retiros, suelos y divisa antes de incorporarlo a selección
+    o confirmación. El contraste ampliado con semilla nueva y dos cierres
+    contiguos reduce las cotas a USD 117/117 en crecimiento y USD 10/18 en
+    preservación con 8.000 trayectorias. El primero sigue sobre USD 100;
+    resolver una comparación finita no valida sus retornos. Véase
+    `auditoria-precision-mandatos-0.35.md`. Véase
     `auditoria-reduccion-ruido-0.35.md`.
     También falta atribuir cada cambio importante a datos, corrección
     o evidencia. La coincidencia de semillas con la política nueva no prueba

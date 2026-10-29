@@ -130,6 +130,19 @@ de selección, confirmación y riesgo. La [auditoría del estimador](auditoria-r
 documenta resultados, paridad exacta del modo ordinario y límites. No hay
 promoción predictiva ni se cambia la ley marginal de precios.
 
+## Precisión por mandato y presupuesto (29-oct-2026)
+
+El contraste ampliado usa una nueva pareja de semillas, cierres 27 y 28-oct,
+19 cestas, tres objetivos y presupuestos de 2.000/8.000 trayectorias. A mayor
+presupuesto, la menor cota de oportunidad antitética es USD 117,41/117,28 en
+crecimiento y USD 9,56/17,57 en preservación. Crecimiento sigue sin resolver
+el umbral USD 100. Preservación encuentra alternativas dentro de ese umbral
+condicional. El objetivo de capital distingue una candidata, pero su cota
+relativa cero no implica alcanzar la meta ni riesgo cero. Los cortes son
+contiguos, el universo fijo es ex post y no se certifican todos los límites
+de riesgo. La [auditoría por mandatos](auditoria-precision-mandatos-0.35.md)
+conserva protocolo, límites y resultados. No hay promoción a producción.
+
 ## Decisión de operar
 
 Desde 0.33.0, la propuesta ordinaria debe mejorar frente a mantener en los

@@ -9,6 +9,8 @@ on:
     paths:
       - 'scripts/pool_opportunity_audit.mjs'
       - 'scripts/antithetic_selection_research.mjs'
+      - 'scripts/antithetic_matrix_research.mjs'
+      - 'tests/antithetic-matrix.test.mjs'
       - 'tests/antithetic-selection.test.mjs'
       - 'tests/pool-opportunity.test.mjs'
       - 'docs/auditorias/policy-pool-0.34.1.json'
@@ -37,6 +39,10 @@ jobs:
         run: node scripts/pool_opportunity_audit.mjs
       - name: Compare ordinary and antithetic estimates at equal payoff cost
         run: node scripts/antithetic_selection_research.mjs
+      - name: Check objective reuse and independent-pair budget accounting
+        run: node --test tests/antithetic-matrix.test.mjs
+      - name: Exercise a bounded objective and budget matrix, never promote from it
+        run: node scripts/antithetic_matrix_research.mjs --quick
       - name: Preserve uncertainty without authorizing trades
         if: always()
         uses: actions/upload-artifact@v4
@@ -45,4 +51,5 @@ jobs:
           path: |
             out/pool-opportunity-audit.json
             out/antithetic-selection.json
+            out/antithetic-matrix.json
           retention-days: 90
