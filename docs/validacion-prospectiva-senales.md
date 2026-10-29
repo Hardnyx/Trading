@@ -128,3 +128,14 @@ Los controles de software cubren paridad con producción, fechas causales,
 publicación tardía, revisiones, datos faltantes, separación de cohortes y
 conservación de los primeros sellos y resultados. Aprobarlos no demuestra
 que las predicciones sean acertadas.
+
+## Primera emisión comprobada
+
+El sello de octubre se emitió el 29-oct-2026 a las 12:20 de Lima y apareció
+en `c81bd62fdeb2e1a72ea36be2a71687e01b44b274`. La verificación de publicación
+se guardó en `f4b83a8`. Usa código `c4172ee`, precios del 28-oct y cohorte
+`8f9ae829a773397f8311d7b4a71ec86f13fa31cbed288331a39e6b469e9b8b21`.
+Contiene 147 señales utilizables, 13 exclusiones y el ancla SPY. Se verificó
+el hash de ambos archivos de entrada y se reconstruyeron todos los valores
+de señal, score, confianza y anclas con tolerancia numérica de 10⁻¹².
+Los tres horizontes siguen sin observaciones maduras.

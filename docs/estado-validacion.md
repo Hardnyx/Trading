@@ -16,6 +16,7 @@ conserva los cambios y cifras anteriores.
 | Eventos verificados | 0 | GARCH-X y saltos informativos siguen bloqueados |
 | IC reconstruido del proxy anual | 0,037 a 252 sesiones; 36 orígenes | Intervalo por bloques [−0,082; 0,082]; no valida el IC declarado de 0,05 |
 | IC de rangos con fórmula TTM actual reconstruida | 0,087 a 252 sesiones; 36 orígenes, solo tres sin solapamiento | Banda descriptiva [0,027; 0,134]; ventaja frente a BPA/precio sin resolver, vintages y catálogo históricos sin verificar |
+| Señal completa prospectiva mensual | 1 sello: 147 señales y 13 exclusiones; ancla SPY; 0 vencidos | Publicación inicial verificada y datos archivados; no acredita IC ni retorno previsto |
 | Candidato de oro con factores rezagados | 34 orígenes; R² fuera de muestra −0,057 frente a media histórica | Empeora el MSE un 5,7%; permanece en sombra |
 
 ## Fiabilidad del cálculo y de los pesos (0.34.0)
@@ -185,6 +186,14 @@ Se esperan 21/63/252 sesiones y se conservan los faltantes y la primera
 puntuación madura. No hay promociones automáticas. El
 [protocolo](validacion-prospectiva-senales.md) define frecuencia, comparadores,
 errores y límites de inferencia. La evidencia madura continúa pendiente.
+
+Primer sello emitido el 29-oct a las 12:20 de Lima, con precios del 28-oct.
+La primera publicación está en `c81bd62`, y su verificación en `f4b83a8`.
+Conserva 147 señales, 13 exclusiones y el ancla SPY. La reconstrucción desde
+las entradas archivadas coincide con todos los predictores sellados.
+Hay cero resultados maduros en los tres horizontes. El
+[resumen del registro](../dist/data/signal-validation.json) se actualiza
+automáticamente sin reescribir el sello.
 
 ## Decisión de operar
 
