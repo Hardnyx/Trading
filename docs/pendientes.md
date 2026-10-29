@@ -231,6 +231,12 @@ Este archivo lista **solo lo que falta**. Para el funcionamiento, consultar
     resolver una comparación finita no valida sus retornos. Véase
     `auditoria-precision-mandatos-0.35.md`. Véase
     `auditoria-reduccion-ruido-0.35.md`.
+    La sensibilidad económica de 17 casos conserva datos y candidatas:
+    prima cero resta USD 669 y crecimiento ×0,5/×1,5 mueve aproximadamente
+    USD −518/+518 en la cesta publicada. El IC cambia los líderes aunque
+    no su centro de índice. Falta calibración de esos parámetros y de
+    crédito; la prueba no convierte los niveles de estrés en estimaciones.
+    Véase `auditoria-supuestos-economicos-0.35.md`.
     También falta atribuir cada cambio importante a datos, corrección
     o evidencia. La coincidencia de semillas con la política nueva no prueba
     que los pesos estén identificados ni que generen mejores retornos.

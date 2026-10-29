@@ -10,6 +10,8 @@ on:
       - 'scripts/pool_opportunity_audit.mjs'
       - 'scripts/antithetic_selection_research.mjs'
       - 'scripts/antithetic_matrix_research.mjs'
+      - 'scripts/economic_sensitivity_research.mjs'
+      - 'tests/economic-sensitivity.test.mjs'
       - 'tests/antithetic-matrix.test.mjs'
       - 'tests/antithetic-selection.test.mjs'
       - 'tests/pool-opportunity.test.mjs'
@@ -43,6 +45,10 @@ jobs:
         run: node --test tests/antithetic-matrix.test.mjs
       - name: Exercise a bounded objective and budget matrix, never promote from it
         run: node scripts/antithetic_matrix_research.mjs --quick
+      - name: Check isolated assumptions, accounting integrity and signed sensitivity bounds
+        run: node --test tests/economic-sensitivity.test.mjs
+      - name: Exercise economic sensitivity on the dated reference basket, never authorize trades
+        run: node scripts/economic_sensitivity_research.mjs --quick
       - name: Preserve uncertainty without authorizing trades
         if: always()
         uses: actions/upload-artifact@v4
@@ -52,4 +58,5 @@ jobs:
             out/pool-opportunity-audit.json
             out/antithetic-selection.json
             out/antithetic-matrix.json
+            out/economic-sensitivity.json
           retention-days: 90

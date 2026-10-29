@@ -143,6 +143,22 @@ contiguos, el universo fijo es ex post y no se certifican todos los límites
 de riesgo. La [auditoría por mandatos](auditoria-precision-mandatos-0.35.md)
 conserva protocolo, límites y resultados. No hay promoción a producción.
 
+## Sensibilidad económica de la propuesta (29-oct-2026)
+
+Sobre la cesta canónica SPY 35%, LQD 35%, TIP 25%, CASH 5%, se congelan
+19 alternativas, datos y semilla, y se contrastan 17 casos declarados con
+1.500 parejas. Prima CAPM cero cambia el equivalente cierto de la misma
+cesta en USD −669 y crecimiento del catálogo ×0,5/×1,5 en aproximadamente
+USD −518/+518. Triplicar la pérdida de crédito resta USD 170. Son cambios
+dentro del modelo, sin intervalos estimados de parámetros ni validación
+predictiva. El IC no mueve el centro de esta cesta de índice y bonos, pero
+sí qué acciones resultan elegidas: con IC 0,10 el líder puntual reasigna
+65% del capital. No acredita ese IC. Tasas/spread siguen con bandas de
+utilidad que abarcan cero. La [auditoría económica](auditoria-supuestos-economicos-0.35.md)
+separa datos fechados y convenciones, conserva perfiles y bandas firmadas,
+y prioriza validación de anclas e IC antes de promover nuevos supuestos.
+Ningún líder aislado autoriza operar. La producción permanece sin cambios.
+
 ## Decisión de operar
 
 Desde 0.33.0, la propuesta ordinaria debe mejorar frente a mantener en los
