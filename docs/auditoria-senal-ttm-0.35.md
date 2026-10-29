@@ -63,6 +63,12 @@ retornos observados; el filtro por fecha del informe no elimina ese sesgo.
 Las respuestas actuales pueden incluir revisiones del proveedor y no
 verifican la primera disponibilidad exacta de cada valor.
 
+Excluir ventanas anteriores a operaciones corporativas posteriores evita
+mezclar unidades de precio y BPA, pero también es un filtro ex post.
+No habría sido una regla de selección disponible en aquel origen y añade
+sesgo a la muestra. Sin precios originales o una conciliación de cada
+operación, no debe interpretarse esta reconstrucción como ejecutable.
+
 La mejora frente a BPA/precio **no queda resuelta en ninguno de los tres
 horizontes**. Eso limita la justificación empírica para que los supuestos
 individuales de crecimiento y re-rating determinen diferencias precisas de
