@@ -55,9 +55,40 @@
       <div class="metric-grid">
         {{{metric}}}{{{metric2}}}{{{metric3}}}{{{metric4}}}
       </div>
+      {{{validationReview}}}
       <div class="two-column">{{{panel}}}{{{panel6}}}</div>
       <div class="two-column section-gap">{{{panel7}}}{{{panel8}}}</div>
       <div class="section-gap">{{{panel9}}}</div>
+    </template>
+
+    <template id="validation-review-warning">
+      <p class="notice negative" role="status">{{message}}</p>
+    </template>
+
+    <template id="validation-review-row">
+      <tr><td>{{horizon}} sesiones</td><td>{{name}}</td><td>{{origins}}</td><td>{{coverage}}</td><td>{{interval}}</td><td>{{gain}}</td><td>{{missing}}</td></tr>
+    </template>
+
+    <template id="validation-review-plots">
+      <h4>{{horizon}} sesiones · propuesta sellada</h4>
+      <div class="two-column"><div>{{{coverage}}}</div><div>{{{qlike}}}</div></div>
+    </template>
+
+    <template id="validation-review">
+      <section class="panel section-gap validation-review" aria-label="Evidencia del modelo">
+        <header class="panel-header"><h2 class="panel-title">EVIDENCIA DEL MODELO</h2><span class="panel-meta">Corte {{cut}}</span></header>
+        <div class="validation-review-body">
+          <strong class="{{tone}}">{{label}}</strong><p>{{message}}</p>
+          <p class="muted">Núcleo: {{kernelSeals}} sellos · Señales: {{signalSeals}} emisiones mensuales · Vencidas por horizonte {{signalMature}}.</p>
+          <details><summary>COBERTURA Y COMPARACIÓN · REVISIÓN {{review}} · {{reviewSummary}}</summary>
+            <div class="table-wrap"><table><thead><tr><th>Horizonte</th><th>Cesta</th><th>Orígenes sin solapamiento</th><th>Excepciones VaR95</th><th>Banda binomial 95%</th><th>Ganancia CRPS</th><th>Ausentes</th></tr></thead><tbody>{{{rows}}}</tbody></table></div>
+            <p>Una ganancia positiva favorece al núcleo frente a EWMA. Las bandas binomiales suponen independencia temporal; las acciones no se agrupan como muestras independientes. No hay certificación predictiva.</p>
+            <p>{{rejectionText}}</p><p>{{issueText}}</p>
+            <p>Si hay rechazo: suspender nuevas promociones, revisar datos y comparar con EWMA antes de decidir una retirada o recalibración. No se cambian automáticamente parámetros ni posiciones.</p>
+          </details>
+          <details><summary>COBERTURA Y QLIKE ACUMULADOS</summary>{{{plots}}}</details>
+        </div>
+      </section>
     </template>
 
     <template id="risk-view-7">

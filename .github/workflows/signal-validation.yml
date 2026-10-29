@@ -9,6 +9,8 @@ on:
     paths:
       - 'scripts/signal_ledger.mjs'
       - 'tests/signal-ledger.test.mjs'
+      - 'scripts/validation_watch.py'
+      - 'tests/test_validation_watch.py'
       - 'dist/assets/js/**'
       - '.github/workflows/signal-validation.yml'
 permissions:
@@ -18,11 +20,14 @@ concurrency:
   cancel-in-progress: false
 jobs:
   ledger:
-    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
       contents: write
+    env:
+      DATA_REFRESH_RESULT: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.conclusion || 'not-requested' }}
+    outputs:
+      published_ref: ${{ steps.published.outputs.ref }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -31,19 +36,35 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-research.txt
       - name: Verify causal windows, frozen forecasts and matched diagnostics
         run: node --test tests/signal-ledger.test.mjs
+      - name: Verify per-series inference, missing evidence and frozen monthly decisions
+        run: python -m unittest tests.test_validation_watch
       - name: Seal the first eligible monthly signal and score mature cohorts
         id: seal
         run: |
           export SIGNAL_SOURCE_COMMIT="$(git rev-parse HEAD)"
           mkdir -p out
-          node scripts/signal_ledger.mjs > out/signal-ledger-run.json
-          cat out/signal-ledger-run.json
-          node -e 'const fs=require("fs"),r=JSON.parse(fs.readFileSync("out/signal-ledger-run.json")); fs.appendFileSync(process.env.GITHUB_OUTPUT,"new_seal="+(r.issuance==="sealed")+"\n");'
+          if [ "$DATA_REFRESH_RESULT" = 'success' ] || [ "$DATA_REFRESH_RESULT" = 'not-requested' ]; then
+            node scripts/signal_ledger.mjs > out/signal-ledger-run.json
+            cat out/signal-ledger-run.json
+            node -e 'const fs=require("fs"),r=JSON.parse(fs.readFileSync("out/signal-ledger-run.json")); fs.appendFileSync(process.env.GITHUB_OUTPUT,"new_seal="+(r.issuance==="sealed")+"\n");'
+          else
+            echo 'new_seal=false' >> "$GITHUB_OUTPUT"
+          fi
+          case "$DATA_REFRESH_RESULT" in
+            success|not-requested|failure|cancelled|timed_out|skipped) ;;
+            *) export DATA_REFRESH_RESULT='failure' ;;
+          esac
+          python scripts/validation_watch.py --upstream-status "$DATA_REFRESH_RESULT"
       - name: Preserve the immutable evidence on main
         run: |
           git add data/signal-validation dist/data/signal-validation.json
+          git add data/validation-reviews dist/data/validation-review.json
           if git diff --cached --quiet; then exit 0; fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
@@ -60,7 +81,8 @@ jobs:
         run: |
           export SIGNAL_SOURCE_COMMIT="$(git rev-parse HEAD)"
           node scripts/signal_ledger.mjs
-          git add dist/data/signal-validation.json
+          python scripts/validation_watch.py --upstream-status "$DATA_REFRESH_RESULT"
+          git add dist/data/signal-validation.json dist/data/validation-review.json
           if git diff --cached --quiet; then exit 0; fi
           git commit -m 'chore(validation): verify first stock-signal publication'
           for attempt in 1 2 3; do
@@ -69,3 +91,15 @@ jobs:
             if git push origin HEAD:main; then exit 0; fi
             if [ "$attempt" -eq 3 ]; then exit 1; fi
           done
+      - name: Record the exact evidence commit for deployment
+        id: published
+        run: echo "ref=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+  deploy:
+    needs: ledger
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    uses: ./.github/workflows/pages.yml
+    with:
+      ref: ${{ needs.ledger.outputs.published_ref }}

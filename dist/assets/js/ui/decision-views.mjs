@@ -23,6 +23,7 @@ import { growthEvidence } from '../growth-evidence.mjs?v=0.35.0';
 import { factorModel, factorAttribution } from "../factors.mjs?v=0.35.0";
 import { calibrationAudit } from "../calibration-audit.mjs?v=0.35.0";
 import { evaluateJournal } from "../journal.mjs?v=0.35.0";
+import {reviewDecisionWarning} from './validation-review.mjs?v=0.35.0';
 const objectives = {
   growth: "Crecimiento logarítmico",
   preservation: "Preservación · utilidad CRRA",
@@ -759,7 +760,7 @@ export function createDecisionViews({ state = {}, data, asset }) {
     if (!p) return "";
     const alternatives = p.alternatives || {},
       plan = p.trade_plan;
-    return section(
+    return reviewDecisionWarning(data?.validationReview,data||{})+section(
       "DECISIÓN DESDE LA CARTERA ACTUAL",
       stats([
         [

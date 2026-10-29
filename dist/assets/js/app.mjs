@@ -819,6 +819,13 @@ async function simulatorValidation() {
     const s=await response.json();return s.schema_version===1&&s.horizons?s:null;
   } catch {return null;}
 }
+async function validationReview() {
+  try {
+    const r=await fetch(new URL('../../data/validation-review.json',import.meta.url),{cache:'no-cache'});
+    if(!r.ok)return null;
+    const s=await r.json();return s.schema_version===1&&s.protocol==='monthly-validation-review-v1'?s:null;
+  } catch {return null;}
+}
 let marketETag = null;
 let marketURL = null;
 
@@ -851,6 +858,7 @@ async function loadData() {
   checked.volatility=await matchingVolatility(checked);
   checked.riskCalibration=await riskCalibration();
   checked.simulatorValidation=await simulatorValidation();
+  checked.validationReview=await validationReview();
   data = withCashAsset(checked);
   if (state.proposal &&
       (state.proposal.model_version !== MODEL_VERSION ||
@@ -893,9 +901,14 @@ async function loadData() {
 
 // Only checks the published snapshot while the application is open.
 setInterval(async () => {
-  if (!data || !state.baseline || document.visibilityState !== "visible")
+  if (!data || document.visibilityState !== "visible")
     return;
   try {
+    const watch=await validationReview();
+    if((watch?.updated_at||null)!==(data.validationReview?.updated_at||null)){
+      data.validationReview=watch;render();
+    }
+    if(!state.baseline)return;
     // HEAD against the same compressed or ordinary resource we last loaded.
     if (marketETag && marketURL) {
       const head = await fetch(marketURL, { method: "HEAD", cache: "no-cache" });
@@ -911,6 +924,7 @@ setInterval(async () => {
     next.volatility=await matchingVolatility(next);
     next.riskCalibration=await riskCalibration();
     next.simulatorValidation=await simulatorValidation();
+    next.validationReview=await validationReview();
     data = withCashAsset(next);
     if (state.proposal &&
         (state.proposal.model_version !== MODEL_VERSION ||

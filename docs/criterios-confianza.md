@@ -86,6 +86,13 @@ con IC cero, además del error del ancla SPY. Verifica la primera publicación
 Git antes del inicio del retorno y congela el primer resultado maduro.
 Permite empezar a contrastar esas afirmaciones, sin declararlas validadas.
 
+El [seguimiento operativo](revision-operativa-validacion.md) conserva la
+primera revisión mensual del núcleo y distingue acumulación, falta de
+trazabilidad y rechazo. Los diagnósticos de cobertura no agrupan activos
+correlacionados como observaciones independientes. Un rechazo suspende
+nuevas promociones y requiere una decisión documentada; no activa un cambio
+automático de pesos o parámetros ni acredita por sí mismo el fallback EWMA.
+
 ## Cómo interpretar la salida actual
 
 - **Admisible bajo los contrastes:** pasa controles condicionales; la

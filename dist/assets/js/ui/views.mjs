@@ -37,6 +37,7 @@ import { financialFreshness } from '../financial-freshness.mjs?v=0.35.0';
 import { priceMonitor } from '../price-monitor.mjs?v=0.35.0';
 
 import { createDecisionViews } from "./decision-views.mjs?v=0.35.0";
+import {validationReviewPanel,reviewDecisionWarning} from './validation-review.mjs?v=0.35.0';
 
 /**
  * Describes the process the Monte Carlo actually runs. Jumps and the GBM /
@@ -1124,7 +1125,7 @@ export function createViews(context) {
         `Precios ${dateLabel(p.as_of)} · información ${dateLabel(p.information_as_of || p.as_of)}`,
       ],
     ];
-    return template("composition-report", {
+    return reviewDecisionWarning(data.validationReview,data)+template("composition-report", {
       asOf: dateLabel(p.as_of),
       sourceNotice: p.reference_id
         ? "CONFIGURACIÓN BASE · Capital USD 100.000 · cuenta vacía"
@@ -1394,6 +1395,7 @@ export function createViews(context) {
         }),
       ) +
       template("risk-view", {
+        validationReview:validationReviewPanel(data.validationReview,data),
         metric: metric(
           "VOLATILIDAD ANUAL",
           pct(s?.volatility),
@@ -1479,7 +1481,7 @@ export function createViews(context) {
         }),
         "",
         "QLIKE walk-forward frente a EWMA para la varianza. Innovaciones gaussianas en precios; Student-t solo como estrés de riesgo. La elección de la distribución y la cobertura del CVaR requieren validación continua. " +
-          riskCalibrationNote(data.riskCalibration)+' '+simulatorValidationNote(data.simulatorValidation)
+          'La evidencia prospectiva y sus límites se muestran en el panel Evidencia del modelo.'
       ) +
       panel(
         "SHOCKS EXTREMOS · SIN ATRIBUCIÓN A NOTICIAS",

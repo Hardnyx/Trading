@@ -197,6 +197,15 @@ automáticamente sin reescribir el sello.
 
 ## Decisión de operar
 
+El panel Riesgo incorpora el [seguimiento operativo](revision-operativa-validacion.md)
+del núcleo exacto, separado de la referencia estadística anterior. Contrasta
+cobertura por activo o cesta, conserva curvas acumuladas y fija revisiones
+mensuales sin promoción automática. Una falta de evidencia o un rechazo se
+avisa junto a la propuesta. La primera revisión del núcleo 1.0.0 sigue en
+acumulación: dos sellos, ninguna observación madura y ninguna prueba formal
+habilitada. No son cero fallos sobre una muestra evaluada. La ley de precios,
+los parámetros y los pesos no cambian por incorporar este seguimiento.
+
 Desde 0.33.0, la propuesta ordinaria debe mejorar frente a mantener en los
 cinco modelos declarados, después de costes y de un margen pareado por
 ruido de Monte Carlo. Se conserva el mandato completo: utilidad de

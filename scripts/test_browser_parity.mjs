@@ -79,6 +79,26 @@ try {
   if(coverageCount!==snapshot.assets.filter(a=>a.type==='stock').length)
     throw Error('Financial coverage does not include the stock universe');
   await page.locator('.financial-coverage > summary').click();
+  // A separate evidence panel must remain usable without a registered account.
+  await page.goto('http://127.0.0.1:8813/#risk',{waitUntil:'networkidle'});
+  const evidence=page.locator('.validation-review');await evidence.waitFor({state:'visible'});
+  const evidenceText=await evidence.innerText();
+  if(!evidenceText.includes('SIN VALIDAR')||/NaN|undefined/.test(evidenceText))throw Error('Validation evidence is missing or falsely certified');
+  if(!await evidence.evaluate(e=>e.scrollWidth<=e.clientWidth+3))throw Error('Validation evidence overflows');
+  await evidence.screenshot({path:'out/browser-validation.png'});
+  const reviewSource=JSON.parse(readFileSync('dist/data/validation-review.json','utf8'));
+  await page.route('**/data/validation-review.json',route=>route.fulfill({status:200,contentType:'application/json',body:'null'}));
+  await page.reload({waitUntil:'networkidle'});
+  if(!await page.locator('.validation-review').innerText().then(t=>t.includes('SEGUIMIENTO NO DISPONIBLE')))
+    throw Error('Missing validation evidence was silently treated as safe');
+  await page.unroute('**/data/validation-review.json');
+  await page.route('**/data/validation-review.json',route=>route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({...reviewSource,price_cut:'2000-01-01'})}));
+  await page.reload({waitUntil:'networkidle'});
+  if(!await page.locator('.validation-review').innerText().then(t=>t.includes('SEGUIMIENTO DESACTUALIZADO')))
+    throw Error('An old validation cut was accepted');
+  await page.unroute('**/data/validation-review.json');
+  await page.goto('http://127.0.0.1:8813/#portfolio',{waitUntil:'networkidle'});
+  await button.waitFor({state:'visible'});
   const actualFooter=await page.locator(".footer-right").innerText();
   if(!actualFooter.includes('v'+MODEL_VERSION) || actualFooter.includes("v0.6.0"))
     throw Error("La etiqueta de versión del pie de página no corresponde al motor: "+

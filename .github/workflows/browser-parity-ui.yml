@@ -49,4 +49,5 @@ jobs:
             out/browser-parity.png
             out/browser-robustness.png
             out/browser-growth-evidence.png
+            out/browser-validation.png
           retention-days: 14

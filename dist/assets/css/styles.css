@@ -1170,6 +1170,23 @@ h1 {
   background: var(--panel);
   min-width: 0;
 }
+.validation-review-body {
+  padding: var(--pad);
+  display: grid;
+  gap: 8px;
+}
+.validation-review-body p {
+  margin: 0;
+}
+.validation-review-body details > summary {
+  cursor: pointer;
+  font: 600 var(--fs-sm) var(--mono);
+  padding: 6px 0;
+}
+.validation-review-body details[open] {
+  display: grid;
+  gap: 8px;
+}
 .panel-header {
   height: 32px;
   display: flex;

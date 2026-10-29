@@ -140,8 +140,11 @@ Este archivo lista **solo lo que falta**. Para el funcionamiento, consultar
   suficiente cola para validar ES. No acredita anclas, vintages o CVaR anual.
 - **Falta:** acumular resultados, intervalos de cobertura/ES y decisiones
   mensuales predeterminadas; contrastar por subperiodo y con referencias.
-  Faltan gráficos acumulados, alertas Kupiec/Christoffersen y una regla
-  operativa de retirada/recalibración ante rechazos. Una prueba que no
+  El seguimiento operativo ya conserva cobertura y QLIKE acumulados,
+  diagnósticos por serie y revisiones mensuales con ajuste por multiplicidad,
+  advertencias visibles y una regla de retirada/recalibración documentada
+  en `revision-operativa-validacion.md`. Falta evidencia madura para aplicar
+  esa regla y calibrar el riesgo, especialmente ES. Una prueba que no
   rechace con poca muestra no acredita adecuación.
 - **Terminado cuando:** haya precisión y evidencia fuera de muestra suficiente
   para cada afirmación, con comparación frente a EWMA y decisión documentada.
