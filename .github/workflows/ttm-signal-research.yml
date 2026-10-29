@@ -1,0 +1,56 @@
+name: Filed TTM signal validation (shadow)
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/ttm_signal_research.py'
+      - 'scripts/ttm_signal_replay.mjs'
+      - 'tests/test_ttm_signal_research.py'
+      - 'tests/ttm-signal-replay.test.mjs'
+      - 'docs/protocolo-senal-ttm-0.35.md'
+      - 'dist/assets/js/analytics.mjs'
+      - 'dist/assets/js/return-model.mjs'
+      - 'dist/assets/js/financial-freshness.mjs'
+      - '.github/workflows/ttm-signal-research.yml'
+permissions:
+  contents: read
+concurrency:
+  group: ttm-signal-research
+  cancel-in-progress: true
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: python -m pip install -r requirements-research.txt
+      - name: Check filing lag, share units, conflicts and dependent inference
+        run: python -m unittest tests.test_ttm_signal_research
+      - name: Check production formula parity and future-input isolation
+        run: node --test tests/ttm-signal-replay.test.mjs
+      - name: Reconstruct filed TTM on the frozen market, never change assumptions
+        env:
+          SEC_USER_AGENT: ${{ secrets.SEC_USER_AGENT || vars.SEC_USER_AGENT }}
+        run: python scripts/ttm_signal_research.py collect
+      - name: Evaluate the production signal with reconstructed inputs
+        run: node scripts/ttm_signal_replay.mjs
+      - name: Measure IC against a matched simple reference, never promote it
+        run: python scripts/ttm_signal_research.py summarize
+      - name: Preserve frozen inputs and all exclusions
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ttm-signal-reconstruction
+          path: |
+            out/ttm-signal-*.json
+            dist/data/market.json
+            docs/protocolo-senal-ttm-0.35.md
+          retention-days: 90
+          if-no-files-found: error

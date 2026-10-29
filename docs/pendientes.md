@@ -40,7 +40,8 @@ Este archivo lista **solo lo que falta**. Para el funcionamiento, consultar
   directa. Es una señal: equilibrio CAPM más alfa = IC × volatilidad
   residual × puntuación, neutral frente a SPY. Con IC 0,05 declarado, la
   dispersión entre acciones baja de 2,6 a 1,5 pp. El IC es una convención:
-  medirlo con los sellos a 12 meses lo cerraría.
+  requiere señales individuales selladas y resultados posteriores; los
+  sellos agregados de cartera no identifican ese coeficiente.
 - **Falta:** vintages originales verificados y evidencia prospectiva. La
   reconstrucción desde companyfacts actual no certifica lo conocido entonces;
   el candidato y sus bandas no se promueven por generar un error histórico.
@@ -52,6 +53,16 @@ Este archivo lista **solo lo que falta**. Para el funcionamiento, consultar
   o universo histórico. Falta esa reconstrucción completa y el contraste
   prospectivo; no se cambia el IC por el punto estimado del proxy. La
   decisión incluye desde ahora un modelo con IC cero.
+- **Contraste TTM en 0.35.0:** 160 respuestas SEC, fórmula de valoración
+  actual, dividendos por origen y lag de un día para informes sin hora.
+  IC de rangos anual 0,087 en 36 orígenes mensuales, banda descriptiva
+  [0,027; 0,134], pero solo tres orígenes anuales sin solapamiento. Frente
+  a BPA/precio, diferencia 0,022, banda [−0,070; 0,100]: no se resuelve
+  valor incremental. El catálogo y universo siguen siendo actuales; no se
+  acredita vintage original, el ancla completa ni un IC calibrado. Falta
+  sellar y evaluar score/confianza/exposición de la señal completa, además
+  de validar el nivel de crecimiento y retorno del benchmark. Véase
+  `auditoria-senal-ttm-0.35.md`. No se promueven parámetros.
 - **Terminado cuando:** cada ancla de crecimiento indica su fuente y vintage,
   y existe un error de previsión medido fuera de muestra.
 

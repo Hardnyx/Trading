@@ -15,6 +15,7 @@ conserva los cambios y cifras anteriores.
 | Núcleo de precios exacto 1.0.0 | 2 sellos; 0 orígenes maduros a 1/5/21 sesiones | No se suma la evidencia de otros modelos ni se cuentan activos correlacionados como orígenes independientes |
 | Eventos verificados | 0 | GARCH-X y saltos informativos siguen bloqueados |
 | IC reconstruido del proxy anual | 0,037 a 252 sesiones; 36 orígenes | Intervalo por bloques [−0,082; 0,082]; no valida el IC declarado de 0,05 |
+| IC de rangos con fórmula TTM actual reconstruida | 0,087 a 252 sesiones; 36 orígenes, solo tres sin solapamiento | Banda descriptiva [0,027; 0,134]; ventaja frente a BPA/precio sin resolver, vintages y catálogo históricos sin verificar |
 | Candidato de oro con factores rezagados | 34 orígenes; R² fuera de muestra −0,057 frente a media histórica | Empeora el MSE un 5,7%; permanece en sombra |
 
 ## Fiabilidad del cálculo y de los pesos (0.34.0)
@@ -158,6 +159,20 @@ utilidad que abarcan cero. La [auditoría económica](auditoria-supuestos-econom
 separa datos fechados y convenciones, conserva perfiles y bandas firmadas,
 y prioriza validación de anclas e IC antes de promover nuevos supuestos.
 Ningún líder aislado autoriza operar. La producción permanece sin cambios.
+
+## Contraste de la señal TTM (29-oct-2026)
+
+Se conservan 10.538 versiones de BPA de 160 respuestas companyfacts. El
+extractor TTM y las funciones actuales de valoración/exposición se ejecutan
+por origen con informes anteriores al día del corte y dividendos históricos.
+El IC de rangos es 0,033/0,051/0,087 a 21/63/252 sesiones. Las diferencias
+frente a BPA/precio no se distinguen de cero en ninguno de esos horizontes.
+La asociación anual positiva es un diagnóstico reconstruido, con solo tres
+orígenes anuales sin solapamiento; no certifica habilidad estable ni el
+coeficiente completo de producción. La [auditoría TTM](auditoria-senal-ttm-0.35.md)
+conserva protocolo, fuentes y exclusiones. Sigue pendiente evaluar señales
+individuales emitidas prospectivamente, por cohorte, y calibrar el nivel de
+las anclas. La cartera y los parámetros de producción permanecen sin cambios.
 
 ## Decisión de operar
 

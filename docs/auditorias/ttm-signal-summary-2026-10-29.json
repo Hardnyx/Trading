@@ -1,0 +1,1620 @@
+{
+ "status": "reconstructed_ttm_signal_only",
+ "production_eligible": false,
+ "automatic_promotion": false,
+ "inference": {
+  "bootstrap_draws": 2000,
+  "seed": 20261029,
+  "scope": "Descriptive pointwise moving-block intervals; no multiple-testing correction or certification with few independent annual origins"
+ },
+ "original_vintages_verified": false,
+ "historical_universe_verified": false,
+ "exact_live_signal": false,
+ "exact_valuation_function": true,
+ "as_of": "2026-10-28",
+ "summary": [
+  {
+   "horizon_sessions": 21,
+   "origins": 47,
+   "first_origin": "2022-10-31",
+   "last_origin": "2026-08-31",
+   "block_months": 1,
+   "minimum_stocks": 135,
+   "maximum_stocks": 148,
+   "metrics": {
+    "ttm_rank_ic": {
+     "mean": 0.03281663305815526,
+     "median": 0.00912647297361767,
+     "month_block_95_interval": [
+      -0.015480717231880442,
+      0.08013502554437449
+     ]
+    },
+    "earnings_yield_rank_ic": {
+     "mean": 0.018898205692845723,
+     "median": 0.021617787070397815,
+     "month_block_95_interval": [
+      -0.04645950357623658,
+      0.08297039766757966
+     ]
+    },
+    "rank_ic_difference_vs_yield": {
+     "mean": 0.01391842736530954,
+     "median": 0.009238123109940495,
+     "month_block_95_interval": [
+      -0.017550984989109685,
+      0.046572152511233096
+     ]
+    },
+    "score_standardized_pearson_ic": {
+     "mean": 0.04120758290560281,
+     "median": -0.010730713437479477,
+     "month_block_95_interval": [
+      -0.0037201772427747147,
+      0.08731560047786248
+     ]
+    },
+    "signal_standardized_rank_ic": {
+     "mean": 0.03475364472436022,
+     "median": 0.027255379037259674,
+     "month_block_95_interval": [
+      -0.0117544891318668,
+      0.08090486477277352
+     ]
+    }
+   },
+   "nonoverlapping_origin_count": 33,
+   "nonoverlapping_mean_rank_ic": 0.047765800361455404
+  },
+  {
+   "horizon_sessions": 63,
+   "origins": 45,
+   "first_origin": "2022-10-31",
+   "last_origin": "2026-06-30",
+   "block_months": 3,
+   "minimum_stocks": 135,
+   "maximum_stocks": 148,
+   "metrics": {
+    "ttm_rank_ic": {
+     "mean": 0.05122833246370128,
+     "median": 0.048213348599780534,
+     "month_block_95_interval": [
+      -0.015507433125195497,
+      0.09931846069902894
+     ]
+    },
+    "earnings_yield_rank_ic": {
+     "mean": 0.032143441339147816,
+     "median": 0.03139693688420643,
+     "month_block_95_interval": [
+      -0.06004618166686508,
+      0.11047344351048058
+     ]
+    },
+    "rank_ic_difference_vs_yield": {
+     "mean": 0.019084891124553475,
+     "median": 0.021999576689417863,
+     "month_block_95_interval": [
+      -0.024313182875243464,
+      0.06230469619604825
+     ]
+    },
+    "score_standardized_pearson_ic": {
+     "mean": 0.06170578790561352,
+     "median": 0.06421816525885597,
+     "month_block_95_interval": [
+      -0.0019466159156200737,
+      0.11222233242258561
+     ]
+    },
+    "signal_standardized_rank_ic": {
+     "mean": 0.05368111437784396,
+     "median": 0.053461189828729536,
+     "month_block_95_interval": [
+      -0.010064898709509256,
+      0.10132301635780441
+     ]
+    }
+   },
+   "nonoverlapping_origin_count": 14,
+   "nonoverlapping_mean_rank_ic": 0.07053439020384526
+  },
+  {
+   "horizon_sessions": 252,
+   "origins": 36,
+   "first_origin": "2022-10-31",
+   "last_origin": "2025-09-30",
+   "block_months": 12,
+   "minimum_stocks": 135,
+   "maximum_stocks": 142,
+   "metrics": {
+    "ttm_rank_ic": {
+     "mean": 0.08697486707038926,
+     "median": 0.06640677732157224,
+     "month_block_95_interval": [
+      0.02654964748438293,
+      0.13368655876170865
+     ]
+    },
+    "earnings_yield_rank_ic": {
+     "mean": 0.06460870173984928,
+     "median": 0.03171127331711274,
+     "month_block_95_interval": [
+      -0.04529289254920075,
+      0.19096918913357047
+     ]
+    },
+    "rank_ic_difference_vs_yield": {
+     "mean": 0.02236616533053996,
+     "median": 0.026526769604384222,
+     "month_block_95_interval": [
+      -0.06967048726747271,
+      0.10022962437358368
+     ]
+    },
+    "score_standardized_pearson_ic": {
+     "mean": 0.09222378321131995,
+     "median": 0.05588332650876398,
+     "month_block_95_interval": [
+      0.0330485467900942,
+      0.14658000861728196
+     ]
+    },
+    "signal_standardized_rank_ic": {
+     "mean": 0.08757054105838323,
+     "median": 0.0643912131544585,
+     "month_block_95_interval": [
+      0.03064149475022578,
+      0.13780190368667275
+     ]
+    }
+   },
+   "nonoverlapping_origin_count": 3,
+   "nonoverlapping_mean_rank_ic": 0.07644462767651246
+  }
+ ],
+ "origin_metrics": [
+  {
+   "origin": "2022-10-31",
+   "maturity": "2022-11-30",
+   "horizon_sessions": 21,
+   "stocks": 137,
+   "ttm_rank_ic": 0.3136119252524875,
+   "earnings_yield_rank_ic": 0.1963195624171598,
+   "score_standardized_pearson_ic": 0.32471924686849196,
+   "signal_standardized_rank_ic": 0.27709690667761866,
+   "rank_ic_difference_vs_yield": 0.11729236283532768
+  },
+  {
+   "origin": "2022-10-31",
+   "maturity": "2023-02-01",
+   "horizon_sessions": 63,
+   "stocks": 137,
+   "ttm_rank_ic": 0.29110739821158543,
+   "earnings_yield_rank_ic": 0.15119383202344724,
+   "score_standardized_pearson_ic": 0.244775275919076,
+   "signal_standardized_rank_ic": 0.25664588272630534,
+   "rank_ic_difference_vs_yield": 0.1399135661881382
+  },
+  {
+   "origin": "2022-10-31",
+   "maturity": "2023-11-01",
+   "horizon_sessions": 252,
+   "stocks": 137,
+   "ttm_rank_ic": -0.01896690126383781,
+   "earnings_yield_rank_ic": -0.24504359027012895,
+   "score_standardized_pearson_ic": 0.03465716069401362,
+   "signal_standardized_rank_ic": -0.03199264472529729,
+   "rank_ic_difference_vs_yield": 0.22607668900629113
+  },
+  {
+   "origin": "2022-11-30",
+   "maturity": "2022-12-30",
+   "horizon_sessions": 21,
+   "stocks": 136,
+   "ttm_rank_ic": -0.17862220313916316,
+   "earnings_yield_rank_ic": -0.16827918515338006,
+   "score_standardized_pearson_ic": -0.117620712048707,
+   "signal_standardized_rank_ic": -0.16450551023329038,
+   "rank_ic_difference_vs_yield": -0.010343017985783104
+  },
+  {
+   "origin": "2022-11-30",
+   "maturity": "2023-03-03",
+   "horizon_sessions": 63,
+   "stocks": 136,
+   "ttm_rank_ic": 0.027360335861838652,
+   "earnings_yield_rank_ic": -0.07259195649062543,
+   "score_standardized_pearson_ic": -0.00864004830647818,
+   "signal_standardized_rank_ic": 0.03466914746433853,
+   "rank_ic_difference_vs_yield": 0.09995229235246408
+  },
+  {
+   "origin": "2022-11-30",
+   "maturity": "2023-12-01",
+   "horizon_sessions": 252,
+   "stocks": 136,
+   "ttm_rank_ic": -0.11468918467630358,
+   "earnings_yield_rank_ic": -0.3576928581651639,
+   "score_standardized_pearson_ic": -0.07983982820528147,
+   "signal_standardized_rank_ic": -0.10342063832832403,
+   "rank_ic_difference_vs_yield": 0.24300367348886032
+  },
+  {
+   "origin": "2022-12-30",
+   "maturity": "2023-02-01",
+   "horizon_sessions": 21,
+   "stocks": 136,
+   "ttm_rank_ic": 0.16407137064071367,
+   "earnings_yield_rank_ic": 0.027641810982300456,
+   "score_standardized_pearson_ic": 0.13267656989554444,
+   "signal_standardized_rank_ic": 0.18090739945613282,
+   "rank_ic_difference_vs_yield": 0.13642955965841322
+  },
+  {
+   "origin": "2022-12-30",
+   "maturity": "2023-04-03",
+   "horizon_sessions": 63,
+   "stocks": 136,
+   "ttm_rank_ic": 0.02577644196364677,
+   "earnings_yield_rank_ic": -0.1857401841515195,
+   "score_standardized_pearson_ic": -0.0103659234914591,
+   "signal_standardized_rank_ic": 0.02698821621105863,
+   "rank_ic_difference_vs_yield": 0.21151662611516625
+  },
+  {
+   "origin": "2022-12-30",
+   "maturity": "2024-01-03",
+   "horizon_sessions": 252,
+   "stocks": 136,
+   "ttm_rank_ic": 0.046276418109823,
+   "earnings_yield_rank_ic": -0.19912695005009304,
+   "score_standardized_pearson_ic": 0.05406833566874644,
+   "signal_standardized_rank_ic": 0.046777348408949954,
+   "rank_ic_difference_vs_yield": 0.24540336815991604
+  },
+  {
+   "origin": "2023-01-31",
+   "maturity": "2023-03-02",
+   "horizon_sessions": 21,
+   "stocks": 136,
+   "ttm_rank_ic": 0.00912647297361767,
+   "earnings_yield_rank_ic": -0.09910309622632507,
+   "score_standardized_pearson_ic": -0.031037902503897014,
+   "signal_standardized_rank_ic": 0.027255379037259674,
+   "rank_ic_difference_vs_yield": 0.10822956919994274
+  },
+  {
+   "origin": "2023-01-31",
+   "maturity": "2023-05-02",
+   "horizon_sessions": 63,
+   "stocks": 136,
+   "ttm_rank_ic": -0.2674443013215018,
+   "earnings_yield_rank_ic": -0.4528791565287915,
+   "score_standardized_pearson_ic": -0.19410269640714656,
+   "signal_standardized_rank_ic": -0.2614760746147607,
+   "rank_ic_difference_vs_yield": 0.1854348552072897
+  },
+  {
+   "origin": "2023-01-31",
+   "maturity": "2024-02-01",
+   "horizon_sessions": 252,
+   "stocks": 136,
+   "ttm_rank_ic": -0.05291732264682028,
+   "earnings_yield_rank_ic": -0.32967892753208333,
+   "score_standardized_pearson_ic": -0.06352207956142909,
+   "signal_standardized_rank_ic": -0.044091407852678774,
+   "rank_ic_difference_vs_yield": 0.276761604885263
+  },
+  {
+   "origin": "2023-02-28",
+   "maturity": "2023-03-29",
+   "horizon_sessions": 21,
+   "stocks": 138,
+   "ttm_rank_ic": -0.08784923822287773,
+   "earnings_yield_rank_ic": -0.307672110486793,
+   "score_standardized_pearson_ic": -0.11535553864706392,
+   "signal_standardized_rank_ic": -0.09100913493261245,
+   "rank_ic_difference_vs_yield": 0.21982287226391528
+  },
+  {
+   "origin": "2023-02-28",
+   "maturity": "2023-05-30",
+   "horizon_sessions": 63,
+   "stocks": 138,
+   "ttm_rank_ic": -0.1372112085006701,
+   "earnings_yield_rank_ic": -0.3969254935626237,
+   "score_standardized_pearson_ic": -0.13399625654020755,
+   "signal_standardized_rank_ic": -0.138293427460507,
+   "rank_ic_difference_vs_yield": 0.2597142850619536
+  },
+  {
+   "origin": "2023-02-28",
+   "maturity": "2024-02-29",
+   "horizon_sessions": 252,
+   "stocks": 138,
+   "ttm_rank_ic": -0.05335065492512369,
+   "earnings_yield_rank_ic": -0.27470324597193074,
+   "score_standardized_pearson_ic": -0.08408205552865729,
+   "signal_standardized_rank_ic": -0.07004057179518207,
+   "rank_ic_difference_vs_yield": 0.22135259104680705
+  },
+  {
+   "origin": "2023-03-31",
+   "maturity": "2023-05-02",
+   "horizon_sessions": 21,
+   "stocks": 138,
+   "ttm_rank_ic": -0.21463324421389576,
+   "earnings_yield_rank_ic": -0.19114406982823767,
+   "score_standardized_pearson_ic": -0.19428261338869157,
+   "signal_standardized_rank_ic": -0.22927288128240658,
+   "rank_ic_difference_vs_yield": -0.02348917438565809
+  },
+  {
+   "origin": "2023-03-31",
+   "maturity": "2023-07-03",
+   "horizon_sessions": 63,
+   "stocks": 138,
+   "ttm_rank_ic": -0.07137393861489671,
+   "earnings_yield_rank_ic": -0.23220902808061383,
+   "score_standardized_pearson_ic": -0.042080902814160145,
+   "signal_standardized_rank_ic": -0.07811840023379582,
+   "rank_ic_difference_vs_yield": 0.16083508946571712
+  },
+  {
+   "origin": "2023-03-31",
+   "maturity": "2024-04-03",
+   "horizon_sessions": 252,
+   "stocks": 138,
+   "ttm_rank_ic": 0.10683145010491131,
+   "earnings_yield_rank_ic": -0.010450034133277318,
+   "score_standardized_pearson_ic": 0.04343523182189068,
+   "signal_standardized_rank_ic": 0.09753441296470915,
+   "rank_ic_difference_vs_yield": 0.11728148423818863
+  },
+  {
+   "origin": "2023-04-28",
+   "maturity": "2023-05-30",
+   "horizon_sessions": 21,
+   "stocks": 138,
+   "ttm_rank_ic": -0.02461477343038295,
+   "earnings_yield_rank_ic": -0.2685250086189379,
+   "score_standardized_pearson_ic": -0.02117745582478478,
+   "signal_standardized_rank_ic": 0.05625027112553055,
+   "rank_ic_difference_vs_yield": 0.24391023518855495
+  },
+  {
+   "origin": "2023-04-28",
+   "maturity": "2023-07-31",
+   "horizon_sessions": 63,
+   "stocks": 138,
+   "ttm_rank_ic": 0.28619668530488207,
+   "earnings_yield_rank_ic": 0.10337474228804831,
+   "score_standardized_pearson_ic": 0.2323434667057645,
+   "signal_standardized_rank_ic": 0.3008545876722931,
+   "rank_ic_difference_vs_yield": 0.18282194301683374
+  },
+  {
+   "origin": "2023-04-28",
+   "maturity": "2024-04-30",
+   "horizon_sessions": 252,
+   "stocks": 138,
+   "ttm_rank_ic": 0.14951288730995527,
+   "earnings_yield_rank_ic": 0.012641870001301398,
+   "score_standardized_pearson_ic": 0.05194035275715001,
+   "signal_standardized_rank_ic": 0.14198301783834752,
+   "rank_ic_difference_vs_yield": 0.13687101730865386
+  },
+  {
+   "origin": "2023-05-31",
+   "maturity": "2023-06-30",
+   "horizon_sessions": 21,
+   "stocks": 137,
+   "ttm_rank_ic": 0.14671346164616272,
+   "earnings_yield_rank_ic": 0.17738066346818,
+   "score_standardized_pearson_ic": 0.2176682530073373,
+   "signal_standardized_rank_ic": 0.12837194541415423,
+   "rank_ic_difference_vs_yield": -0.030667201822017265
+  },
+  {
+   "origin": "2023-05-31",
+   "maturity": "2023-08-30",
+   "horizon_sessions": 63,
+   "stocks": 137,
+   "ttm_rank_ic": 0.20374484290701364,
+   "earnings_yield_rank_ic": 0.1927259320103795,
+   "score_standardized_pearson_ic": 0.22625174233223608,
+   "signal_standardized_rank_ic": 0.18089028693038622,
+   "rank_ic_difference_vs_yield": 0.011018910896634149
+  },
+  {
+   "origin": "2023-05-31",
+   "maturity": "2024-05-31",
+   "horizon_sessions": 252,
+   "stocks": 137,
+   "ttm_rank_ic": 0.2398771631788228,
+   "earnings_yield_rank_ic": 0.18953833516904062,
+   "score_standardized_pearson_ic": 0.16929441564594427,
+   "signal_standardized_rank_ic": 0.20514495864991503,
+   "rank_ic_difference_vs_yield": 0.05033882800978218
+  },
+  {
+   "origin": "2023-06-30",
+   "maturity": "2023-08-01",
+   "horizon_sessions": 21,
+   "stocks": 136,
+   "ttm_rank_ic": 0.389771480368303,
+   "earnings_yield_rank_ic": 0.41726539764324216,
+   "score_standardized_pearson_ic": 0.32308801382187075,
+   "signal_standardized_rank_ic": 0.38005820332999374,
+   "rank_ic_difference_vs_yield": -0.02749391727493916
+  },
+  {
+   "origin": "2023-06-30",
+   "maturity": "2023-09-29",
+   "horizon_sessions": 63,
+   "stocks": 136,
+   "ttm_rank_ic": 0.10782882496064117,
+   "earnings_yield_rank_ic": 0.08567339344496923,
+   "score_standardized_pearson_ic": 0.08193994650756112,
+   "signal_standardized_rank_ic": 0.10512380134535565,
+   "rank_ic_difference_vs_yield": 0.02215543151567194
+  },
+  {
+   "origin": "2023-06-30",
+   "maturity": "2024-07-02",
+   "horizon_sessions": 252,
+   "stocks": 136,
+   "ttm_rank_ic": 0.14449692285673393,
+   "earnings_yield_rank_ic": 0.037502981727970994,
+   "score_standardized_pearson_ic": 0.06913031518038473,
+   "signal_standardized_rank_ic": 0.12622489385048422,
+   "rank_ic_difference_vs_yield": 0.10699394112876294
+  },
+  {
+   "origin": "2023-07-31",
+   "maturity": "2023-08-29",
+   "horizon_sessions": 21,
+   "stocks": 136,
+   "ttm_rank_ic": -0.15470158866466294,
+   "earnings_yield_rank_ic": -0.2211249463288965,
+   "score_standardized_pearson_ic": -0.13050580795520894,
+   "signal_standardized_rank_ic": -0.16364677257764418,
+   "rank_ic_difference_vs_yield": 0.06642335766423357
+  },
+  {
+   "origin": "2023-07-31",
+   "maturity": "2023-10-27",
+   "horizon_sessions": 63,
+   "stocks": 136,
+   "ttm_rank_ic": -0.1755116645198225,
+   "earnings_yield_rank_ic": -0.253351462239397,
+   "score_standardized_pearson_ic": -0.20206084391087126,
+   "signal_standardized_rank_ic": -0.1741615380945565,
+   "rank_ic_difference_vs_yield": 0.07783979771957447
+  },
+  {
+   "origin": "2023-07-31",
+   "maturity": "2024-07-31",
+   "horizon_sessions": 252,
+   "stocks": 136,
+   "ttm_rank_ic": 0.059462811888745755,
+   "earnings_yield_rank_ic": 0.0032488907971947897,
+   "score_standardized_pearson_ic": 0.020917945482669082,
+   "signal_standardized_rank_ic": 0.0442726969133152,
+   "rank_ic_difference_vs_yield": 0.05621392109155097
+  },
+  {
+   "origin": "2023-08-31",
+   "maturity": "2023-10-02",
+   "horizon_sessions": 21,
+   "stocks": 135,
+   "ttm_rank_ic": -0.039030338503560635,
+   "earnings_yield_rank_ic": -0.04826846161350113,
+   "score_standardized_pearson_ic": -0.05496341056652662,
+   "signal_standardized_rank_ic": -0.005048287971905181,
+   "rank_ic_difference_vs_yield": 0.009238123109940495
+  },
+  {
+   "origin": "2023-08-31",
+   "maturity": "2023-11-30",
+   "horizon_sessions": 63,
+   "stocks": 135,
+   "ttm_rank_ic": -0.12077846063798654,
+   "earnings_yield_rank_ic": -0.15042922641693496,
+   "score_standardized_pearson_ic": -0.13389157567514526,
+   "signal_standardized_rank_ic": -0.12294898058725978,
+   "rank_ic_difference_vs_yield": 0.029650765778948415
+  },
+  {
+   "origin": "2023-08-31",
+   "maturity": "2024-09-03",
+   "horizon_sessions": 252,
+   "stocks": 135,
+   "ttm_rank_ic": 0.016247195395571165,
+   "earnings_yield_rank_ic": -0.03380158033362599,
+   "score_standardized_pearson_ic": -0.013759113160836953,
+   "signal_standardized_rank_ic": 0.003385035606282314,
+   "rank_ic_difference_vs_yield": 0.05004877572919716
+  },
+  {
+   "origin": "2023-09-29",
+   "maturity": "2023-10-30",
+   "horizon_sessions": 21,
+   "stocks": 136,
+   "ttm_rank_ic": -0.1559706120891179,
+   "earnings_yield_rank_ic": -0.23870521444587564,
+   "score_standardized_pearson_ic": -0.10784248064593334,
+   "signal_standardized_rank_ic": -0.1555603263203091,
+   "rank_ic_difference_vs_yield": 0.08273460235675775
+  },
+  {
+   "origin": "2023-09-29",
+   "maturity": "2023-12-29",
+   "horizon_sessions": 63,
+   "stocks": 136,
+   "ttm_rank_ic": 0.048213348599780534,
+   "earnings_yield_rank_ic": 0.02030914555603263,
+   "score_standardized_pearson_ic": 0.057998896349953165,
+   "signal_standardized_rank_ic": 0.053461189828729536,
+   "rank_ic_difference_vs_yield": 0.027904203043747904
+  },
+  {
+   "origin": "2023-09-29",
+   "maturity": "2024-10-01",
+   "horizon_sessions": 252,
+   "stocks": 136,
+   "ttm_rank_ic": 0.00107819283431134,
+   "earnings_yield_rank_ic": -0.08451409760984685,
+   "score_standardized_pearson_ic": -0.008252119390600941,
+   "signal_standardized_rank_ic": -0.00260006679070655,
+   "rank_ic_difference_vs_yield": 0.08559229044415818
+  },
+  {
+   "origin": "2023-10-31",
+   "maturity": "2023-11-30",
+   "horizon_sessions": 21,
+   "stocks": 137,
+   "ttm_rank_ic": 0.03815782104653984,
+   "earnings_yield_rank_ic": 0.021617787070397815,
+   "score_standardized_pearson_ic": -0.010730713437479477,
+   "signal_standardized_rank_ic": 0.042768868893161824,
+   "rank_ic_difference_vs_yield": 0.016540033976142027
+  },
+  {
+   "origin": "2023-10-31",
+   "maturity": "2024-02-01",
+   "horizon_sessions": 63,
+   "stocks": 137,
+   "ttm_rank_ic": 0.013175089140702296,
+   "earnings_yield_rank_ic": -0.05960759422778949,
+   "score_standardized_pearson_ic": 0.002576789143767377,
+   "signal_standardized_rank_ic": 0.005880486120185935,
+   "rank_ic_difference_vs_yield": 0.07278268336849178
+  },
+  {
+   "origin": "2023-10-31",
+   "maturity": "2024-10-31",
+   "horizon_sessions": 252,
+   "stocks": 137,
+   "ttm_rank_ic": 0.028819049041387417,
+   "earnings_yield_rank_ic": -0.04496705060951705,
+   "score_standardized_pearson_ic": 0.028483154037248767,
+   "signal_standardized_rank_ic": 0.033528104990012506,
+   "rank_ic_difference_vs_yield": 0.07378609965090446
+  },
+  {
+   "origin": "2023-11-30",
+   "maturity": "2024-01-02",
+   "horizon_sessions": 21,
+   "stocks": 140,
+   "ttm_rank_ic": 0.3113599090332597,
+   "earnings_yield_rank_ic": 0.40851501169884763,
+   "score_standardized_pearson_ic": 0.31624378005225584,
+   "signal_standardized_rank_ic": 0.3047385799567034,
+   "rank_ic_difference_vs_yield": -0.09715510266558791
+  },
+  {
+   "origin": "2023-11-30",
+   "maturity": "2024-03-04",
+   "horizon_sessions": 63,
+   "stocks": 140,
+   "ttm_rank_ic": 0.031029279919529428,
+   "earnings_yield_rank_ic": -0.052804443375390885,
+   "score_standardized_pearson_ic": 0.059049315670728054,
+   "signal_standardized_rank_ic": 0.035525136122105366,
+   "rank_ic_difference_vs_yield": 0.08383372329492031
+  },
+  {
+   "origin": "2023-11-30",
+   "maturity": "2024-12-02",
+   "horizon_sessions": 252,
+   "stocks": 140,
+   "ttm_rank_ic": 0.14941287091907024,
+   "earnings_yield_rank_ic": 0.09997594629463602,
+   "score_standardized_pearson_ic": 0.15665754408368995,
+   "signal_standardized_rank_ic": 0.1327589600052481,
+   "rank_ic_difference_vs_yield": 0.04943692462443422
+  },
+  {
+   "origin": "2023-12-29",
+   "maturity": "2024-01-31",
+   "horizon_sessions": 21,
+   "stocks": 140,
+   "ttm_rank_ic": -0.1581290590627802,
+   "earnings_yield_rank_ic": -0.30669349019264835,
+   "score_standardized_pearson_ic": -0.1603711224880928,
+   "signal_standardized_rank_ic": -0.15571494172443204,
+   "rank_ic_difference_vs_yield": 0.14856443112986817
+  },
+  {
+   "origin": "2023-12-29",
+   "maturity": "2024-04-02",
+   "horizon_sessions": 63,
+   "stocks": 140,
+   "ttm_rank_ic": 0.10539021670201834,
+   "earnings_yield_rank_ic": 0.07778530974612408,
+   "score_standardized_pearson_ic": 0.10411041075957496,
+   "signal_standardized_rank_ic": 0.08621285342546633,
+   "rank_ic_difference_vs_yield": 0.027604906955894265
+  },
+  {
+   "origin": "2023-12-29",
+   "maturity": "2024-12-31",
+   "horizon_sessions": 252,
+   "stocks": 140,
+   "ttm_rank_ic": 0.038897028274037314,
+   "earnings_yield_rank_ic": -0.05588331766197984,
+   "score_standardized_pearson_ic": 0.07036776026810791,
+   "signal_standardized_rank_ic": 0.05095886816382761,
+   "rank_ic_difference_vs_yield": 0.09478034593601715
+  },
+  {
+   "origin": "2024-01-31",
+   "maturity": "2024-03-01",
+   "horizon_sessions": 21,
+   "stocks": 141,
+   "ttm_rank_ic": -0.12208142471852391,
+   "earnings_yield_rank_ic": -0.166839333875594,
+   "score_standardized_pearson_ic": -0.031605225729226666,
+   "signal_standardized_rank_ic": -0.11030009846311914,
+   "rank_ic_difference_vs_yield": 0.04475790915707008
+  },
+  {
+   "origin": "2024-01-31",
+   "maturity": "2024-05-01",
+   "horizon_sessions": 63,
+   "stocks": 141,
+   "ttm_rank_ic": 0.200796266963483,
+   "earnings_yield_rank_ic": 0.2367096194186395,
+   "score_standardized_pearson_ic": 0.19281422427658346,
+   "signal_standardized_rank_ic": 0.1611113489447322,
+   "rank_ic_difference_vs_yield": -0.035913352455156505
+  },
+  {
+   "origin": "2024-01-31",
+   "maturity": "2025-02-03",
+   "horizon_sessions": 252,
+   "stocks": 141,
+   "ttm_rank_ic": 0.07335074275439872,
+   "earnings_yield_rank_ic": 0.009062887966094437,
+   "score_standardized_pearson_ic": 0.11928882919813534,
+   "signal_standardized_rank_ic": 0.06942934200950383,
+   "rank_ic_difference_vs_yield": 0.06428785478830429
+  },
+  {
+   "origin": "2024-02-29",
+   "maturity": "2024-04-01",
+   "horizon_sessions": 21,
+   "stocks": 140,
+   "ttm_rank_ic": 0.4033850123548578,
+   "earnings_yield_rank_ic": 0.5179856115107914,
+   "score_standardized_pearson_ic": 0.34618528834764717,
+   "signal_standardized_rank_ic": 0.38080514311954694,
+   "rank_ic_difference_vs_yield": -0.11460059915593357
+  },
+  {
+   "origin": "2024-02-29",
+   "maturity": "2024-05-30",
+   "horizon_sessions": 63,
+   "stocks": 140,
+   "ttm_rank_ic": 0.3173033609586496,
+   "earnings_yield_rank_ic": 0.3037764317421443,
+   "score_standardized_pearson_ic": 0.3274796650069071,
+   "signal_standardized_rank_ic": 0.28681200935907813,
+   "rank_ic_difference_vs_yield": 0.013526929216505279
+  },
+  {
+   "origin": "2024-02-29",
+   "maturity": "2025-03-04",
+   "horizon_sessions": 252,
+   "stocks": 140,
+   "ttm_rank_ic": 0.12791760512562597,
+   "earnings_yield_rank_ic": 0.11491548402615295,
+   "score_standardized_pearson_ic": 0.18017734446047787,
+   "signal_standardized_rank_ic": 0.11730773435962477,
+   "rank_ic_difference_vs_yield": 0.013002121099473019
+  },
+  {
+   "origin": "2024-03-28",
+   "maturity": "2024-04-29",
+   "horizon_sessions": 21,
+   "stocks": 141,
+   "ttm_rank_ic": 0.06325613253992036,
+   "earnings_yield_rank_ic": 0.11184126032792499,
+   "score_standardized_pearson_ic": 0.06425039832469286,
+   "signal_standardized_rank_ic": 0.06967335930476475,
+   "rank_ic_difference_vs_yield": -0.048585127788004626
+  },
+  {
+   "origin": "2024-03-28",
+   "maturity": "2024-06-28",
+   "horizon_sessions": 63,
+   "stocks": 141,
+   "ttm_rank_ic": 0.007119311614367053,
+   "earnings_yield_rank_ic": -0.14227920715784065,
+   "score_standardized_pearson_ic": 0.0149158201666382,
+   "signal_standardized_rank_ic": -0.007234898754227491,
+   "rank_ic_difference_vs_yield": 0.1493985187722077
+  },
+  {
+   "origin": "2024-03-28",
+   "maturity": "2025-04-01",
+   "horizon_sessions": 252,
+   "stocks": 141,
+   "ttm_rank_ic": 0.04085791343807525,
+   "earnings_yield_rank_ic": 0.0630549252964596,
+   "score_standardized_pearson_ic": 0.07459367604820041,
+   "signal_standardized_rank_ic": 0.03193201763774133,
+   "rank_ic_difference_vs_yield": -0.022197011858384352
+  },
+  {
+   "origin": "2024-04-30",
+   "maturity": "2024-05-30",
+   "horizon_sessions": 21,
+   "stocks": 142,
+   "ttm_rank_ic": 0.11007961172779875,
+   "earnings_yield_rank_ic": -0.022085496164009802,
+   "score_standardized_pearson_ic": 0.16787075910913096,
+   "signal_standardized_rank_ic": 0.08574134885192723,
+   "rank_ic_difference_vs_yield": 0.13216510789180855
+  },
+  {
+   "origin": "2024-04-30",
+   "maturity": "2024-07-31",
+   "horizon_sessions": 63,
+   "stocks": 142,
+   "ttm_rank_ic": 0.09510866717938939,
+   "earnings_yield_rank_ic": 0.07310909048997152,
+   "score_standardized_pearson_ic": 0.1912937821953787,
+   "signal_standardized_rank_ic": 0.0986460348162476,
+   "rank_ic_difference_vs_yield": 0.021999576689417863
+  },
+  {
+   "origin": "2024-04-30",
+   "maturity": "2025-05-02",
+   "horizon_sessions": 252,
+   "stocks": 142,
+   "ttm_rank_ic": -0.0839936210029108,
+   "earnings_yield_rank_ic": -0.11380558308937093,
+   "score_standardized_pearson_ic": -0.007793221882676017,
+   "signal_standardized_rank_ic": -0.0571238770219891,
+   "rank_ic_difference_vs_yield": 0.029811962086460128
+  },
+  {
+   "origin": "2024-05-31",
+   "maturity": "2024-07-02",
+   "horizon_sessions": 21,
+   "stocks": 141,
+   "ttm_rank_ic": -0.23789117684832398,
+   "earnings_yield_rank_ic": -0.4135836294361916,
+   "score_standardized_pearson_ic": -0.216557001743929,
+   "signal_standardized_rank_ic": -0.23784408579134378,
+   "rank_ic_difference_vs_yield": 0.17569245258786761
+  },
+  {
+   "origin": "2024-05-31",
+   "maturity": "2024-08-30",
+   "horizon_sessions": 63,
+   "stocks": 141,
+   "ttm_rank_ic": -0.1477631747934415,
+   "earnings_yield_rank_ic": -0.1233956933087889,
+   "score_standardized_pearson_ic": -0.05826105491932516,
+   "signal_standardized_rank_ic": -0.1149792371248769,
+   "rank_ic_difference_vs_yield": -0.024367481484652606
+  },
+  {
+   "origin": "2024-05-31",
+   "maturity": "2025-06-04",
+   "horizon_sessions": 252,
+   "stocks": 141,
+   "ttm_rank_ic": -0.1083479601010317,
+   "earnings_yield_rank_ic": -0.13158953722334002,
+   "score_standardized_pearson_ic": -0.05140327523729202,
+   "signal_standardized_rank_ic": -0.08546170640866474,
+   "rank_ic_difference_vs_yield": 0.023241577122308316
+  },
+  {
+   "origin": "2024-06-28",
+   "maturity": "2024-07-30",
+   "horizon_sessions": 21,
+   "stocks": 139,
+   "ttm_rank_ic": 0.13590419589794,
+   "earnings_yield_rank_ic": 0.33456812189999546,
+   "score_standardized_pearson_ic": 0.2348024822893391,
+   "signal_standardized_rank_ic": 0.1297555744224496,
+   "rank_ic_difference_vs_yield": -0.19866392600205546
+  },
+  {
+   "origin": "2024-06-28",
+   "maturity": "2024-09-27",
+   "horizon_sessions": 63,
+   "stocks": 139,
+   "ttm_rank_ic": 0.08747933330354349,
+   "earnings_yield_rank_ic": 0.12857589704633807,
+   "score_standardized_pearson_ic": 0.1315610500292406,
+   "signal_standardized_rank_ic": 0.09685419366370256,
+   "rank_ic_difference_vs_yield": -0.04109656374279458
+  },
+  {
+   "origin": "2024-06-28",
+   "maturity": "2025-07-02",
+   "horizon_sessions": 252,
+   "stocks": 139,
+   "ttm_rank_ic": 0.029853880870458906,
+   "earnings_yield_rank_ic": 0.05016756780910674,
+   "score_standardized_pearson_ic": 0.04867398888652719,
+   "signal_standardized_rank_ic": 0.0366638366325573,
+   "rank_ic_difference_vs_yield": -0.020313686938647837
+  },
+  {
+   "origin": "2024-07-31",
+   "maturity": "2024-08-29",
+   "horizon_sessions": 21,
+   "stocks": 138,
+   "ttm_rank_ic": -0.17161846530392313,
+   "earnings_yield_rank_ic": -0.189628050019521,
+   "score_standardized_pearson_ic": -0.16914468292728266,
+   "signal_standardized_rank_ic": -0.17070520035891312,
+   "rank_ic_difference_vs_yield": 0.018009584715597854
+  },
+  {
+   "origin": "2024-07-31",
+   "maturity": "2024-10-29",
+   "horizon_sessions": 63,
+   "stocks": 138,
+   "ttm_rank_ic": -0.07408176917685147,
+   "earnings_yield_rank_ic": -0.17453178047850515,
+   "score_standardized_pearson_ic": -0.0776096969661434,
+   "signal_standardized_rank_ic": -0.04369744445636762,
+   "rank_ic_difference_vs_yield": 0.10045001130165368
+  },
+  {
+   "origin": "2024-07-31",
+   "maturity": "2025-08-04",
+   "horizon_sessions": 252,
+   "stocks": 138,
+   "ttm_rank_ic": -0.053926011840480015,
+   "earnings_yield_rank_ic": -0.0869451059273178,
+   "score_standardized_pearson_ic": -0.043699674914928884,
+   "signal_standardized_rank_ic": -0.03294374972887446,
+   "rank_ic_difference_vs_yield": 0.033019094086837786
+  },
+  {
+   "origin": "2024-08-30",
+   "maturity": "2024-10-01",
+   "horizon_sessions": 21,
+   "stocks": 137,
+   "ttm_rank_ic": 0.1258190677095973,
+   "earnings_yield_rank_ic": 0.044808370825321554,
+   "score_standardized_pearson_ic": 0.13595580397272286,
+   "signal_standardized_rank_ic": 0.13323968114697482,
+   "rank_ic_difference_vs_yield": 0.08101069688427576
+  },
+  {
+   "origin": "2024-08-30",
+   "maturity": "2024-11-29",
+   "horizon_sessions": 63,
+   "stocks": 137,
+   "ttm_rank_ic": 0.011886982657232996,
+   "earnings_yield_rank_ic": 0.0043823622752814225,
+   "score_standardized_pearson_ic": 0.06421816525885597,
+   "signal_standardized_rank_ic": 0.044687027460936765,
+   "rank_ic_difference_vs_yield": 0.007504620381951574
+  },
+  {
+   "origin": "2024-08-30",
+   "maturity": "2025-09-04",
+   "horizon_sessions": 252,
+   "stocks": 137,
+   "ttm_rank_ic": 0.0946944947448989,
+   "earnings_yield_rank_ic": 0.07702503406948306,
+   "score_standardized_pearson_ic": 0.057698317348781517,
+   "signal_standardized_rank_ic": 0.0895654040734034,
+   "rank_ic_difference_vs_yield": 0.017669460675415832
+  },
+  {
+   "origin": "2024-09-30",
+   "maturity": "2024-10-29",
+   "horizon_sessions": 21,
+   "stocks": 136,
+   "ttm_rank_ic": -0.1191212251323887,
+   "earnings_yield_rank_ic": -0.1750345880444635,
+   "score_standardized_pearson_ic": -0.08485264217101054,
+   "signal_standardized_rank_ic": -0.11706502552359141,
+   "rank_ic_difference_vs_yield": 0.05591336291207481
+  },
+  {
+   "origin": "2024-09-30",
+   "maturity": "2024-12-30",
+   "horizon_sessions": 63,
+   "stocks": 136,
+   "ttm_rank_ic": -0.06016888507227708,
+   "earnings_yield_rank_ic": -0.12856256857974332,
+   "score_standardized_pearson_ic": -0.04680123232616619,
+   "signal_standardized_rank_ic": -0.029535804589475686,
+   "rank_ic_difference_vs_yield": 0.06839368350746625
+  },
+  {
+   "origin": "2024-09-30",
+   "maturity": "2025-10-02",
+   "horizon_sessions": 252,
+   "stocks": 136,
+   "ttm_rank_ic": 0.01003768904155336,
+   "earnings_yield_rank_ic": 0.025919564906254473,
+   "score_standardized_pearson_ic": -0.010425788925663761,
+   "signal_standardized_rank_ic": 0.01217976241591527,
+   "rank_ic_difference_vs_yield": -0.015881875864701113
+  },
+  {
+   "origin": "2024-10-31",
+   "maturity": "2024-12-02",
+   "horizon_sessions": 21,
+   "stocks": 136,
+   "ttm_rank_ic": -0.04145317494394351,
+   "earnings_yield_rank_ic": 0.07263489337340776,
+   "score_standardized_pearson_ic": 0.009924499985795456,
+   "signal_standardized_rank_ic": -0.023996946710557698,
+   "rank_ic_difference_vs_yield": -0.11408806831735127
+  },
+  {
+   "origin": "2024-10-31",
+   "maturity": "2025-02-04",
+   "horizon_sessions": 63,
+   "stocks": 136,
+   "ttm_rank_ic": -0.06256857974333285,
+   "earnings_yield_rank_ic": -0.08213825676255902,
+   "score_standardized_pearson_ic": -0.08285670233178975,
+   "signal_standardized_rank_ic": -0.05923858594532703,
+   "rank_ic_difference_vs_yield": 0.01956967701922617
+  },
+  {
+   "origin": "2024-10-31",
+   "maturity": "2025-11-04",
+   "horizon_sessions": 252,
+   "stocks": 136,
+   "ttm_rank_ic": -0.03493631029053957,
+   "earnings_yield_rank_ic": -0.01440293879108821,
+   "score_standardized_pearson_ic": -0.05282738909801944,
+   "signal_standardized_rank_ic": -0.01220838700443681,
+   "rank_ic_difference_vs_yield": -0.02053337149945136
+  },
+  {
+   "origin": "2024-11-29",
+   "maturity": "2024-12-31",
+   "horizon_sessions": 21,
+   "stocks": 136,
+   "ttm_rank_ic": 0.016368493869567288,
+   "earnings_yield_rank_ic": -0.2629454701588665,
+   "score_standardized_pearson_ic": -0.033926463962082425,
+   "signal_standardized_rank_ic": 0.014899098325461569,
+   "rank_ic_difference_vs_yield": 0.2793139640284338
+  },
+  {
+   "origin": "2024-11-29",
+   "maturity": "2025-03-05",
+   "horizon_sessions": 63,
+   "stocks": 136,
+   "ttm_rank_ic": -0.07486284051333428,
+   "earnings_yield_rank_ic": -0.2240828204761223,
+   "score_standardized_pearson_ic": -0.10698428321506309,
+   "signal_standardized_rank_ic": -0.08095033633891512,
+   "rank_ic_difference_vs_yield": 0.14921997996278802
+  },
+  {
+   "origin": "2024-11-29",
+   "maturity": "2025-12-03",
+   "horizon_sessions": 252,
+   "stocks": 136,
+   "ttm_rank_ic": 0.04969705643814703,
+   "earnings_yield_rank_ic": 0.07084108582605791,
+   "score_standardized_pearson_ic": 0.016756212926466816,
+   "signal_standardized_rank_ic": 0.05935308429941319,
+   "rank_ic_difference_vs_yield": -0.021144029387910886
+  },
+  {
+   "origin": "2024-12-31",
+   "maturity": "2025-02-03",
+   "horizon_sessions": 21,
+   "stocks": 135,
+   "ttm_rank_ic": -0.06679348356257926,
+   "earnings_yield_rank_ic": -0.0021607648034338116,
+   "score_standardized_pearson_ic": -0.07192509368441952,
+   "signal_standardized_rank_ic": -0.08894254219100577,
+   "rank_ic_difference_vs_yield": -0.06463271875914545
+  },
+  {
+   "origin": "2024-12-31",
+   "maturity": "2025-04-03",
+   "horizon_sessions": 63,
+   "stocks": 135,
+   "ttm_rank_ic": -0.11185250219490783,
+   "earnings_yield_rank_ic": 0.03139693688420643,
+   "score_standardized_pearson_ic": -0.09497605935402662,
+   "signal_standardized_rank_ic": -0.11429616622768511,
+   "rank_ic_difference_vs_yield": -0.14324943907911425
+  },
+  {
+   "origin": "2024-12-31",
+   "maturity": "2026-01-05",
+   "horizon_sessions": 252,
+   "stocks": 135,
+   "ttm_rank_ic": 0.09888791337430496,
+   "earnings_yield_rank_ic": 0.2590478977660717,
+   "score_standardized_pearson_ic": 0.10773054566838793,
+   "signal_standardized_rank_ic": 0.10557994342015414,
+   "rank_ic_difference_vs_yield": -0.1601599843917667
+  },
+  {
+   "origin": "2025-01-31",
+   "maturity": "2025-03-04",
+   "horizon_sessions": 21,
+   "stocks": 135,
+   "ttm_rank_ic": -0.05788703541117941,
+   "earnings_yield_rank_ic": -0.028094820017559266,
+   "score_standardized_pearson_ic": -0.019543644238245433,
+   "signal_standardized_rank_ic": -0.06068188469417619,
+   "rank_ic_difference_vs_yield": -0.029792215393620147
+  },
+  {
+   "origin": "2025-01-31",
+   "maturity": "2025-05-02",
+   "horizon_sessions": 63,
+   "stocks": 135,
+   "ttm_rank_ic": -0.20351673007511464,
+   "earnings_yield_rank_ic": -0.15151692517803142,
+   "score_standardized_pearson_ic": -0.1382861158084298,
+   "signal_standardized_rank_ic": -0.18391864208369918,
+   "rank_ic_difference_vs_yield": -0.051999804897083224
+  },
+  {
+   "origin": "2025-01-31",
+   "maturity": "2026-02-03",
+   "horizon_sessions": 252,
+   "stocks": 135,
+   "ttm_rank_ic": 0.19756609111306214,
+   "earnings_yield_rank_ic": 0.32115403375280466,
+   "score_standardized_pearson_ic": 0.20322819593804495,
+   "signal_standardized_rank_ic": 0.20946736903716714,
+   "rank_ic_difference_vs_yield": -0.12358794263974252
+  },
+  {
+   "origin": "2025-02-28",
+   "maturity": "2025-03-31",
+   "horizon_sessions": 21,
+   "stocks": 141,
+   "ttm_rank_ic": -0.09612569031208526,
+   "earnings_yield_rank_ic": 0.11114345648358233,
+   "score_standardized_pearson_ic": -0.05960602725761951,
+   "signal_standardized_rank_ic": -0.11222655079412645,
+   "rank_ic_difference_vs_yield": -0.2072691467956676
+  },
+  {
+   "origin": "2025-02-28",
+   "maturity": "2025-05-30",
+   "horizon_sessions": 63,
+   "stocks": 141,
+   "ttm_rank_ic": -0.18571000470910567,
+   "earnings_yield_rank_ic": -0.2488462691039856,
+   "score_standardized_pearson_ic": -0.1664395714332832,
+   "signal_standardized_rank_ic": -0.17559398946872723,
+   "rank_ic_difference_vs_yield": 0.06313626439487993
+  },
+  {
+   "origin": "2025-02-28",
+   "maturity": "2026-03-03",
+   "horizon_sessions": 252,
+   "stocks": 141,
+   "ttm_rank_ic": 0.19267948114217215,
+   "earnings_yield_rank_ic": 0.35517359476004967,
+   "score_standardized_pearson_ic": 0.2206784625370603,
+   "signal_standardized_rank_ic": 0.2068966993450062,
+   "rank_ic_difference_vs_yield": -0.16249411361787752
+  },
+  {
+   "origin": "2025-03-31",
+   "maturity": "2025-04-30",
+   "horizon_sessions": 21,
+   "stocks": 141,
+   "ttm_rank_ic": -0.09319320176377412,
+   "earnings_yield_rank_ic": -0.3001541161864806,
+   "score_standardized_pearson_ic": -0.07382171938828087,
+   "signal_standardized_rank_ic": -0.07601352797636884,
+   "rank_ic_difference_vs_yield": 0.20696091442270648
+  },
+  {
+   "origin": "2025-03-31",
+   "maturity": "2025-07-01",
+   "horizon_sessions": 63,
+   "stocks": 141,
+   "ttm_rank_ic": 0.09327882186737445,
+   "earnings_yield_rank_ic": -0.039637826961770616,
+   "score_standardized_pearson_ic": 0.09474431343186646,
+   "signal_standardized_rank_ic": 0.078423733892718,
+   "rank_ic_difference_vs_yield": 0.13291664882914506
+  },
+  {
+   "origin": "2025-03-31",
+   "maturity": "2026-04-01",
+   "horizon_sessions": 252,
+   "stocks": 141,
+   "ttm_rank_ic": 0.23559655807183527,
+   "earnings_yield_rank_ic": 0.3913052784793869,
+   "score_standardized_pearson_ic": 0.27072789854635126,
+   "signal_standardized_rank_ic": 0.22521940151547581,
+   "rank_ic_difference_vs_yield": -0.15570872040755163
+  },
+  {
+   "origin": "2025-04-30",
+   "maturity": "2025-05-30",
+   "horizon_sessions": 21,
+   "stocks": 141,
+   "ttm_rank_ic": -0.006335887666424076,
+   "earnings_yield_rank_ic": -0.09682349415642791,
+   "score_standardized_pearson_ic": -0.02281985909770408,
+   "signal_standardized_rank_ic": 0.002508669035489533,
+   "rank_ic_difference_vs_yield": 0.09048760649000383
+  },
+  {
+   "origin": "2025-04-30",
+   "maturity": "2025-07-31",
+   "horizon_sessions": 63,
+   "stocks": 141,
+   "ttm_rank_ic": 0.12133652981720107,
+   "earnings_yield_rank_ic": 0.1288967849651098,
+   "score_standardized_pearson_ic": 0.15609416717884722,
+   "signal_standardized_rank_ic": 0.1238451988526906,
+   "rank_ic_difference_vs_yield": -0.007560255147908743
+  },
+  {
+   "origin": "2025-04-30",
+   "maturity": "2026-05-01",
+   "horizon_sessions": 252,
+   "stocks": 141,
+   "ttm_rank_ic": 0.32439316751573266,
+   "earnings_yield_rank_ic": 0.4485251937154843,
+   "score_standardized_pearson_ic": 0.359938129285099,
+   "signal_standardized_rank_ic": 0.3139303908557729,
+   "rank_ic_difference_vs_yield": -0.12413202619975167
+  },
+  {
+   "origin": "2025-05-30",
+   "maturity": "2025-07-01",
+   "horizon_sessions": 21,
+   "stocks": 139,
+   "ttm_rank_ic": 0.3512265963626614,
+   "earnings_yield_rank_ic": 0.33931364225389865,
+   "score_standardized_pearson_ic": 0.32289386025358535,
+   "signal_standardized_rank_ic": 0.3418293936279547,
+   "rank_ic_difference_vs_yield": 0.011912954108762752
+  },
+  {
+   "origin": "2025-05-30",
+   "maturity": "2025-08-29",
+   "horizon_sessions": 63,
+   "stocks": 139,
+   "ttm_rank_ic": 0.27573171276643277,
+   "earnings_yield_rank_ic": 0.3978685374681621,
+   "score_standardized_pearson_ic": 0.3093949552893627,
+   "signal_standardized_rank_ic": 0.2886277313552884,
+   "rank_ic_difference_vs_yield": -0.12213682470172932
+  },
+  {
+   "origin": "2025-05-30",
+   "maturity": "2026-06-02",
+   "horizon_sessions": 252,
+   "stocks": 139,
+   "ttm_rank_ic": 0.29001742705214706,
+   "earnings_yield_rank_ic": 0.38039233209705525,
+   "score_standardized_pearson_ic": 0.35730155850324447,
+   "signal_standardized_rank_ic": 0.2975914920237723,
+   "rank_ic_difference_vs_yield": -0.0903749050449082
+  },
+  {
+   "origin": "2025-06-30",
+   "maturity": "2025-07-30",
+   "horizon_sessions": 21,
+   "stocks": 138,
+   "ttm_rank_ic": -0.006408836751607916,
+   "earnings_yield_rank_ic": 0.07960702209416216,
+   "score_standardized_pearson_ic": 0.043914852690366185,
+   "signal_standardized_rank_ic": 0.00834952475975424,
+   "rank_ic_difference_vs_yield": -0.08601585884577008
+  },
+  {
+   "origin": "2025-06-30",
+   "maturity": "2025-09-29",
+   "horizon_sessions": 63,
+   "stocks": 138,
+   "ttm_rank_ic": 0.14917497928030155,
+   "earnings_yield_rank_ic": 0.31770889223245324,
+   "score_standardized_pearson_ic": 0.19566684319933142,
+   "signal_standardized_rank_ic": 0.17991091100461423,
+   "rank_ic_difference_vs_yield": -0.1685339129521517
+  },
+  {
+   "origin": "2025-06-30",
+   "maturity": "2026-07-01",
+   "horizon_sessions": 252,
+   "stocks": 138,
+   "ttm_rank_ic": 0.19371034432371584,
+   "earnings_yield_rank_ic": 0.33328919219432446,
+   "score_standardized_pearson_ic": 0.2861739945144722,
+   "signal_standardized_rank_ic": 0.20823582327410045,
+   "rank_ic_difference_vs_yield": -0.13957884787060862
+  },
+  {
+   "origin": "2025-07-31",
+   "maturity": "2025-08-29",
+   "horizon_sessions": 21,
+   "stocks": 139,
+   "ttm_rank_ic": 0.3108852048795746,
+   "earnings_yield_rank_ic": 0.47245632065775944,
+   "score_standardized_pearson_ic": 0.28984913686783254,
+   "signal_standardized_rank_ic": 0.3151660038428884,
+   "rank_ic_difference_vs_yield": -0.16157111577818484
+  },
+  {
+   "origin": "2025-07-31",
+   "maturity": "2025-10-29",
+   "horizon_sessions": 63,
+   "stocks": 139,
+   "ttm_rank_ic": 0.23809374860360158,
+   "earnings_yield_rank_ic": 0.25980606818892704,
+   "score_standardized_pearson_ic": 0.24555110357055124,
+   "signal_standardized_rank_ic": 0.25525269225613295,
+   "rank_ic_difference_vs_yield": -0.021712319585325462
+  },
+  {
+   "origin": "2025-07-31",
+   "maturity": "2026-08-03",
+   "horizon_sessions": 252,
+   "stocks": 139,
+   "ttm_rank_ic": 0.28911032664551584,
+   "earnings_yield_rank_ic": 0.429907502569373,
+   "score_standardized_pearson_ic": 0.3180283383645023,
+   "signal_standardized_rank_ic": 0.2890343625720541,
+   "rank_ic_difference_vs_yield": -0.14079717592385715
+  },
+  {
+   "origin": "2025-08-29",
+   "maturity": "2025-09-30",
+   "horizon_sessions": 21,
+   "stocks": 141,
+   "ttm_rank_ic": 0.09156641979536793,
+   "earnings_yield_rank_ic": 0.0914765186865876,
+   "score_standardized_pearson_ic": 0.07130139051353729,
+   "signal_standardized_rank_ic": 0.10668264908600537,
+   "rank_ic_difference_vs_yield": 8.99011087803353e-05
+  },
+  {
+   "origin": "2025-08-29",
+   "maturity": "2025-11-28",
+   "horizon_sessions": 63,
+   "stocks": 141,
+   "ttm_rank_ic": 0.13437647159553062,
+   "earnings_yield_rank_ic": 0.16357292692324157,
+   "score_standardized_pearson_ic": 0.1534384830440457,
+   "signal_standardized_rank_ic": 0.1663512992850721,
+   "rank_ic_difference_vs_yield": -0.029196455327710952
+  },
+  {
+   "origin": "2025-08-29",
+   "maturity": "2026-09-01",
+   "horizon_sessions": 252,
+   "stocks": 141,
+   "ttm_rank_ic": 0.2477674557986215,
+   "earnings_yield_rank_ic": 0.3852390941393039,
+   "score_standardized_pearson_ic": 0.2560563925206598,
+   "signal_standardized_rank_ic": 0.25457853504002736,
+   "rank_ic_difference_vs_yield": -0.1374716383406824
+  },
+  {
+   "origin": "2025-09-30",
+   "maturity": "2025-10-29",
+   "horizon_sessions": 21,
+   "stocks": 142,
+   "ttm_rank_ic": 0.08653348449572604,
+   "earnings_yield_rank_ic": -0.00698881579912446,
+   "score_standardized_pearson_ic": 0.07930912234609226,
+   "signal_standardized_rank_ic": 0.0643997896020671,
+   "rank_ic_difference_vs_yield": 0.0935223002948505
+  },
+  {
+   "origin": "2025-09-30",
+   "maturity": "2025-12-30",
+   "horizon_sessions": 63,
+   "stocks": 142,
+   "ttm_rank_ic": 0.23534182329507475,
+   "earnings_yield_rank_ic": 0.2737499240346109,
+   "score_standardized_pearson_ic": 0.2058019434127902,
+   "signal_standardized_rank_ic": 0.21755020526372043,
+   "rank_ic_difference_vs_yield": -0.038408100739536155
+  },
+  {
+   "origin": "2025-09-30",
+   "maturity": "2026-10-01",
+   "horizon_sessions": 252,
+   "stocks": 142,
+   "ttm_rank_ic": 0.1751730439174251,
+   "earnings_yield_rank_ic": 0.2505893866397313,
+   "score_standardized_pearson_ic": 0.15965664112664726,
+   "signal_standardized_rank_ic": 0.18288903185516914,
+   "rank_ic_difference_vs_yield": -0.07541634272230618
+  },
+  {
+   "origin": "2025-10-31",
+   "maturity": "2025-12-02",
+   "horizon_sessions": 21,
+   "stocks": 142,
+   "ttm_rank_ic": 0.15420450092311044,
+   "earnings_yield_rank_ic": 0.2497008535366342,
+   "score_standardized_pearson_ic": 0.1719471658675828,
+   "signal_standardized_rank_ic": 0.15528582894480406,
+   "rank_ic_difference_vs_yield": -0.09549635261352377
+  },
+  {
+   "origin": "2025-10-31",
+   "maturity": "2026-02-03",
+   "horizon_sessions": 63,
+   "stocks": 142,
+   "ttm_rank_ic": 0.2462012066447188,
+   "earnings_yield_rank_ic": 0.37937220106833536,
+   "score_standardized_pearson_ic": 0.2624681244569446,
+   "signal_standardized_rank_ic": 0.23550527985649355,
+   "rank_ic_difference_vs_yield": -0.13317099442361655
+  },
+  {
+   "origin": "2025-11-28",
+   "maturity": "2025-12-30",
+   "horizon_sessions": 21,
+   "stocks": 141,
+   "ttm_rank_ic": 0.17340639582173892,
+   "earnings_yield_rank_ic": 0.19293206044779312,
+   "score_standardized_pearson_ic": 0.19793569492413654,
+   "signal_standardized_rank_ic": 0.15348259771394324,
+   "rank_ic_difference_vs_yield": -0.019525664626054207
+  },
+  {
+   "origin": "2025-11-28",
+   "maturity": "2026-03-03",
+   "horizon_sessions": 63,
+   "stocks": 141,
+   "ttm_rank_ic": 0.13382850293248855,
+   "earnings_yield_rank_ic": 0.3086476304636328,
+   "score_standardized_pearson_ic": 0.19365504252690083,
+   "signal_standardized_rank_ic": 0.1320561667879618,
+   "rank_ic_difference_vs_yield": -0.17481912753114426
+  },
+  {
+   "origin": "2025-12-31",
+   "maturity": "2026-02-02",
+   "horizon_sessions": 21,
+   "stocks": 139,
+   "ttm_rank_ic": 0.07969971848608069,
+   "earnings_yield_rank_ic": 0.15741543411233744,
+   "score_standardized_pearson_ic": 0.09381933090170774,
+   "signal_standardized_rank_ic": 0.09928057553956833,
+   "rank_ic_difference_vs_yield": -0.07771571562625675
+  },
+  {
+   "origin": "2025-12-31",
+   "maturity": "2026-04-02",
+   "horizon_sessions": 63,
+   "stocks": 139,
+   "ttm_rank_ic": 0.05424281692658295,
+   "earnings_yield_rank_ic": 0.24818803342419232,
+   "score_standardized_pearson_ic": 0.08277976472253373,
+   "signal_standardized_rank_ic": 0.05713838866794763,
+   "rank_ic_difference_vs_yield": -0.19394521649760937
+  },
+  {
+   "origin": "2026-01-30",
+   "maturity": "2026-03-03",
+   "horizon_sessions": 21,
+   "stocks": 141,
+   "ttm_rank_ic": 0.06894558842416199,
+   "earnings_yield_rank_ic": 0.23804957403998456,
+   "score_standardized_pearson_ic": 0.09016476409488011,
+   "signal_standardized_rank_ic": 0.06259685774219786,
+   "rank_ic_difference_vs_yield": -0.16910398561582257
+  },
+  {
+   "origin": "2026-01-30",
+   "maturity": "2026-05-01",
+   "horizon_sessions": 63,
+   "stocks": 141,
+   "ttm_rank_ic": 0.03837064942848581,
+   "earnings_yield_rank_ic": 0.10378440857913436,
+   "score_standardized_pearson_ic": 0.07396495408608107,
+   "signal_standardized_rank_ic": 0.04422706451474806,
+   "rank_ic_difference_vs_yield": -0.06541375915064855
+  },
+  {
+   "origin": "2026-02-27",
+   "maturity": "2026-03-30",
+   "horizon_sessions": 21,
+   "stocks": 143,
+   "ttm_rank_ic": -0.01950162513542795,
+   "earnings_yield_rank_ic": 0.07492448865688302,
+   "score_standardized_pearson_ic": -0.04057254203216878,
+   "signal_standardized_rank_ic": -0.004542992219048556,
+   "rank_ic_difference_vs_yield": -0.09442611379231097
+  },
+  {
+   "origin": "2026-02-27",
+   "maturity": "2026-05-29",
+   "horizon_sessions": 63,
+   "stocks": 143,
+   "ttm_rank_ic": 0.044875898749138186,
+   "earnings_yield_rank_ic": -0.00961948849272793,
+   "score_standardized_pearson_ic": -0.005574958753791706,
+   "signal_standardized_rank_ic": 0.056383170819790523,
+   "rank_ic_difference_vs_yield": 0.05449538724186612
+  },
+  {
+   "origin": "2026-03-31",
+   "maturity": "2026-04-30",
+   "horizon_sessions": 21,
+   "stocks": 145,
+   "ttm_rank_ic": 0.09846480869154461,
+   "earnings_yield_rank_ic": 0.03527790899071012,
+   "score_standardized_pearson_ic": 0.06785003852591101,
+   "signal_standardized_rank_ic": 0.10978979688238072,
+   "rank_ic_difference_vs_yield": 0.06318689970083449
+  },
+  {
+   "origin": "2026-03-31",
+   "maturity": "2026-07-01",
+   "horizon_sessions": 63,
+   "stocks": 145,
+   "ttm_rank_ic": 0.05013383719099355,
+   "earnings_yield_rank_ic": 0.005743190048811211,
+   "score_standardized_pearson_ic": -0.030814585582639602,
+   "signal_standardized_rank_ic": 0.04984648086915446,
+   "rank_ic_difference_vs_yield": 0.04439064714218234
+  },
+  {
+   "origin": "2026-04-30",
+   "maturity": "2026-06-01",
+   "horizon_sessions": 21,
+   "stocks": 144,
+   "ttm_rank_ic": -0.0004581625271280444,
+   "earnings_yield_rank_ic": -0.10857648099027412,
+   "score_standardized_pearson_ic": -0.057238745585419436,
+   "signal_standardized_rank_ic": -0.013551965276103205,
+   "rank_ic_difference_vs_yield": 0.10811831846314607
+  },
+  {
+   "origin": "2026-04-30",
+   "maturity": "2026-07-31",
+   "horizon_sessions": 63,
+   "stocks": 144,
+   "ttm_rank_ic": -0.011064223133188653,
+   "earnings_yield_rank_ic": 0.078048388393216,
+   "score_standardized_pearson_ic": -0.02286285080027778,
+   "signal_standardized_rank_ic": 0.001342335825094446,
+   "rank_ic_difference_vs_yield": -0.08911261152640465
+  },
+  {
+   "origin": "2026-05-29",
+   "maturity": "2026-06-30",
+   "horizon_sessions": 21,
+   "stocks": 146,
+   "ttm_rank_ic": -0.1641926869944955,
+   "earnings_yield_rank_ic": -0.0645638321459902,
+   "score_standardized_pearson_ic": -0.16041741793303002,
+   "signal_standardized_rank_ic": -0.12692392970414432,
+   "rank_ic_difference_vs_yield": -0.0996288548485053
+  },
+  {
+   "origin": "2026-05-29",
+   "maturity": "2026-08-28",
+   "horizon_sessions": 63,
+   "stocks": 146,
+   "ttm_rank_ic": 0.1465049694889765,
+   "earnings_yield_rank_ic": 0.3263011770603376,
+   "score_standardized_pearson_ic": 0.21689456532381057,
+   "signal_standardized_rank_ic": 0.1680873010517386,
+   "rank_ic_difference_vs_yield": -0.1797962075713611
+  },
+  {
+   "origin": "2026-06-30",
+   "maturity": "2026-07-30",
+   "horizon_sessions": 21,
+   "stocks": 148,
+   "ttm_rank_ic": 0.2407482129438026,
+   "earnings_yield_rank_ic": 0.3926489151800754,
+   "score_standardized_pearson_ic": 0.2910787985973115,
+   "signal_standardized_rank_ic": 0.2502026749390125,
+   "rank_ic_difference_vs_yield": -0.15190070223627278
+  },
+  {
+   "origin": "2026-06-30",
+   "maturity": "2026-09-29",
+   "horizon_sessions": 63,
+   "stocks": 148,
+   "ttm_rank_ic": 0.18817488903778454,
+   "earnings_yield_rank_ic": 0.22690338605966606,
+   "score_standardized_pearson_ic": 0.211583003823682,
+   "signal_standardized_rank_ic": 0.1711835105890715,
+   "rank_ic_difference_vs_yield": -0.038728497021881525
+  },
+  {
+   "origin": "2026-07-31",
+   "maturity": "2026-08-31",
+   "horizon_sessions": 21,
+   "stocks": 148,
+   "ttm_rank_ic": 0.13754872527643383,
+   "earnings_yield_rank_ic": 0.16320237509115745,
+   "score_standardized_pearson_ic": 0.13375237294367304,
+   "signal_standardized_rank_ic": 0.11411246885839409,
+   "rank_ic_difference_vs_yield": -0.025653649814723622
+  },
+  {
+   "origin": "2026-08-31",
+   "maturity": "2026-09-30",
+   "horizon_sessions": 21,
+   "stocks": 148,
+   "ttm_rank_ic": -0.26185972302942584,
+   "earnings_yield_rank_ic": -0.35351691919285405,
+   "score_standardized_pearson_ic": -0.20452640438130817,
+   "signal_standardized_rank_ic": -0.25427468284611143,
+   "rank_ic_difference_vs_yield": 0.09165719616342821
+  }
+ ],
+ "input_market_sha256": "51b818b130765be9d3906dedf5d978446de51c44cde19588159a079dd3370415",
+ "input_facts_sha256": "5c198993b844d950c6d05748a7d2386fc4a137e18f30a1898f73d74a0348ff58",
+ "replay_source_hashes": {
+  "scripts/ttm_signal_replay.mjs": "0817352f3df61478f853d3969c0d8edaf557683cbcc754639acc5a2dccdc2943",
+  "dist/assets/js/analytics.mjs": "612c01e55a714b43a21dac1cdce19147d3893338625beacde7f3b8e5d38a5e5f",
+  "dist/assets/js/return-model.mjs": "e39e3a71e1b54a347649d54a11c3964bb289b0fa55befc6a5d6d7b2df56f43d4",
+  "dist/assets/js/financial-freshness.mjs": "538c0f4cb91162cb07b42ced80b23b507bf83e646b62a7062ae2334f0688e983"
+ },
+ "exclusions": {
+  "mixed_historical_share_basis": 97,
+  "missing_ttm_or_fy_fallback": 164,
+  "nonpositive_ttm": 332,
+  "unreconciled_future_price_adjustment": 226,
+  "invalid_signal_or_exposure": 141
+ },
+ "limitations": [
+  "Current companyfacts extraction, not original historical API vintages or verified filing timestamps",
+  "Strict prior-calendar-day filing lag; no same-day information is admitted",
+  "Current selected universe, present catalogue growth/multiples and corporate-action classification",
+  "Today's adjusted price and ex-date dividend series; no original dividend vintage or executable strategy",
+  "Actual valuation/market-exposure functions; not the full confidence/holdings-neutralized anchor",
+  "Rank IC is not the Pearson skill coefficient; even Pearson diagnostics do not calibrate the live coefficient",
+  "Monthly overlapping outcomes; moving blocks are approximate, few disjoint annual origins",
+  "No fitted parameter, parameter search, production promotion, or financial-risk certification"
+ ],
+ "replay_sha256": "41a2227a46698d6290df1ac77781088e3014aa5aa09a7a4120cbcf7a8a452e7f",
+ "analysis_source_sha256": "b70a15e29da71e67456e6349ef460a05b464ce576f2ea5153471af575f5d6b68",
+ "collector_source_sha256": "473489e6dda241b77c5a729fb19347027facbae309bd04370ae45d9df0f013f6",
+ "protocol_sha256": "57456d91af3f9b1a1e40c5b390fe259426a582bb15e8bef2b29b425ac9b5f6d3",
+ "data_git_commit": "8dcd06cfd06b2ca34ca6fb64e31d5b6344525cd5",
+ "frozen_inputs_archive_sha256": "37286e413f228ade436fa0e34317db751d44f93335fcd334232d850b7e5fdaa6",
+ "downloaded_companies": 160,
+ "eps_fact_versions": 10538,
+ "download_errors": []
+}
