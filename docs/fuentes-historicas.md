@@ -86,6 +86,35 @@ trimestral diferida puede dejar cortes sin composición admisible. No se
 relaja ese límite para completar el backtest. Disponibilidad del documento,
 identificadores utilizables y cobertura de anclas válidas son requisitos distintos.
 
+## Preparación reproducible de entradas macro (fase siguiente)
+
+El adaptador `scripts/historical_replay_inputs.py` reconstruye, exclusivamente
+desde el archivo verificable, un paquete por cada uno de los 48 cierres.
+Revalida todos los hashes, el cuerpo ALFRED, la versión histórica solicitada,
+el conjunto de series, las fechas de disponibilidad y los metadatos de cada
+puntero. Una serie ausente, corrupta o reemplazada por datos actuales provoca
+un fallo explícito: no se rellenan huecos ni se permite un backtest parcial
+bajo la etiqueta de replay completo.
+
+```sh
+python -m unittest tests.test_historical_replay_inputs
+python scripts/historical_replay_inputs.py --output out/historical-macro-inputs-v1.json.gz
+```
+
+El paquete comprimido conserva las historias, valores disponibles, versión,
+fecha original del dato, hash de la fuente, primera descarga y el hash del
+manifiesto. La compresión es reproducible (mtime fijo). El workflow
+`Historical provider inputs (research)` comprueba las pruebas y guarda
+`historical-macro-replay-inputs` como artefacto de investigación por 90 días;
+no modifica los datos de producción.
+
+**Esto prepara solo la capa macro.** El paquete señala explícitamente
+`full_model_replay_ready=false` y `predictive_validation=not-established`.
+Faltan todavía el universo histórico, correspondencia verificable de CUSIP,
+perfiles originales de renta fija/ETF, calidad contable, precios operables y el
+recorrido de decisiones del motor completo. No se atribuye rendimiento
+predictivo al archivo generado.
+
 ## Archivos y operación
 
 ```sh
