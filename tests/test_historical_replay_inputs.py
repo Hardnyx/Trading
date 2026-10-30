@@ -5,7 +5,7 @@ from pathlib import Path
 import tempfile
 import unittest
 
-from scripts.historical_sources import PROTOCOL, SERIES, archive, canonical
+from scripts.historical_sources import MARKET_COMMIT, PROTOCOL, SERIES, archive, canonical
 from scripts.historical_replay_inputs import materialize_macro_inputs, write_bundle
 from tests.test_historical_sources import record
 
@@ -22,7 +22,7 @@ class HistoricalMacroReplayInputs(unittest.TestCase):
                         "vintage_day": "2022-10-30",
                         "last_observation": "2022-10-30", "observations": 1}
         self.manifest = {
-            "protocol": PROTOCOL, "source_market_commit": "frozen",
+            "protocol": PROTOCOL, "source_market_commit": MARKET_COMMIT,
             "cuts": self.cuts, "series_ids": ["DGS3MO"],
             "macro": {"2022-10-31": {"DGS3MO": self.pointer}}
         }
@@ -49,6 +49,11 @@ class HistoricalMacroReplayInputs(unittest.TestCase):
         self.assertEqual(json.loads(gzip.decompress(target.read_bytes())), bundle)
 
     def test_rejects_missing_misdated_or_misidentified_sources(self):
+        self.manifest["source_market_commit"] = "other"
+        self.save_manifest()
+        with self.assertRaisesRegex(ValueError, "Source protocol"):
+            self.build()
+        self.manifest["source_market_commit"] = MARKET_COMMIT
         self.manifest["macro"]["2022-10-31"]["DGS3MO"]["status"] = "unavailable"
         self.save_manifest()
         with self.assertRaisesRegex(ValueError, "Missing historical"):
