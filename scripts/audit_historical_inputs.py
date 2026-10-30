@@ -62,6 +62,7 @@ def audit_sources(root, cuts, definitions=SERIES):
                        "bond_profiles":"missing-original-history","financial_quality":"incomplete-history",
                        "historical_universe":"unverified","full_replay_ready":False})
     return {"protocol":"historical-source-readiness-v1","audited_at":datetime.now(timezone.utc).isoformat(),
+            "auditor_sha256":sha(Path(__file__).read_bytes()),
             "manifest_sha256":sha((root/"manifest.json").read_bytes()),
             "macro_records_verified":verified,"macro_records_expected":len(cuts)*len(definitions),
             "all_macro_verified":verified==len(cuts)*len(definitions),

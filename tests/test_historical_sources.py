@@ -11,7 +11,7 @@ from unittest.mock import patch
 from urllib.parse import urlparse, parse_qs
 
 from scripts.historical_sources import (PROTOCOL, SERIES, FetchError, archive,
-    collect, fred_parameters, normalize_fred, parse_nport, select_holdings,
+    collect, collect_spy, fred_parameters, normalize_fred, parse_nport, select_holdings,
     sha, submission_rows, validate_macro_record)
 from scripts.audit_historical_inputs import audit_sources
 
@@ -111,6 +111,21 @@ class HistoricalSources(unittest.TestCase):
         for raw in [nport().replace(b"0000884394",b"0000000001"),nport("2022-06-30"),b'<!DOCTYPE test>'+nport()]:
             with self.assertRaises(ValueError):parse_nport(raw,filing)
 
+    def test_sec_xsl_primary_is_resolved_to_the_original_xml_without_an_arbitrary_path(self):
+        cols={"accessionNumber":["0001410368-22-000001"],"filingDate":["2022-11-29"],
+              "reportDate":["2022-09-30"],"form":["NPORT-P"],
+              "primaryDocument":["xslFormNPORT-P_X01/primary_doc.xml"],"acceptanceDateTime":["2022-11-29T12:00:00Z"]}
+        def fetch(url,**kwargs):
+            if "/submissions/" in url:
+                return json.dumps({"cik":884394,"tickers":["SPY"],"filings":{"recent":cols,"files":[]}}).encode()
+            self.assertEqual(url,"https://www.sec.gov/Archives/edgar/data/884394/000141036822000001/primary_doc.xml")
+            return nport()
+        with tempfile.TemporaryDirectory() as folder:
+            result=collect_spy(Path(folder),["2022-11-30"],"2022-11-30",fetch,"2026-10-30T05:00:00Z","test-code")
+            self.assertEqual(result["status"],"collected")
+            self.assertEqual(len(result["documents"]),1)
+            self.assertEqual(result["by_cut"]["2022-11-30"]["status"],"source-available")
+
     def test_immutable_raw_archive_preserves_first_retrieval(self):
         with tempfile.TemporaryDirectory() as folder:
             root=Path(folder);a=record();ptr,_=archive(root,"one.json.gz",a)
@@ -152,6 +167,13 @@ class HistoricalSources(unittest.TestCase):
             invalid=audit_sources(folder,cuts,SERIES[:2]);self.assertEqual(invalid["macro_records_verified"],3)
             self.assertFalse(invalid["all_macro_verified"]);self.assertEqual(len(invalid["errors"]),1)
             path.write_bytes(saved)
+            manifest_path=Path(folder)/"manifest.json"
+            manifest=json.loads(manifest_path.read_text())
+            manifest["macro"][cuts[0]]["DGS2"]=manifest["macro"][cuts[0]]["DGS3MO"]
+            manifest_path.write_text(json.dumps(manifest))
+            rejected=collect(folder,{"price_as_of":"2026-10-28"},fetch=fetch)
+            self.assertEqual(rejected["macro"][cuts[0]]["DGS2"]["status"],"unavailable")
+            self.assertEqual(rejected["available_macro_records"],3)
             for path in Path(folder).rglob('*'):
                 if path.is_file():
                     raw=gzip.decompress(path.read_bytes()) if path.suffix==".gz" else path.read_bytes()

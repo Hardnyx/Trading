@@ -15,6 +15,7 @@ import os
 from pathlib import Path
 import re
 import subprocess
+import sys
 import time
 import urllib.error
 import urllib.parse
@@ -286,6 +287,12 @@ def collect(root, market, *, fetch=None, limit=None):
               "retrieved_at":datetime.now(timezone.utc).isoformat(),"collector_sha256":code_hash,
               "cuts":cuts,"series_ids":[r[0] for r in SERIES],"macro":{},"sec":{},"errors":[],
               "production_eligible":False,"automatic_promotion":False,"full_model_backtest":"blocked"}
+    result["source_hashes"]={}
+    for module in list(sys.modules.values()):
+        path=getattr(module,"__file__",None)
+        if path and Path(path).suffix==".py" and Path(path).resolve().is_relative_to(ROOT/"scripts"):
+            path=Path(path).resolve();result["source_hashes"][str(path.relative_to(ROOT))]=sha(path.read_bytes())
+    result["source_hashes"]["requirements-research.txt"]=sha((ROOT/"requirements-research.txt").read_bytes())
     key = os.environ.get("FRED_API_KEY", "")
     for cut in cuts:
         result["macro"][cut] = {}
@@ -298,6 +305,7 @@ def collect(root, market, *, fetch=None, limit=None):
                     path = source_path(root,prior["path"])
                     if sha(path.read_bytes()) != prior["sha256"]:raise ValueError("Archived blob mismatch")
                     previous = json.loads(gzip.decompress(path.read_bytes()))
+                    validate_macro_record(previous,definition,cut)
                     raw = base64.b64decode(previous["raw_base64"],validate=True)
                     if sha(raw)!=previous["raw_sha256"]:raise ValueError("Archived raw mismatch")
                     retrieved = previous["retrieved_at"]
@@ -362,10 +370,13 @@ def collect_spy(root,cuts,last_cut,fetch,retrieved,code_hash):
         row={"accession":accession,"filing_date":filing["filingDate"],"form":filing["form"],"report_date":filing["reportDate"],"normalized":None}
         try:
             primary=filing["primaryDocument"]
-            if not re.fullmatch(r"[A-Za-z0-9_.-]+",primary):raise ValueError("Unsafe primary document")
             # XML primary documents preserve identifiers and weights. If SEC
             # names a rendered N-PORT primary, the standard raw XML is retained.
-            filename="primary_doc.xml" if filing["form"].startswith("NPORT") else primary
+            if filing["form"].startswith("NPORT"):
+                filename="primary_doc.xml"
+            else:
+                if not re.fullmatch(r"[A-Za-z0-9_.-]+",primary):raise ValueError("Unsafe primary document")
+                filename=primary
             source=f"https://www.sec.gov/Archives/edgar/data/{SPY_CIK}/{accession.replace('-','')}/{filename}"
             original=fetch(source,sec=True,max_bytes=4_000_000)
             ref,record=archive(root,f"sec/{accession}-{sha(original)[:20]}.json.gz",{"raw_sha256":sha(original),"raw_base64":base64.b64encode(original).decode(),"source_url":source,"filing":filing,"retrieved_at":retrieved})
