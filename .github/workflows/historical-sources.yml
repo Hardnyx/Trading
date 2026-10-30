@@ -7,6 +7,8 @@ on:
       - 'scripts/historical_sources.py'
       - 'scripts/audit_historical_inputs.py'
       - 'tests/test_historical_sources.py'
+      - 'scripts/historical_replay_inputs.py'
+      - 'tests/test_historical_replay_inputs.py'
       - '.github/workflows/historical-sources.yml'
 permissions:
   contents: read
@@ -29,7 +31,7 @@ jobs:
           python-version: '3.12'
       - run: python -m pip install -r requirements-research.txt
       - name: Check vintage, publication, identity and immutable-source guards
-        run: python -m unittest tests.test_historical_sources
+        run: python -m unittest tests.test_historical_sources tests.test_historical_replay_inputs
       - name: Recover historical macro vintages and original SPY filings
         id: collect
         continue-on-error: true
@@ -42,6 +44,19 @@ jobs:
         id: audit
         continue-on-error: true
         run: python scripts/audit_historical_inputs.py
+      - name: Build verified as-of macro inputs for future full-engine replay
+        id: bundle
+        if: steps.audit.outcome == 'success'
+        continue-on-error: true
+        run: python scripts/historical_replay_inputs.py
+      - name: Retain source-backed macro replay inputs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: historical-macro-replay-inputs
+          path: out/historical-macro-inputs-v1.json.gz
+          retention-days: 90
+          if-no-files-found: ignore
       - name: Preserve collection evidence even when a source is unavailable
         if: always()
         uses: actions/upload-artifact@v4
@@ -62,7 +77,7 @@ jobs:
           git pull --rebase origin main
           git push origin HEAD:main
       - name: Require an explicit complete collection
-        if: steps.collect.outcome != 'success' || steps.audit.outcome != 'success'
+        if: steps.collect.outcome != 'success' || steps.audit.outcome != 'success' || steps.bundle.outcome != 'success'
         run: |
           echo "Historical recovery is incomplete. Valid sources were preserved; no live inputs or parameters were promoted."
           exit 1
