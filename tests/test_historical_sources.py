@@ -112,10 +112,12 @@ class HistoricalSources(unittest.TestCase):
             with self.assertRaises(ValueError):parse_nport(raw,filing)
 
     def test_sec_xsl_primary_is_resolved_to_the_original_xml_without_an_arbitrary_path(self):
+        calls=[]
         cols={"accessionNumber":["0001410368-22-000001"],"filingDate":["2022-11-29"],
               "reportDate":["2022-09-30"],"form":["NPORT-P"],
               "primaryDocument":["xslFormNPORT-P_X01/primary_doc.xml"],"acceptanceDateTime":["2022-11-29T12:00:00Z"]}
         def fetch(url,**kwargs):
+            calls.append(url)
             if "/submissions/" in url:
                 return json.dumps({"cik":884394,"tickers":["SPY"],"filings":{"recent":cols,"files":[]}}).encode()
             self.assertEqual(url,"https://www.sec.gov/Archives/edgar/data/884394/000141036822000001/primary_doc.xml")
@@ -125,6 +127,9 @@ class HistoricalSources(unittest.TestCase):
             self.assertEqual(result["status"],"collected")
             self.assertEqual(len(result["documents"]),1)
             self.assertEqual(result["by_cut"]["2022-11-30"]["status"],"source-available")
+            again=collect_spy(Path(folder),["2022-11-30"],"2022-11-30",fetch,"2026-10-31T05:00:00Z","test-code")
+            self.assertEqual(sum('/Archives/' in url for url in calls),1)
+            self.assertEqual(again["documents"],result["documents"])
 
     def test_immutable_raw_archive_preserves_first_retrieval(self):
         with tempfile.TemporaryDirectory() as folder:
@@ -187,6 +192,28 @@ class HistoricalSources(unittest.TestCase):
             self.assertEqual(r["health"],"partial-collection")
             self.assertEqual(r["available_macro_records"],0)
             self.assertEqual(r["macro"]["2022-10-31"]["DGS3MO"]["http_status"],403)
+
+    def test_interrupted_download_keeps_a_verified_checkpoint_and_resumes_without_replacing_it(self):
+        cuts=["2022-10-31","2022-11-30"];requested=[]
+        def interrupted(url,**kwargs):
+            q=parse_qs(urlparse(url).query);v=q["realtime_start"][0]
+            if v=="2022-11-29":raise SystemExit("interrupted")
+            requested.append(v)
+            return json.dumps(response("2022-10-31")).encode()
+        def resumed(url,**kwargs):
+            if "stlouisfed" not in url:raise FetchError("expected-sec-unavailable")
+            q=parse_qs(urlparse(url).query);v=q["realtime_start"][0];requested.append(v)
+            return json.dumps(response(str(date.fromisoformat(v)+timedelta(days=1)))).encode()
+        with tempfile.TemporaryDirectory() as folder,patch.dict(os.environ,{"FRED_API_KEY":"sentinel-private-key"}),patch('scripts.historical_sources.account_origins',return_value=cuts),patch('scripts.historical_sources.SERIES',SERIES[:1]):
+            with self.assertRaises(SystemExit):collect(folder,{"price_as_of":"2026-10-28"},fetch=interrupted)
+            saved=json.loads((Path(folder)/"manifest.json").read_text())
+            self.assertEqual(saved["health"],"in-progress")
+            self.assertEqual(saved["available_macro_records"],1)
+            pointer=saved["macro"][cuts[0]]["DGS3MO"]
+            final=collect(folder,{"price_as_of":"2026-10-28"},fetch=resumed)
+            self.assertEqual(final["available_macro_records"],2)
+            self.assertEqual(final["macro"][cuts[0]]["DGS3MO"],pointer)
+            self.assertEqual(requested.count("2022-10-30"),1)
 
     def test_submissions_columns_must_reconcile(self):
         with self.assertRaisesRegex(ValueError,"Inconsistent"):

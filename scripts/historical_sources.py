@@ -6,6 +6,7 @@ conservative availability dates. Unknown identifiers remain unmatched.
 """
 import argparse
 import base64
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import date, datetime, timedelta, timezone
 import gzip
 import hashlib
@@ -17,6 +18,7 @@ import re
 import subprocess
 import sys
 import time
+from threading import Lock
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -221,13 +223,20 @@ class FetchError(Exception):
 class Downloader:
     def __init__(self, delay=.65):
         self.delay = delay
+        self.lock = Lock()
+        self.last_request = 0
+
+    def pace(self):
+        with self.lock:
+            time.sleep(max(0,self.delay-(time.monotonic()-self.last_request)))
+            self.last_request=time.monotonic()
 
     def __call__(self, url, *, sec=False, max_bytes=8_000_000):
         agent = os.environ.get("SEC_USER_AGENT", "") if sec else "TradingHistoricalResearch/1.0"
         if sec and not agent:
             raise FetchError("missing-sec-user-agent")
         for attempt in range(3):
-            time.sleep(self.delay)
+            self.pace()
             try:
                 request = urllib.request.Request(url,headers={"User-Agent":agent,"Accept":"application/json, application/xml, text/html"})
                 with urllib.request.urlopen(request,timeout=30) as response:
@@ -272,6 +281,40 @@ def safe_error(error):
     return {"kind":error.kind,"http_status":error.status} if isinstance(error,FetchError) else {"kind":type(error).__name__}
 
 
+def recover_macro(root, old, cut, definition, fetch, key, code_hash):
+    target, source, _ = definition
+    prior = old.get("macro",{}).get(cut,{}).get(target,{})
+    try:
+        raw=None;retrieved=None;basis="download-completed"
+        if prior.get("path"):
+            path=source_path(root,prior["path"])
+            if sha(path.read_bytes())!=prior["sha256"]:raise ValueError("Archived blob mismatch")
+            previous=json.loads(gzip.decompress(path.read_bytes()))
+            validate_macro_record(previous,definition,cut)
+            raw=base64.b64decode(previous["raw_base64"],validate=True)
+            retrieved=previous["retrieved_at"]
+            basis=previous.get("retrieval_timestamp_basis","initial-collection-clock")
+        params=fred_parameters(source,cut)
+        if raw is None:
+            if not key:raise FetchError("missing-fred-api-key")
+            url="https://api.stlouisfed.org/fred/series/observations?"+urllib.parse.urlencode({**params,"api_key":key})
+            raw=fetch(url);retrieved=datetime.now(timezone.utc).isoformat()
+            if key.encode() in raw:raise FetchError("credential-in-response")
+        normalized=normalize_fred(json.loads(raw),definition,cut)
+        record={"protocol":PROTOCOL,"kind":"alfred-vintage","request":params,
+                "retrieved_at":retrieved,"retrieval_timestamp_basis":basis,
+                "raw_sha256":sha(raw),"raw_base64":base64.b64encode(raw).decode(),
+                "normalized":normalized,"collector_sha256":code_hash}
+        relative=f"macro/{cut}/{target}-{sha(raw)[:20]}-{code_hash[:12]}.json.gz"
+        pointer,record=archive(root,relative,record)
+        validate_macro_record(record,definition,cut)
+        return target,{**pointer,"status":"available","vintage_day":normalized["vintage_date"],
+                       "last_observation":normalized["date"],"observations":len(normalized["history"])},None
+    except Exception as error:
+        detail={"source":"ALFRED","cut":cut,"series":target,**safe_error(error)}
+        return target,{"status":"unavailable",**safe_error(error)},detail
+
+
 def collect(root, market, *, fetch=None, limit=None):
     fetch = fetch or Downloader()
     root = Path(root);root.mkdir(parents=True,exist_ok=True)
@@ -294,39 +337,25 @@ def collect(root, market, *, fetch=None, limit=None):
             path=Path(path).resolve();result["source_hashes"][str(path.relative_to(ROOT))]=sha(path.read_bytes())
     result["source_hashes"]["requirements-research.txt"]=sha((ROOT/"requirements-research.txt").read_bytes())
     key = os.environ.get("FRED_API_KEY", "")
+    result["health"]="in-progress";result["macro_health"]="incomplete"
+    result["expected_macro_records"]=len(cuts)*len(SERIES)
+    ignore=root/".gitignore"
+    if not ignore.exists():ignore.write_text(".manifest.tmp\n")
+    def checkpoint():
+        result["available_macro_records"]=sum(r["status"]=="available" for rows in result["macro"].values() for r in rows.values())
+        temporary=root/".manifest.tmp"
+        temporary.write_bytes(canonical(result)+b"\n")
+        os.replace(temporary,manifest_path)
+    checkpoint()
     for cut in cuts:
         result["macro"][cut] = {}
-        for definition in SERIES:
-            target, source, _ = definition
-            prior = old.get("macro",{}).get(cut,{}).get(target,{})
-            try:
-                raw = None;retrieved = result["retrieved_at"]
-                if prior.get("path"):
-                    path = source_path(root,prior["path"])
-                    if sha(path.read_bytes()) != prior["sha256"]:raise ValueError("Archived blob mismatch")
-                    previous = json.loads(gzip.decompress(path.read_bytes()))
-                    validate_macro_record(previous,definition,cut)
-                    raw = base64.b64decode(previous["raw_base64"],validate=True)
-                    if sha(raw)!=previous["raw_sha256"]:raise ValueError("Archived raw mismatch")
-                    retrieved = previous["retrieved_at"]
-                params = fred_parameters(source,cut)
-                if raw is None:
-                    if not key:raise FetchError("missing-fred-api-key")
-                    url = "https://api.stlouisfed.org/fred/series/observations?"+urllib.parse.urlencode({**params,"api_key":key})
-                    raw = fetch(url)
-                    if key.encode() in raw:raise FetchError("credential-in-response")
-                normalized = normalize_fred(json.loads(raw),definition,cut)
-                record = {"protocol":PROTOCOL,"kind":"alfred-vintage","request":params,
-                          "retrieved_at":retrieved,"raw_sha256":sha(raw),"raw_base64":base64.b64encode(raw).decode(),
-                          "normalized":normalized,"collector_sha256":code_hash}
-                relative=f"macro/{cut}/{target}-{sha(raw)[:20]}-{code_hash[:12]}.json.gz"
-                pointer,record=archive(root,relative,record)
-                validate_macro_record(record,definition,cut)
-                result["macro"][cut][target]={**pointer,"status":"available","vintage_day":normalized["vintage_date"],
-                                             "last_observation":normalized["date"],"observations":len(normalized["history"])}
-            except Exception as error:
-                detail={"source":"ALFRED","cut":cut,"series":target,**safe_error(error)}
-                result["errors"].append(detail);result["macro"][cut][target]={"status":"unavailable",**safe_error(error)}
+        with ThreadPoolExecutor(max_workers=4) as pool:
+            futures=[pool.submit(recover_macro,root,old,cut,definition,fetch,key,code_hash) for definition in SERIES]
+            for future in as_completed(futures):
+                target,pointer,error=future.result()
+                result["macro"][cut][target]=pointer
+                if error:result["errors"].append(error)
+                checkpoint()
         print(json.dumps({"cut":cut,"macro_available":sum(r["status"]=="available" for r in result["macro"][cut].values()),"expected":len(SERIES)}),flush=True)
     try:
         result["sec"]=collect_spy(root,cuts,market["price_as_of"],fetch,result["retrieved_at"],code_hash)
@@ -339,7 +368,8 @@ def collect(root, market, *, fetch=None, limit=None):
     result["health"]="complete-collection" if not result["errors"] and not result["sec"].get("errors") else "partial-collection"
     result["remaining_blockers"]=["Original dated bond and ETF valuation profiles","Complete historical financial quality/confidence",
                                   "Historical universe, identifiers and corporate actions","Holdings-to-valid-anchor coverage and full decision replay"]
-    manifest_path.write_bytes(canonical(result)+b"\n")
+    result["collection_finished_at"]=datetime.now(timezone.utc).isoformat()
+    checkpoint()
     return result
 
 
@@ -378,8 +408,23 @@ def collect_spy(root,cuts,last_cut,fetch,retrieved,code_hash):
                 if not re.fullmatch(r"[A-Za-z0-9_.-]+",primary):raise ValueError("Unsafe primary document")
                 filename=primary
             source=f"https://www.sec.gov/Archives/edgar/data/{SPY_CIK}/{accession.replace('-','')}/{filename}"
-            original=fetch(source,sec=True,max_bytes=4_000_000)
-            ref,record=archive(root,f"sec/{accession}-{sha(original)[:20]}.json.gz",{"raw_sha256":sha(original),"raw_base64":base64.b64encode(original).decode(),"source_url":source,"filing":filing,"retrieved_at":retrieved})
+            cached=[]
+            for path in (root/"sec").glob(accession+"-*.json.gz"):
+                prior=json.loads(gzip.decompress(path.read_bytes()))
+                original=base64.b64decode(prior["raw_base64"],validate=True)
+                if (sha(original)!=prior["raw_sha256"] or prior.get("source_url")!=source or
+                    prior.get("filing")!=filing or path.name!=f"{accession}-{sha(original)[:20]}.json.gz"):
+                    raise ValueError("SEC cached source identity mismatch")
+                instant=datetime.fromisoformat(prior["retrieved_at"].replace("Z","+00:00"))
+                if instant.tzinfo is None:raise ValueError("Undated cached source")
+                cached.append((instant,original,prior))
+            if cached:
+                _,original,record=min(cached,key=lambda r:r[0])
+            else:
+                original=fetch(source,sec=True,max_bytes=4_000_000)
+                record={"raw_sha256":sha(original),"raw_base64":base64.b64encode(original).decode(),"source_url":source,
+                        "filing":filing,"retrieved_at":datetime.now(timezone.utc).isoformat(),"retrieval_timestamp_basis":"download-completed"}
+            ref,record=archive(root,f"sec/{accession}-{sha(original)[:20]}.json.gz",record)
             row.update(ref);row["source_url"]=source
             if filing["form"].startswith("NPORT"):
                 row["normalized"]=parse_nport(original,filing)

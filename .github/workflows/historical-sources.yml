@@ -33,6 +33,7 @@ jobs:
       - name: Recover historical macro vintages and original SPY filings
         id: collect
         continue-on-error: true
+        timeout-minutes: 20
         env:
           FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
           SEC_USER_AGENT: ${{ secrets.SEC_USER_AGENT || vars.SEC_USER_AGENT }}

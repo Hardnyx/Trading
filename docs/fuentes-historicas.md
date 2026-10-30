@@ -4,6 +4,30 @@ Protocolo `historical-provider-inputs-v1`. Recuperación de datos públicos
 para los 48 cierres mensuales del estudio congelado, octubre de 2022 a
 septiembre de 2026. No ejecuta el optimizador ni cambia el modelo publicado.
 
+## Medición del 30-oct-2026
+
+La colección se descargó, publicó y volvió a verificar desde los originales:
+
+| Requisito | Resultado medido | Implicación |
+|---|---|---|
+| Macro | 768/768 combinaciones serie/corte; 16 series en los 48 cortes | Cerrada la recuperación del periodo real ALFRED para este corpus |
+| Documentos originales SPY | 30 documentos, de los que 20 son XML N-PORT verificados | Se conservan los originales, sin deducir fechas de publicación de la fecha de cartera |
+| Holdings con disponibilidad previa y edad admisible | 26/48 cortes | Otros 22 superan el límite vigente de 120 días; no se amplía para llenar huecos |
+| Peso con ticker explícito en los XML | 0% en los veinte documentos | Están los pesos y CUSIP; falta un enlace histórico verificable a instrumentos y precios |
+| Motor completo apto para replay | 0/48 cortes | Siguen faltando identificadores, perfiles, calidad contable y universo históricos |
+
+Los 768 registros son paquetes de **datos de entrada**, no 768 pruebas
+predictivas ni observaciones independientes de acierto. Los distintos
+formatos archivados del mismo raw no se cuentan como evidencia adicional.
+La recuperación inicial de SPY detectó una ruta de presentación XSL; se
+corrigió el acceso al XML original y se conservó el resultado completo.
+La primera versión macro archivada se reutiliza en las pasadas posteriores.
+
+La matriz verificable se encuentra en
+[`readiness.json`](../data/historical/provider-inputs-v1/readiness.json), y el
+inventario con hashes en [`manifest.json`](../data/historical/provider-inputs-v1/manifest.json).
+El diagnóstico no cambia el estado `not-established` de la capacidad predictiva.
+
 ## Macro conocida en cada fecha
 
 Se consultan las 16 series del motor mediante el API oficial FRED/ALFRED.
@@ -28,6 +52,14 @@ ausencia de fechas futuras/duplicadas y coincidencia entre datos normalizados
 y cuerpo archivado. Los huecos originales no se rellenan con cero. Una
 repetición reutiliza la primera respuesta archivada; no selecciona después
 una revisión favorable del proveedor.
+
+La descarga usa cuatro peticiones en vuelo como máximo y un único limitador
+global, con al menos 0,65 segundos entre inicios. Se guarda un checkpoint
+atómico después de cada registro: una interrupción conserva lo descargado
+sin presentarlo como colección completa. El workflow reserva tiempo para
+auditar y publicar la parte válida aunque la descarga alcance su límite.
+Los registros nuevos fechan la finalización real de la descarga; los
+reutilizados conservan su timestamp y su base temporal originales.
 
 ## Holdings originales de SPY
 

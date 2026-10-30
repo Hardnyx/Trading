@@ -157,17 +157,18 @@ Este archivo lista **solo lo que falta**. Para el funcionamiento, consultar
   USD 100.000 iniciales, ventaja sin resolver. La regla es una manga de
   señal bruta al 35%, no el optimizador. Falta la cuenta histórica del
   motor completo: holdings del benchmark para CAPM/IC, perfiles de bonos y
-  ETF, calidad/confianza y vintages macro, universo y operaciones corporativas
-  originales. No se rellena con datos actuales ni se acredita la cartera.
+  ETF, calidad/confianza, universo y operaciones corporativas originales,
+  más integrar los periodos macro recuperados. No se rellena con datos
+  actuales ni se acredita la cartera.
   Véase `auditoria-cuenta-historica-0.35.md`.
-- **Recuperación histórica implementada (30-oct):** consultas ALFRED con
-  versión fijada al día anterior en las 16 series y los 48 cortes del
-  estudio, más documentos originales de SPY y una matriz de huecos
-  verificada desde los bytes archivados. La colección se mide en
-  `data/historical/provider-inputs-v1/readiness.json`; el código no acredita
-  por sí solo cobertura. El N-PORT original de SPY examinado al 30-jun-2026
-  conserva pesos y CUSIP, pero no aporta tickers explícitos: falta un mapa
-  histórico verificable de identificadores, sin inferirlo del catálogo actual.
+- **Recuperación histórica medida (30-oct):** 768/768 combinaciones ALFRED,
+  16 series y 48 cortes, verificadas desde sus bytes originales. Se conservan
+  30 documentos SPY, incluidos veinte XML N-PORT. Hay holdings previas con
+  edad admisible en 26 cortes; otros 22 exceden los 120 días vigentes. Ningún
+  XML aporta tickers explícitos: falta un mapa histórico verificable desde
+  CUSIP a instrumentos/precios, sin inferirlo del catálogo actual. La matriz
+  `data/historical/provider-inputs-v1/readiness.json` mantiene bloqueado el
+  motor completo. Recuperar datos no acredita capacidad predictiva.
   También siguen pendientes perfiles de bonos/ETF y calidad contable completa.
   Véase `fuentes-historicas.md`.
 

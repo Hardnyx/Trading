@@ -24,11 +24,16 @@ conserva los cambios y cifras anteriores.
 
 El [colector y auditor de fuentes](fuentes-historicas.md) recuperan versiones
 oficiales ALFRED y documentos originales de SPY para los cortes del estudio.
-Su cobertura se mide tras descargar y verificar los cuerpos originales;
-`readiness.json` separa la macro disponible de los identificadores, perfiles
-y demás datos aún necesarios. No se modifica el motor ni se autoriza el
-backtest completo por tener un colector. Los originales conservan fecha
-real de descarga, periodo y disponibilidad histórica con precisión diaria.
+Se verificaron **768/768 combinaciones serie/corte**, 16 series en los 48
+cortes; 30 documentos SPY, incluidos 20 XML originales N-PORT. Las holdings
+son previas y no superan 120 días en 26 cortes; otros 22 quedan fuera por
+antigüedad. Ninguno de los veinte XML aporta ticker explícito: se conservan
+sus pesos y CUSIP sin asignarlos por nombre al universo actual.
+`readiness.json` separa la macro recuperada del mapa histórico de instrumentos,
+perfiles y demás datos todavía pendientes. No hay aún un corte apto para
+el motor completo. Se conserva el reloj de colección y su base temporal;
+la disponibilidad histórica se trata con precisión diaria y sin fingir una
+descarga local anterior. No se modifican los parámetros o pesos publicados.
 
 ## Cuenta histórica reconstruida de la señal (29-oct)
 
