@@ -1,0 +1,45 @@
+name: Historical TTM accounts (shadow)
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/account_replay.mjs'
+      - 'scripts/ttm_account_backtest.mjs'
+      - 'scripts/ttm_signal_replay.mjs'
+      - 'tests/account-replay.test.mjs'
+      - 'tests/ttm-account-backtest.test.mjs'
+      - 'docs/protocolo-cuenta-historica-0.35.md'
+      - 'docs/auditorias/ttm-signal-inputs-2026-10-29.json.gz'
+      - 'dist/assets/js/**'
+      - '.github/workflows/ttm-account-backtest.yml'
+permissions:
+  contents: read
+concurrency:
+  group: ttm-account-backtest
+  cancel-in-progress: true
+jobs:
+  accounts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check causal orders, funded costs, missing outcomes and matched accounts
+        run: node --test tests/account-replay.test.mjs tests/ttm-account-backtest.test.mjs
+      - name: Replay frozen historical inputs without fitting or promoting a strategy
+        run: node scripts/ttm_account_backtest.mjs
+      - name: Preserve daily account ledgers and source hashes
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: historical-ttm-accounts
+          path: |
+            out/ttm-account-*.json
+            docs/protocolo-cuenta-historica-0.35.md
+          retention-days: 90
+          if-no-files-found: error

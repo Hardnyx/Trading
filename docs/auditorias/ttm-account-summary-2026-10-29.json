@@ -1,0 +1,1584 @@
+{
+ "schema_version": 1,
+ "protocol": {
+  "id": "reconstructed-ttm-account-v1",
+  "market_commit": "8dcd06cfd06b2ca34ca6fb64e31d5b6344525cd5",
+  "price_cut": "2026-10-28",
+  "initial_capital": 100000,
+  "lead_sessions": 2,
+  "positions": 5,
+  "minimum_signals": 30,
+  "equity_weight": 0.35,
+  "cash_yield": 0,
+  "dividends": "provider-gross-total-return-reinvestment",
+  "costs": {
+   "commissionFixed": 0,
+   "commissionBps": 0,
+   "spreadBps": 5,
+   "slippageBps": 2,
+   "capitalGainsTax": 0,
+   "minTrade": 0
+  },
+  "cost_multipliers": [
+   1,
+   3
+  ],
+  "block_months": 12,
+  "bootstrap_draws": 2000,
+  "seed": 20261029
+ },
+ "engine_reference_version": "0.35.0",
+ "price_kernel_executed": false,
+ "price_cut": "2026-10-28",
+ "start": "2022-10-31",
+ "end": "2026-10-28",
+ "scheduled_origins": 47,
+ "pending_origins": [],
+ "exclusions": {
+  "unreconciled_future_price_adjustment": 226,
+  "invalid_signal_or_exposure": 141
+ },
+ "calendar": "Observed SPY sessions, not a certified original exchange calendar",
+ "large_reallocation_threshold": 0.1,
+ "upstream_ttm_exclusions": {
+  "mixed_historical_share_basis": 97,
+  "missing_ttm_or_fy_fallback": 164,
+  "nonpositive_ttm": 332
+ },
+ "production_eligible": false,
+ "automatic_promotion": false,
+ "prospective": false,
+ "historical_universe_verified": false,
+ "original_vintages_verified": false,
+ "economic_superiority": "not-established",
+ "full_model_replay": {
+  "status": "blocked",
+  "blockers": [
+   "Historical benchmark holdings for the CAPM/IC refinement and ETF exposure",
+   "Original historical bond and equity ETF valuation profiles",
+   "Complete historical financial quality/confidence and macro vintages",
+   "Corporate actions, execution prices and dividend pay-dates for a broker account"
+  ],
+  "not_executed": [
+   "Live robust optimizer and transition gate",
+   "Historical GJR reestimation",
+   "Full simulator risk distribution"
+  ]
+ },
+ "limitations": [
+  "Current surviving universe and catalogue selected after many outcomes",
+  "Current provider-adjusted prices and reconstructed filings, not original vintages",
+  "Inherited ex-post corporate-action exclusions from the TTM study",
+  "Synthetic gross total-return units; not the app cash-dividend policy or broker fills",
+  "Fixed 35% equity sleeve; uncalibrated absolute anchors and full mandate risk limits not tested",
+  "Historical results already examined, no untouched temporal holdout or causal performance claim",
+  "Pointwise exploratory intervals with few nonoverlapping annual blocks; no promotion test"
+ ],
+ "input_hashes": {
+  "market_sha256": "51b818b130765be9d3906dedf5d978446de51c44cde19588159a079dd3370415",
+  "ttm_gzip_sha256": "37286e413f228ade436fa0e34317db751d44f93335fcd334232d850b7e5fdaa6"
+ },
+ "protocol_publication_commit": "fb2b41405d0a9ce5a24c1fa8710507043356348a",
+ "source_hashes": {
+  "scripts/ttm_account_backtest.mjs": "5ce8c3cddf49c789f87708beb55a84e97bb99bcefa2234f671f24c1de7336255",
+  "scripts/ttm_signal_replay.mjs": "0817352f3df61478f853d3969c0d8edaf557683cbcc754639acc5a2dccdc2943",
+  "dist/assets/js/analytics.mjs": "612c01e55a714b43a21dac1cdce19147d3893338625beacde7f3b8e5d38a5e5f",
+  "dist/assets/js/financial-freshness.mjs": "538c0f4cb91162cb07b42ced80b23b507bf83e646b62a7062ae2334f0688e983",
+  "dist/assets/js/return-model.mjs": "e39e3a71e1b54a347649d54a11c3964bb289b0fa55befc6a5d6d7b2df56f43d4",
+  "dist/assets/js/observation.mjs": "228761022a5068ff60863a6376a4455906f609bd6d885da76ca6e780436cd129",
+  "dist/assets/js/research-model.mjs": "e346e97a2b08a509047f77aa7247f18165f43d57dabb6e3bb4676430239f2eb5",
+  "dist/assets/js/policy.mjs": "edcbd064f199e42df574ffe01d3dd67e0b8daf8b3a120e67256c36e206745a17",
+  "dist/assets/js/random.mjs": "7d071161216b97a72b29e2608f232bae8a3624c84c0768d63433812c136abe15",
+  "dist/assets/js/earnings-normalization.mjs": "3746c60e755fd0b63451d5ed877bbba1416ff9424b196654418f44db36f52b69",
+  "dist/assets/js/growth-evidence.mjs": "319212a3bc7992b29d6aac02875f30fd40ea902e483e9de4f22a2c436621cff7",
+  "dist/assets/js/economic-exposure.mjs": "6eadc8ec764fef29fce070333ed7dc7e92fcdf7528f47a29d7f9456627853e2a",
+  "scripts/account_replay.mjs": "5d61f52d49e8eb24d3d27b7713edc66c6a7fcdfa5f9e500c983b0c9a799c6c81",
+  "docs/protocolo-cuenta-historica-0.35.md": "3d7fc412443d6fc4712414f5880c0b146584b5575940394982902c19036d405b"
+ },
+ "runtime_node_version": "v24.22.1",
+ "result_sha256": "8368a3d7d212671e1276d088a9cc5e6b5590c15e6e843a18ca28d74078f9bef9",
+ "runs": [
+  {
+   "cost_multiplier": 1,
+   "cost_assumptions": {
+    "commissionFixed": 0,
+    "commissionBps": 0,
+    "spreadBps": 5,
+    "slippageBps": 2,
+    "capitalGainsTax": 0,
+    "minTrade": 0
+   },
+   "accounts": [
+    {
+     "id": "ttm_monthly",
+     "status": "complete",
+     "issues": [],
+     "initial_capital": 100000,
+     "scheduled_start": "2022-10-31",
+     "scheduled_end": "2026-10-28",
+     "observed_through": "2026-10-28",
+     "costs": 406.4798087969305,
+     "notional": 903288.4639931784,
+     "turnover": 4.2223323215393105,
+     "trade_count": 280,
+     "large_reallocations": 10,
+     "final_cash": 93012.91803671102,
+     "final_weights": {
+      "AMZN": 0.07078527592642936,
+      "CASH": 0.6582728546572947,
+      "CMCSA": 0.05792188951174303,
+      "HPQ": 0.0726091414519916,
+      "NVDA": 0.06811448591625942,
+      "PGR": 0.07229635253628196
+     },
+     "metrics": {
+      "ending_nav": 141298.42568874382,
+      "total_return": 0.41298425688743823,
+      "cagr": 0.09092980863760505,
+      "max_drawdown": 0.0964239124574745,
+      "annualized_daily_volatility": 0.07607259299378487,
+      "observed_sessions": 1002,
+      "return_intervals": 1001,
+      "yearly": [
+       {
+        "year": "2022",
+        "start": "2022-10-31",
+        "end": "2022-12-30",
+        "opening_nav": 100000,
+        "ending_nav": 103203.51441978702,
+        "return": 0.03203514419787035
+       },
+       {
+        "year": "2023",
+        "start": "2023-01-03",
+        "end": "2023-12-29",
+        "opening_nav": 103203.51441978702,
+        "ending_nav": 115797.1080887419,
+        "return": 0.12202679084870693
+       },
+       {
+        "year": "2024",
+        "start": "2024-01-02",
+        "end": "2024-12-31",
+        "opening_nav": 115797.1080887419,
+        "ending_nav": 122495.90806759172,
+        "return": 0.05784945832771715
+       },
+       {
+        "year": "2025",
+        "start": "2025-01-02",
+        "end": "2025-12-31",
+        "opening_nav": 122495.90806759172,
+        "ending_nav": 125139.81261419211,
+        "return": 0.021583615226898223
+       },
+       {
+        "year": "2026",
+        "start": "2026-01-02",
+        "end": "2026-10-28",
+        "opening_nav": 125139.81261419211,
+        "ending_nav": 141298.42568874382,
+        "return": 0.12912447874897293
+       }
+      ],
+      "mean_noncash_exposure": 0.3510535594307353,
+      "maximum_noncash_exposure": 0.3885429315328329,
+      "final_noncash_exposure": 0.3417271453427053,
+      "maximum_single_security_weight": 0.09508512328136466,
+      "complete_month_count": 47
+     },
+     "observed_prefix": null,
+     "reviews": 47,
+     "largest_transitions": [
+      {
+       "cut": "2025-02-28",
+       "execute": "2025-03-04",
+       "reallocation": 0.22113231262603117,
+       "entered": [
+        "NVDA",
+        "PFE",
+        "VZ"
+       ],
+       "exited": [
+        "DG",
+        "PCAR",
+        "UPS"
+       ],
+       "cost": 23.760127285701486
+      },
+      {
+       "cut": "2023-01-31",
+       "execute": "2023-02-02",
+       "reallocation": 0.19081731778873395,
+       "entered": [
+        "PFE",
+        "VZ"
+       ],
+       "exited": [
+        "META",
+        "QCOM"
+       ],
+       "cost": 16.897841317296297
+      },
+      {
+       "cut": "2025-06-30",
+       "execute": "2025-07-02",
+       "reallocation": 0.1637582704456015,
+       "entered": [
+        "PFE",
+        "VZ"
+       ],
+       "exited": [
+        "HPE",
+        "NVDA"
+       ],
+       "cost": 17.27795708031101
+      },
+      {
+       "cut": "2026-06-30",
+       "execute": "2026-07-02",
+       "reallocation": 0.1610216841870769,
+       "entered": [
+        "ACN",
+        "ADBE"
+       ],
+       "exited": [
+        "AMZN",
+        "PGR"
+       ],
+       "cost": 18.44656945144679
+      },
+      {
+       "cut": "2022-12-30",
+       "execute": "2023-01-04",
+       "reallocation": 0.15329555843986542,
+       "entered": [
+        "META",
+        "QCOM"
+       ],
+       "exited": [
+        "HPE",
+        "MU"
+       ],
+       "cost": 13.877573642656863
+      }
+     ]
+    },
+    {
+     "id": "yield_monthly",
+     "status": "complete",
+     "issues": [],
+     "initial_capital": 100000,
+     "scheduled_start": "2022-10-31",
+     "scheduled_end": "2026-10-28",
+     "observed_through": "2026-10-28",
+     "costs": 438.3470901591672,
+     "notional": 974104.6447981494,
+     "turnover": 4.529454304598528,
+     "trade_count": 285,
+     "large_reallocations": 13,
+     "final_cash": 91165.94197184901,
+     "final_weights": {
+      "CASH": 0.6481457212903311,
+      "CMCSA": 0.057030795954106754,
+      "EOG": 0.07591191387317359,
+      "OXY": 0.07236546975299725,
+      "PGR": 0.07118411647960736,
+      "TRV": 0.0753619826497839
+     },
+     "metrics": {
+      "ending_nav": 140656.55141617765,
+      "total_return": 0.40656551416177655,
+      "cagr": 0.08968008107871635,
+      "max_drawdown": 0.08877404104740827,
+      "annualized_daily_volatility": 0.0761561856292805,
+      "observed_sessions": 1002,
+      "return_intervals": 1001,
+      "yearly": [
+       {
+        "year": "2022",
+        "start": "2022-10-31",
+        "end": "2022-12-30",
+        "opening_nav": 100000,
+        "ending_nav": 101900.38857614386,
+        "return": 0.01900388576143852
+       },
+       {
+        "year": "2023",
+        "start": "2023-01-03",
+        "end": "2023-12-29",
+        "opening_nav": 101900.38857614386,
+        "ending_nav": 110849.57312348243,
+        "return": 0.08782286969054498
+       },
+       {
+        "year": "2024",
+        "start": "2024-01-02",
+        "end": "2024-12-31",
+        "opening_nav": 110849.57312348243,
+        "ending_nav": 118183.33892500773,
+        "return": 0.06615962150215715
+       },
+       {
+        "year": "2025",
+        "start": "2025-01-02",
+        "end": "2025-12-31",
+        "opening_nav": 118183.33892500773,
+        "ending_nav": 123110.37334964749,
+        "return": 0.04168975482886106
+       },
+       {
+        "year": "2026",
+        "start": "2026-01-02",
+        "end": "2026-10-28",
+        "opening_nav": 123110.37334964749,
+        "ending_nav": 140656.55141617765,
+        "return": 0.14252396113442867
+       }
+      ],
+      "mean_noncash_exposure": 0.35097643043066995,
+      "maximum_noncash_exposure": 0.3894247110060196,
+      "final_noncash_exposure": 0.3518542787096689,
+      "maximum_single_security_weight": 0.09728301583936792,
+      "complete_month_count": 47
+     },
+     "observed_prefix": null,
+     "reviews": 47,
+     "largest_transitions": [
+      {
+       "cut": "2026-02-27",
+       "execute": "2026-03-03",
+       "reallocation": 0.2238758680927271,
+       "entered": [
+        "PGR",
+        "TRV",
+        "USB"
+       ],
+       "exited": [
+        "EOG",
+        "UBER",
+        "VZ"
+       ],
+       "cost": 24.798090821000738
+      },
+      {
+       "cut": "2026-06-30",
+       "execute": "2026-07-02",
+       "reallocation": 0.17118384711539106,
+       "entered": [
+        "ACN",
+        "VZ"
+       ],
+       "exited": [
+        "CB",
+        "PGR"
+       ],
+       "cost": 19.237044456816932
+      },
+      {
+       "cut": "2022-11-30",
+       "execute": "2022-12-02",
+       "reallocation": 0.16577180153215323,
+       "entered": [
+        "MPC",
+        "PSX"
+       ],
+       "exited": [
+        "C",
+        "HPE"
+       ],
+       "cost": 14.360282342522535
+      },
+      {
+       "cut": "2025-08-29",
+       "execute": "2025-09-03",
+       "reallocation": 0.16525101511110143,
+       "entered": [
+        "TRV",
+        "USB"
+       ],
+       "exited": [
+        "EOG",
+        "UNH"
+       ],
+       "cost": 17.46599852021878
+      },
+      {
+       "cut": "2025-01-31",
+       "execute": "2025-02-04",
+       "reallocation": 0.1615355739070661,
+       "entered": [
+        "CB",
+        "HPQ"
+       ],
+       "exited": [
+        "NUE",
+        "VLO"
+       ],
+       "cost": 16.77105338739664
+      }
+     ]
+    },
+    {
+     "id": "ttm_initial_hold",
+     "status": "complete",
+     "issues": [],
+     "initial_capital": 100000,
+     "scheduled_start": "2022-10-31",
+     "scheduled_end": "2026-10-28",
+     "observed_through": "2026-10-28",
+     "costs": 15.747519765636902,
+     "notional": 34994.488368082006,
+     "turnover": 0.3500236212796485,
+     "trade_count": 5,
+     "large_reallocations": 0,
+     "final_cash": 64989.7641121523,
+     "final_weights": {
+      "CASH": 0.32929580722039825,
+      "HPE": 0.16944928718167276,
+      "HPQ": 0.05002921638078348,
+      "INTC": 0.12985760080064754,
+      "META": 0.2421971729276695,
+      "NUE": 0.07917091548882838
+     },
+     "metrics": {
+      "ending_nav": 197359.82872279492,
+      "total_return": 0.9735982872279492,
+      "cagr": 0.1866724956712638,
+      "max_drawdown": 0.18420238343491335,
+      "annualized_daily_volatility": 0.1590505000944856,
+      "observed_sessions": 1002,
+      "return_intervals": 1001,
+      "yearly": [
+       {
+        "year": "2022",
+        "start": "2022-10-31",
+        "end": "2022-12-30",
+        "opening_nav": 100000,
+        "ending_nav": 103395.63407272333,
+        "return": 0.033956340727233414
+       },
+       {
+        "year": "2023",
+        "start": "2023-01-03",
+        "end": "2023-12-29",
+        "opening_nav": 103395.63407272333,
+        "ending_nav": 132261.31260582083,
+        "return": 0.27917695744091886
+       },
+       {
+        "year": "2024",
+        "start": "2024-01-02",
+        "end": "2024-12-31",
+        "opening_nav": 132261.31260582083,
+        "ending_nav": 142892.60094193454,
+        "return": 0.08038093775613886
+       },
+       {
+        "year": "2025",
+        "start": "2025-01-02",
+        "end": "2025-12-31",
+        "opening_nav": 142892.60094193454,
+        "ending_nav": 155257.1483823827,
+        "return": 0.08653035467856451
+       },
+       {
+        "year": "2026",
+        "start": "2026-01-02",
+        "end": "2026-10-28",
+        "opening_nav": 155257.1483823827,
+        "ending_nav": 197359.82872279492,
+        "return": 0.27118030170641516
+       }
+      ],
+      "mean_noncash_exposure": 0.5352362565140145,
+      "maximum_noncash_exposure": 0.702914615398966,
+      "final_noncash_exposure": 0.6707041927796018,
+      "maximum_single_security_weight": 0.38603169022089123,
+      "complete_month_count": 47
+     },
+     "observed_prefix": null,
+     "reviews": 47,
+     "largest_transitions": []
+    },
+    {
+     "id": "index_monthly",
+     "status": "complete",
+     "issues": [],
+     "initial_capital": 100000,
+     "scheduled_start": "2022-10-31",
+     "scheduled_end": "2026-10-28",
+     "observed_through": "2026-10-28",
+     "costs": 33.47084575863518,
+     "notional": 74379.65724141154,
+     "turnover": 0.6930173644235548,
+     "trade_count": 47,
+     "large_reallocations": 0,
+     "final_cash": 85557.4329927431,
+     "final_weights": {
+      "CASH": 0.6473150637011983,
+      "SPY": 0.35268493629880177
+     },
+     "metrics": {
+      "ending_nav": 132172.7822979206,
+      "total_return": 0.3217278229792062,
+      "cagr": 0.07274696576835987,
+      "max_drawdown": 0.06820989909680653,
+      "annualized_daily_volatility": 0.05269847143399055,
+      "observed_sessions": 1002,
+      "return_intervals": 1001,
+      "yearly": [
+       {
+        "year": "2022",
+        "start": "2022-10-31",
+        "end": "2022-12-30",
+        "opening_nav": 100000,
+        "ending_nav": 100961.63402460233,
+        "return": 0.009616340246023425
+       },
+       {
+        "year": "2023",
+        "start": "2023-01-03",
+        "end": "2023-12-29",
+        "opening_nav": 100961.63402460233,
+        "ending_nav": 109796.1540542198,
+        "return": 0.0875037346113543
+       },
+       {
+        "year": "2024",
+        "start": "2024-01-02",
+        "end": "2024-12-31",
+        "opening_nav": 109796.1540542198,
+        "ending_nav": 118877.30604234661,
+        "return": 0.08270919930075449
+       },
+       {
+        "year": "2025",
+        "start": "2025-01-02",
+        "end": "2025-12-31",
+        "opening_nav": 118877.30604234661,
+        "ending_nav": 125987.39712439949,
+        "return": 0.059810331498596714
+       },
+       {
+        "year": "2026",
+        "start": "2026-01-02",
+        "end": "2026-10-28",
+        "opening_nav": 125987.39712439949,
+        "ending_nav": 132172.7822979206,
+        "return": 0.04909526916738893
+       }
+      ],
+      "mean_noncash_exposure": 0.3510131777414018,
+      "maximum_noncash_exposure": 0.37173350077378886,
+      "final_noncash_exposure": 0.3526849362988017,
+      "maximum_single_security_weight": 0.37173350077378897,
+      "complete_month_count": 47
+     },
+     "observed_prefix": null,
+     "reviews": 47,
+     "largest_transitions": [
+      {
+       "cut": "2026-04-30",
+       "execute": "2026-05-04",
+       "reallocation": 0.020876759843162535,
+       "entered": [],
+       "exited": [],
+       "cost": 1.2078229785583194
+      },
+      {
+       "cut": "2023-01-31",
+       "execute": "2023-02-02",
+       "reallocation": 0.019002602745249064,
+       "entered": [],
+       "exited": [],
+       "cost": 0.890517721059559
+      },
+      {
+       "cut": "2022-11-30",
+       "execute": "2022-12-02",
+       "reallocation": 0.018879576584471452,
+       "entered": [],
+       "exited": [],
+       "cost": 0.8749956558270675
+      },
+      {
+       "cut": "2023-09-29",
+       "execute": "2023-10-03",
+       "reallocation": 0.013524866315966194,
+       "entered": [],
+       "exited": [],
+       "cost": 0.6393465276006005
+      },
+      {
+       "cut": "2023-11-30",
+       "execute": "2023-12-04",
+       "reallocation": 0.013412010118888484,
+       "entered": [],
+       "exited": [],
+       "cost": 0.6524977264475114
+      }
+     ]
+    },
+    {
+     "id": "index_initial_hold",
+     "status": "complete",
+     "issues": [],
+     "initial_capital": 100000,
+     "scheduled_start": "2022-10-31",
+     "scheduled_end": "2026-10-28",
+     "observed_through": "2026-10-28",
+     "costs": 15.7475197656369,
+     "notional": 34994.488368082,
+     "turnover": 0.3500236212796485,
+     "trade_count": 1,
+     "large_reallocations": 0,
+     "final_cash": 64989.7641121523,
+     "final_weights": {
+      "CASH": 0.46116980032963606,
+      "SPY": 0.5388301996703638
+     },
+     "metrics": {
+      "ending_nav": 140923.72064627553,
+      "total_return": 0.4092372064627552,
+      "cagr": 0.09020077625901798,
+      "max_drawdown": 0.0893272167891126,
+      "annualized_daily_volatility": 0.0671546849249089,
+      "observed_sessions": 1002,
+      "return_intervals": 1001,
+      "yearly": [
+       {
+        "year": "2022",
+        "start": "2022-10-31",
+        "end": "2022-12-30",
+        "opening_nav": 100000,
+        "ending_nav": 100853.92207798257,
+        "return": 0.008539220779825607
+       },
+       {
+        "year": "2023",
+        "start": "2023-01-03",
+        "end": "2023-12-29",
+        "opening_nav": 100853.92207798257,
+        "ending_nav": 110241.65186719576,
+        "return": 0.0930824463321751
+       },
+       {
+        "year": "2024",
+        "start": "2024-01-02",
+        "end": "2024-12-31",
+        "opening_nav": 110241.65186719576,
+        "ending_nav": 121503.23036766812,
+        "return": 0.10215357181003415
+       },
+       {
+        "year": "2025",
+        "start": "2025-01-02",
+        "end": "2025-12-31",
+        "opening_nav": 121503.23036766812,
+        "ending_nav": 131516.90162411032,
+        "return": 0.08241485618234923
+       },
+       {
+        "year": "2026",
+        "start": "2026-01-02",
+        "end": "2026-10-28",
+        "opening_nav": 131516.90162411032,
+        "ending_nav": 140923.72064627553,
+        "return": 0.07152555227502932
+       }
+      ],
+      "mean_noncash_exposure": 0.44921046301509276,
+      "maximum_noncash_exposure": 0.54100141635839,
+      "final_noncash_exposure": 0.5388301996703639,
+      "maximum_single_security_weight": 0.5410014163583899,
+      "complete_month_count": 47
+     },
+     "observed_prefix": null,
+     "reviews": 47,
+     "largest_transitions": []
+    },
+    {
+     "id": "cash",
+     "status": "complete",
+     "issues": [],
+     "initial_capital": 100000,
+     "scheduled_start": "2022-10-31",
+     "scheduled_end": "2026-10-28",
+     "observed_through": "2026-10-28",
+     "costs": 0,
+     "notional": 0,
+     "turnover": 0,
+     "trade_count": 0,
+     "large_reallocations": 0,
+     "final_cash": 100000,
+     "final_weights": {
+      "CASH": 1
+     },
+     "metrics": {
+      "ending_nav": 100000,
+      "total_return": 0,
+      "cagr": 0,
+      "max_drawdown": 0,
+      "annualized_daily_volatility": 0,
+      "observed_sessions": 1002,
+      "return_intervals": 1001,
+      "yearly": [
+       {
+        "year": "2022",
+        "start": "2022-10-31",
+        "end": "2022-12-30",
+        "opening_nav": 100000,
+        "ending_nav": 100000,
+        "return": 0
+       },
+       {
+        "year": "2023",
+        "start": "2023-01-03",
+        "end": "2023-12-29",
+        "opening_nav": 100000,
+        "ending_nav": 100000,
+        "return": 0
+       },
+       {
+        "year": "2024",
+        "start": "2024-01-02",
+        "end": "2024-12-31",
+        "opening_nav": 100000,
+        "ending_nav": 100000,
+        "return": 0
+       },
+       {
+        "year": "2025",
+        "start": "2025-01-02",
+        "end": "2025-12-31",
+        "opening_nav": 100000,
+        "ending_nav": 100000,
+        "return": 0
+       },
+       {
+        "year": "2026",
+        "start": "2026-01-02",
+        "end": "2026-10-28",
+        "opening_nav": 100000,
+        "ending_nav": 100000,
+        "return": 0
+       }
+      ],
+      "mean_noncash_exposure": 0,
+      "maximum_noncash_exposure": 0,
+      "final_noncash_exposure": 0,
+      "maximum_single_security_weight": 0,
+      "complete_month_count": 47
+     },
+     "observed_prefix": null,
+     "reviews": 47,
+     "largest_transitions": []
+    }
+   ],
+   "comparisons": [
+    {
+     "candidate": "ttm_monthly",
+     "reference": "yield_monthly",
+     "formal_test": false,
+     "superiority": "not-established",
+     "status": "descriptive-only",
+     "complete_months": 47,
+     "contiguous_months": true,
+     "nonoverlapping_annual_blocks": 3,
+     "terminal_nav_difference": 641.8742725661723,
+     "annualized_mean_log_return_difference": 0.008220676277609532,
+     "moving_block_95": [
+      -0.05175726563787382,
+      0.018651782809851955
+     ],
+     "block_months": 12,
+     "bootstrap_draws": 2000,
+     "seed": 20261029,
+     "scope": "Paired monthly log-return differences on one reconstructed path. Pointwise descriptive interval, not CAGR difference, causal attribution or multiplicity-adjusted predictive evidence."
+    },
+    {
+     "candidate": "ttm_monthly",
+     "reference": "ttm_initial_hold",
+     "formal_test": false,
+     "superiority": "not-established",
+     "status": "descriptive-only",
+     "complete_months": 47,
+     "contiguous_months": true,
+     "nonoverlapping_annual_blocks": 3,
+     "terminal_nav_difference": -56061.403034051094,
+     "annualized_mean_log_return_difference": -0.10545847511255574,
+     "moving_block_95": [
+      -0.13312959861946896,
+      -0.026338842390024826
+     ],
+     "block_months": 12,
+     "bootstrap_draws": 2000,
+     "seed": 20261029,
+     "scope": "Paired monthly log-return differences on one reconstructed path. Pointwise descriptive interval, not CAGR difference, causal attribution or multiplicity-adjusted predictive evidence."
+    },
+    {
+     "candidate": "ttm_monthly",
+     "reference": "index_monthly",
+     "formal_test": false,
+     "superiority": "not-established",
+     "status": "descriptive-only",
+     "complete_months": 47,
+     "contiguous_months": true,
+     "nonoverlapping_annual_blocks": 3,
+     "terminal_nav_difference": 9125.643390823214,
+     "annualized_mean_log_return_difference": 0.016559319126479313,
+     "moving_block_95": [
+      -0.03168925525464809,
+      0.02056233272646193
+     ],
+     "block_months": 12,
+     "bootstrap_draws": 2000,
+     "seed": 20261029,
+     "scope": "Paired monthly log-return differences on one reconstructed path. Pointwise descriptive interval, not CAGR difference, causal attribution or multiplicity-adjusted predictive evidence."
+    }
+   ]
+  },
+  {
+   "cost_multiplier": 3,
+   "cost_assumptions": {
+    "commissionFixed": 0,
+    "commissionBps": 0,
+    "spreadBps": 15,
+    "slippageBps": 6,
+    "capitalGainsTax": 0,
+    "minTrade": 0
+   },
+   "accounts": [
+    {
+     "id": "ttm_monthly",
+     "status": "complete",
+     "issues": [],
+     "initial_capital": 100000,
+     "scheduled_start": "2022-10-31",
+     "scheduled_end": "2026-10-28",
+     "observed_through": "2026-10-28",
+     "costs": 1215.1007136798391,
+     "notional": 900074.6027258066,
+     "turnover": 4.221547734901052,
+     "trade_count": 280,
+     "large_reallocations": 10,
+     "final_cash": 92380.3060474325,
+     "final_weights": {
+      "AMZN": 0.07078527592642934,
+      "CASH": 0.6582728546572947,
+      "CMCSA": 0.05792188951174303,
+      "HPQ": 0.07260914145199159,
+      "NVDA": 0.06811448591625942,
+      "PGR": 0.07229635253628193
+     },
+     "metrics": {
+      "ending_nav": 140337.40779957708,
+      "total_return": 0.40337407799577085,
+      "cagr": 0.08905712035557611,
+      "max_drawdown": 0.09716027621763834,
+      "annualized_daily_volatility": 0.07604643565674163,
+      "observed_sessions": 1002,
+      "return_intervals": 1001,
+      "yearly": [
+       {
+        "year": "2022",
+        "start": "2022-10-31",
+        "end": "2022-12-30",
+        "opening_nav": 100000,
+        "ending_nav": 103154.28847705858,
+        "return": 0.031542884770585866
+       },
+       {
+        "year": "2023",
+        "start": "2023-01-03",
+        "end": "2023-12-29",
+        "opening_nav": 103154.28847705858,
+        "ending_nav": 115509.78206158441,
+        "return": 0.11977682912595222
+       },
+       {
+        "year": "2024",
+        "start": "2024-01-02",
+        "end": "2024-12-31",
+        "opening_nav": 115509.78206158441,
+        "ending_nav": 122033.68610213656,
+        "return": 0.05647923426150969
+       },
+       {
+        "year": "2025",
+        "start": "2025-01-02",
+        "end": "2025-12-31",
+        "opening_nav": 122033.68610213656,
+        "ending_nav": 124471.22357136292,
+        "return": 0.019974300105843223
+       },
+       {
+        "year": "2026",
+        "start": "2026-01-02",
+        "end": "2026-10-28",
+        "opening_nav": 124471.22357136292,
+        "ending_nav": 140337.40779957708,
+        "return": 0.12746869334917088
+       }
+      ],
+      "mean_noncash_exposure": 0.3510535594307353,
+      "maximum_noncash_exposure": 0.3885429315328329,
+      "final_noncash_exposure": 0.3417271453427053,
+      "maximum_single_security_weight": 0.09508512328136465,
+      "complete_month_count": 47
+     },
+     "observed_prefix": null,
+     "reviews": 47,
+     "largest_transitions": [
+      {
+       "cut": "2025-02-28",
+       "execute": "2025-03-04",
+       "reallocation": 0.22113231262603114,
+       "entered": [
+        "NVDA",
+        "PFE",
+        "VZ"
+       ],
+       "exited": [
+        "DG",
+        "PCAR",
+        "UPS"
+       ],
+       "cost": 70.9688452349673
+      },
+      {
+       "cut": "2023-01-31",
+       "execute": "2023-02-02",
+       "reallocation": 0.19081731778873398,
+       "entered": [
+        "PFE",
+        "VZ"
+       ],
+       "exited": [
+        "META",
+        "QCOM"
+       ],
+       "cost": 50.65910132954048
+      },
+      {
+       "cut": "2025-06-30",
+       "execute": "2025-07-02",
+       "reallocation": 0.1637582704456015,
+       "entered": [
+        "PFE",
+        "VZ"
+       ],
+       "exited": [
+        "HPE",
+        "NVDA"
+       ],
+       "cost": 51.57816059044101
+      },
+      {
+       "cut": "2026-06-30",
+       "execute": "2026-07-02",
+       "reallocation": 0.16102168418707705,
+       "entered": [
+        "ACN",
+        "ADBE"
+       ],
+       "exited": [
+        "AMZN",
+        "PGR"
+       ],
+       "cost": 54.97809585513888
+      },
+      {
+       "cut": "2022-12-30",
+       "execute": "2023-01-04",
+       "reallocation": 0.15329555843986548,
+       "entered": [
+        "META",
+        "QCOM"
+       ],
+       "exited": [
+        "HPE",
+        "MU"
+       ],
+       "cost": 41.599761119599435
+      }
+     ]
+    },
+    {
+     "id": "yield_monthly",
+     "status": "complete",
+     "issues": [],
+     "initial_capital": 100000,
+     "scheduled_start": "2022-10-31",
+     "scheduled_end": "2026-10-28",
+     "observed_through": "2026-10-28",
+     "costs": 1309.9599038583947,
+     "notional": 970340.6695247366,
+     "turnover": 4.528301657859812,
+     "trade_count": 285,
+     "large_reallocations": 13,
+     "final_cash": 90495.3916121707,
+     "final_weights": {
+      "CASH": 0.6481457212903312,
+      "CMCSA": 0.05703079595410677,
+      "EOG": 0.0759119138731736,
+      "OXY": 0.07236546975299725,
+      "PGR": 0.07118411647960737,
+      "TRV": 0.0753619826497839
+     },
+     "metrics": {
+      "ending_nav": 139621.9841303775,
+      "total_return": 0.39621984130377497,
+      "cagr": 0.08765676918097699,
+      "max_drawdown": 0.08926146589328587,
+      "annualized_daily_volatility": 0.0761449867864918,
+      "observed_sessions": 1002,
+      "return_intervals": 1001,
+      "yearly": [
+       {
+        "year": "2022",
+        "start": "2022-10-31",
+        "end": "2022-12-30",
+        "opening_nav": 100000,
+        "ending_nav": 101840.13590358128,
+        "return": 0.018401359035812748
+       },
+       {
+        "year": "2023",
+        "start": "2023-01-03",
+        "end": "2023-12-29",
+        "opening_nav": 101840.13590358128,
+        "ending_nav": 110678.45266483958,
+        "return": 0.08678618388359305
+       },
+       {
+        "year": "2024",
+        "start": "2024-01-02",
+        "end": "2024-12-31",
+        "opening_nav": 110678.45266483958,
+        "ending_nav": 117787.37310858638,
+        "return": 0.06423039238969386
+       },
+       {
+        "year": "2025",
+        "start": "2025-01-02",
+        "end": "2025-12-31",
+        "opening_nav": 117787.37310858638,
+        "ending_nav": 122416.23453280413,
+        "return": 0.03929845196522441
+       },
+       {
+        "year": "2026",
+        "start": "2026-01-02",
+        "end": "2026-10-28",
+        "opening_nav": 122416.23453280413,
+        "ending_nav": 139621.9841303775,
+        "return": 0.1405512076338431
+       }
+      ],
+      "mean_noncash_exposure": 0.35097643043066995,
+      "maximum_noncash_exposure": 0.3894247110060196,
+      "final_noncash_exposure": 0.3518542787096688,
+      "maximum_single_security_weight": 0.09728301583936792,
+      "complete_month_count": 47
+     },
+     "observed_prefix": null,
+     "reviews": 47,
+     "largest_transitions": [
+      {
+       "cut": "2026-02-27",
+       "execute": "2026-03-03",
+       "reallocation": 0.22387586809272716,
+       "entered": [
+        "PGR",
+        "TRV",
+        "USB"
+       ],
+       "exited": [
+        "EOG",
+        "UBER",
+        "VZ"
+       ],
+       "cost": 73.92917939203363
+      },
+      {
+       "cut": "2026-06-30",
+       "execute": "2026-07-02",
+       "reallocation": 0.17118384711539097,
+       "entered": [
+        "ACN",
+        "VZ"
+       ],
+       "exited": [
+        "CB",
+        "PGR"
+       ],
+       "cost": 57.317369427170384
+      },
+      {
+       "cut": "2022-11-30",
+       "execute": "2022-12-02",
+       "reallocation": 0.16577180153215323,
+       "entered": [
+        "MPC",
+        "PSX"
+       ],
+       "exited": [
+        "C",
+        "HPE"
+       ],
+       "cost": 43.064569987317505
+      },
+      {
+       "cut": "2025-08-29",
+       "execute": "2025-09-03",
+       "reallocation": 0.16525101511110152,
+       "entered": [
+        "TRV",
+        "USB"
+       ],
+       "exited": [
+        "EOG",
+        "UNH"
+       ],
+       "cost": 52.128211398204236
+      },
+      {
+       "cut": "2025-01-31",
+       "execute": "2025-02-04",
+       "reallocation": 0.1615355739070661,
+       "entered": [
+        "CB",
+        "HPQ"
+       ],
+       "exited": [
+        "NUE",
+        "VLO"
+       ],
+       "cost": 50.12218730916467
+      }
+     ]
+    },
+    {
+     "id": "ttm_initial_hold",
+     "status": "complete",
+     "issues": [],
+     "initial_capital": 100000,
+     "scheduled_start": "2022-10-31",
+     "scheduled_end": "2026-10-28",
+     "observed_through": "2026-10-28",
+     "costs": 47.22768491887347,
+     "notional": 34983.47031027665,
+     "turnover": 0.35007084152738577,
+     "trade_count": 5,
+     "large_reallocations": 0,
+     "final_cash": 64969.302004799494,
+     "final_weights": {
+      "CASH": 0.32929580722039836,
+      "HPE": 0.16944928718167282,
+      "HPQ": 0.05002921638078349,
+      "INTC": 0.12985760080064757,
+      "META": 0.24219717292766957,
+      "NUE": 0.07917091548882839
+     },
+     "metrics": {
+      "ending_nav": 197297.68973740807,
+      "total_return": 0.9729768973740807,
+      "cagr": 0.1865784250739433,
+      "max_drawdown": 0.18420238343491335,
+      "annualized_daily_volatility": 0.1590510208948842,
+      "observed_sessions": 1002,
+      "return_intervals": 1001,
+      "yearly": [
+       {
+        "year": "2022",
+        "start": "2022-10-31",
+        "end": "2022-12-30",
+        "opening_nav": 100000,
+        "ending_nav": 103363.07982986508,
+        "return": 0.03363079829865079
+       },
+       {
+        "year": "2023",
+        "start": "2023-01-03",
+        "end": "2023-12-29",
+        "opening_nav": 103363.07982986508,
+        "ending_nav": 132219.66996848962,
+        "return": 0.27917695744091886
+       },
+       {
+        "year": "2024",
+        "start": "2024-01-02",
+        "end": "2024-12-31",
+        "opening_nav": 132219.66996848962,
+        "ending_nav": 142847.611030364,
+        "return": 0.08038093775613886
+       },
+       {
+        "year": "2025",
+        "start": "2025-01-02",
+        "end": "2025-12-31",
+        "opening_nav": 142847.611030364,
+        "ending_nav": 155208.26547780703,
+        "return": 0.08653035467856451
+       },
+       {
+        "year": "2026",
+        "start": "2026-01-02",
+        "end": "2026-10-28",
+        "opening_nav": 155208.26547780703,
+        "ending_nav": 197297.68973740807,
+        "return": 0.27118030170641494
+       }
+      ],
+      "mean_noncash_exposure": 0.5352362565140145,
+      "maximum_noncash_exposure": 0.702914615398966,
+      "final_noncash_exposure": 0.6707041927796016,
+      "maximum_single_security_weight": 0.3860316902208913,
+      "complete_month_count": 47
+     },
+     "observed_prefix": null,
+     "reviews": 47,
+     "largest_transitions": []
+    },
+    {
+     "id": "index_monthly",
+     "status": "complete",
+     "issues": [],
+     "initial_capital": 100000,
+     "scheduled_start": "2022-10-31",
+     "scheduled_end": "2026-10-28",
+     "observed_through": "2026-10-28",
+     "costs": 100.38134846880278,
+     "notional": 74356.55442133534,
+     "turnover": 0.6930408036695166,
+     "trade_count": 47,
+     "large_reallocations": 0,
+     "final_cash": 85504.0867122656,
+     "final_weights": {
+      "CASH": 0.6473150637011983,
+      "SPY": 0.35268493629880177
+     },
+     "metrics": {
+      "ending_nav": 132090.37068189477,
+      "total_return": 0.32090370681894775,
+      "cagr": 0.07257853885472663,
+      "max_drawdown": 0.06822145088229725,
+      "annualized_daily_volatility": 0.052698874300243885,
+      "observed_sessions": 1002,
+      "return_intervals": 1001,
+      "yearly": [
+       {
+        "year": "2022",
+        "start": "2022-10-31",
+        "end": "2022-12-30",
+        "opening_nav": 100000,
+        "ending_nav": 100928.13007259465,
+        "return": 0.009281300725946462
+       },
+       {
+        "year": "2023",
+        "start": "2023-01-03",
+        "end": "2023-12-29",
+        "opening_nav": 100928.13007259465,
+        "ending_nav": 109749.44607211855,
+        "return": 0.08740195615611812
+       },
+       {
+        "year": "2024",
+        "start": "2024-01-02",
+        "end": "2024-12-31",
+        "opening_nav": 109749.44607211855,
+        "ending_nav": 118816.79689542513,
+        "return": 0.08261864772737204
+       },
+       {
+        "year": "2025",
+        "start": "2025-01-02",
+        "end": "2025-12-31",
+        "opening_nav": 118816.79689542513,
+        "ending_nav": 125915.82047092855,
+        "return": 0.05974764310261227
+       },
+       {
+        "year": "2026",
+        "start": "2026-01-02",
+        "end": "2026-10-28",
+        "opening_nav": 125915.82047092855,
+        "ending_nav": 132090.37068189477,
+        "return": 0.04903712804215732
+       }
+      ],
+      "mean_noncash_exposure": 0.3510131777414018,
+      "maximum_noncash_exposure": 0.37173350077378897,
+      "final_noncash_exposure": 0.3526849362988017,
+      "maximum_single_security_weight": 0.3717335007737889,
+      "complete_month_count": 47
+     },
+     "observed_prefix": null,
+     "reviews": 47,
+     "largest_transitions": [
+      {
+       "cut": "2026-04-30",
+       "execute": "2026-05-04",
+       "reallocation": 0.02087675984316259,
+       "entered": [],
+       "exited": [],
+       "cost": 3.622505795004427
+      },
+      {
+       "cut": "2023-01-31",
+       "execute": "2023-02-02",
+       "reallocation": 0.019002602745249064,
+       "entered": [],
+       "exited": [],
+       "cost": 2.6714789992003807
+      },
+      {
+       "cut": "2022-11-30",
+       "execute": "2022-12-02",
+       "reallocation": 0.01887957658447148,
+       "entered": [],
+       "exited": [],
+       "cost": 2.624987488419994
+      },
+      {
+       "cut": "2023-09-29",
+       "execute": "2023-10-03",
+       "reallocation": 0.013524866315966194,
+       "entered": [],
+       "exited": [],
+       "cost": 1.9166749391128517
+      },
+      {
+       "cut": "2023-11-30",
+       "execute": "2023-12-04",
+       "reallocation": 0.013412010118888512,
+       "entered": [],
+       "exited": [],
+       "cost": 1.957300729946632
+      }
+     ]
+    },
+    {
+     "id": "index_initial_hold",
+     "status": "complete",
+     "issues": [],
+     "initial_capital": 100000,
+     "scheduled_start": "2022-10-31",
+     "scheduled_end": "2026-10-28",
+     "observed_through": "2026-10-28",
+     "costs": 47.22768491887348,
+     "notional": 34983.47031027665,
+     "turnover": 0.35007084152738577,
+     "trade_count": 1,
+     "large_reallocations": 0,
+     "final_cash": 64969.302004799494,
+     "final_weights": {
+      "CASH": 0.461169800329636,
+      "SPY": 0.5388301996703639
+     },
+     "metrics": {
+      "ending_nav": 140879.35063909343,
+      "total_return": 0.40879350639093426,
+      "cagr": 0.09011435322435939,
+      "max_drawdown": 0.0893272167891126,
+      "annualized_daily_volatility": 0.06715547214731574,
+      "observed_sessions": 1002,
+      "return_intervals": 1001,
+      "yearly": [
+       {
+        "year": "2022",
+        "start": "2022-10-31",
+        "end": "2022-12-30",
+        "opening_nav": 100000,
+        "ending_nav": 100822.1680962794,
+        "return": 0.008221680962793965
+       },
+       {
+        "year": "2023",
+        "start": "2023-01-03",
+        "end": "2023-12-29",
+        "opening_nav": 100822.1680962794,
+        "ending_nav": 110206.94214719489,
+        "return": 0.09308244633217533
+       },
+       {
+        "year": "2024",
+        "start": "2024-01-02",
+        "end": "2024-12-31",
+        "opening_nav": 110206.94214719489,
+        "ending_nav": 121464.97492579262,
+        "return": 0.10215357181003393
+       },
+       {
+        "year": "2025",
+        "start": "2025-01-02",
+        "end": "2025-12-31",
+        "opening_nav": 121464.97492579262,
+        "ending_nav": 131475.49336549448,
+        "return": 0.08241485618234923
+       },
+       {
+        "year": "2026",
+        "start": "2026-01-02",
+        "end": "2026-10-28",
+        "opening_nav": 131475.49336549448,
+        "ending_nav": 140879.35063909343,
+        "return": 0.07152555227502932
+       }
+      ],
+      "mean_noncash_exposure": 0.4492104630150929,
+      "maximum_noncash_exposure": 0.54100141635839,
+      "final_noncash_exposure": 0.5388301996703639,
+      "maximum_single_security_weight": 0.54100141635839,
+      "complete_month_count": 47
+     },
+     "observed_prefix": null,
+     "reviews": 47,
+     "largest_transitions": []
+    },
+    {
+     "id": "cash",
+     "status": "complete",
+     "issues": [],
+     "initial_capital": 100000,
+     "scheduled_start": "2022-10-31",
+     "scheduled_end": "2026-10-28",
+     "observed_through": "2026-10-28",
+     "costs": 0,
+     "notional": 0,
+     "turnover": 0,
+     "trade_count": 0,
+     "large_reallocations": 0,
+     "final_cash": 100000,
+     "final_weights": {
+      "CASH": 1
+     },
+     "metrics": {
+      "ending_nav": 100000,
+      "total_return": 0,
+      "cagr": 0,
+      "max_drawdown": 0,
+      "annualized_daily_volatility": 0,
+      "observed_sessions": 1002,
+      "return_intervals": 1001,
+      "yearly": [
+       {
+        "year": "2022",
+        "start": "2022-10-31",
+        "end": "2022-12-30",
+        "opening_nav": 100000,
+        "ending_nav": 100000,
+        "return": 0
+       },
+       {
+        "year": "2023",
+        "start": "2023-01-03",
+        "end": "2023-12-29",
+        "opening_nav": 100000,
+        "ending_nav": 100000,
+        "return": 0
+       },
+       {
+        "year": "2024",
+        "start": "2024-01-02",
+        "end": "2024-12-31",
+        "opening_nav": 100000,
+        "ending_nav": 100000,
+        "return": 0
+       },
+       {
+        "year": "2025",
+        "start": "2025-01-02",
+        "end": "2025-12-31",
+        "opening_nav": 100000,
+        "ending_nav": 100000,
+        "return": 0
+       },
+       {
+        "year": "2026",
+        "start": "2026-01-02",
+        "end": "2026-10-28",
+        "opening_nav": 100000,
+        "ending_nav": 100000,
+        "return": 0
+       }
+      ],
+      "mean_noncash_exposure": 0,
+      "maximum_noncash_exposure": 0,
+      "final_noncash_exposure": 0,
+      "maximum_single_security_weight": 0,
+      "complete_month_count": 47
+     },
+     "observed_prefix": null,
+     "reviews": 47,
+     "largest_transitions": []
+    }
+   ],
+   "comparisons": [
+    {
+     "candidate": "ttm_monthly",
+     "reference": "yield_monthly",
+     "formal_test": false,
+     "superiority": "not-established",
+     "status": "descriptive-only",
+     "complete_months": 47,
+     "contiguous_months": true,
+     "nonoverlapping_annual_blocks": 3,
+     "terminal_nav_difference": 715.4236691995757,
+     "annualized_mean_log_return_difference": 0.008363115469038581,
+     "moving_block_95": [
+      -0.051573328418509215,
+      0.018975487603151528
+     ],
+     "block_months": 12,
+     "bootstrap_draws": 2000,
+     "seed": 20261029,
+     "scope": "Paired monthly log-return differences on one reconstructed path. Pointwise descriptive interval, not CAGR difference, causal attribution or multiplicity-adjusted predictive evidence."
+    },
+    {
+     "candidate": "ttm_monthly",
+     "reference": "ttm_initial_hold",
+     "formal_test": false,
+     "superiority": "not-established",
+     "status": "descriptive-only",
+     "complete_months": 47,
+     "contiguous_months": true,
+     "nonoverlapping_annual_blocks": 3,
+     "terminal_nav_difference": -56960.281937830994,
+     "annualized_mean_log_return_difference": -0.10712051810906353,
+     "moving_block_95": [
+      -0.13477438423682936,
+      -0.027845656743400966
+     ],
+     "block_months": 12,
+     "bootstrap_draws": 2000,
+     "seed": 20261029,
+     "scope": "Paired monthly log-return differences on one reconstructed path. Pointwise descriptive interval, not CAGR difference, causal attribution or multiplicity-adjusted predictive evidence."
+    },
+    {
+     "candidate": "ttm_monthly",
+     "reference": "index_monthly",
+     "formal_test": false,
+     "superiority": "not-established",
+     "status": "descriptive-only",
+     "complete_months": 47,
+     "contiguous_months": true,
+     "nonoverlapping_annual_blocks": 3,
+     "terminal_nav_difference": 8247.03711768231,
+     "annualized_mean_log_return_difference": 0.01497612070737327,
+     "moving_block_95": [
+      -0.03330574825031231,
+      0.019150207017492586
+     ],
+     "block_months": 12,
+     "bootstrap_draws": 2000,
+     "seed": 20261029,
+     "scope": "Paired monthly log-return differences on one reconstructed path. Pointwise descriptive interval, not CAGR difference, causal attribution or multiplicity-adjusted predictive evidence."
+    }
+   ]
+  }
+ ]
+}

@@ -17,7 +17,23 @@ conserva los cambios y cifras anteriores.
 | IC reconstruido del proxy anual | 0,037 a 252 sesiones; 36 orígenes | Intervalo por bloques [−0,082; 0,082]; no valida el IC declarado de 0,05 |
 | IC de rangos con fórmula TTM actual reconstruida | 0,087 a 252 sesiones; 36 orígenes, solo tres sin solapamiento | Banda descriptiva [0,027; 0,134]; ventaja frente a BPA/precio sin resolver, vintages y catálogo históricos sin verificar |
 | Señal completa prospectiva mensual | 1 sello: 147 señales y 13 exclusiones; ancla SPY; 0 vencidos | Publicación inicial verificada y datos archivados; no acredita IC ni retorno previsto |
+| Cuenta TTM reconstruida | 47 revisiones; USD 141.298 frente a USD 140.657 de BPA/precio, con USD 100.000 iniciales | Manga fija 35%, costes financiados y cuenta continua; ventaja incremental sin resolver. No reproduce el optimizador ni acredita vintages o universo histórico |
 | Candidato de oro con factores rezagados | 34 orígenes; R² fuera de muestra −0,057 frente a media histórica | Empeora el MSE un 5,7%; permanece en sombra |
+
+## Cuenta histórica reconstruida de la señal (29-oct)
+
+El [protocolo](protocolo-cuenta-historica-0.35.md) se publicó en `fb2b414`
+antes de calcular el rendimiento. El [resultado](auditoria-cuenta-historica-0.35.md)
+conserva seis cuentas y dos niveles de costes, del 31-oct-2022 al 28-oct-2026,
+sin reiniciar capital entre revisiones. No se resuelve una ventaja frente
+a BPA/precio ni al índice mensual. La cesta inicial mantenida rinde más,
+pero su exposición media sube de 35% a 53,5% y llega a 70,3%; no es una
+comparación a riesgo constante ni prueba que evitar rotación cause esa ventaja.
+
+Se completa la infraestructura y el diagnóstico económico limitado de esa
+señal. El backtest de producción sigue bloqueado por holdings, perfiles de
+bonos/ETF, calidad/confianza y vintages históricos; no se sustituye por la
+regla de cinco acciones. Tampoco cambia el núcleo, los pesos o el IC.
 
 ## Fiabilidad del cálculo y de los pesos (0.34.0)
 
