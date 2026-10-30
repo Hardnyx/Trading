@@ -26,6 +26,7 @@ def materialize_macro_inputs(root, cuts, definitions=SERIES):
     manifest = json.loads(original_manifest)
     names = [definition[0] for definition in definitions]
     if (manifest.get("protocol") != PROTOCOL or
+            manifest.get("source_market_commit") != MARKET_COMMIT or
             manifest.get("cuts") != cuts or
             manifest.get("series_ids") != names):
         raise ValueError("Source protocol, calendar or series set has changed")
