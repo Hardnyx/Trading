@@ -12,9 +12,9 @@ import {totalReturnPrices,replayAccount,compareAccounts} from './account_replay.
 import {MODEL_VERSION} from '../dist/assets/js/policy.mjs?v=0.35.0';
 
 const ROOT=resolve(dirname(fileURLToPath(import.meta.url)),'..'),sha=bytes=>createHash('sha256').update(bytes).digest('hex');
-export const ACCOUNT_PROTOCOL=Object.freeze({id:'reconstructed-ttm-account-v1',
+export const ACCOUNT_PROTOCOL=Object.freeze({id:'reconstructed-ttm-account-v2',
  market_commit:'8dcd06cfd06b2ca34ca6fb64e31d5b6344525cd5',price_cut:'2026-10-28',
- initial_capital:100000,lead_sessions:2,positions:5,minimum_signals:30,equity_weight:.35,
+ initial_capital:100000,lead_sessions:2,minimum_training:252,positions:5,minimum_signals:30,equity_weight:.35,
  cash_yield:0,dividends:'provider-gross-total-return-reinvestment',
  costs:{commissionFixed:0,commissionBps:0,spreadBps:5,slippageBps:2,capitalGainsTax:0,minTrade:0},
  cost_multipliers:[1,3],block_months:12,bootstrap_draws:2000,seed:20261029});
@@ -34,6 +34,10 @@ export function accountDecisions(market,facts,protocol=ACCOUNT_PROTOCOL){
  if(!benchmark)throw Error('Missing benchmark calendar');
  const dates=benchmark.history.filter(r=>r.date<=market.price_as_of).map(r=>r.date),index=new Map(dates.map((d,i)=>[d,i]));
  if(index.size!==dates.length||dates.some((d,i)=>i&&d<=dates[i-1]))throw Error('Ambiguous benchmark calendar');
+ const ends=new Map();dates.forEach((d,i)=>ends.set(d.slice(0,7),{date:d,index:i}));
+ const expected=[...ends.values()].filter(r=>r.index>=protocol.minimum_training&&r.date.slice(0,7)<market.price_as_of.slice(0,7)).map(r=>r.date);
+ if(JSON.stringify(facts.origins.map(r=>r.origin))!==JSON.stringify(expected))
+  throw Error('Missing or unexpected scheduled review; future maturity must not select account origins');
  const decisions=[],pending=[],exclusions={};let previous='';
  for(const input of facts.origins){
   if(input.origin<=previous||!index.has(input.origin))throw Error('Invalid reconstructed origin');
@@ -51,7 +55,7 @@ export function accountDecisions(market,facts,protocol=ACCOUNT_PROTOCOL){
   const rank=key=>[...rows].sort((a,b)=>b[key]-a[key]||alphabet(a,b)).slice(0,protocol.positions),
    enough=rows.length>=protocol.minimum_signals&&rows.length>=protocol.positions,
    weights=selected=>Object.fromEntries([...selected.map(r=>[r.symbol,protocol.equity_weight/protocol.positions]),['CASH',1-protocol.equity_weight]]);
-  decisions.push({cut:input.origin,execute,usable_signals:rows.length,excluded:reasons,
+  decisions.push({cut:input.origin,execute,usable_signals:rows.length,excluded:reasons,accounting_exclusions:input.accounting_exclusions||{},
    ttm_target:enough?weights(rank('signal')):null,yield_target:enough?weights(rank('earnings_yield')):null,
    ttm_selection:enough?rank('signal'):[],yield_selection:enough?rank('earnings_yield'):[],
    scope:'Raw block valuation rank with current catalogue; no live CAPM/IC, optimizer, risk forecast or trade gate'});
@@ -131,7 +135,9 @@ export function backtestSourceHashes(){
   for(const m of bytes.toString().matchAll(/\b(?:from|import)\s*['"]([^'"]+\.mjs)(?:\?[^'"]*)?['"]/g))
    if(m[1].startsWith('.'))visit(resolve(dirname(path),m[1]));
  };
- visit(fileURLToPath(import.meta.url));hashes['docs/protocolo-cuenta-historica-0.35.md']=sha(readFileSync(resolve(ROOT,'docs/protocolo-cuenta-historica-0.35.md')));
+ visit(fileURLToPath(import.meta.url));
+ for(const file of ['docs/protocolo-cuenta-historica-0.35.md','docs/protocolo-cuenta-historica-0.35-v2.md'])hashes[file]=sha(readFileSync(resolve(ROOT,file)));
+ hashes['requirements-research.txt']=sha(readFileSync(resolve(ROOT,'requirements-research.txt')));
  return hashes;
 }
 
@@ -142,12 +148,15 @@ if(process.argv[1]&&resolve(process.argv[1])===fileURLToPath(import.meta.url)){
   factsPath=resolve(ROOT,'docs/auditorias/ttm-signal-inputs-2026-10-29.json.gz'),factsBytes=readFileSync(factsPath),
   facts=JSON.parse(gunzipSync(factsBytes));
  if(sha(marketBytes)!==facts.input_market_sha256)throw Error('Frozen market hash mismatch');
- const report=runAccountBacktest(JSON.parse(marketBytes),facts,{onProgress:p=>console.log(JSON.stringify(p))});
- report.input_hashes={market_sha256:sha(marketBytes),ttm_gzip_sha256:sha(factsBytes)};
- report.protocol_publication_commit='fb2b41405d0a9ce5a24c1fa8710507043356348a';
- report.source_hashes=backtestSourceHashes();report.runtime_node_version=process.version;
+ const market=JSON.parse(marketBytes),preparedBytes=execFileSync(process.env.PYTHON||'python',[resolve(ROOT,'scripts/account_inputs.py')],
+  {input:JSON.stringify({market,archived:facts}),maxBuffer:32*1024*1024}),prepared=JSON.parse(preparedBytes),
+  report=runAccountBacktest(market,prepared,{onProgress:p=>console.log(JSON.stringify(p))});
+ report.input_hashes={market_sha256:sha(marketBytes),ttm_gzip_sha256:sha(factsBytes),prepared_account_facts_sha256:sha(preparedBytes)};
+ report.protocol_publication_commits=['fb2b41405d0a9ce5a24c1fa8710507043356348a','1c840b3f8f3895c1c1bf93822ada4514bd546047'];
+ report.source_hashes={...backtestSourceHashes(),...prepared.python_source_hashes};
+ report.runtime_node_version=process.version;report.runtime_python_version=prepared.python_version;
  report.result_sha256=sha(JSON.stringify({decisions:report.decisions,runs:report.runs}));
- const output=resolve(value('--output','out/ttm-account-backtest.json')),summary=resolve(value('--summary','out/ttm-account-summary.json'));
+ const output=resolve(value('--output','out/ttm-account-backtest-v2.json')),summary=resolve(value('--summary','out/ttm-account-summary-v2.json'));
  for(const [path,data] of [[output,report],[summary,accountBacktestSummary(report)]]){
   mkdirSync(dirname(path),{recursive:true});writeFileSync(path,JSON.stringify(data,null,1)+'\n');
  }

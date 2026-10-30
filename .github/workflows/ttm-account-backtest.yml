@@ -5,11 +5,18 @@ on:
     branches: [main]
     paths:
       - 'scripts/account_replay.mjs'
+      - 'scripts/account_inputs.py'
       - 'scripts/ttm_account_backtest.mjs'
       - 'scripts/ttm_signal_replay.mjs'
+      - 'scripts/ttm_signal_research.py'
+      - 'scripts/refresh_data.py'
+      - 'scripts/distributions.py'
+      - 'requirements-research.txt'
       - 'tests/account-replay.test.mjs'
       - 'tests/ttm-account-backtest.test.mjs'
+      - 'tests/test_account_inputs.py'
       - 'docs/protocolo-cuenta-historica-0.35.md'
+      - 'docs/protocolo-cuenta-historica-0.35-v2.md'
       - 'docs/auditorias/ttm-signal-inputs-2026-10-29.json.gz'
       - 'dist/assets/js/**'
       - '.github/workflows/ttm-account-backtest.yml'
@@ -29,6 +36,12 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-research.txt
+      - name: Check every scheduled review without looking for a mature outcome
+        run: python -m unittest tests.test_account_inputs
       - name: Check causal orders, funded costs, missing outcomes and matched accounts
         run: node --test tests/account-replay.test.mjs tests/ttm-account-backtest.test.mjs
       - name: Replay frozen historical inputs without fitting or promoting a strategy
@@ -41,5 +54,6 @@ jobs:
           path: |
             out/ttm-account-*.json
             docs/protocolo-cuenta-historica-0.35.md
+            docs/protocolo-cuenta-historica-0.35-v2.md
           retention-days: 90
           if-no-files-found: error

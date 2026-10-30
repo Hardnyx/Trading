@@ -151,9 +151,9 @@ Este archivo lista **solo lo que falta**. Para el funcionamiento, consultar
   Veinte orígenes no superpuestos y 500 observaciones solo habilitan revisión
   diagnóstica. La ventaja de asignación requiere resultados de cartera netos
   maduros frente a mantener y referencias pasivas bajo el mismo mandato.
-- **Cuenta histórica de señal incorporada:** 47 revisiones con seis cuentas,
+- **Cuenta histórica de señal incorporada (v2):** 48 revisiones con seis cuentas,
   costes base/triples, NAV y composiciones diarios e interrupción ante
-  resultados ausentes. USD 141.298 frente a USD 140.657 de BPA/precio sobre
+  resultados ausentes. USD 141.394 frente a USD 139.741 de BPA/precio sobre
   USD 100.000 iniciales, ventaja sin resolver. La regla es una manga de
   señal bruta al 35%, no el optimizador. Falta la cuenta histórica del
   motor completo: holdings del benchmark para CAPM/IC, perfiles de bonos y

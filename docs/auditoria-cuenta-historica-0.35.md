@@ -1,16 +1,20 @@
 # Cuenta histórica de la señal TTM
 
-Resultado del protocolo `reconstructed-ttm-account-v1`, publicado en
+Resultado del protocolo `reconstructed-ttm-account-v2`. La regla económica
+original se publicó en
 [`fb2b414`](https://github.com/Hardnyx/Trading/commit/fb2b41405d0a9ce5a24c1fa8710507043356348a)
-antes de ejecutar el recorrido económico. Motor de referencia 0.35.0,
+antes de ejecutar el recorrido económico. La
+[corrección causal del calendario](protocolo-cuenta-historica-0.35-v2.md)
+se publicó en `1c840b3` antes de calcular el resultado corregido.
+Motor de referencia 0.35.0,
 precios congelados al 28-oct-2026. Es el primer diagnóstico de una cuenta
 sucesiva de la señal reconstruida; **no es el backtest de la cartera de
 producción** y no acredita su ventaja económica.
 
 ## Resultado que importa
 
-La regla mensual TTM termina con USD 141.298 frente a USD 140.657 al ordenar
-solo por BPA/precio. La ventaja terminal de USD 642 sobre USD 100.000
+La regla mensual TTM termina con USD 141.394 frente a USD 139.741 al ordenar
+solo por BPA/precio. La ventaja terminal de USD 1.653 sobre USD 100.000
 iniciales **no tiene respaldo estadístico resuelto**. Su banda descriptiva
 pareada admite ventaja y desventaja. El resultado concuerda con el estudio
 de ranking: aún no se demuestra que los supuestos adicionales aporten
@@ -24,7 +28,7 @@ declara que mantener sea la estrategia correcta. Toma un riesgo diferente.
 
 ## Recorrido completo y costes
 
-Las seis cuentas empiezan con USD 100.000 al 31-oct-2022. Se fijan 47
+Las seis cuentas empiezan con USD 100.000 al 31-oct-2022. Se fijan 48
 decisiones mensuales y se ejecutan desde el 2-nov-2022, dos sesiones SPY
 después del primer origen. Se valoran diariamente hasta el 28-oct-2026.
 Las doce cuentas (seis reglas por dos niveles de costes) terminan sin
@@ -38,9 +42,9 @@ conserva unidades, efectivo y costes; no se reinicia el capital al revisar.
 
 | Cuenta, costes base | Patrimonio final USD | Retorno neto acumulado | CAGR por sesiones | Máxima caída diaria | Costes USD |
 |---|---:|---:|---:|---:|---:|
-| TTM mensual | 141.298 | 41,30% | 9,09% | 9,64% | 406,48 |
-| BPA/precio mensual | 140.657 | 40,66% | 8,97% | 8,88% | 438,35 |
-| SPY mensual | 132.173 | 32,17% | 7,27% | 6,82% | 33,47 |
+| TTM mensual | 141.394 | 41,39% | 9,11% | 9,64% | 407,85 |
+| BPA/precio mensual | 139.741 | 39,74% | 8,79% | 8,88% | 447,85 |
+| SPY mensual | 132.172 | 32,17% | 7,27% | 6,82% | 33,58 |
 | Primera cesta TTM mantenida | 197.360 | 97,36% | 18,67% | 18,42% | 15,75 |
 | SPY inicial mantenido | 140.924 | 40,92% | 9,02% | 8,93% | 15,75 |
 | Efectivo | 100.000 | 0,00% | 0,00% | 0,00% | 0,00 |
@@ -52,11 +56,11 @@ ficticia para cerrar el informe. Los costes se financian dentro de la
 cuenta usando el `tradePlan` de producción: spread completo 5 pb y slippage
 2 pb, es decir, 4,5 pb por nominal comprado o vendido.
 
-Con costes triples, TTM termina en USD 140.337 y BPA/precio en USD 139.622.
-La ventaja terminal entre ambos sigue siendo pequeña (USD 715) y sin
+Con costes triples, TTM termina en USD 140.430 y BPA/precio en USD 138.694.
+La ventaja terminal entre ambos sigue siendo pequeña (USD 1.736) y sin
 superioridad resuelta. No se elige un nivel de costes por conveniencia.
 
-![Patrimonio y exposición efectiva de las cuentas](auditorias/ttm-account-2026-10-29.svg)
+![Patrimonio y exposición efectiva de las cuentas](auditorias/ttm-account-v2-2026-10-29.svg)
 
 ## Incertidumbre y periodos
 
@@ -78,13 +82,13 @@ múltiples elecciones ni una certificación de cobertura con tan poca
 historia. Tampoco eliminan sesgos del universo, catálogo y proveedor.
 
 La cuenta TTM registra +3,20% en el tramo final de 2022, +12,20% en 2023,
-+5,78% en 2024, +2,16% en 2025 y +12,91% hasta el 28-oct-2026. No cubre
++5,78% en 2024, +2,16% en 2025 y +12,99% hasta el 28-oct-2026. No cubre
 2008, 2020 ni la mayor parte del ajuste de 2022. No basta para acreditar
 comportamiento en crisis, ES o CVaR anual.
 
 ## Qué dice sobre los cambios de composición
 
-TTM realiza 280 compras/ventas, con USD 406,48 de costes y diez revisiones
+TTM realiza 285 compras/ventas, con USD 407,85 de costes y diez revisiones
 que reasignan al menos 10% del patrimonio, excluida la primera inversión.
 El mayor cambio reasigna 22,11% al cierre del 4-mar-2025 con información del
 28-feb: entran NVDA, PFE y VZ; salen DG, PCAR y UPS. Se conservan las señales,
@@ -101,8 +105,8 @@ El universo y los supuestos de crecimiento/múltiplo son actuales. Los TTM
 se filtran por presentación anterior al origen y se reutiliza la valoración
 de producción, pero no hay vintages originales o universo histórico
 verificados. Se heredan 226 exclusiones acción-origen por ajustes futuros
-no conciliados y 141 por señal/exposición inválida, además de las
-exclusiones contables del paquete original. El filtro ex post de operaciones
+no conciliados y 144 por señal/exposición inválida, además de las
+exclusiones contables reconstruidas por origen. El filtro ex post de operaciones
 corporativas introduce sesgo; no se oculta porque las cuentas terminen.
 
 El siguiente paso hacia el motor completo exige reconstruir holdings
@@ -121,17 +125,28 @@ No se cambian parámetros ni se promueve la regla de esta prueba.
 node --test tests/account-replay.test.mjs tests/ttm-account-backtest.test.mjs
 node scripts/ttm_account_backtest.mjs
 # Gráfico opcional; requiere Matplotlib.
-python scripts/plot_account_backtest.py --output out/ttm-account-backtest.svg
+python scripts/plot_account_backtest.py --output out/ttm-account-backtest-v2.svg
 ```
 
 El script recupera el mercado congelado mediante Git y verifica su hash
 frente al paquete TTM. Requiere el historial de ese commit, no credenciales
-ni nuevas descargas. `out/ttm-account-backtest.json` conserva NAV, pesos
+ni nuevas descargas; requiere las dependencias Python de investigación.
+`out/ttm-account-backtest-v2.json` conserva NAV, pesos
 diarios, unidades tras cada transición, órdenes, costes y datos utilizados.
-`out/ttm-account-summary.json` resume el diagnóstico. Los hashes de entradas,
+`out/ttm-account-summary-v2.json` resume el diagnóstico. Los hashes de entradas,
 dependencias matemáticas, protocolo y resultado, y la versión de Node,
 permiten reproducirlo. El resumen permanente está en
-[`auditorias/ttm-account-summary-2026-10-29.json`](auditorias/ttm-account-summary-2026-10-29.json).
+[`auditorias/ttm-account-summary-v2-2026-10-29.json`](auditorias/ttm-account-summary-v2-2026-10-29.json).
+
+La versión v1 omitía septiembre porque reutilizaba orígenes que requerían
+21 sesiones futuras para otro estudio. Se conserva su
+[resumen original](auditorias/ttm-account-summary-2026-10-29.json), sin
+presentarlo como mensual completo. V2 reconstruye cada cierre anterior al
+mes del corte sin exigir retorno futuro y rechaza paquetes que omitan una
+revisión programada. Las doce cuentas coinciden exactamente con v1 hasta
+la ejecución corregida del 2-oct-2026; no se ajustaron reglas de inversión.
+Las bandas de meses completos no cambian, porque el efecto es en octubre,
+que sigue siendo parcial.
 
 CI ejecuta el recorrido con las mismas entradas, sin tocar producción,
 y conserva ambos JSON durante 90 días. Las pruebas cubren aislamiento del
@@ -139,7 +154,7 @@ futuro, continuidad de la cuenta, presupuesto de costes, ejecución causal,
 datos ausentes, reinversión sin duplicar dividendos y comparaciones pareadas.
 Que pasen acredita esos controles de software, no capacidad predictiva.
 
-Comprobación de esta entrega: 298 tests JS, 158 Python y `npm run check`
+Comprobación de esta entrega: 299 tests JS, 162 Python y `npm run check`
 aprobados. Una conciliación independiente revisó 12.024 valoraciones
 diarias, cobros/pagos de cada transición y suma de pesos; el residuo máximo
 de caja fue menor de USD 0,000001. El protocolo publicado permanece idéntico.

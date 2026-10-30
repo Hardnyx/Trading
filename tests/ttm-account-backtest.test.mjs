@@ -3,9 +3,11 @@ import assert from 'node:assert/strict';
 import {accountDecisions,accountOrders,runAccountBacktest,ACCOUNT_PROTOCOL} from '../scripts/ttm_account_backtest.mjs';
 
 function fixture(){
- const history=Array.from({length:460},(_,i)=>({date:new Date(Date.UTC(2023,0,1+i)).toISOString().slice(0,10),
-  close:100*Math.exp(.0001*i+.01*Math.sin(i+1)),adj_close:100*Math.exp(.0001*i+.01*Math.sin(i+1))})),
-  cut=history.at(-1).date,origin=history[420].date,second=history[449].date,
+ const history=[];let day=new Date('2022-11-01T12:00:00Z');
+ while(history.length<460){if(![0,6].includes(day.getUTCDay())){const i=history.length;
+  history.push({date:day.toISOString().slice(0,10),close:100*Math.exp(.0001*i+.01*Math.sin(i+1)),adj_close:100*Math.exp(.0001*i+.01*Math.sin(i+1))});}
+  day.setUTCDate(day.getUTCDate()+1);}
+ const cut=history.at(-1).date,
   distribution_index={complete_ex_date_index:true,currency:'USD',coverage_start:history[0].date,coverage_end:cut,records:[]},
   benchmark={symbol:'SPY',type:'etf',history},assets=[benchmark],facts=[];
  for(let i=0;i<35;i++){
@@ -14,10 +16,11 @@ function fixture(){
    adj_close:r.adj_close*Math.exp(.001*Math.sin(k+i)),close:r.close*Math.exp(.001*Math.sin(k+i))})),
    price_date:cut,splits:[],distribution_index,
    assumptions:{growth:.04+i*.001,multiple:20,horizon:3,discount:.1}});
-  facts.push({symbol,eps:{value:4+i*.05,period_end:'2023-09-30',filed:'2023-11-01',method:'TTM'}});
+  facts.push({symbol,eps:{value:4+i*.05,period_end:'2023-06-30',filed:'2023-09-01',method:'TTM'}});
  }
- return {market:{price_as_of:cut,assets},facts:{price_cut:cut,exclusions:{},origins:[
-  {origin,facts,outcomes:{'21':second}},{origin:second,facts,outcomes:{}}]}};
+ const ends=new Map();history.forEach((r,i)=>ends.set(r.date.slice(0,7),{date:r.date,i}));
+ const origins=[...ends.values()].filter(r=>r.i>=252&&r.date.slice(0,7)<cut.slice(0,7)).map(r=>({origin:r.date,facts,outcomes:{}}));
+ return {market:{price_as_of:cut,assets},facts:{price_cut:cut,exclusions:{},origins}};
 }
 
 test('historical decisions isolate future prices, outcomes, dividends and current financial metadata',()=>{
@@ -29,7 +32,7 @@ test('historical decisions isolate future prices, outcomes, dividends and curren
  }
  f.origins[0].outcomes={'21':'2099-01-01'};
  assert.deepEqual(accountDecisions(m,f).decisions[0],before.decisions[0]);
- assert.equal(before.decisions[0].execute,market.assets[0].history[422].date);
+ assert.equal(before.decisions[0].execute,market.assets[0].history.find((r,i)=>market.assets[0].history[i-2]?.date===cut).date);
  assert.equal(before.decisions[0].usable_signals,35);
 });
 
@@ -43,10 +46,16 @@ test('paired ranking references use the same sample and deterministic tie orderi
 
 test('insufficient original signals mean hold, and an unobserved fill stays pending',()=>{
  const {market,facts}=fixture();for(const origin of facts.origins)origin.facts=origin.facts.slice(0,4);
- facts.origins.push({origin:market.price_as_of,facts:[]});
+ const history=market.assets[0].history,last=facts.origins.at(-1).origin;
+ market.price_as_of=facts.price_cut=history[history.findIndex(r=>r.date===last)+1].date;
  const s=accountDecisions(market,facts);assert.equal(s.decisions[0].ttm_target,null);assert.equal(s.pending.length,1);
  const orders=accountOrders('ttm_monthly',s.decisions);assert.equal(orders[0].target,null);
  assert.equal(orders[0].decision.reason,'insufficient-signals-hold');
+});
+
+test('an input package filtered for mature outcomes cannot silently drop a scheduled review',()=>{
+ const {market,facts}=fixture();facts.origins.pop();
+ assert.throws(()=>accountDecisions(market,facts),/Missing or unexpected scheduled review/);
 });
 
 test('initial-hold and monthly rules diverge only after a first actual allocation',()=>{

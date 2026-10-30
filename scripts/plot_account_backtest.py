@@ -18,7 +18,7 @@ def plot_accounts(source, output, preview=None):
              ("index_monthly", "SPY mensual", "#5dcf9c"),
              ("ttm_initial_hold", "Cesta TTM inicial mantenida", "#ce8bee")]
     with plt.style.context("dark_background"):
-        plt.rcParams["svg.hashsalt"] = "reconstructed-ttm-account-v1"
+        plt.rcParams["svg.hashsalt"] = report["protocol"]["id"]
         fig, axes = plt.subplots(2, 1, figsize=(10, 7), sharex=True)
         fig.patch.set_facecolor("#14181f")
         for axis in axes:
@@ -54,8 +54,8 @@ def plot_accounts(source, output, preview=None):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--input", default="out/ttm-account-backtest.json")
-    parser.add_argument("--output", default="out/ttm-account-backtest.svg")
+    parser.add_argument("--input", default="out/ttm-account-backtest-v2.json")
+    parser.add_argument("--output", default="out/ttm-account-backtest-v2.svg")
     parser.add_argument("--preview")
     args = parser.parse_args()
     plot_accounts(args.input, args.output, args.preview)
