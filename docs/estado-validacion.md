@@ -1,6 +1,6 @@
 # Estado de validación de Trading
 
-**Actualizado:** 29 de octubre de 2026 · motor 0.35.0 · precios al 28-oct.
+**Actualizado:** 30 de octubre de 2026 · motor 0.35.0 · precios al 28-oct.
 **Estado:** escenarios condicionales de investigación; capacidad predictiva y
 ventaja económica sin acreditar. El [historial hasta 0.32.0](historial-validacion-hasta-0.32.md)
 conserva los cambios y cifras anteriores.
@@ -34,6 +34,17 @@ perfiles y demás datos todavía pendientes. No hay aún un corte apto para
 el motor completo. Se conserva el reloj de colección y su base temporal;
 la disponibilidad histórica se trata con precisión diaria y sin fingir una
 descarga local anterior. No se modifican los parámetros o pesos publicados.
+
+El [preflight integral](../data/historical/replay-plan-v1/coverage.md) conserva
+los 48 cierres y desglosa 14 componentes por fecha, con sus dependencias y
+bloqueos. Revalida los originales en cada regeneración y registra hashes del
+motor, fuentes y [protocolo de desarrollo v1](protocolo-replay-integral-v1.md).
+Hay 0/48 cierres elegibles y 0 ejecutados por el motor completo. Los
+pronósticos y órdenes permanecen nulos. El periodo ya inspeccionado no es
+un holdout independiente; tampoco se acredita procedencia histórica de
+parámetros por congelar el kernel actual. El protocolo registra estas
+limitaciones antes de ejecutar el replay integral y no modifica el criterio
+de capacidad predictiva sin acreditar.
 
 ## Cuenta histórica reconstruida de la señal (29-oct)
 

@@ -1,0 +1,167 @@
+{
+  "protocol": "full-engine-evaluation-v1",
+  "registered_on": "2026-10-30",
+  "status": "frozen-development-protocol-not-a-validation-result",
+  "source_market_commit": "8dcd06cfd06b2ca34ca6fb64e31d5b6344525cd5",
+  "expected_cuts": [
+    "2022-10-31",
+    "2022-11-30",
+    "2022-12-30",
+    "2023-01-31",
+    "2023-02-28",
+    "2023-03-31",
+    "2023-04-28",
+    "2023-05-31",
+    "2023-06-30",
+    "2023-07-31",
+    "2023-08-31",
+    "2023-09-29",
+    "2023-10-31",
+    "2023-11-30",
+    "2023-12-29",
+    "2024-01-31",
+    "2024-02-29",
+    "2024-03-28",
+    "2024-04-30",
+    "2024-05-31",
+    "2024-06-28",
+    "2024-07-31",
+    "2024-08-30",
+    "2024-09-30",
+    "2024-10-31",
+    "2024-11-29",
+    "2024-12-31",
+    "2025-01-31",
+    "2025-02-28",
+    "2025-03-31",
+    "2025-04-30",
+    "2025-05-30",
+    "2025-06-30",
+    "2025-07-31",
+    "2025-08-29",
+    "2025-09-30",
+    "2025-10-31",
+    "2025-11-28",
+    "2025-12-31",
+    "2026-01-30",
+    "2026-02-27",
+    "2026-03-31",
+    "2026-04-30",
+    "2026-05-29",
+    "2026-06-30",
+    "2026-07-31",
+    "2026-08-31",
+    "2026-09-30"
+  ],
+  "sample_role": "previously-inspected-development-history",
+  "independent_holdout": {
+    "registered": false,
+    "reason": "No historical observations are claimed unseen; an independent dataset must be registered before a confirmatory run."
+  },
+  "availability": {
+    "macro": "strict-prior-day-official-vintage",
+    "filings": "strict-prior-publication-with-original-document-and-amendment-identity",
+    "prices": "decision-after-official-close-no-future-corporate-action-basis",
+    "execution": "next-observed-exchange-session-close-after-origin-no-same-close-fill",
+    "parameters": "per-cut-training-only-or-explicitly-retrospective-fixed-policy-no-later-fit-as-historical"
+  },
+  "horizons_sessions": [
+    21,
+    63,
+    252
+  ],
+  "maturity_rule": "first count sessions from origin for forecasts; account returns start at actual next-session execution; missing or immature outcomes remain explicitly unscored",
+  "forecast_target": "arithmetic total return in USD including distributions; no mixing log and arithmetic forecasts",
+  "primary_tests": [
+    {
+      "id": "return_mse",
+      "horizons_sessions": [
+        21,
+        63,
+        252
+      ],
+      "candidate": "full-engine predictive mean",
+      "reference": "training-only expanding mean of daily arithmetic total returns compounded as (1+mean_daily_return)**h-1; minimum 252 daily return intervals ending by origin, otherwise unscored",
+      "effect": "reference_squared_error-minus-candidate_squared_error; equal weight to origins and equal weight to eligible instruments within origin"
+    },
+    {
+      "id": "ranking_ic",
+      "horizons_sessions": [
+        21,
+        63,
+        252
+      ],
+      "candidate": "Spearman rank correlation of predicted and realized arithmetic total returns within each origin",
+      "reference": "same-origin trailing filed EPS divided by same-basis origin price",
+      "effect": "candidate_IC-minus-reference_IC on identical instrument intersection; ties use midranks; fewer than 10 instruments or constant scores unscored"
+    },
+    {
+      "id": "net_economic_value",
+      "horizons_sessions": [
+        21
+      ],
+      "candidate": "sequential monthly full-engine account net of base costs",
+      "reference": "SPY plus cash with risky weight clip(candidate ex-ante portfolio beta,0,1); beta fitted to trailing 252 sessions available at origin, minimum 126 aligned returns; same execution and cash accrual rules",
+      "effect": "annualized mean paired monthly log-return differential; separate duration/credit exposures must be reported before any skill attribution"
+    }
+  ],
+  "multiple_testing": {
+    "family": "seven primary tests above, three MSE plus three IC plus one economic",
+    "method": "Holm step-down",
+    "familywise_alpha": 0.05,
+    "direction": "one-sided positive advantage",
+    "rule": "no omnibus pass by picking a successful horizon or metric; report all effects and intervals; retrospective results remain descriptive"
+  },
+  "uncertainty": {
+    "method": "paired circular moving-block bootstrap over origin months, resampling the entire cross-section jointly",
+    "block_lengths_months": [
+      12,
+      24
+    ],
+    "draws": 10000,
+    "seed": 20261030,
+    "interval": "percentile 95% two-sided",
+    "one_sided_p": "center the origin-effect series at zero; (1+count(null_bootstrap_mean >= observed_mean))/(draws+1)",
+    "minimum_origins": "at least four blocks for each chosen length; otherwise insufficient-sample, no formal significance claim",
+    "overlap": "do not count overlapping horizons, instruments, or Monte Carlo paths as independent replications"
+  },
+  "risk_diagnostics": [
+    "sample CRPS of predictive total-return distribution",
+    "Brier score for probability of loss versus training-only loss frequency",
+    "p05 and p95 exceedance rates with joint month-block intervals",
+    "predicted variance versus realized sum of squared daily log returns",
+    "tail-loss and maximum-drawdown diagnostics with event counts; no tail validity claim from low power"
+  ],
+  "secondary_benchmarks": [
+    "SPY buy and hold",
+    "50% SPY / 50% SHY monthly rebalance",
+    "equal weights in same causal eligible universe",
+    "same full engine with alpha set to zero",
+    "same full engine with unconditional training-only covariance"
+  ],
+  "costs": {
+    "base": {
+      "commissionFixed": 0,
+      "commissionBps": 0,
+      "spreadBps": 5,
+      "slippageBps": 2,
+      "capitalGainsTax": 0
+    },
+    "stress": "triple spread and slippage; base costs are an explicit scenario, not observed broker quotes",
+    "dividends": "actual cash flows and split-consistent shares, no double-counting adjusted prices plus cash dividends",
+    "cash": "realized documented cash accrual, never forecast cash yield as realized outcome"
+  },
+  "model_freeze": {
+    "policy": "hash engine source, data manifest, calibration, settings, search budgets, seeds and protocol before scoring; preserve every candidate version and cohort",
+    "production_entrypoint": "composeMultiStart with referenceRequest; conditional risk recalibrated using only eligible past inputs",
+    "search": "use reference settings and existing default search budgets, no selection by realized results",
+    "seed_policy": "fixed ex-ante seeds; sensitivity changes are separate research versions"
+  },
+  "missing_data": {
+    "retain_all_cuts": true,
+    "no_forward_fill_of_future_information": true,
+    "no_backfilled_current_membership": true,
+    "no_eligible_only_full_period_account": "gaps cannot silently become cash or skipped decisions; report blocked timeline, origin and instrument selection and reference coverage on the same sample"
+  },
+  "validation_decision": "unestablished until predictive accuracy, risk calibration and net economic value have consistent out-of-sample evidence with uncertainty reported and prospective confirmation; software tests do not establish financial validity"
+}

@@ -28,6 +28,34 @@ La matriz verificable se encuentra en
 inventario con hashes en [`manifest.json`](../data/historical/provider-inputs-v1/manifest.json).
 El diagnóstico no cambia el estado `not-established` de la capacidad predictiva.
 
+## Matriz del replay integral por componente
+
+La [matriz de 48 cierres](../data/historical/replay-plan-v1/coverage.md)
+detalla qué fuentes pueden verificarse y qué componentes siguen bloqueados.
+Se publica también en [JSON](../data/historical/replay-plan-v1/coverage.json)
+y [CSV](../data/historical/replay-plan-v1/coverage.csv), con una fila por
+fecha y componente en el CSV. No se limita a un indicador global de aptitud.
+
+```sh
+python -m unittest tests.test_historical_replay_plan
+python scripts/historical_replay_plan.py
+python scripts/historical_replay_plan.py --require-full-engine
+```
+
+El último comando escribe la evidencia y termina con código 2: no hay
+adaptadores causales completos ni un solo cierre elegible. La ejecución
+normal comprueba fuentes, no ejecuta Monte Carlo ni el optimizador.
+Los bloques de pronósticos y órdenes permanecen nulos. La macro verificada
+y un N-PORT público no habilitan por sí solos ninguna etapa del modelo.
+
+Cada regeneración reaudita los bytes originales; no confía en los booleanos
+de `readiness.json`. Conserva todos los cierres, propaga dependencias, registra
+hashes de fuentes, motor y [protocolo de evaluación](protocolo-replay-integral-v1.md).
+Faltan también precios y flujos operables reconciliados y la procedencia
+temporal de los parámetros: congelar el kernel actual no demuestra que se
+hubiera calibrado con información anterior a cada corte. Este periodo ya
+inspeccionado continúa clasificado como desarrollo, sin holdout independiente.
+
 ## Macro conocida en cada fecha
 
 Se consultan las 16 series del motor mediante el API oficial FRED/ALFRED.
