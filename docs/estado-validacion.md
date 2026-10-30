@@ -20,6 +20,16 @@ conserva los cambios y cifras anteriores.
 | Cuenta TTM reconstruida v2 | 48 revisiones; USD 141.394 frente a USD 139.741 de BPA/precio, con USD 100.000 iniciales | Manga fija 35%, costes financiados y cuenta continua; ventaja incremental sin resolver. No reproduce el optimizador ni acredita vintages o universo histórico |
 | Candidato de oro con factores rezagados | 34 orígenes; R² fuera de muestra −0,057 frente a media histórica | Empeora el MSE un 5,7%; permanece en sombra |
 
+## Recuperación de fuentes históricas (30-oct)
+
+El [colector y auditor de fuentes](fuentes-historicas.md) recuperan versiones
+oficiales ALFRED y documentos originales de SPY para los cortes del estudio.
+Su cobertura se mide tras descargar y verificar los cuerpos originales;
+`readiness.json` separa la macro disponible de los identificadores, perfiles
+y demás datos aún necesarios. No se modifica el motor ni se autoriza el
+backtest completo por tener un colector. Los originales conservan fecha
+real de descarga, periodo y disponibilidad histórica con precisión diaria.
+
 ## Cuenta histórica reconstruida de la señal (29-oct)
 
 El [protocolo](protocolo-cuenta-historica-0.35.md) se publicó en `fb2b414`

@@ -160,6 +160,16 @@ Este archivo lista **solo lo que falta**. Para el funcionamiento, consultar
   ETF, calidad/confianza y vintages macro, universo y operaciones corporativas
   originales. No se rellena con datos actuales ni se acredita la cartera.
   Véase `auditoria-cuenta-historica-0.35.md`.
+- **Recuperación histórica implementada (30-oct):** consultas ALFRED con
+  versión fijada al día anterior en las 16 series y los 48 cortes del
+  estudio, más documentos originales de SPY y una matriz de huecos
+  verificada desde los bytes archivados. La colección se mide en
+  `data/historical/provider-inputs-v1/readiness.json`; el código no acredita
+  por sí solo cobertura. El N-PORT original de SPY examinado al 30-jun-2026
+  conserva pesos y CUSIP, pero no aporta tickers explícitos: falta un mapa
+  histórico verificable de identificadores, sin inferirlo del catálogo actual.
+  También siguen pendientes perfiles de bonos/ETF y calidad contable completa.
+  Véase `fuentes-historicas.md`.
 
 ## P1 · Modelo frente al documento técnico (`docs/modelo-estocastico-eventos.md`)
 
