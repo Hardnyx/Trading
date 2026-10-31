@@ -30,6 +30,12 @@ El diagnóstico no cambia el estado `not-established` de la capacidad predictiva
 
 ## Matriz del replay integral por componente
 
+El [contraste de precios y unidades](precios-historicos.md) compara marcas
+por acción de los N-PORT con el mercado congelado, revierte splits declarados
+y prepara historias de investigación sin filas posteriores al cierre. Conserva
+desajustes de calendario y eventos pendientes. La compatibilidad puntual no
+certifica identidad continua, precios ejecutables o flujos cobrados.
+
 El [colector de identificadores originales](identificadores-historicos.md)
 añade un contraste independiente con otros fondos. Recupera observaciones
 explícitas CUSIP/ticker por fecha, sin usar nombres ni la tabla actual de

@@ -137,6 +137,13 @@ def render_markdown(plan):
                   f'Documentos de contraste verificados: {evidence["summary"]["verified_identifier_documents"]}. '
                   f'Cierres con algún ticker explícito enlazado por CUSIP: {evidence["summary"]["cuts_with_explicit_tickers"]}.',
                   "Estos símbolos todavía no certifican instrumentos de precios históricos; el componente sigue bloqueado."]
+    if "price_evidence" in plan:
+        summary = plan["price_evidence"]["summary"]
+        lines += ["", "## Contraste de precios y unidades", "",
+                  f'Cierres con marcas por acción compatibles: {summary["cuts_with_point_compatible_marks"]}. '
+                  f'Historias reconstruidas para investigación: {summary["research_history_count"]}, '
+                  f'en {summary["cuts_with_research_histories"]} cierres.',
+                  "La comparación no certifica cotización de cierre, continuidad de ticker, eventos completos ni precios de ejecución."]
     lines += ["", "Una fuente verificada no acredita identificadores, anclas o parámetros causales del motor.",
               "El perfil actual, los precios ajustados actuales y el kernel congelado hoy no sustituyen evidencia histórica.",
               "Los bloques de ejecución conservan pronósticos y órdenes nulos. No se saltan cortes fallidos.", ""]
@@ -189,6 +196,23 @@ def main():
         audit = evidence["identifier_audit"]
         if audit["missing_documents"] or audit["missing_discoveries"] or audit["collection_errors"]:
             plan["errors"].append({"source": "SEC-identifiers", "kind": "incomplete-identifier-collection"})
+        price_protocol = ROOT / "docs/protocolo-precios-historicos-v1.json"
+        if price_protocol.exists():
+            if __package__:
+                from .historical_price_audit import build_audit, load_frozen_market
+            else:
+                from historical_price_audit import build_audit, load_frozen_market
+            price_evidence, _ = build_audit(args.input, args.identifier_input, load_frozen_market(), json.loads(price_protocol.read_bytes()))
+            if [r["cut"] for r in price_evidence["matrix"]] != plan["cuts"]:
+                raise ValueError("Price evidence calendar mismatch")
+            plan["price_evidence"] = {k: price_evidence[k] for k in (
+                "summary", "auditor_sha256", "price_protocol_sha256", "canonical_market_sha256",
+                "current_catalogue_selection_bias", "continuous_price_identity_verified", "share_basis_reconstructed_ex_post")}
+            for row, prices in zip(plan["matrix"], price_evidence["matrix"]):
+                row["components"]["tradable_prices_and_distributions"].update(
+                    point_compatible_weight=prices["point_compatible_weight"],
+                    research_history_weight=prices["research_history_weight"],
+                    continuous_vendor_binding_verified=False, execution_cashflows_verified=False)
     write_plan(plan, args.output)
     print(json.dumps({**plan["summary"], "engine_dispatch_enabled": False}, sort_keys=True))
     return 2 if plan["errors"] or args.require_full_engine else 0

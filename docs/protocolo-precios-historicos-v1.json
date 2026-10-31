@@ -1,0 +1,30 @@
+{
+  "protocol": "historical-price-unit-audit-v1",
+  "registered_on": "2026-10-31",
+  "source_market_commit": "8dcd06cfd06b2ca34ca6fb64e31d5b6344525cd5",
+  "scope": "Development-only point checks and mechanical share-unit reconstruction; not a certified historical vendor identity, execution price or return backtest",
+  "candidate_binding": "Exact original filing ticker equals a stock symbol in the frozen USD catalogue; no punctuation aliases, names or current identifier lookup",
+  "reference": "Original SPY N-PORT USD fair value divided by positive share balance, only long common equity, NS units, level 1 and an exact available historical CUSIP/ticker observation",
+  "comparison_tolerance": {
+    "absolute_usd": 0.01,
+    "relative": 0.0001,
+    "rule": "max(absolute_usd, relative * reference_price)"
+  },
+  "reference_date": "Exact N-PORT portfolio date; no previous-session substitution or interpolation",
+  "comparison_column": "close, never dividend-adjusted adj_close",
+  "split_inversion": "Multiply provider close by the product of declared split ratios with reference_date < event_date <= frozen_price_cut",
+  "origin_share_unit_history": "Multiply all trailing provider close and adj_close levels by the same product of declared split ratios after origin and through frozen_price_cut; preserve every return ratio and omit future history",
+  "minimum_return_intervals": 252,
+  "maximum_return_intervals": 500,
+  "non_share_actions": "A future provider price adjustment blocks a point-price reconstruction; any classified non-share adjustment in the selected history blocks the training bundle",
+  "known_limitations": [
+    "N-PORT fair value per share is not a certified exchange closing print",
+    "Provider split classifications are hypotheses until issuer events are reconciled",
+    "A compatible point does not establish continuous ticker validity or completeness of corporate actions",
+    "The frozen current catalogue omits historical instruments and introduces selection and survivorship bias",
+    "No broker execution, dividend cash ledger, prices or source availability are certified by this audit"
+  ],
+  "production_eligible": false,
+  "predictive_validation": "not-established",
+  "canonical_market_sha256": "4581c5a532b62f5929756a4e33324577f08edeb070483e8940a53c4db4cf157a"
+}

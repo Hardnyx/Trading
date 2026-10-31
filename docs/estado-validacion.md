@@ -60,6 +60,21 @@ instrumentos de precios reconciliados, eventos, fundamentales y parámetros
 causales. El motor completo permanece en 0/48 cierres elegibles y 0 ejecutados.
 No cambian las predicciones, los pesos ni el estado de validación.
 
+## Contraste de precios: medición del 31-oct
+
+El [auditor de unidades](precios-historicos.md) encuentra 1.442 marcas por
+acción compatibles y prepara 1.424 historias por activo/fecha en diez cierres.
+Cubren el 66,35%–72,77% del peso de SPY en esos cortes, sin renormalización.
+Otros dos cortes con identificadores carecen de una fila en la fecha exacta
+del N-PORT. Se excluyen 60 casos con ajustes posteriores distintos de splits.
+Los conteos incluyen referencias repetidas y no son pruebas predictivas.
+
+La reconstrucción retira mecánicamente ajustes de splits utilizando los
+metadatos posteriores del proveedor. Sigue pendiente verificar los eventos
+originales, la identidad continua y los flujos ejecutables. El catálogo
+congelado introduce selección y supervivencia. La matriz incorpora la
+evidencia, pero el motor integral continúa en 0/48 cierres elegibles.
+
 ## Cuenta histórica reconstruida de la señal (29-oct)
 
 El [protocolo](protocolo-cuenta-historica-0.35.md) se publicó en `fb2b414`

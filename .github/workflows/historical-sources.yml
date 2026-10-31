@@ -11,6 +11,11 @@ on:
       - 'tests/test_historical_replay_inputs.py'
       - 'scripts/historical_replay_plan.py'
       - 'tests/test_historical_replay_plan.py'
+      - 'scripts/historical_identifiers.py'
+      - 'tests/test_historical_identifiers.py'
+      - 'scripts/historical_price_audit.py'
+      - 'tests/test_historical_price_audit.py'
+      - 'docs/protocolo-precios-historicos-v1.json'
       - 'docs/protocolo-replay-integral-v1.json'
       - '.github/workflows/historical-sources.yml'
 permissions:
@@ -21,7 +26,7 @@ concurrency:
 jobs:
   recover:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 55
     permissions:
       contents: write
     steps:
@@ -34,7 +39,7 @@ jobs:
           python-version: '3.12'
       - run: python -m pip install -r requirements-research.txt
       - name: Check vintage, publication, identity and immutable-source guards
-        run: python -m unittest tests.test_historical_sources tests.test_historical_replay_inputs tests.test_historical_replay_plan tests.test_historical_identifiers
+        run: python -m unittest tests.test_historical_sources tests.test_historical_replay_inputs tests.test_historical_replay_plan tests.test_historical_identifiers tests.test_historical_price_audit
       - name: Recover historical macro vintages and original SPY filings
         id: collect
         continue-on-error: true
@@ -55,9 +60,16 @@ jobs:
       - name: Recheck identifier observations against the updated source manifest
         id: identifiers
         continue-on-error: true
+        timeout-minutes: 18
+        env:
+          SEC_USER_AGENT: ${{ secrets.SEC_USER_AGENT || vars.SEC_USER_AGENT }}
+        run: python scripts/historical_identifiers.py --collect
+      - name: Recheck price-unit diagnostics against the updated sources
+        id: prices
+        continue-on-error: true
         run: |
           if [ -f data/historical/identifier-sources-v1/manifest.json ]; then
-            python scripts/historical_identifiers.py
+            python scripts/historical_price_audit.py
           fi
       - name: Rebuild every cut and its full-engine component blockers
         id: plan
@@ -73,6 +85,17 @@ jobs:
             data/historical/replay-plan-v1/
             docs/protocolo-replay-integral-v1.json
             docs/protocolo-replay-integral-v1.md
+          retention-days: 90
+          if-no-files-found: warn
+      - name: Preserve reconstructed share-unit research histories
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: historical-share-unit-research
+          path: |
+            out/historical-common-unit-histories-v1.json.gz
+            data/historical/price-reconciliation-v1/
+            docs/protocolo-precios-historicos-v1.json
           retention-days: 90
           if-no-files-found: warn
       - name: Retain source-backed macro replay inputs
@@ -96,8 +119,10 @@ jobs:
         run: |
           if [ ! -f data/historical/provider-inputs-v1/manifest.json ]; then exit 1; fi
           git add data/historical/provider-inputs-v1
+          if [ -d data/historical/identifier-sources-v1 ]; then git add data/historical/identifier-sources-v1; fi
           if [ -d data/historical/identifier-observations-v1 ]; then git add data/historical/identifier-observations-v1; fi
           if [ -d data/historical/replay-plan-v1 ]; then git add data/historical/replay-plan-v1; fi
+          if [ -d data/historical/price-reconciliation-v1 ]; then git add data/historical/price-reconciliation-v1; fi
           if git diff --cached --quiet; then exit 0; fi
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
@@ -105,7 +130,7 @@ jobs:
           git pull --rebase origin main
           git push origin HEAD:main
       - name: Require an explicit complete collection
-        if: steps.collect.outcome != 'success' || steps.audit.outcome != 'success' || steps.bundle.outcome != 'success' || steps.identifiers.outcome != 'success' || steps.plan.outcome != 'success'
+        if: steps.collect.outcome != 'success' || steps.audit.outcome != 'success' || steps.bundle.outcome != 'success' || steps.identifiers.outcome != 'success' || steps.prices.outcome != 'success' || steps.plan.outcome != 'success'
         run: |
           echo "Historical recovery is incomplete. Valid sources were preserved; no live inputs or parameters were promoted."
           exit 1

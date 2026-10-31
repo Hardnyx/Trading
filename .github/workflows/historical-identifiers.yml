@@ -1,12 +1,6 @@
 name: Historical identifier evidence (research)
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - 'scripts/historical_identifiers.py'
-      - 'tests/test_historical_identifiers.py'
-      - '.github/workflows/historical-identifiers.yml'
 permissions:
   contents: read
 concurrency:
@@ -41,6 +35,11 @@ jobs:
         if: always()
         continue-on-error: true
         run: python scripts/historical_identifiers.py
+      - name: Recheck price-unit diagnostics against the recovered identifiers
+        id: prices
+        if: always()
+        continue-on-error: true
+        run: python scripts/historical_price_audit.py
       - name: Rebuild complete replay blockers without promoting symbol observations
         id: plan
         if: always()
@@ -55,6 +54,7 @@ jobs:
             data/historical/identifier-sources-v1/
             data/historical/identifier-observations-v1/
             data/historical/replay-plan-v1/
+            data/historical/price-reconciliation-v1/
           retention-days: 90
           if-no-files-found: warn
       - name: Publish public research evidence on main
@@ -64,6 +64,7 @@ jobs:
           git add data/historical/identifier-sources-v1
           if [ -d data/historical/identifier-observations-v1 ]; then git add data/historical/identifier-observations-v1; fi
           if [ -d data/historical/replay-plan-v1 ]; then git add data/historical/replay-plan-v1; fi
+          if [ -d data/historical/price-reconciliation-v1 ]; then git add data/historical/price-reconciliation-v1; fi
           if git diff --cached --quiet; then exit 0; fi
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
@@ -71,5 +72,5 @@ jobs:
           git pull --rebase origin main
           git push origin HEAD:main
       - name: Keep incomplete collection explicit
-        if: steps.collect.outcome != 'success' || steps.audit.outcome != 'success' || steps.plan.outcome != 'success'
+        if: steps.collect.outcome != 'success' || steps.audit.outcome != 'success' || steps.prices.outcome != 'success' || steps.plan.outcome != 'success'
         run: exit 1

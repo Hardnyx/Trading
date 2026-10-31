@@ -81,6 +81,11 @@ El JSON y el CSV incluyen también las dependencias bloqueadas en cada fecha.
 Documentos de contraste verificados: 92. Cierres con algún ticker explícito enlazado por CUSIP: 12.
 Estos símbolos todavía no certifican instrumentos de precios históricos; el componente sigue bloqueado.
 
+## Contraste de precios y unidades
+
+Cierres con marcas por acción compatibles: 10. Historias reconstruidas para investigación: 1424, en 10 cierres.
+La comparación no certifica cotización de cierre, continuidad de ticker, eventos completos ni precios de ejecución.
+
 Una fuente verificada no acredita identificadores, anclas o parámetros causales del motor.
 El perfil actual, los precios ajustados actuales y el kernel congelado hoy no sustituyen evidencia histórica.
 Los bloques de ejecución conservan pronósticos y órdenes nulos. No se saltan cortes fallidos.
