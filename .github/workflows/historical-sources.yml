@@ -34,7 +34,7 @@ jobs:
           python-version: '3.12'
       - run: python -m pip install -r requirements-research.txt
       - name: Check vintage, publication, identity and immutable-source guards
-        run: python -m unittest tests.test_historical_sources tests.test_historical_replay_inputs tests.test_historical_replay_plan
+        run: python -m unittest tests.test_historical_sources tests.test_historical_replay_inputs tests.test_historical_replay_plan tests.test_historical_identifiers
       - name: Recover historical macro vintages and original SPY filings
         id: collect
         continue-on-error: true
@@ -52,6 +52,13 @@ jobs:
         if: steps.audit.outcome == 'success'
         continue-on-error: true
         run: python scripts/historical_replay_inputs.py
+      - name: Recheck identifier observations against the updated source manifest
+        id: identifiers
+        continue-on-error: true
+        run: |
+          if [ -f data/historical/identifier-sources-v1/manifest.json ]; then
+            python scripts/historical_identifiers.py
+          fi
       - name: Rebuild every cut and its full-engine component blockers
         id: plan
         if: always()
@@ -89,6 +96,7 @@ jobs:
         run: |
           if [ ! -f data/historical/provider-inputs-v1/manifest.json ]; then exit 1; fi
           git add data/historical/provider-inputs-v1
+          if [ -d data/historical/identifier-observations-v1 ]; then git add data/historical/identifier-observations-v1; fi
           if [ -d data/historical/replay-plan-v1 ]; then git add data/historical/replay-plan-v1; fi
           if git diff --cached --quiet; then exit 0; fi
           git config user.name github-actions[bot]
@@ -97,7 +105,7 @@ jobs:
           git pull --rebase origin main
           git push origin HEAD:main
       - name: Require an explicit complete collection
-        if: steps.collect.outcome != 'success' || steps.audit.outcome != 'success' || steps.bundle.outcome != 'success' || steps.plan.outcome != 'success'
+        if: steps.collect.outcome != 'success' || steps.audit.outcome != 'success' || steps.bundle.outcome != 'success' || steps.identifiers.outcome != 'success' || steps.plan.outcome != 'success'
         run: |
           echo "Historical recovery is incomplete. Valid sources were preserved; no live inputs or parameters were promoted."
           exit 1

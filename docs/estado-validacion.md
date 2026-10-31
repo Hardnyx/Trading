@@ -46,6 +46,20 @@ parámetros por congelar el kernel actual. El protocolo registra estas
 limitaciones antes de ejecutar el replay integral y no modifica el criterio
 de capacidad predictiva sin acreditar.
 
+## Identificadores originales: medición del 31-oct
+
+El [cruce de CUSIP y ticker](identificadores-historicos.md) verifica 92
+N-PORT de contraste, con 34.709 observaciones explícitas y 3.089 CUSIP distintos.
+En 12/48 cierres enlaza el 96,09%–97,27% del peso de SPY mediante CUSIP exacto
+y símbolo del documento. Otros 22 cortes quedan bloqueados por la fuente SPY
+y 14 por ausencia de un contraste de identidad admisible. No se rellenan
+esos huecos ni se normaliza el peso restante.
+
+Estos enlaces son observaciones documentadas de símbolos; faltan todavía
+instrumentos de precios reconciliados, eventos, fundamentales y parámetros
+causales. El motor completo permanece en 0/48 cierres elegibles y 0 ejecutados.
+No cambian las predicciones, los pesos ni el estado de validación.
+
 ## Cuenta histórica reconstruida de la señal (29-oct)
 
 El [protocolo](protocolo-cuenta-historica-0.35.md) se publicó en `fb2b414`

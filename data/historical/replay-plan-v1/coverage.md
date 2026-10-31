@@ -76,6 +76,11 @@ El JSON y el CSV incluyen también las dependencias bloqueadas en cada fecha.
 | portfolio_optimization | 0 | 48 | historical-production-composer-adapter-not-implemented |
 | orders_and_account | 0 | 48 | historical-orders-and-corporate-action-account-adapter-not-implemented |
 
+## Cruce de identificadores originales
+
+Documentos de contraste verificados: 92. Cierres con algún ticker explícito enlazado por CUSIP: 12.
+Estos símbolos todavía no certifican instrumentos de precios históricos; el componente sigue bloqueado.
+
 Una fuente verificada no acredita identificadores, anclas o parámetros causales del motor.
 El perfil actual, los precios ajustados actuales y el kernel congelado hoy no sustituyen evidencia histórica.
 Los bloques de ejecución conservan pronósticos y órdenes nulos. No se saltan cortes fallidos.

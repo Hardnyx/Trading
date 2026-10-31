@@ -30,6 +30,12 @@ El diagnóstico no cambia el estado `not-established` de la capacidad predictiva
 
 ## Matriz del replay integral por componente
 
+El [colector de identificadores originales](identificadores-historicos.md)
+añade un contraste independiente con otros fondos. Recupera observaciones
+explícitas CUSIP/ticker por fecha, sin usar nombres ni la tabla actual de
+símbolos. Su cobertura se incorpora a la matriz manteniendo pendiente la
+vinculación con instrumentos de precios históricos y el replay completo.
+
 La [matriz de 48 cierres](../data/historical/replay-plan-v1/coverage.md)
 detalla qué fuentes pueden verificarse y qué componentes siguen bloqueados.
 Se publica también en [JSON](../data/historical/replay-plan-v1/coverage.json)

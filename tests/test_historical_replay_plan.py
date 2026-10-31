@@ -116,7 +116,8 @@ class HistoricalReplayPlan(unittest.TestCase):
         (project / "dist/assets/js").mkdir(parents=True)
         (project / "dist/assets/js/kernel.mjs").write_text("export const version = 1;\n")
         output = self.root / "strict"
-        args = ["historical_replay_plan.py", "--input", str(self.root), "--output", str(output), "--require-full-engine"]
+        args = ["historical_replay_plan.py", "--input", str(self.root), "--output", str(output),
+                "--identifier-input", str(self.root / "no-identifier-sources"), "--require-full-engine"]
         with patch.object(planner, "ROOT", project), patch.object(planner, "account_origins", return_value=self.cuts), \
                 patch.object(planner, "SERIES", SERIES[:1]), patch.object(planner.subprocess, "check_output", return_value=b"{}"), \
                 patch("sys.argv", args), patch("builtins.print"):

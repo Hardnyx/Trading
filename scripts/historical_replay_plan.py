@@ -131,6 +131,12 @@ def render_markdown(plan):
     for name in DEPENDENCIES:
         counts = plan["summary"]["component_status_counts"][name]
         lines.append(f'| {name} | {counts.get("verified-source", 0)} | {counts.get("blocked", 0)} | {MISSING.get(name, "según archivo y fecha")} |')
+    if "identifier_evidence" in plan:
+        evidence = plan["identifier_evidence"]
+        lines += ["", "## Cruce de identificadores originales", "",
+                  f'Documentos de contraste verificados: {evidence["summary"]["verified_identifier_documents"]}. '
+                  f'Cierres con algún ticker explícito enlazado por CUSIP: {evidence["summary"]["cuts_with_explicit_tickers"]}.',
+                  "Estos símbolos todavía no certifican instrumentos de precios históricos; el componente sigue bloqueado."]
     lines += ["", "Una fuente verificada no acredita identificadores, anclas o parámetros causales del motor.",
               "El perfil actual, los precios ajustados actuales y el kernel congelado hoy no sustituyen evidencia histórica.",
               "Los bloques de ejecución conservan pronósticos y órdenes nulos. No se saltan cortes fallidos.", ""]
@@ -155,6 +161,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--input", default="data/historical/provider-inputs-v1")
     parser.add_argument("--output", default="data/historical/replay-plan-v1")
+    parser.add_argument("--identifier-input", default="data/historical/identifier-sources-v1")
     parser.add_argument("--require-full-engine", action="store_true",
                         help="Write the evidence, then fail if any scheduled cut cannot run the full engine")
     args = parser.parse_args()
@@ -167,6 +174,21 @@ def main():
     plan["statistical_protocol_sha256"] = sha(protocol_bytes)
     plan["engine_source_sha256"] = {str(p.relative_to(ROOT)): sha(p.read_bytes())
                                      for p in sorted((ROOT / "dist/assets/js").rglob("*.mjs"))}
+    if (Path(args.identifier_input) / "manifest.json").exists():
+        if __package__:
+            from .historical_identifiers import build_report
+        else:
+            from historical_identifiers import build_report
+        evidence = build_report(args.input, args.identifier_input)
+        if [r["cut"] for r in evidence["matrix"]] != plan["cuts"]:
+            raise ValueError("Identifier evidence calendar mismatch")
+        plan["identifier_evidence"] = {k: evidence[k] for k in ("summary", "identifier_audit", "resolver_sha256")}
+        for row, identifiers in zip(plan["matrix"], evidence["matrix"]):
+            row["components"]["historical_identifiers"]["explicit_source_ticker_weight"] = identifiers["mapped_positive_weight"]
+            row["components"]["historical_identifiers"]["price_binding_verified"] = False
+        audit = evidence["identifier_audit"]
+        if audit["missing_documents"] or audit["missing_discoveries"] or audit["collection_errors"]:
+            plan["errors"].append({"source": "SEC-identifiers", "kind": "incomplete-identifier-collection"})
     write_plan(plan, args.output)
     print(json.dumps({**plan["summary"], "engine_dispatch_enabled": False}, sort_keys=True))
     return 2 if plan["errors"] or args.require_full_engine else 0

@@ -1,0 +1,75 @@
+name: Historical identifier evidence (research)
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/historical_identifiers.py'
+      - 'tests/test_historical_identifiers.py'
+      - '.github/workflows/historical-identifiers.yml'
+permissions:
+  contents: read
+concurrency:
+  group: historical-provider-inputs
+  cancel-in-progress: false
+jobs:
+  recover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-research.txt
+      - name: Check exact identifiers, source integrity and publication cutoffs
+        run: python -m unittest tests.test_historical_identifiers tests.test_historical_replay_plan
+      - name: Recover original fund filings with explicit instrument identifiers
+        id: collect
+        continue-on-error: true
+        timeout-minutes: 18
+        env:
+          SEC_USER_AGENT: ${{ secrets.SEC_USER_AGENT || vars.SEC_USER_AGENT }}
+        run: python scripts/historical_identifiers.py --collect
+      - name: Recheck originals and measure historical symbol coverage
+        id: audit
+        if: always()
+        continue-on-error: true
+        run: python scripts/historical_identifiers.py
+      - name: Rebuild complete replay blockers without promoting symbol observations
+        id: plan
+        if: always()
+        continue-on-error: true
+        run: python scripts/historical_replay_plan.py
+      - name: Preserve original evidence and all cut-level exclusions
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: historical-identifier-evidence
+          path: |
+            data/historical/identifier-sources-v1/
+            data/historical/identifier-observations-v1/
+            data/historical/replay-plan-v1/
+          retention-days: 90
+          if-no-files-found: warn
+      - name: Publish public research evidence on main
+        if: always()
+        run: |
+          if [ ! -f data/historical/identifier-sources-v1/manifest.json ]; then exit 1; fi
+          git add data/historical/identifier-sources-v1
+          if [ -d data/historical/identifier-observations-v1 ]; then git add data/historical/identifier-observations-v1; fi
+          if [ -d data/historical/replay-plan-v1 ]; then git add data/historical/replay-plan-v1; fi
+          if git diff --cached --quiet; then exit 0; fi
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git commit -m "chore(research): preserve original historical identifier evidence"
+          git pull --rebase origin main
+          git push origin HEAD:main
+      - name: Keep incomplete collection explicit
+        if: steps.collect.outcome != 'success' || steps.audit.outcome != 'success' || steps.plan.outcome != 'success'
+        run: exit 1
