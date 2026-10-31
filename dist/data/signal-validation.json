@@ -1,7 +1,7 @@
 {
  "schema_version": 1,
  "protocol": "monthly-complete-stock-signal-v1",
- "updated_at": "2026-10-30T02:54:26.749Z",
+ "updated_at": "2026-10-31T02:45:16.573Z",
  "current_cohort": "8f9ae829a773397f8311d7b4a71ec86f13fa31cbed288331a39e6b469e9b8b21",
  "sealed": 1,
  "cohorts": {
@@ -60,5 +60,5 @@
  "limitations": "No pooling across source-code cohorts. Correlated stocks and overlapping monthly returns are not independent temporal evidence. Missing and delisted outcomes remain visible. Adjusted provider prices are not certified original outcome vintages or broker cash flows. A point anchor is not the simulator distribution.",
  "issuance_status": "already-sealed",
  "current_month": "2026-10",
- "observed_price_as_of": "2026-10-29"
+ "observed_price_as_of": "2026-10-30"
 }
