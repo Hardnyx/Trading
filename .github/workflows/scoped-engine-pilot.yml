@@ -1,0 +1,57 @@
+name: Scoped historical engine pilot (development only)
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/scoped_engine_inputs.py'
+      - 'scripts/scoped_engine_pilot.mjs'
+      - 'scripts/archive_scoped_pilot.py'
+      - 'tests/test_scoped_engine_inputs.py'
+      - 'tests/test_scoped_engine_archive.py'
+      - 'tests/scoped-engine-pilot.test.mjs'
+      - 'docs/protocolo-piloto-integrado-v1.json'
+      - '.github/workflows/scoped-engine-pilot.yml'
+permissions:
+  contents: read
+concurrency:
+  group: scoped-engine-pilot-${{ github.sha }}
+  cancel-in-progress: false
+jobs:
+  pilot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: python -m pip install -r requirements-research.txt
+      - name: Check temporal, share-unit and policy isolation
+        run: |
+          python -m unittest tests.test_scoped_engine_inputs tests.test_scoped_engine_archive
+          node --test tests/scoped-engine-pilot.test.mjs
+      - name: Revalidate original archives and compile registered dates
+        run: python scripts/scoped_engine_inputs.py
+      - name: Run actual composer, Monte Carlo and robust decision gate
+        run: node scripts/scoped_engine_pilot.mjs out/scoped-engine-inputs-v1.json.gz out/scoped-engine-pilot-report.json
+      - name: Bind exact snapshots and decisions into an immutable run archive
+        run: python scripts/archive_scoped_pilot.py --archive-dir out/scoped-engine-cohort-v1 --report out/scoped-engine-pilot-report.json
+      - name: Preserve each run without rewriting older cohorts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: scoped-engine-pilot-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            out/scoped-engine-inputs-v1.json.gz
+            out/scoped-engine-results-v1.json.gz
+            out/scoped-engine-pilot-report.json
+            out/scoped-engine-cohort-v1/
+            docs/protocolo-piloto-integrado-v1.json
+          retention-days: 90
+          if-no-files-found: error

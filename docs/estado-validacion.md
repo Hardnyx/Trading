@@ -1,6 +1,6 @@
 # Estado de validación de Trading
 
-**Actualizado:** 30 de octubre de 2026 · motor 0.35.0 · precios al 28-oct.
+**Actualizado:** 31 de octubre de 2026 · motor 0.35.0 · precios al 28-oct.
 **Estado:** escenarios condicionales de investigación; capacidad predictiva y
 ventaja económica sin acreditar. El [historial hasta 0.32.0](historial-validacion-hasta-0.32.md)
 conserva los cambios y cifras anteriores.
@@ -18,6 +18,7 @@ conserva los cambios y cifras anteriores.
 | IC de rangos con fórmula TTM actual reconstruida | 0,087 a 252 sesiones; 36 orígenes, solo tres sin solapamiento | Banda descriptiva [0,027; 0,134]; ventaja frente a BPA/precio sin resolver, vintages y catálogo históricos sin verificar |
 | Señal completa prospectiva mensual | 1 sello: 147 señales y 13 exclusiones; ancla SPY; 0 vencidos | Publicación inicial verificada y datos archivados; no acredita IC ni retorno previsto |
 | Cuenta TTM reconstruida v2 | 48 revisiones; USD 141.394 frente a USD 139.741 de BPA/precio, con USD 100.000 iniciales | Manga fija 35%, costes financiados y cuenta continua; ventaja incremental sin resolver. No reproduce el optimizador ni acredita vintages o universo histórico |
+| Piloto integrado de desarrollo | 2 cortes ejecutados; ambos mantienen 100% CASH | Compositor y revisión robusta reales, universo parcial y variante EWMA; 0/48 cortes certificados y sin evaluar resultados realizados |
 | Candidato de oro con factores rezagados | 34 orígenes; R² fuera de muestra −0,057 frente a media histórica | Empeora el MSE un 5,7%; permanece en sombra |
 
 ## Recuperación de fuentes históricas (30-oct)
@@ -74,6 +75,23 @@ metadatos posteriores del proveedor. Sigue pendiente verificar los eventos
 originales, la identidad continua y los flujos ejecutables. El catálogo
 congelado introduce selección y supervivencia. La matriz incorpora la
 evidencia, pero el motor integral continúa en 0/48 cierres elegibles.
+
+## Primeras ejecuciones integradas: 31-oct
+
+El [piloto de desarrollo](piloto-integrado-historico.md) ya ejecuta el
+compositor de producción en 31-dic-2024 y 30-abr-2025, elegidos por cobertura
+antes de observar sus salidas. Utiliza 127/134 acciones con precios y BPA
+reconstruidos, preselecciona 40 instrumentos por ejecución y conserva los
+controles de Monte Carlo, riesgo, costes y decisión robusta. En ambos cortes
+ninguna transición pasa todos los controles y se conserva la cuenta inicial
+en efectivo. Se archivan entradas y resultados exactos con sus hashes.
+
+Son dos ejecuciones retrospectivas de alcance limitado con parámetros
+actuales fijos y variante EWMA. No acreditan vintages, universo histórico,
+perfiles de bonos/ETF ni reestimación histórica de GJR. No se puntúan retornos
+realizados ni se deriva una conclusión económica del efectivo. El contador
+causal certificado permanece en 0/48, separado de los dos ensayos ejecutados.
+La capacidad predictiva y la ventaja económica siguen sin acreditar.
 
 ## Cuenta histórica reconstruida de la señal (29-oct)
 
