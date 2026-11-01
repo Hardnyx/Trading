@@ -1,0 +1,23 @@
+{
+  "id": "scoped-pilot-anchor-outcomes-v1",
+  "registered_on": "2026-11-01",
+  "pilot_directory": "data/historical/scoped-engine-pilot-v1",
+  "market_commit": "b2d15329e2484ce103d7d729b90c65e4367b218d",
+  "market_path": "dist/data/market.json",
+  "sample_role": "retrospective-development-diagnostic-not-independent-holdout",
+  "origin_selection": "All archived pilot origins, all prepared stock anchors; never select by realized availability or performance",
+  "horizon": "First benchmark session on or after the one-year UTC calendar anniversary; all instruments must have both exact endpoints; no asset-specific date shift",
+  "outcome": "Provider adjusted-close ratio minus one, gross reinvested total-return proxy; not executable cash-dividend wealth or original-vintage certification",
+  "forecast": "Archived annual anchor, a drift-location parameter, not the simulator's unconditional mean or median terminal return",
+  "comparators": ["zero-return anchor", "archived common SPY annual anchor"],
+  "metrics": ["mean signed error forecast minus realized", "MAE", "RMSE", "Spearman rank correlation"],
+  "matching": "All predictors evaluated on the same scored stock rows within each origin; preserve every exclusion; no pooling CASH or benchmark with stock observations",
+  "adjustments": "Exclude missing or nonpositive endpoints and any documented non-split price adjustment strictly after origin through the frozen market cut; preserve affected rows",
+  "portfolio_context": "Report archived CASH decision at its declared zero yield and hypothetical 35% SPY / 65% CASH gross buy-and-hold proxy. No costs, cashflow reconciliation, claim of matched risk or certified strategy backtest",
+  "gate_context": "Report archived candidate admissibility and positive lower gains separately; archived feasible=false lacks per-model failure attribution, so do not invent a cause or interpret CASH-versus-CASH confirmation as evidence about rejected investments",
+  "inference": "Two overlapping annual origins, correlated selected stocks: descriptive only; no p-values, confidence intervals, annual risk calibration, economic superiority, or validation declaration",
+  "intervals": "Anchor low/high are parameter ranges, not predictive quantiles; do not score them as P05/P95",
+  "changes": "Do not rerun or tune forecasts, dates, seeds, priors, restrictions, weights or kernel; do not rewrite the pilot cohort",
+  "production_eligible": false,
+  "certified_full_engine_cuts": 0
+}
