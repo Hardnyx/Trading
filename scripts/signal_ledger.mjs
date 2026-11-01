@@ -101,7 +101,8 @@ export function rankCorrelation(a,b){
  return a.length>=3&&a.length===b.length?correlation(ranks(a),ranks(b)):null;
 }
 export function signalPublication(root,path,forecastSha){
- const relative=path.slice(resolve(root).length+1),git=args=>execFileSync('git',args,{cwd:root,stdio:['ignore','pipe','pipe']});
+ // Git object paths always use '/', including on Windows.
+ const relative=path.slice(resolve(root).length+1).replaceAll('\\','/'),git=args=>execFileSync('git',args,{cwd:root,stdio:['ignore','pipe','pipe']});
  try{
   const commit=git(['log','--reverse','--diff-filter=A','--format=%H','--',relative]).toString().trim().split('\n')[0];
   if(!commit)return {verified:false,reason:'No first-add commit found'};

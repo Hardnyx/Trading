@@ -1,6 +1,6 @@
 # Estado de validación de Trading
 
-**Actualizado:** 31 de octubre de 2026 · motor 0.35.0 · precios al 28-oct.
+**Actualizado:** 1 de noviembre de 2026 · motor 0.35.0 · diagnóstico del piloto con mercado congelado al 30-oct.
 **Estado:** escenarios condicionales de investigación; capacidad predictiva y
 ventaja económica sin acreditar. El [historial hasta 0.32.0](historial-validacion-hasta-0.32.md)
 conserva los cambios y cifras anteriores.
@@ -19,6 +19,7 @@ conserva los cambios y cifras anteriores.
 | Señal completa prospectiva mensual | 1 sello: 147 señales y 13 exclusiones; ancla SPY; 0 vencidos | Publicación inicial verificada y datos archivados; no acredita IC ni retorno previsto |
 | Cuenta TTM reconstruida v2 | 48 revisiones; USD 141.394 frente a USD 139.741 de BPA/precio, con USD 100.000 iniciales | Manga fija 35%, costes financiados y cuenta continua; ventaja incremental sin resolver. No reproduce el optimizador ni acredita vintages o universo histórico |
 | Piloto integrado de desarrollo | 2 cortes ejecutados; ambos mantienen 100% CASH | Compositor y revisión robusta reales, universo parcial y variante EWMA; 0/48 cortes certificados y sin evaluar resultados realizados |
+| Contraste descriptivo de anclas del piloto | 38 acciones por corte, 2 años solapados; MAE 19,86/46,54 pp frente a 19,71/45,49 pp del ancla común SPY | No mejora ese comparador; proxy bruto ajustado, no realización de flujos ni calibración del simulador |
 | Candidato de oro con factores rezagados | 34 orígenes; R² fuera de muestra −0,057 frente a media histórica | Empeora el MSE un 5,7%; permanece en sombra |
 
 ## Recuperación de fuentes históricas (30-oct)
@@ -88,8 +89,10 @@ en efectivo. Se archivan entradas y resultados exactos con sus hashes.
 
 Son dos ejecuciones retrospectivas de alcance limitado con parámetros
 actuales fijos y variante EWMA. No acreditan vintages, universo histórico,
-perfiles de bonos/ETF ni reestimación histórica de GJR. No se puntúan retornos
-realizados ni se deriva una conclusión económica del efectivo. El contador
+perfiles de bonos/ETF ni reestimación histórica de GJR. El piloto original
+no puntúa realizaciones. El [contraste separado del 1-nov](puntuacion-piloto-integrado.md)
+evalúa las anclas contra un proxy bruto ajustado, sin certificar una ventaja
+económica del efectivo ni puntuar las distribuciones del simulador. El contador
 causal certificado permanece en 0/48, separado de los dos ensayos ejecutados.
 La capacidad predictiva y la ventaja económica siguen sin acreditar.
 

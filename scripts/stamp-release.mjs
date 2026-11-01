@@ -1,5 +1,5 @@
 import { readdirSync, readFileSync, writeFileSync } from "node:fs";
-import { join, resolve } from "node:path";
+import { join, resolve, basename } from "node:path";
 import { fileURLToPath } from "node:url";
 
 // Unique cache identity for every published Git commit.
@@ -24,7 +24,7 @@ export function stampRelease(root, version, sha) {
     }
   }
   scan(root);
-  if (!changed.some(path => path.endsWith("/index.html")))
+  if (!changed.some(path => basename(path) === "index.html"))
     throw new Error("Could not stamp index.html with deployment commit");
   writeFileSync(join(root, "build.json"), JSON.stringify({
     model_version: version,

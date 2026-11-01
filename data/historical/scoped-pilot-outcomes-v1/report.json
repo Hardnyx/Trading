@@ -1,0 +1,843 @@
+{
+  "method": "scoped-pilot-anchor-outcomes-v1",
+  "production_eligible": false,
+  "prospective": false,
+  "certified_full_engine_cuts": 0,
+  "predictive_validation": "not-established",
+  "independent_holdout": false,
+  "origin_count": 2,
+  "pooled_inference": null,
+  "origins": [
+    {
+      "cut": "2024-12-31",
+      "anniversary": "2025-12-31",
+      "maturity": "2025-12-31",
+      "forecast_stocks": 38,
+      "scored_stocks": 38,
+      "exclusions": [],
+      "observations": [
+        {
+          "symbol": "UPS",
+          "anchor": 0.06286386740229467,
+          "zero": 0,
+          "benchmark_anchor": 0.0781,
+          "realized_proxy": -0.1593365504964862,
+          "origin_adjusted_close": 112.642303,
+          "maturity_adjusted_close": 94.694267
+        },
+        {
+          "symbol": "USB",
+          "anchor": 0.06403395650792094,
+          "zero": 0,
+          "benchmark_anchor": 0.0781,
+          "realized_proxy": 0.1648460635001392,
+          "origin_adjusted_close": 44.53817,
+          "maturity_adjusted_close": 51.880112
+        },
+        {
+          "symbol": "META",
+          "anchor": 0.06915797624750517,
+          "zero": 0,
+          "benchmark_anchor": 0.0781,
+          "realized_proxy": 0.13093105864387367,
+          "origin_adjusted_close": 582.170837,
+          "maturity_adjusted_close": 658.395081
+        },
+        {
+          "symbol": "QCOM",
+          "anchor": 0.07176941247324516,
+          "zero": 0,
+          "benchmark_anchor": 0.0781,
+          "realized_proxy": 0.1383865482317137,
+          "origin_adjusted_close": 147.943375,
+          "maturity_adjusted_close": 168.416748
+        },
+        {
+          "symbol": "VZ",
+          "anchor": 0.05692799766562656,
+          "zero": 0,
+          "benchmark_anchor": 0.0781,
+          "realized_proxy": 0.08862758380978986,
+          "origin_adjusted_close": 35.079643,
+          "maturity_adjusted_close": 38.188667
+        },
+        {
+          "symbol": "AMZN",
+          "anchor": 0.06796869112325418,
+          "zero": 0,
+          "benchmark_anchor": 0.0781,
+          "realized_proxy": 0.05209903847987163,
+          "origin_adjusted_close": 219.389999,
+          "maturity_adjusted_close": 230.820007
+        },
+        {
+          "symbol": "MSFT",
+          "anchor": 0.06327320544382034,
+          "zero": 0,
+          "benchmark_anchor": 0.0781,
+          "realized_proxy": 0.15584237275860402,
+          "origin_adjusted_close": 415.775696,
+          "maturity_adjusted_close": 480.571167
+        },
+        {
+          "symbol": "PNC",
+          "anchor": 0.06023168997515085,
+          "zero": 0,
+          "benchmark_anchor": 0.0781,
+          "realized_proxy": 0.12240525595895724,
+          "origin_adjusted_close": 180.039001,
+          "maturity_adjusted_close": 202.076721
+        },
+        {
+          "symbol": "GOOGL",
+          "anchor": 0.06579449184057815,
+          "zero": 0,
+          "benchmark_anchor": 0.0781,
+          "realized_proxy": 0.6599357447696432,
+          "origin_adjusted_close": 188.195419,
+          "maturity_adjusted_close": 312.392303
+        },
+        {
+          "symbol": "CAT",
+          "anchor": 0.06376731293022411,
+          "zero": 0,
+          "benchmark_anchor": 0.0781,
+          "realized_proxy": 0.6030458157475254,
+          "origin_adjusted_close": 354.350128,
+          "maturity_adjusted_close": 568.03949
+        },
+        {
+          "symbol": "ON",
+          "anchor": 0.07472732871731239,
+          "zero": 0,
+          "benchmark_anchor": 0.0781,
+          "realized_proxy": -0.14115776591844198,
+          "origin_adjusted_close": 63.049999,
+          "maturity_adjusted_close": 54.150002
+        },
+        {
+          "symbol": "HD",
+          "anchor": 0.058542796415064345,
+          "zero": 0,
+          "benchmark_anchor": 0.0781,
+          "realized_proxy": -0.09334727255074249,
+          "origin_adjusted_close": 371.463226,
+          "maturity_adjusted_close": 336.788147
+        },
+        {
+          "symbol": "TXN",
+          "anchor": 0.06005460965721692,
+          "zero": 0,
+          "benchmark_anchor": 0.0781,
+          "realized_proxy": -0.044729892395257376,
+          "origin_adjusted_close": 177.741608,
+          "maturity_adjusted_close": 169.791245
+        },
+        {
+          "symbol": "AMAT",
+          "anchor": 0.07087261425478251,
+          "zero": 0,
+          "benchmark_anchor": 0.0781,
+          "realized_proxy": 0.5960307761631594,
+          "origin_adjusted_close": 160.446381,
+          "maturity_adjusted_close": 256.077362
+        },
+        {
+          "symbol": "ITW",
+          "anchor": 0.05547120380068775,
+          "zero": 0,
+          "benchmark_anchor": 0.0781,
+          "realized_proxy": -0.004252949228607084,
+          "origin_adjusted_close": 242.744492,
+          "maturity_adjusted_close": 241.712112
+        },
+        {
+          "symbol": "LOW",
+          "anchor": 0.05815383194595354,
+          "zero": 0,
+          "benchmark_anchor": 0.0781,
+          "realized_proxy": -0.0032802545068220113,
+          "origin_adjusted_close": 236.748703,
+          "maturity_adjusted_close": 235.972107
+        },
+        {
+          "symbol": "CVX",
+          "anchor": 0.05257408893191908,
+          "zero": 0,
+          "benchmark_anchor": 0.0781,
+          "realized_proxy": 0.1010442976992525,
+          "origin_adjusted_close": 134.66275,
+          "maturity_adjusted_close": 148.269653
+        },
+        {
+          "symbol": "UNP",
+          "anchor": 0.056418698152984476,
+          "zero": 0,
+          "benchmark_anchor": 0.0781,
+          "realized_proxy": 0.03858871933039998,
+          "origin_adjusted_close": 219.404068,
+          "maturity_adjusted_close": 227.87059
+        },
+        {
+          "symbol": "IBM",
+          "anchor": 0.05537695636044494,
+          "zero": 0,
+          "benchmark_anchor": 0.0781,
+          "realized_proxy": 0.3822652184378341,
+          "origin_adjusted_close": 210.014969,
+          "maturity_adjusted_close": 290.296387
+        },
+        {
+          "symbol": "KMB",
+          "anchor": 0.05398275698436866,
+          "zero": 0,
+          "benchmark_anchor": 0.0781,
+          "realized_proxy": -0.1985609812815926,
+          "origin_adjusted_close": 121.210793,
+          "maturity_adjusted_close": 97.143059
+        },
+        {
+          "symbol": "AEP",
+          "anchor": 0.05162175693011758,
+          "zero": 0,
+          "benchmark_anchor": 0.0781,
+          "realized_proxy": 0.2938149378986328,
+          "origin_adjusted_close": 87.124008,
+          "maturity_adjusted_close": 112.722343
+        },
+        {
+          "symbol": "PFE",
+          "anchor": 0.05444018400896189,
+          "zero": 0,
+          "benchmark_anchor": 0.0781,
+          "realized_proxy": 0.006470298889059478,
+          "origin_adjusted_close": 23.525652,
+          "maturity_adjusted_close": 23.67787
+        },
+        {
+          "symbol": "APD",
+          "anchor": 0.05547227591437213,
+          "zero": 0,
+          "benchmark_anchor": 0.0781,
+          "realized_proxy": -0.12662355014013038,
+          "origin_adjusted_close": 275.50766,
+          "maturity_adjusted_close": 240.621902
+        },
+        {
+          "symbol": "XOM",
+          "anchor": 0.05320864230078723,
+          "zero": 0,
+          "benchmark_anchor": 0.0781,
+          "realized_proxy": 0.1597715792106058,
+          "origin_adjusted_close": 101.721214,
+          "maturity_adjusted_close": 117.973373
+        },
+        {
+          "symbol": "COST",
+          "anchor": 0.0565679529687989,
+          "zero": 0,
+          "benchmark_anchor": 0.0781,
+          "realized_proxy": -0.05394724159301223,
+          "origin_adjusted_close": 906.168945,
+          "maturity_adjusted_close": 857.28363
+        },
+        {
+          "symbol": "DTE",
+          "anchor": 0.052309749589936644,
+          "zero": 0,
+          "benchmark_anchor": 0.0781,
+          "realized_proxy": 0.10421318730002471,
+          "origin_adjusted_close": 113.940033,
+          "maturity_adjusted_close": 125.814087
+        },
+        {
+          "symbol": "JNJ",
+          "anchor": 0.04950550492394901,
+          "zero": 0,
+          "benchmark_anchor": 0.0781,
+          "realized_proxy": 0.47479541048569596,
+          "origin_adjusted_close": 138.103241,
+          "maturity_adjusted_close": 203.674026
+        },
+        {
+          "symbol": "NUE",
+          "anchor": 0.0651651120690308,
+          "zero": 0,
+          "benchmark_anchor": 0.0781,
+          "realized_proxy": 0.42034531509302475,
+          "origin_adjusted_close": 113.896904,
+          "maturity_adjusted_close": 161.772934
+        },
+        {
+          "symbol": "C",
+          "anchor": 0.05779979293478561,
+          "zero": 0,
+          "benchmark_anchor": 0.0781,
+          "realized_proxy": 0.7037559874343433,
+          "origin_adjusted_close": 67.470886,
+          "maturity_adjusted_close": 114.953926
+        },
+        {
+          "symbol": "EOG",
+          "anchor": 0.055792910653277024,
+          "zero": 0,
+          "benchmark_anchor": 0.0781,
+          "realized_proxy": -0.11370966250939452,
+          "origin_adjusted_close": 114.829063,
+          "maturity_adjusted_close": 101.771889
+        },
+        {
+          "symbol": "PEP",
+          "anchor": 0.051701989619219194,
+          "zero": 0,
+          "benchmark_anchor": 0.0781,
+          "realized_proxy": -0.018444965152163872,
+          "origin_adjusted_close": 141.897476,
+          "maturity_adjusted_close": 139.280182
+        },
+        {
+          "symbol": "DUK",
+          "anchor": 0.05050026660634012,
+          "zero": 0,
+          "benchmark_anchor": 0.0781,
+          "realized_proxy": 0.12724392743874824,
+          "origin_adjusted_close": 101.326973,
+          "maturity_adjusted_close": 114.220215
+        },
+        {
+          "symbol": "HCA",
+          "anchor": 0.058526190897520036,
+          "zero": 0,
+          "benchmark_anchor": 0.0781,
+          "realized_proxy": 0.5670884932943521,
+          "origin_adjusted_close": 296.331696,
+          "maturity_adjusted_close": 464.377991
+        },
+        {
+          "symbol": "SHW",
+          "anchor": 0.05088286042193024,
+          "zero": 0,
+          "benchmark_anchor": 0.0781,
+          "realized_proxy": -0.0382828770398953,
+          "origin_adjusted_close": 334.542542,
+          "maturity_adjusted_close": 321.735291
+        },
+        {
+          "symbol": "MS",
+          "anchor": 0.05815661853467435,
+          "zero": 0,
+          "benchmark_anchor": 0.0781,
+          "realized_proxy": 0.4516468087970198,
+          "origin_adjusted_close": 119.584496,
+          "maturity_adjusted_close": 173.594452
+        },
+        {
+          "symbol": "NFLX",
+          "anchor": 0.06132276727096506,
+          "zero": 0,
+          "benchmark_anchor": 0.0781,
+          "realized_proxy": 0.051922965851861846,
+          "origin_adjusted_close": 89.132004,
+          "maturity_adjusted_close": 93.760002
+        },
+        {
+          "symbol": "NKE",
+          "anchor": 0.05822800410006826,
+          "zero": 0,
+          "benchmark_anchor": 0.0781,
+          "realized_proxy": -0.1382762515461734,
+          "origin_adjusted_close": 72.030243,
+          "maturity_adjusted_close": 62.070171
+        },
+        {
+          "symbol": "VLO",
+          "anchor": 0.05677775489917956,
+          "zero": 0,
+          "benchmark_anchor": 0.0781,
+          "realized_proxy": 0.369745315939658,
+          "origin_adjusted_close": 117.113297,
+          "maturity_adjusted_close": 160.41539
+        }
+      ],
+      "metrics": {
+        "anchor": {
+          "n": 38,
+          "bias": -0.09449917592975797,
+          "mae": 0.198576119138403,
+          "rmse": 0.2667876367719607,
+          "spearman": 0.14848451690556955
+        },
+        "zero": {
+          "n": 38,
+          "bias": -0.15344506596855448,
+          "mae": 0.21312665619796078,
+          "rmse": 0.29357912877459097,
+          "spearman": null
+        },
+        "benchmark_anchor": {
+          "n": 38,
+          "bias": -0.07534506596855449,
+          "mae": 0.19705923395842434,
+          "rmse": 0.26138132210959464,
+          "spearman": null
+        }
+      },
+      "gate": {
+        "screened": 797,
+        "finalists": 23,
+        "admissible_transitions": 0,
+        "archived_feasible_finalists": 1,
+        "positive_lower_gain_finalists": 22,
+        "per_model_rejection_attribution": "unavailable-in-archived-selection",
+        "confirmation_scope": "cash-versus-cash fallback; not a confirmation of rejected investments",
+        "benchmark_buy_allowed": false
+      },
+      "portfolio_context": {
+        "cash_declared_return": 0,
+        "benchmark": {
+          "realized_proxy": 0.17719063790277967,
+          "origin_adjusted_close": 574.787964,
+          "maturity_adjusted_close": 676.63501
+        },
+        "hypothetical_35pct_spy_gross_return": 0.06201672326597288,
+        "costs_and_cashflows_reconciled": false,
+        "risk_matched": false
+      }
+    },
+    {
+      "cut": "2025-04-30",
+      "anniversary": "2026-04-30",
+      "maturity": "2026-04-30",
+      "forecast_stocks": 38,
+      "scored_stocks": 38,
+      "exclusions": [],
+      "observations": [
+        {
+          "symbol": "NVDA",
+          "anchor": 0.09320424539569046,
+          "zero": 0,
+          "benchmark_anchor": 0.0782,
+          "realized_proxy": 0.8326941657380544,
+          "origin_adjusted_close": 108.645996,
+          "maturity_adjusted_close": 199.114883
+        },
+        {
+          "symbol": "UPS",
+          "anchor": 0.0685239619821306,
+          "zero": 0,
+          "benchmark_anchor": 0.0782,
+          "realized_proxy": 0.21968582274275472,
+          "origin_adjusted_close": 86.347816,
+          "maturity_adjusted_close": 105.317207
+        },
+        {
+          "symbol": "TFC",
+          "anchor": 0.0694141238202901,
+          "zero": 0,
+          "benchmark_anchor": 0.0782,
+          "realized_proxy": 0.40790677044837764,
+          "origin_adjusted_close": 35.841511,
+          "maturity_adjusted_close": 50.461506
+        },
+        {
+          "symbol": "USB",
+          "anchor": 0.06832697079480549,
+          "zero": 0,
+          "benchmark_anchor": 0.0782,
+          "realized_proxy": 0.46415199456444456,
+          "origin_adjusted_close": 38.013412,
+          "maturity_adjusted_close": 55.657413
+        },
+        {
+          "symbol": "PFE",
+          "anchor": 0.06193464788330811,
+          "zero": 0,
+          "benchmark_anchor": 0.0782,
+          "realized_proxy": 0.173210436339984,
+          "origin_adjusted_close": 22.003576,
+          "maturity_adjusted_close": 25.814825
+        },
+        {
+          "symbol": "QCOM",
+          "anchor": 0.07346127910724112,
+          "zero": 0,
+          "benchmark_anchor": 0.0782,
+          "realized_proxy": 0.2379609221831609,
+          "origin_adjusted_close": 143.74498,
+          "maturity_adjusted_close": 177.950668
+        },
+        {
+          "symbol": "PNC",
+          "anchor": 0.06356269386323897,
+          "zero": 0,
+          "benchmark_anchor": 0.0782,
+          "realized_proxy": 0.43444733404335456,
+          "origin_adjusted_close": 152.825516,
+          "maturity_adjusted_close": 219.220154
+        },
+        {
+          "symbol": "AMZN",
+          "anchor": 0.07092385855347745,
+          "zero": 0,
+          "benchmark_anchor": 0.0782,
+          "realized_proxy": 0.4372627745066997,
+          "origin_adjusted_close": 184.419998,
+          "maturity_adjusted_close": 265.059998
+        },
+        {
+          "symbol": "GOOGL",
+          "anchor": 0.06886099592863527,
+          "zero": 0,
+          "benchmark_anchor": 0.0782,
+          "realized_proxy": 1.4315757311707173,
+          "origin_adjusted_close": 158.055222,
+          "maturity_adjusted_close": 384.323242
+        },
+        {
+          "symbol": "META",
+          "anchor": 0.06997948799636941,
+          "zero": 0,
+          "benchmark_anchor": 0.0782,
+          "realized_proxy": 0.11806724633590804,
+          "origin_adjusted_close": 546.354675,
+          "maturity_adjusted_close": 610.861267
+        },
+        {
+          "symbol": "CAT",
+          "anchor": 0.06680911772706609,
+          "zero": 0,
+          "benchmark_anchor": 0.0782,
+          "realized_proxy": 1.9092486771558712,
+          "origin_adjusted_close": 304.667603,
+          "maturity_adjusted_close": 886.353821
+        },
+        {
+          "symbol": "AMAT",
+          "anchor": 0.0709783114297036,
+          "zero": 0,
+          "benchmark_anchor": 0.0782,
+          "realized_proxy": 1.6409596729225004,
+          "origin_adjusted_close": 149.0289,
+          "maturity_adjusted_close": 393.579315
+        },
+        {
+          "symbol": "C",
+          "anchor": 0.0647931242497668,
+          "zero": 0,
+          "benchmark_anchor": 0.0782,
+          "realized_proxy": 0.9202535417829201,
+          "origin_adjusted_close": 65.998116,
+          "maturity_adjusted_close": 126.733116
+        },
+        {
+          "symbol": "MSFT",
+          "anchor": 0.06358235980425923,
+          "zero": 0,
+          "benchmark_anchor": 0.0782,
+          "realized_proxy": 0.03957349044635783,
+          "origin_adjusted_close": 390.673828,
+          "maturity_adjusted_close": 406.134155
+        },
+        {
+          "symbol": "DELL",
+          "anchor": 0.08267022196630547,
+          "zero": 0,
+          "benchmark_anchor": 0.0782,
+          "realized_proxy": 1.3117599438208605,
+          "origin_adjusted_close": 90.11174,
+          "maturity_adjusted_close": 208.316711
+        },
+        {
+          "symbol": "TXN",
+          "anchor": 0.0643962457323308,
+          "zero": 0,
+          "benchmark_anchor": 0.0782,
+          "realized_proxy": 0.7963327182218958,
+          "origin_adjusted_close": 154.137924,
+          "maturity_adjusted_close": 276.882996
+        },
+        {
+          "symbol": "HD",
+          "anchor": 0.058609326286359745,
+          "zero": 0,
+          "benchmark_anchor": 0.0782,
+          "realized_proxy": -0.06485303465633618,
+          "origin_adjusted_close": 346.431946,
+          "maturity_adjusted_close": 323.964783
+        },
+        {
+          "symbol": "MPWR",
+          "anchor": 0.08261224131483602,
+          "zero": 0,
+          "benchmark_anchor": 0.0782,
+          "realized_proxy": 1.7426703087449318,
+          "origin_adjusted_close": 586.863464,
+          "maturity_adjusted_close": 1609.572998
+        },
+        {
+          "symbol": "APD",
+          "anchor": 0.05889863746018422,
+          "zero": 0,
+          "benchmark_anchor": 0.0782,
+          "realized_proxy": 0.13652201644214235,
+          "origin_adjusted_close": 260.67041,
+          "maturity_adjusted_close": 296.25766
+        },
+        {
+          "symbol": "CVX",
+          "anchor": 0.055630789357780805,
+          "zero": 0,
+          "benchmark_anchor": 0.0782,
+          "realized_proxy": 0.4847073942731852,
+          "origin_adjusted_close": 127.902794,
+          "maturity_adjusted_close": 189.898224
+        },
+        {
+          "symbol": "KMB",
+          "anchor": 0.053075698851460455,
+          "zero": 0,
+          "benchmark_anchor": 0.0782,
+          "realized_proxy": -0.2198537337630737,
+          "origin_adjusted_close": 122.983406,
+          "maturity_adjusted_close": 95.945045
+        },
+        {
+          "symbol": "DTE",
+          "anchor": 0.050100891266122244,
+          "zero": 0,
+          "benchmark_anchor": 0.0782,
+          "realized_proxy": 0.14428993008161606,
+          "origin_adjusted_close": 130.323807,
+          "maturity_adjusted_close": 149.12822
+        },
+        {
+          "symbol": "MRK",
+          "anchor": 0.05838401589604576,
+          "zero": 0,
+          "benchmark_anchor": 0.0782,
+          "realized_proxy": 0.328006295599385,
+          "origin_adjusted_close": 81.147476,
+          "maturity_adjusted_close": 107.764359
+        },
+        {
+          "symbol": "NUE",
+          "anchor": 0.06350763774946484,
+          "zero": 0,
+          "benchmark_anchor": 0.0782,
+          "realized_proxy": 0.9159481041968343,
+          "origin_adjusted_close": 117.020561,
+          "maturity_adjusted_close": 224.205322
+        },
+        {
+          "symbol": "XOM",
+          "anchor": 0.054298495575129474,
+          "zero": 0,
+          "benchmark_anchor": 0.0782,
+          "realized_proxy": 0.5112436466785093,
+          "origin_adjusted_close": 100.780159,
+          "maturity_adjusted_close": 152.303375
+        },
+        {
+          "symbol": "PEP",
+          "anchor": 0.0533152395449339,
+          "zero": 0,
+          "benchmark_anchor": 0.0782,
+          "realized_proxy": 0.21580338759738305,
+          "origin_adjusted_close": 127.637482,
+          "maturity_adjusted_close": 155.182083
+        },
+        {
+          "symbol": "DUK",
+          "anchor": 0.04832676440778977,
+          "zero": 0,
+          "benchmark_anchor": 0.0782,
+          "realized_proxy": 0.09930620092250408,
+          "origin_adjusted_close": 115.819122,
+          "maturity_adjusted_close": 127.320679
+        },
+        {
+          "symbol": "ITW",
+          "anchor": 0.057190279102775285,
+          "zero": 0,
+          "benchmark_anchor": 0.0782,
+          "realized_proxy": 0.10265641832077366,
+          "origin_adjusted_close": 231.083145,
+          "maturity_adjusted_close": 254.805313
+        },
+        {
+          "symbol": "ABT",
+          "anchor": 0.05358954042376783,
+          "zero": 0,
+          "benchmark_anchor": 0.0782,
+          "realized_proxy": -0.29143649024971174,
+          "origin_adjusted_close": 126.446671,
+          "maturity_adjusted_close": 89.595497
+        },
+        {
+          "symbol": "LOW",
+          "anchor": 0.05848541950151146,
+          "zero": 0,
+          "benchmark_anchor": 0.0782,
+          "realized_proxy": 0.0891344004150576,
+          "origin_adjusted_close": 216.52887,
+          "maturity_adjusted_close": 235.829041
+        },
+        {
+          "symbol": "VZ",
+          "anchor": 0.06010440014177536,
+          "zero": 0,
+          "benchmark_anchor": 0.0782,
+          "realized_proxy": 0.16356282485764018,
+          "origin_adjusted_close": 39.966545,
+          "maturity_adjusted_close": 46.503586
+        },
+        {
+          "symbol": "NEM",
+          "anchor": 0.06252677623306936,
+          "zero": 0,
+          "benchmark_anchor": 0.0782,
+          "realized_proxy": 1.136181097733615,
+          "origin_adjusted_close": 51.775093,
+          "maturity_adjusted_close": 110.600975
+        },
+        {
+          "symbol": "EOG",
+          "anchor": 0.05797928255433394,
+          "zero": 0,
+          "benchmark_anchor": 0.0782,
+          "realized_proxy": 0.31949435465559506,
+          "origin_adjusted_close": 105.041687,
+          "maturity_adjusted_close": 138.601913
+        },
+        {
+          "symbol": "KO",
+          "anchor": 0.04921265794302249,
+          "zero": 0,
+          "benchmark_anchor": 0.0782,
+          "realized_proxy": 0.11706597137109798,
+          "origin_adjusted_close": 69.638298,
+          "maturity_adjusted_close": 77.790573
+        },
+        {
+          "symbol": "WEC",
+          "anchor": 0.04818590185756436,
+          "zero": 0,
+          "benchmark_anchor": 0.0782,
+          "realized_proxy": 0.11326989256219,
+          "origin_adjusted_close": 104.132614,
+          "maturity_adjusted_close": 115.927704
+        },
+        {
+          "symbol": "UNP",
+          "anchor": 0.056991839371596145,
+          "zero": 0,
+          "benchmark_anchor": 0.0782,
+          "realized_proxy": 0.2790302743902857,
+          "origin_adjusted_close": 208.633698,
+          "maturity_adjusted_close": 266.848816
+        },
+        {
+          "symbol": "JNJ",
+          "anchor": 0.05064646775453796,
+          "zero": 0,
+          "benchmark_anchor": 0.0782,
+          "realized_proxy": 0.5114458743700241,
+          "origin_adjusted_close": 150.461288,
+          "maturity_adjusted_close": 227.414093
+        },
+        {
+          "symbol": "NKE",
+          "anchor": 0.06256488317559655,
+          "zero": 0,
+          "benchmark_anchor": 0.0782,
+          "realized_proxy": -0.19373629303411377,
+          "origin_adjusted_close": 53.958878,
+          "maturity_adjusted_close": 43.505085
+        }
+      ],
+      "metrics": {
+        "anchor": {
+          "n": 38,
+          "bias": -0.41157608557708203,
+          "mae": 0.46535123661909894,
+          "rmse": 0.6770949505529181,
+          "spearman": 0.5415253309990152
+        },
+        "zero": {
+          "n": 38,
+          "bias": -0.4740934232614052,
+          "mae": 0.5146133996668387,
+          "rmse": 0.7209187947652045,
+          "spearman": null
+        },
+        "benchmark_anchor": {
+          "n": 38,
+          "bias": -0.3958934232614053,
+          "mae": 0.4549095317486092,
+          "rmse": 0.672079561694619,
+          "spearman": null
+        }
+      },
+      "gate": {
+        "screened": 408,
+        "finalists": 23,
+        "admissible_transitions": 0,
+        "archived_feasible_finalists": 1,
+        "positive_lower_gain_finalists": 22,
+        "per_model_rejection_attribution": "unavailable-in-archived-selection",
+        "confirmation_scope": "cash-versus-cash fallback; not a confirmation of rejected investments",
+        "benchmark_buy_allowed": false
+      },
+      "portfolio_context": {
+        "cash_declared_return": 0,
+        "benchmark": {
+          "realized_proxy": 0.3108132008439599,
+          "origin_adjusted_close": 545.491699,
+          "maturity_adjusted_close": 715.03772
+        },
+        "hypothetical_35pct_spy_gross_return": 0.10878462029538596,
+        "costs_and_cashflows_reconciled": false,
+        "risk_matched": false
+      }
+    }
+  ],
+  "protocol": {
+    "id": "scoped-pilot-anchor-outcomes-v1",
+    "registered_on": "2026-11-01",
+    "pilot_directory": "data/historical/scoped-engine-pilot-v1",
+    "market_commit": "b2d15329e2484ce103d7d729b90c65e4367b218d",
+    "market_path": "dist/data/market.json",
+    "sample_role": "retrospective-development-diagnostic-not-independent-holdout",
+    "origin_selection": "All archived pilot origins, all prepared stock anchors; never select by realized availability or performance",
+    "horizon": "First benchmark session on or after the one-year UTC calendar anniversary; all instruments must have both exact endpoints; no asset-specific date shift",
+    "outcome": "Provider adjusted-close ratio minus one, gross reinvested total-return proxy; not executable cash-dividend wealth or original-vintage certification",
+    "forecast": "Archived annual anchor, a drift-location parameter, not the simulator's unconditional mean or median terminal return",
+    "comparators": [
+      "zero-return anchor",
+      "archived common SPY annual anchor"
+    ],
+    "metrics": [
+      "mean signed error forecast minus realized",
+      "MAE",
+      "RMSE",
+      "Spearman rank correlation"
+    ],
+    "matching": "All predictors evaluated on the same scored stock rows within each origin; preserve every exclusion; no pooling CASH or benchmark with stock observations",
+    "adjustments": "Exclude missing or nonpositive endpoints and any documented non-split price adjustment strictly after origin through the frozen market cut; preserve affected rows",
+    "portfolio_context": "Report archived CASH decision at its declared zero yield and hypothetical 35% SPY / 65% CASH gross buy-and-hold proxy. No costs, cashflow reconciliation, claim of matched risk or certified strategy backtest",
+    "gate_context": "Report archived candidate admissibility and positive lower gains separately; archived feasible=false lacks per-model failure attribution, so do not invent a cause or interpret CASH-versus-CASH confirmation as evidence about rejected investments",
+    "inference": "Two overlapping annual origins, correlated selected stocks: descriptive only; no p-values, confidence intervals, annual risk calibration, economic superiority, or validation declaration",
+    "intervals": "Anchor low/high are parameter ranges, not predictive quantiles; do not score them as P05/P95",
+    "changes": "Do not rerun or tune forecasts, dates, seeds, priors, restrictions, weights or kernel; do not rewrite the pilot cohort",
+    "production_eligible": false,
+    "certified_full_engine_cuts": 0
+  },
+  "evidence": {
+    "protocol_sha256": "ad30069716a9dd322ac057b3c3ea44bdf614afa1784221224e99ed5c6957f66c",
+    "pilot_inputs_sha256": "242d4dd5d486d327c4b999f7e7cbcb57a8159db0b3b817985d9a156cc7682205",
+    "pilot_results_sha256": "63b2f249fb8535b0b8781ebba837e37b4ea4722345529bbcefc9abc979e04c44",
+    "market_sha256": "8d5133d0d36e18672b66660a280f4f4a45a7c2e6a725167ea77cd50e64baa2ad",
+    "market_commit": "b2d15329e2484ce103d7d729b90c65e4367b218d",
+    "scorer_sha256": "324ea698cc69ea6e8a81ef6a308b9c8817ccf24ff5181c06abd6d37c28a6b02d"
+  }
+}

@@ -1,5 +1,9 @@
 # Primer piloto integrado histórico: desarrollo, no validación
 
+**Ampliación del 1-nov:** el [contraste separado de anclas](puntuacion-piloto-integrado.md)
+ya mide errores frente a un proxy de retorno total. El informe original y
+sus archivos permanecen intactos; no se certifican flujos ni probabilidades.
+
 El 31-oct-2026 se ejecutó el compositor de producción 0.35.0 en dos fechas
 reconstruidas. En ambas conservó la cuenta inicial de USD 100.000 en efectivo.
 Ninguna transición examinada resultó admisible bajo todos los controles.

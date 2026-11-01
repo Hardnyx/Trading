@@ -1,0 +1,35 @@
+name: Archived pilot anchor outcomes (descriptive)
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/score_scoped_pilot.mjs'
+      - 'tests/scoped-pilot-outcomes.test.mjs'
+      - 'docs/protocolo-puntuacion-piloto-v1.json'
+      - 'data/historical/scoped-engine-pilot-v1/**'
+      - 'data/historical/scoped-pilot-outcomes-v1/**'
+      - '.github/workflows/scoped-pilot-outcomes.yml'
+permissions:
+  contents: read
+jobs:
+  score:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test tests/scoped-pilot-outcomes.test.mjs
+      - name: Reproduce against frozen market and immutable decisions
+        run: |
+          node scripts/score_scoped_pilot.mjs
+          git diff --exit-code -- data/historical/scoped-pilot-outcomes-v1/report.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pilot-anchor-outcomes-${{ github.sha }}
+          path: data/historical/scoped-pilot-outcomes-v1/report.json
+          retention-days: 90
