@@ -3,6 +3,7 @@ import {readFileSync,writeFileSync,mkdirSync,existsSync,readdirSync} from 'node:
 import {gunzipSync,gzipSync} from 'node:zlib';
 import {resolve,relative} from 'node:path';
 import {fileURLToPath} from 'node:url';
+import {execFileSync} from 'node:child_process';
 import {digest,pilotRequest} from './scoped_engine_pilot.mjs';
 import {assertEquivalent,verifySources} from './attribute_scoped_pilot.mjs';
 import {flatBaseline} from './scoped_pilot_distributions.mjs';
@@ -29,8 +30,9 @@ function sourceManifest(directory) {
       [{path:relative(ROOT,path).replaceAll('\\','/'),sha256:digest(readFileSync(path))}]:[];
   });
 }
-function immutable(path,value) {
-  if(existsSync(path))assertEquivalent(value,JSON.parse(gunzipSync(readFileSync(path))));
+export function immutable(path,value) {
+  // The archive contains JSON values; optional internal undefined properties are not serialized.
+  if(existsSync(path))assertEquivalent(JSON.parse(JSON.stringify(value)),JSON.parse(gunzipSync(readFileSync(path))));
   else writeFileSync(path,gzipSync(JSON.stringify(value)),{flag:'wx'});
   return digest(readFileSync(path));
 }
@@ -85,7 +87,14 @@ export function main() {
       input_compiler_sha256:bundle.compiler_sha256,stock_compiler_sha256:bundle.builder_sha256,
       runner_sha256:digest(read('scripts/expanded_stock_forecasts.mjs'))}};
   const target=resolve(directory,'manifest.json');
-  if(existsSync(target))assertEquivalent(manifest,JSON.parse(readFileSync(target)));
+  if(existsSync(target)) {
+    const published=JSON.parse(readFileSync(target)),
+      originalRunner=execFileSync('git',['show','c323b8187c3bf0a52129333e5a7236304629f2f3:scripts/expanded_stock_forecasts.mjs'],{cwd:ROOT});
+    check(digest(originalRunner)===published.evidence.runner_sha256,'Original forecast runner hash mismatch');
+    // This field identifies the original generating code, not a later verification run.
+    manifest.evidence.runner_sha256=published.evidence.runner_sha256;
+    assertEquivalent(manifest,published);
+  }
   else writeFileSync(target,JSON.stringify(manifest,null,2)+'\n',{flag:'wx'});
   console.log(JSON.stringify({origins:files.length,forecasts:files.reduce((n,r)=>n+r.records,0),certified_full_engine_cuts:0}));
   return manifest;

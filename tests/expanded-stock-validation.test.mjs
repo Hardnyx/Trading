@@ -1,10 +1,25 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {readFileSync} from 'node:fs';
+import {readFileSync,mkdtempSync,rmSync} from 'node:fs';
+import {tmpdir} from 'node:os';
+import {join} from 'node:path';
 import {gunzipSync} from 'node:zlib';
-import {selectedCuts} from '../scripts/expanded_stock_forecasts.mjs';
+import {selectedCuts,immutable} from '../scripts/expanded_stock_forecasts.mjs';
 import {assertEquivalent} from '../scripts/attribute_scoped_pilot.mjs';
 import {digest} from '../scripts/scoped_engine_pilot.mjs';
+
+test('immutable replay compares JSON semantics while rejecting material changes and preserving bytes',()=>{
+  const dir=mkdtempSync(join(tmpdir(),'expanded-forecast-')),path=join(dir,'forecast.json.gz');
+  try {
+    const original={prepared:{evidence:{missing:undefined,known:null}},records:[{mean:.1}]};
+    immutable(path,original);const before=readFileSync(path);
+    immutable(path,original);immutable(path,JSON.parse(JSON.stringify(original)));
+    assert.deepEqual(readFileSync(path),before);
+    assert.throws(()=>immutable(path,{...original,records:[{mean:.1001}]}),/mismatch/);
+    assert.throws(()=>immutable(path,{...original,prepared:{evidence:{known:undefined}}}),/mismatch/);
+    assert.deepEqual(readFileSync(path),before);
+  } finally {rmSync(dir,{recursive:true,force:true});}
+});
 
 test('expanded sample uses the unchanged coverage boundary and ignores outcome availability',()=>{
   const bundle={protocol:{selection:{minimum_weight:.7,maximum_origins:48}},

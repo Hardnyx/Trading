@@ -119,6 +119,12 @@ node --test tests/expanded-stock-validation.test.mjs tests/expanded-stock-scores
 ```
 
 El generador rechaza cambios materiales en archivos ya archivados. El
+contraste usa el contenido JSON serializado: los campos internos `undefined`
+se omiten igual que al archivar, sin convertir cambios en campos nulos o
+valores numéricos en equivalentes. Se conserva y verifica el hash del
+generador original desde `c323b81`; una ejecución posterior de verificación
+no lo reemplaza ni reescribe las distribuciones.
+El
 puntuador lee distribuciones desde el commit de congelación y resultados
 desde el mercado fijado; no recalcula pronósticos. La comparación entre V8
 tolera solo redondeo de 1e-12, manteniendo estructura y hashes exactos. El
