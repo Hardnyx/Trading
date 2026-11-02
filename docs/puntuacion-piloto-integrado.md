@@ -51,8 +51,10 @@ efectivo; el archivo no guarda las causas por modelo de cada rechazo.
 
 La confirmación final compara **CASH con CASH** después del retorno a la
 cuenta inicial. Sus ganancias nulas no describen las inversiones rechazadas.
-Queda pendiente reproducir y guardar la atribución de restricciones por
-finalista. SPY era una referencia sin permiso de compra.
+La [atribución separada del 2-nov](atribucion-rechazos-piloto.md) reproduce
+y guarda los rechazos de cada finalista: el control de probabilidad de
+pérdida con margen de muestreo resulta decisivo. No modifica este primer
+informe ni las decisiones originales. SPY era una referencia sin permiso de compra.
 
 El efectivo al 0% declarado produce 0% por definición. Una referencia
 hipotética mantenida de 35% SPY / 65% CASH produce aproximadamente 6,20%
@@ -74,7 +76,7 @@ intervalos predictivos. No se validan probabilidad de pérdida, CVaR, GJR ni
 calibración anual. Permanecen **0/48 cortes causales certificados**.
 
 El siguiente cierre requiere realización de flujos compatible con la
-distribución simulada, atribución de rechazos y más orígenes con datos
+distribución simulada y más orígenes con datos
 históricos suficientes. Después debe contrastarse una cuenta continua neta
 de costes. Los registros prospectivos deben madurar conservando sus sellos.
 

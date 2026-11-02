@@ -1,6 +1,6 @@
 # Estado de validación de Trading
 
-**Actualizado:** 1 de noviembre de 2026 · motor 0.35.0 · diagnóstico del piloto con mercado congelado al 30-oct.
+**Actualizado:** 2 de noviembre de 2026 · motor 0.35.0 · diagnóstico del piloto con mercado congelado al 30-oct.
 **Estado:** escenarios condicionales de investigación; capacidad predictiva y
 ventaja económica sin acreditar. El [historial hasta 0.32.0](historial-validacion-hasta-0.32.md)
 conserva los cambios y cifras anteriores.
@@ -20,6 +20,7 @@ conserva los cambios y cifras anteriores.
 | Cuenta TTM reconstruida v2 | 48 revisiones; USD 141.394 frente a USD 139.741 de BPA/precio, con USD 100.000 iniciales | Manga fija 35%, costes financiados y cuenta continua; ventaja incremental sin resolver. No reproduce el optimizador ni acredita vintages o universo histórico |
 | Piloto integrado de desarrollo | 2 cortes ejecutados; ambos mantienen 100% CASH | Compositor y revisión robusta reales, universo parcial y variante EWMA; 0/48 cortes certificados y sin evaluar resultados realizados |
 | Contraste descriptivo de anclas del piloto | 38 acciones por corte, 2 años solapados; MAE 19,86/46,54 pp frente a 19,71/45,49 pp del ancla común SPY | No mejora ese comparador; proxy bruto ajustado, no realización de flujos ni calibración del simulador |
+| Atribución de rechazos del piloto | 23 finalistas reproducidas por corte; las 22 inversiones fallan riesgo pese a superar el umbral económico | Probabilidad de pérdida con margen de Monte Carlo decisiva; no calibra límites ni acredita superioridad del efectivo |
 | Candidato de oro con factores rezagados | 34 orígenes; R² fuera de muestra −0,057 frente a media histórica | Empeora el MSE un 5,7%; permanece en sombra |
 
 ## Recuperación de fuentes históricas (30-oct)
@@ -95,6 +96,16 @@ evalúa las anclas contra un proxy bruto ajustado, sin certificar una ventaja
 económica del efectivo ni puntuar las distribuciones del simulador. El contador
 causal certificado permanece en 0/48, separado de los dos ensayos ejecutados.
 La capacidad predictiva y la ventaja económica siguen sin acreditar.
+
+La [atribución del 2-nov](atribucion-rechazos-piloto.md) reproduce las 46
+finalistas con código y entradas congelados, verificando las métricas
+archivadas. Las 22 inversiones de cada corte superan la ganancia requerida,
+pero fallan riesgo: baja convicción y Student rechazan todas por la cota
+de probabilidad de pérdida. Con estimaciones puntuales sin márgenes de
+muestreo pasarían todos los controles de riesgo 16 y 3 alternativas,
+respectivamente. Es una descomposición diagnóstica, sin cambiar la decisión
+ni acreditar los límites. El informe nuevo conserva motivos por modelo;
+no repite búsqueda o confirmación y no reescribe el piloto original.
 
 ## Cuenta histórica reconstruida de la señal (29-oct)
 

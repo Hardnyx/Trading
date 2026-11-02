@@ -1,6 +1,7 @@
 # Repository workflow
 
 - Commit authorized changes directly to `main`. Do not create pull requests or auxiliary review branches.
+- Use Conventional Commits in English. Describe concrete technical changes; avoid promotional wording, unsupported claims and generic AI phrasing.
 - Fetch `origin/main` before publishing and preserve concurrent changes.
 - Preserve existing history unless the user explicitly requests a history rewrite.
 - For changes affecting forecasts or composition, keep a frozen-input audit that separates data changes, model corrections, Monte Carlo noise and search uncertainty. Do not tune seeds or preserve previous weights merely to make recommendations look stable.

@@ -1,0 +1,31 @@
+name: Archived pilot rejection attribution
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/attribute_scoped_pilot.mjs'
+      - 'tests/scoped-pilot-attribution.test.mjs'
+      - 'data/historical/scoped-pilot-attribution-v1/**'
+      - '.github/workflows/scoped-pilot-attribution.yml'
+permissions:
+  contents: read
+jobs:
+  reproduce:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test tests/scoped-pilot-attribution.test.mjs
+      - name: Replay original selection paths for fixed finalists
+        run: |
+          node scripts/attribute_scoped_pilot.mjs
+          git diff --exit-code -- data/historical/scoped-pilot-attribution-v1/report.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pilot-attribution-${{ github.sha }}
+          path: data/historical/scoped-pilot-attribution-v1/report.json
+          retention-days: 90
