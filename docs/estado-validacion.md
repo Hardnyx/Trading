@@ -22,6 +22,7 @@ conserva los cambios y cifras anteriores.
 | Contraste descriptivo de anclas del piloto | 38 acciones por corte, 2 años solapados; MAE 19,86/46,54 pp frente a 19,71/45,49 pp del ancla común SPY | No mejora ese comparador; proxy bruto ajustado, no realización de flujos ni calibración del simulador |
 | Atribución de rechazos del piloto | 23 finalistas reproducidas por corte; las 22 inversiones fallan riesgo pese a superar el umbral económico | Probabilidad de pérdida con margen de Monte Carlo decisiva; no calibra límites ni acredita superioridad del efectivo |
 | Distribuciones reconstruidas del piloto | 38 acciones por corte a 21/63/252 sesiones; CRPS y Brier mejores que EWMA cero en 5/6 grupos | Dos orígenes retrospectivos; sesgos anuales −11,50/−38,93 pp, flujos en efectivo sin conciliar y 0/48 cortes certificados |
+| Pronósticos ampliados a todos los cierres con cobertura ≥70% | 8 cortes archivados; 8/7/4 vencidos a 21/63/252 sesiones, 722 filas puntuadas | Incluye las dos fechas anteriores, sin contarlas como nuevas; solo un intervalo anual sin solapamiento y 0/48 cortes certificados |
 | Candidato de oro con factores rezagados | 34 orígenes; R² fuera de muestra −0,057 frente a media histórica | Empeora el MSE un 5,7%; permanece en sombra |
 
 ## Recuperación de fuentes históricas (30-oct)
@@ -118,6 +119,15 @@ las probabilidades de pérdida anual son 45,73%/48,37% frente a frecuencias
 28,95%/10,53%. Evalúa retorno total bruto antes de separar dividendos:
 no valida los flujos en efectivo del piloto ni su cuenta. No es una prueba
 independiente, no calibra el motor y no cambia las predicciones publicadas.
+
+La [ampliación a ocho cierres](validacion-acciones-ampliada.md) añade seis
+orígenes con la misma regla de cobertura, sin ejecutar el optimizador en
+ellos ni rebajar requisitos. Se archivan las distribuciones antes de puntuar.
+CRPS mejora frente a EWMA cero en 7/8, 6/7 y 4/4 cortes vencidos por horizonte;
+los conteos son descriptivos. Los cuatro años se solapan y sus sesgos van de
+−11,50 a −38,93 pp. Se conservan los vencimientos pendientes, las dos fechas
+repetidas y todas las exclusiones. No hay nuevos cortes causales certificados
+ni una cuenta continua conciliada. Los datos y las salidas previas no se reescriben.
 
 ## Cuenta histórica reconstruida de la señal (29-oct)
 

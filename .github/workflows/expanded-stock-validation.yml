@@ -1,0 +1,46 @@
+name: Expanded historical stock validation
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/expanded_validation_inputs.py'
+      - 'scripts/expanded_stock_forecasts.mjs'
+      - 'scripts/score_expanded_stock_validation.mjs'
+      - 'tests/expanded-stock-validation.test.mjs'
+      - 'tests/expanded-stock-scores.test.mjs'
+      - 'docs/protocolo-validacion-ampliada-v1.json'
+      - 'data/historical/expanded-stock-validation-v1/**'
+      - 'data/historical/expanded-stock-validation-scores-v1/**'
+      - '.github/workflows/expanded-stock-validation.yml'
+permissions:
+  contents: read
+jobs:
+  reproduce:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-research.txt
+      - run: node --test tests/expanded-stock-validation.test.mjs tests/expanded-stock-scores.test.mjs
+      - name: Revalidate historical sources and rebuild all eligible inputs
+        run: python scripts/expanded_validation_inputs.py
+      - name: Verify frozen distributions without replacing archives
+        run: node scripts/expanded_stock_forecasts.mjs
+      - name: Score only the published forecast cohort and frozen outcomes
+        run: node scripts/score_expanded_stock_validation.mjs --verify
+      - uses: actions/upload-artifact@v4
+        with:
+          name: expanded-stock-validation-${{ github.sha }}
+          path: |
+            data/historical/expanded-stock-validation-scores-v1/report.json
+            out/expanded-validation-inputs-v1.json.gz
+          retention-days: 90
