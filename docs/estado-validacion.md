@@ -23,6 +23,7 @@ conserva los cambios y cifras anteriores.
 | Atribución de rechazos del piloto | 23 finalistas reproducidas por corte; las 22 inversiones fallan riesgo pese a superar el umbral económico | Probabilidad de pérdida con margen de Monte Carlo decisiva; no calibra límites ni acredita superioridad del efectivo |
 | Distribuciones reconstruidas del piloto | 38 acciones por corte a 21/63/252 sesiones; CRPS y Brier mejores que EWMA cero en 5/6 grupos | Dos orígenes retrospectivos; sesgos anuales −11,50/−38,93 pp, flujos en efectivo sin conciliar y 0/48 cortes certificados |
 | Pronósticos ampliados a todos los cierres con cobertura ≥70% | 8 cortes archivados; 8/7/4 vencidos a 21/63/252 sesiones, 722 filas puntuadas | Incluye las dos fechas anteriores, sin contarlas como nuevas; solo un intervalo anual sin solapamiento y 0/48 cortes certificados |
+| Realización con dividendos en efectivo | 14 eventos PFE/MSFT; 283/722 filas reconstruibles frente a 253 antes, 190 pendientes | Convenciones de impuesto/efectivo conservadas; no se puntúan pronósticos de otro objetivo ni se certifica la cuenta |
 | Candidato de oro con factores rezagados | 34 orígenes; R² fuera de muestra −0,057 frente a media histórica | Empeora el MSE un 5,7%; permanece en sombra |
 
 ## Recuperación de fuentes históricas (30-oct)
@@ -128,6 +129,15 @@ los conteos son descriptivos. Los cuatro años se solapan y sus sesgos van de
 −11,50 a −38,93 pp. Se conservan los vencimientos pendientes, las dos fechas
 repetidas y todas las exclusiones. No hay nuevos cortes causales certificados
 ni una cuenta continua conciliada. Los datos y las salidas previas no se reescriben.
+
+La [conciliación de dividendos](conciliacion-dividendos-historicos.md) añade
+datos de los emisores para treinta filas más y conserva 439 bloqueadas con
+su causa. Se separan pagos recibidos de derechos aún por cobrar. Pfizer se
+respalda con un extracto factual de su tabla oficial y Microsoft con el XLSX
+original, sin equiparar su fuerza de procedencia. Las fuentes son solo para
+resultados realizados y no pasan a los pronósticos históricos. Falta ampliar
+los emisores y completar operaciones corporativas, precios y la cuenta neta;
+el contador causal sigue en 0/48.
 
 ## Cuenta histórica reconstruida de la señal (29-oct)
 

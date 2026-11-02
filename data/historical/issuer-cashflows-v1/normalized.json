@@ -1,0 +1,158 @@
+{
+  "protocol": "historical-issuer-cashflows-v1",
+  "outcome_only": true,
+  "forecast_input_eligible": false,
+  "production_eligible": false,
+  "predictive_validation": "not-established",
+  "assets": [
+    {
+      "symbol": "PFE",
+      "issuer_distributions": {
+        "symbol": "PFE",
+        "currency": "USD",
+        "source_layer": "issuer",
+        "source_url": "https://investors.pfizer.com/Investors/stock-dividend/dividend-split-history/default.aspx",
+        "source_sha256": "0b499caca66bf33e2c84156c12489e84a60fd0de2117c5f6082023b8143bb5f7",
+        "source_representation": "verbatim-factual-table-excerpt-from-web-retrieval",
+        "observed_at": "2026-11-02T22:11:19.453633+00:00",
+        "records": [
+          {
+            "ex_date": "2025-01-24",
+            "record_date": "2025-01-24",
+            "pay_date": "2025-03-07",
+            "amount_per_share": 0.43,
+            "currency": "USD",
+            "observed_at": "2026-11-02T22:11:19.453633+00:00"
+          },
+          {
+            "ex_date": "2025-05-09",
+            "record_date": "2025-05-09",
+            "pay_date": "2025-06-13",
+            "amount_per_share": 0.43,
+            "currency": "USD",
+            "observed_at": "2026-11-02T22:11:19.453633+00:00"
+          },
+          {
+            "ex_date": "2025-07-25",
+            "record_date": "2025-07-25",
+            "pay_date": "2025-09-02",
+            "amount_per_share": 0.43,
+            "currency": "USD",
+            "observed_at": "2026-11-02T22:11:19.453633+00:00"
+          },
+          {
+            "ex_date": "2025-11-07",
+            "record_date": "2025-11-07",
+            "pay_date": "2025-12-01",
+            "amount_per_share": 0.43,
+            "currency": "USD",
+            "observed_at": "2026-11-02T22:11:19.453633+00:00"
+          },
+          {
+            "ex_date": "2026-01-23",
+            "record_date": "2026-01-23",
+            "pay_date": "2026-03-06",
+            "amount_per_share": 0.43,
+            "currency": "USD",
+            "observed_at": "2026-11-02T22:11:19.453633+00:00"
+          },
+          {
+            "ex_date": "2026-05-08",
+            "record_date": "2026-05-08",
+            "pay_date": "2026-06-12",
+            "amount_per_share": 0.43,
+            "currency": "USD",
+            "observed_at": "2026-11-02T22:11:19.453633+00:00"
+          },
+          {
+            "ex_date": "2026-07-24",
+            "record_date": "2026-07-24",
+            "pay_date": "2026-09-01",
+            "amount_per_share": 0.43,
+            "currency": "USD",
+            "observed_at": "2026-11-02T22:11:19.453633+00:00"
+          }
+        ]
+      }
+    },
+    {
+      "symbol": "MSFT",
+      "issuer_distributions": {
+        "symbol": "MSFT",
+        "currency": "USD",
+        "source_layer": "issuer",
+        "source_url": "https://cdn-dynmedia-1.microsoft.com/is/content/microsoftcorp/Microsofts-Dividend-History",
+        "source_sha256": "3c6b9f1aac489b672a2a69514182edbb2757a13059d2c5549783de340c4025e0",
+        "source_representation": "issuer-linked-original-xlsx",
+        "observed_at": "2026-11-02T22:11:19.453633+00:00",
+        "records": [
+          {
+            "announcement_date": "2024-12-03",
+            "ex_date": "2025-02-20",
+            "record_date": "2025-02-20",
+            "pay_date": "2025-03-13",
+            "amount_per_share": 0.83,
+            "currency": "USD",
+            "observed_at": "2026-11-02T22:11:19.453633+00:00"
+          },
+          {
+            "announcement_date": "2025-03-11",
+            "ex_date": "2025-05-15",
+            "record_date": "2025-05-15",
+            "pay_date": "2025-06-12",
+            "amount_per_share": 0.83,
+            "currency": "USD",
+            "observed_at": "2026-11-02T22:11:19.453633+00:00"
+          },
+          {
+            "announcement_date": "2025-06-10",
+            "ex_date": "2025-08-21",
+            "record_date": "2025-08-21",
+            "pay_date": "2025-09-11",
+            "amount_per_share": 0.83,
+            "currency": "USD",
+            "observed_at": "2026-11-02T22:11:19.453633+00:00"
+          },
+          {
+            "announcement_date": "2025-09-15",
+            "ex_date": "2025-11-20",
+            "record_date": "2025-11-20",
+            "pay_date": "2025-12-11",
+            "amount_per_share": 0.91,
+            "currency": "USD",
+            "observed_at": "2026-11-02T22:11:19.453633+00:00"
+          },
+          {
+            "announcement_date": "2025-12-02",
+            "ex_date": "2026-02-19",
+            "record_date": "2026-02-19",
+            "pay_date": "2026-03-12",
+            "amount_per_share": 0.91,
+            "currency": "USD",
+            "observed_at": "2026-11-02T22:11:19.453633+00:00"
+          },
+          {
+            "announcement_date": "2026-03-10",
+            "ex_date": "2026-05-21",
+            "record_date": "2026-05-21",
+            "pay_date": "2026-06-11",
+            "amount_per_share": 0.91,
+            "currency": "USD",
+            "observed_at": "2026-11-02T22:11:19.453633+00:00"
+          },
+          {
+            "announcement_date": "2026-06-10",
+            "ex_date": "2026-08-20",
+            "record_date": "2026-08-20",
+            "pay_date": "2026-09-10",
+            "amount_per_share": 0.91,
+            "currency": "USD",
+            "observed_at": "2026-11-02T22:11:19.453633+00:00"
+          }
+        ]
+      }
+    }
+  ],
+  "manifest_sha256": "340f35332547ae3a3c68d5b754845166b301ce176b216b422a77869658bbe2d7",
+  "normalizer_sha256": "f701d442667b935d44124c89154165036cfe2cbcbb247459d64baba009efc37e"
+}

@@ -1,0 +1,34 @@
+{
+  "protocol": "historical-issuer-cashflows-v1",
+  "outcome_only": true,
+  "forecast_input_eligible": false,
+  "sources": [
+    {
+      "symbol": "PFE",
+      "path": "excerpts/PFE.txt",
+      "source_url": "https://investors.pfizer.com/Investors/stock-dividend/dividend-split-history/default.aspx",
+      "representation": "verbatim-factual-table-excerpt-from-web-retrieval",
+      "original_response_bytes_preserved": false,
+      "retrieved_on": "2026-11-02",
+      "archived_at": "2026-11-02T22:11:19.453633+00:00",
+      "sha256": "0b499caca66bf33e2c84156c12489e84a60fd0de2117c5f6082023b8143bb5f7"
+    },
+    {
+      "symbol": "MSFT",
+      "path": "originals/MSFT.xlsx",
+      "source_url": "https://cdn-dynmedia-1.microsoft.com/is/content/microsoftcorp/Microsofts-Dividend-History",
+      "resolved_url": "https://cdn-dynmedia-1.microsoft.com/is/content/microsoftcorp/Microsofts-Dividend-History",
+      "identity_page": "https://www.microsoft.com/en-us/Investor/dividends-and-stock-history",
+      "representation": "issuer-linked-original-xlsx",
+      "original_response_bytes_preserved": true,
+      "retrieved_at": "2026-11-02T22:11:19.453633+00:00",
+      "archived_at": "2026-11-02T22:11:19.453633+00:00",
+      "sha256": "3c6b9f1aac489b672a2a69514182edbb2757a13059d2c5549783de340c4025e0"
+    }
+  ],
+  "limitations": [
+    "Downloaded in 2026 for realized outcomes, never evidence of information available at historical forecast origins",
+    "The Pfizer capture preserves only the factual table excerpt, not original issuer HTML bytes",
+    "No certified price identity, corporate-action completeness, broker execution or tax treatment"
+  ]
+}

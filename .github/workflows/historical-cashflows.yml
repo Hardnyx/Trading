@@ -1,0 +1,40 @@
+name: Historical stock cashflow reconciliation
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/issuer_cashflow_inputs.py'
+      - 'scripts/audit_historical_cashflows.mjs'
+      - 'tests/test_issuer_cashflow_inputs.py'
+      - 'tests/historical-cashflows.test.mjs'
+      - 'data/historical/issuer-cashflows-v1/**'
+      - 'data/historical/cashflow-reconciliation-v1/**'
+      - '.github/workflows/historical-cashflows.yml'
+permissions:
+  contents: read
+jobs:
+  reconcile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m unittest tests.test_issuer_cashflow_inputs
+      - run: node --test tests/historical-cashflows.test.mjs
+      - name: Verify normalization from preserved issuer sources
+        run: python scripts/issuer_cashflow_inputs.py
+      - name: Reproduce cash outcomes against frozen prices and study rows
+        run: node scripts/audit_historical_cashflows.mjs --verify
+      - uses: actions/upload-artifact@v4
+        with:
+          name: historical-stock-cashflows-${{ github.sha }}
+          path: data/historical/cashflow-reconciliation-v1/report.json
+          retention-days: 90
