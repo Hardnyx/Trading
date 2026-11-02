@@ -1,0 +1,629 @@
+{
+  "protocol": {
+    "id": "expanded-reconstructed-stock-validation-v1",
+    "registered_on": "2026-11-02",
+    "source_market_commit": "8dcd06cfd06b2ca34ca6fb64e31d5b6344525cd5",
+    "eps_archive": "docs/auditorias/ttm-signal-inputs-2026-10-29.json.gz",
+    "selection": {
+      "rule": "All price-audit cuts meeting the original 70% reconstructed-history coverage threshold; no outcome-availability or performance filter",
+      "minimum_weight": 0.7,
+      "maximum_origins": 48
+    },
+    "risk_mode": "ewma",
+    "seed": 20261024,
+    "horizon_years": 1,
+    "outcome_scoring": false,
+    "production_eligible": false,
+    "reconstruction_clock": "2026-11-02T20:26:23Z",
+    "reconstruction_clock_semantics": "Recorded start of this retrospective input review; fixed for reproducible snapshot compilation, not historical retrieval or a rerun completion timestamp",
+    "forecast_directory": "data/historical/expanded-stock-validation-v1",
+    "market_commit": "b2d15329e2484ce103d7d729b90c65e4367b218d",
+    "market_path": "dist/data/market.json",
+    "horizons_sessions": [
+      21,
+      63,
+      252
+    ],
+    "paths": 2000,
+    "distribution_seed": 20261102,
+    "steps_per_year": 252,
+    "models": [
+      "pilot_kernel",
+      "flat_ewma_zero_mean"
+    ],
+    "sample_role": "Previously inspected retrospective development data; six additional origins do not constitute an independent holdout",
+    "input_policy": "Reuse the original compiler and its prior-day EPS, macro, holdings clocks, price reconstruction, dividend units and absent-quality penalties. Do not import current quality, analyst estimates, bond profiles or GJR fits. Record all 48 scheduled cuts and all exclusions.",
+    "forecast_policy": "referenceRequest -> prepareComposition -> production generatePaths, with daily one-year paths and 21/63/252 prefixes. Keep the deployed preselection. No optimization, orders or continuous account. New per-origin archives; never replace the two-origin pilot or combine counts as independent experiments.",
+    "baseline": "Same prepared EWMA covariance, zero arithmetic mean, flat Gaussian variance, no regime mixture or anchor uncertainty. Joint component comparison, not identification of incremental alpha.",
+    "target": "Gross reinvested total-return proxy from exact adjusted endpoints, before cash-dividend accounting. Exclude later documented non-split adjustments through the frozen outcome market cut. No per-asset date shift or fallback for missing outcomes.",
+    "metrics": [
+      "quantile-grid CRPS",
+      "Brier loss probability",
+      "mean-return MAE/RMSE/bias",
+      "Spearman",
+      "central 90% coverage",
+      "lower 5% exceptions",
+      "signed ES residual diagnostic"
+    ],
+    "inference": "Per-origin/horizon descriptions with every pending outcome retained. No pooled p-values or confidence intervals, no predictive calibration certification. Report overlap and immature origins explicitly.",
+    "freezing": "Publish protocol and per-origin forecasts before scoring outcomes. Inputs and periods were previously studied; this is not prospective preregistration. Do not tune seeds, parameters, selection or risk limits after scoring.",
+    "predictive_validation": "not-established",
+    "certified_full_engine_cuts": 0
+  },
+  "price_kernel_version": "1.0.0",
+  "production_eligible": false,
+  "prospective": false,
+  "independent_holdout": false,
+  "predictive_validation": "not-established",
+  "certified_full_engine_cuts": 0,
+  "optimization_executed": false,
+  "schedule": [
+    {
+      "cut": "2022-10-31",
+      "reason": "insufficient-price-input-coverage",
+      "research_history_weight": 0,
+      "selected": false
+    },
+    {
+      "cut": "2022-11-30",
+      "reason": "insufficient-price-input-coverage",
+      "research_history_weight": 0,
+      "selected": false
+    },
+    {
+      "cut": "2022-12-30",
+      "reason": "insufficient-price-input-coverage",
+      "research_history_weight": 0,
+      "selected": false
+    },
+    {
+      "cut": "2023-01-31",
+      "reason": "insufficient-price-input-coverage",
+      "research_history_weight": 0,
+      "selected": false
+    },
+    {
+      "cut": "2023-02-28",
+      "reason": "insufficient-price-input-coverage",
+      "research_history_weight": 0,
+      "selected": false
+    },
+    {
+      "cut": "2023-03-31",
+      "reason": "insufficient-price-input-coverage",
+      "research_history_weight": 0,
+      "selected": false
+    },
+    {
+      "cut": "2023-04-28",
+      "reason": "insufficient-price-input-coverage",
+      "research_history_weight": 0,
+      "selected": false
+    },
+    {
+      "cut": "2023-05-31",
+      "reason": "insufficient-price-input-coverage",
+      "research_history_weight": 0.66349048862702,
+      "selected": false
+    },
+    {
+      "cut": "2023-06-30",
+      "reason": "insufficient-price-input-coverage",
+      "research_history_weight": 0.66349048862702,
+      "selected": false
+    },
+    {
+      "cut": "2023-07-31",
+      "reason": "insufficient-price-input-coverage",
+      "research_history_weight": 0,
+      "selected": false
+    },
+    {
+      "cut": "2023-08-31",
+      "reason": "insufficient-price-input-coverage",
+      "research_history_weight": 0,
+      "selected": false
+    },
+    {
+      "cut": "2023-09-29",
+      "reason": "insufficient-price-input-coverage",
+      "research_history_weight": 0,
+      "selected": false
+    },
+    {
+      "cut": "2023-10-31",
+      "reason": "insufficient-price-input-coverage",
+      "research_history_weight": 0,
+      "selected": false
+    },
+    {
+      "cut": "2023-11-30",
+      "reason": "insufficient-price-input-coverage",
+      "research_history_weight": 0,
+      "selected": false
+    },
+    {
+      "cut": "2023-12-29",
+      "reason": "insufficient-price-input-coverage",
+      "research_history_weight": 0,
+      "selected": false
+    },
+    {
+      "cut": "2024-01-31",
+      "reason": "insufficient-price-input-coverage",
+      "research_history_weight": 0,
+      "selected": false
+    },
+    {
+      "cut": "2024-02-29",
+      "reason": "insufficient-price-input-coverage",
+      "research_history_weight": 0,
+      "selected": false
+    },
+    {
+      "cut": "2024-03-28",
+      "reason": "insufficient-price-input-coverage",
+      "research_history_weight": 0,
+      "selected": false
+    },
+    {
+      "cut": "2024-04-30",
+      "reason": "insufficient-price-input-coverage",
+      "research_history_weight": 0,
+      "selected": false
+    },
+    {
+      "cut": "2024-05-31",
+      "reason": "insufficient-price-input-coverage",
+      "research_history_weight": 0,
+      "selected": false
+    },
+    {
+      "cut": "2024-06-28",
+      "reason": "insufficient-price-input-coverage",
+      "research_history_weight": 0,
+      "selected": false
+    },
+    {
+      "cut": "2024-07-31",
+      "reason": "insufficient-price-input-coverage",
+      "research_history_weight": 0,
+      "selected": false
+    },
+    {
+      "cut": "2024-08-30",
+      "reason": "insufficient-price-input-coverage",
+      "research_history_weight": 0,
+      "selected": false
+    },
+    {
+      "cut": "2024-09-30",
+      "reason": "insufficient-price-input-coverage",
+      "research_history_weight": 0,
+      "selected": false
+    },
+    {
+      "cut": "2024-10-31",
+      "reason": "insufficient-price-input-coverage",
+      "research_history_weight": 0,
+      "selected": false
+    },
+    {
+      "cut": "2024-11-29",
+      "reason": "insufficient-price-input-coverage",
+      "research_history_weight": 0,
+      "selected": false
+    },
+    {
+      "cut": "2024-12-31",
+      "reason": "selected-before-model-results",
+      "research_history_weight": 0.70256651152596,
+      "selected": true
+    },
+    {
+      "cut": "2025-01-31",
+      "reason": "insufficient-price-input-coverage",
+      "research_history_weight": 0,
+      "selected": false
+    },
+    {
+      "cut": "2025-02-28",
+      "reason": "insufficient-price-input-coverage",
+      "research_history_weight": 0,
+      "selected": false
+    },
+    {
+      "cut": "2025-03-31",
+      "reason": "insufficient-price-input-coverage",
+      "research_history_weight": 0,
+      "selected": false
+    },
+    {
+      "cut": "2025-04-30",
+      "reason": "selected-before-model-results",
+      "research_history_weight": 0.7154966259143,
+      "selected": true
+    },
+    {
+      "cut": "2025-05-30",
+      "reason": "insufficient-price-input-coverage",
+      "research_history_weight": 0,
+      "selected": false
+    },
+    {
+      "cut": "2025-06-30",
+      "reason": "selected-before-model-results",
+      "research_history_weight": 0.70158842692705,
+      "selected": true
+    },
+    {
+      "cut": "2025-07-31",
+      "reason": "insufficient-price-input-coverage",
+      "research_history_weight": 0,
+      "selected": false
+    },
+    {
+      "cut": "2025-08-29",
+      "reason": "insufficient-price-input-coverage",
+      "research_history_weight": 0,
+      "selected": false
+    },
+    {
+      "cut": "2025-09-30",
+      "reason": "selected-before-model-results",
+      "research_history_weight": 0.71440447156233,
+      "selected": true
+    },
+    {
+      "cut": "2025-10-31",
+      "reason": "insufficient-price-input-coverage",
+      "research_history_weight": 0,
+      "selected": false
+    },
+    {
+      "cut": "2025-11-28",
+      "reason": "insufficient-price-input-coverage",
+      "research_history_weight": 0,
+      "selected": false
+    },
+    {
+      "cut": "2025-12-31",
+      "reason": "selected-before-model-results",
+      "research_history_weight": 0.72044170907433,
+      "selected": true
+    },
+    {
+      "cut": "2026-01-30",
+      "reason": "insufficient-price-input-coverage",
+      "research_history_weight": 0,
+      "selected": false
+    },
+    {
+      "cut": "2026-02-27",
+      "reason": "insufficient-price-input-coverage",
+      "research_history_weight": 0,
+      "selected": false
+    },
+    {
+      "cut": "2026-03-31",
+      "reason": "insufficient-price-input-coverage",
+      "research_history_weight": 0,
+      "selected": false
+    },
+    {
+      "cut": "2026-04-30",
+      "reason": "selected-before-model-results",
+      "research_history_weight": 0.72769341432402,
+      "selected": true
+    },
+    {
+      "cut": "2026-05-29",
+      "reason": "insufficient-price-input-coverage",
+      "research_history_weight": 0,
+      "selected": false
+    },
+    {
+      "cut": "2026-06-30",
+      "reason": "selected-before-model-results",
+      "research_history_weight": 0.71618738605401,
+      "selected": true
+    },
+    {
+      "cut": "2026-07-31",
+      "reason": "insufficient-price-input-coverage",
+      "research_history_weight": 0,
+      "selected": false
+    },
+    {
+      "cut": "2026-08-31",
+      "reason": "insufficient-price-input-coverage",
+      "research_history_weight": 0,
+      "selected": false
+    },
+    {
+      "cut": "2026-09-30",
+      "reason": "selected-before-model-results",
+      "research_history_weight": 0.7117151278546701,
+      "selected": true
+    }
+  ],
+  "origins": [
+    {
+      "cut": "2024-12-31",
+      "file": "2024-12-31.json.gz",
+      "sha256": "8671807a68cb8a38329e78ae849ea1d63a03af0fd0f4b4da2e512aed3db46a42",
+      "usable_stocks": 127,
+      "forecast_stocks": 38,
+      "records": 234,
+      "snapshot_sha256": "35d22c2ba079552e01c69058ece1916ea3e28b4af8460bfbafbc033a3fdc2b92"
+    },
+    {
+      "cut": "2025-04-30",
+      "file": "2025-04-30.json.gz",
+      "sha256": "29dc4cc2a44b3ce27e3e29761855a550ebe6117f45215d1de151c5122c0ff5ba",
+      "usable_stocks": 134,
+      "forecast_stocks": 38,
+      "records": 234,
+      "snapshot_sha256": "874f4c6496825089d16f6bfd7aad517307844f34be358fe96fad9e2c22a80ced"
+    },
+    {
+      "cut": "2025-06-30",
+      "file": "2025-06-30.json.gz",
+      "sha256": "f5e467b4430edab179691e0a816bbb03ff317402066537c07cc18add25cd354a",
+      "usable_stocks": 131,
+      "forecast_stocks": 38,
+      "records": 234,
+      "snapshot_sha256": "c9d7c14be61e389a5fe28190f92b81a09ef530a7b4c331e02265428e34ad7248"
+    },
+    {
+      "cut": "2025-09-30",
+      "file": "2025-09-30.json.gz",
+      "sha256": "6729df37068b09f0c9c0db206d6f82ca471c6f1d691939b34edab5b959d0fa96",
+      "usable_stocks": 135,
+      "forecast_stocks": 38,
+      "records": 234,
+      "snapshot_sha256": "97a054db4a809c1079deb8d84560a21dfb2284a823150dcb2ed73d6fbe646be0"
+    },
+    {
+      "cut": "2025-12-31",
+      "file": "2025-12-31.json.gz",
+      "sha256": "5525a4f4c557bdd5b9ce5e4865ebc77b955b572a44290854b4e15330aa1d553c",
+      "usable_stocks": 134,
+      "forecast_stocks": 38,
+      "records": 234,
+      "snapshot_sha256": "69c7f973d93982709fcb53b51e7f663a951d62ed5dd75ae9f876d842144521e2"
+    },
+    {
+      "cut": "2026-04-30",
+      "file": "2026-04-30.json.gz",
+      "sha256": "6b7acec5567fdf1641087bd973575fbaf5715f0e6d1ac17f9f9d3f61da8a3874",
+      "usable_stocks": 139,
+      "forecast_stocks": 38,
+      "records": 234,
+      "snapshot_sha256": "d7009752344435b052a37585290ea36135733add29c8d76e3951e4d73d8e6c29"
+    },
+    {
+      "cut": "2026-06-30",
+      "file": "2026-06-30.json.gz",
+      "sha256": "61dfd07b61fd02866428302ef0861cda1c9bdbb62ca47f0ec90904ec6e90c329",
+      "usable_stocks": 141,
+      "forecast_stocks": 38,
+      "records": 234,
+      "snapshot_sha256": "26d9749e8c58a34003ed6773760376133f7a5aa53054d3c565c10fda18665120"
+    },
+    {
+      "cut": "2026-09-30",
+      "file": "2026-09-30.json.gz",
+      "sha256": "fb5c9443c9af0904cd51f8f5362e7a2bb5eafeaad589e7663366e5716a4a5f36",
+      "usable_stocks": 139,
+      "forecast_stocks": 38,
+      "records": 234,
+      "snapshot_sha256": "5ec5adb254ee7fec2573c22255e26697a7f3d858f5225adf4015ee40b932fb9f"
+    }
+  ],
+  "production_sources": [
+    {
+      "path": "dist/assets/js/analytics.mjs",
+      "sha256": "612c01e55a714b43a21dac1cdce19147d3893338625beacde7f3b8e5d38a5e5f"
+    },
+    {
+      "path": "dist/assets/js/app.mjs",
+      "sha256": "5679b78772798b0cd3a985ba11f10d019900a1f975345c4087994502460e980d"
+    },
+    {
+      "path": "dist/assets/js/attribution.mjs",
+      "sha256": "2fd58e83af4686e68052504379e5d9267217777ab5c7b7dd432c92f630f573a1"
+    },
+    {
+      "path": "dist/assets/js/calibration-audit.mjs",
+      "sha256": "76c47ca749a637366ad8651a560e7a9c97bdc1b2d35a0fb7de8c594bbad069f4"
+    },
+    {
+      "path": "dist/assets/js/cashflows.mjs",
+      "sha256": "518eaf28bc464e04ea204791410e980cf071559d77b407c4580546174ac82503"
+    },
+    {
+      "path": "dist/assets/js/charts.mjs",
+      "sha256": "459def0d95597cbd9dfdf7790c60a8e080693e0130e2e808cb443f7c6c7e6e54"
+    },
+    {
+      "path": "dist/assets/js/composer-worker.mjs",
+      "sha256": "25d6d45819a6ce255bd56bd7db558ddfefd91d5a302a521afefc4d3b3d81cb53"
+    },
+    {
+      "path": "dist/assets/js/composer.mjs",
+      "sha256": "65a41545c2b96bec49c14b3f0c47f3f13d1e113f13a86c7bf18ae264c2dd60e4"
+    },
+    {
+      "path": "dist/assets/js/conditional-risk.mjs",
+      "sha256": "cfe7d963905350657961487d3d4c57d104ccb8e4ce36bf5d68f6c54c370fd79b"
+    },
+    {
+      "path": "dist/assets/js/copula-covariance.mjs",
+      "sha256": "9da2ee17bf35fae20b53954f92ae4da423d1a9639a8169752490a9933ad18a89"
+    },
+    {
+      "path": "dist/assets/js/distribution-ledger.mjs",
+      "sha256": "a8d134fba74ea062a4e35f64c3b70b0dd1af7bdd9c37e55d9266f83f65f315fa"
+    },
+    {
+      "path": "dist/assets/js/earnings-normalization.mjs",
+      "sha256": "3746c60e755fd0b63451d5ed877bbba1416ff9424b196654418f44db36f52b69"
+    },
+    {
+      "path": "dist/assets/js/economic-exposure.mjs",
+      "sha256": "6eadc8ec764fef29fce070333ed7dc7e92fcdf7528f47a29d7f9456627853e2a"
+    },
+    {
+      "path": "dist/assets/js/factor-covariance.mjs",
+      "sha256": "915a75799d31711ab4439c0cf7bcb870b9f9913eb81d04150f7d789099d5c4b8"
+    },
+    {
+      "path": "dist/assets/js/factors.mjs",
+      "sha256": "ebdd948cd779811d7f002ee2a6ddcc805d34dde957eb290757865aca5b6755f7"
+    },
+    {
+      "path": "dist/assets/js/financial-freshness.mjs",
+      "sha256": "538c0f4cb91162cb07b42ced80b23b507bf83e646b62a7062ae2334f0688e983"
+    },
+    {
+      "path": "dist/assets/js/forecast-worker.mjs",
+      "sha256": "448366b2122423a3b9064259347eaefe44425335ecfc1bf60e099817a10f5f7d"
+    },
+    {
+      "path": "dist/assets/js/forecast.mjs",
+      "sha256": "b8cca9fe3b93b9c2c1552ade6b551711825027851b4eb6b5c11267cf5ce3c25b"
+    },
+    {
+      "path": "dist/assets/js/growth-evidence.mjs",
+      "sha256": "319212a3bc7992b29d6aac02875f30fd40ea902e483e9de4f22a2c436621cff7"
+    },
+    {
+      "path": "dist/assets/js/journal-store.mjs",
+      "sha256": "3b948e12b4a38fa7a1e08459cb85b12d9183b7aa1b68d23827c44ec13edf2974"
+    },
+    {
+      "path": "dist/assets/js/journal.mjs",
+      "sha256": "8d89aa52c7104b80c5168acf9966960226026787b7466159588fdd89b19a0031"
+    },
+    {
+      "path": "dist/assets/js/monitor.mjs",
+      "sha256": "e40ca384f2bc92c25453b800d508c4cef03f17a38dce8cfb62662e55e5d422d2"
+    },
+    {
+      "path": "dist/assets/js/observation.mjs",
+      "sha256": "228761022a5068ff60863a6376a4455906f609bd6d885da76ca6e780436cd129"
+    },
+    {
+      "path": "dist/assets/js/path-model.mjs",
+      "sha256": "5257972822683cc807a67dfd19c7cdd1f02026bbfbb3f7bce405904af91076f7"
+    },
+    {
+      "path": "dist/assets/js/policy.mjs",
+      "sha256": "edcbd064f199e42df574ffe01d3dd67e0b8daf8b3a120e67256c36e206745a17"
+    },
+    {
+      "path": "dist/assets/js/price-monitor.mjs",
+      "sha256": "27f72f69e50eb145eccc04ebbf0280e0d5e0ddb11100b85e6117e46272d87cd4"
+    },
+    {
+      "path": "dist/assets/js/random.mjs",
+      "sha256": "7d071161216b97a72b29e2608f232bae8a3624c84c0768d63433812c136abe15"
+    },
+    {
+      "path": "dist/assets/js/reference-preset.mjs",
+      "sha256": "6279cefa0fcbb607df35d0dd9ce2a6c643a0cbb360f4c7475fe3e4e4b9ef6c4a"
+    },
+    {
+      "path": "dist/assets/js/reliable-selection.mjs",
+      "sha256": "35da8ebce512e68f6cb59ac7ec1272e3c56e7e356de9a84d781598d02221310f"
+    },
+    {
+      "path": "dist/assets/js/research-model.mjs",
+      "sha256": "e346e97a2b08a509047f77aa7247f18165f43d57dabb6e3bb4676430239f2eb5"
+    },
+    {
+      "path": "dist/assets/js/residual-dependence.mjs",
+      "sha256": "d3b45e4436df8469e442984df7eb33dcdd8226fad5904464c4c21fb2b1ebdb59"
+    },
+    {
+      "path": "dist/assets/js/return-model.mjs",
+      "sha256": "e39e3a71e1b54a347649d54a11c3964bb289b0fa55befc6a5d6d7b2df56f43d4"
+    },
+    {
+      "path": "dist/assets/js/risk-math.mjs",
+      "sha256": "4991ea8ad1388aa28ca5e4d2a54bd968995b4c76fc53e33d4db109b8a51510d3"
+    },
+    {
+      "path": "dist/assets/js/robust-composer.mjs",
+      "sha256": "852bccc282bd1080020dd975f31fbb92fb3a5ef2c3ee352787577f3d11a45678"
+    },
+    {
+      "path": "dist/assets/js/robust-core.mjs",
+      "sha256": "238a121b812ad478aef93505aff117bb33d7dc76a67294d55c5ae6b48926f830"
+    },
+    {
+      "path": "dist/assets/js/robust-decision.mjs",
+      "sha256": "3830ae8383478d219f844da44abd7036236e75f1e76fdf9c152d84e177d3bdc1"
+    },
+    {
+      "path": "dist/assets/js/robust-transition.mjs",
+      "sha256": "447a4b4302150a36633826779bd247bdee50e3054bc9dd7c44abae998e2ca90f"
+    },
+    {
+      "path": "dist/assets/js/robust-worker.mjs",
+      "sha256": "b0bf90c949a566e0e0f8959794926b816cacaa6d5665c7c673b5e52d4d326773"
+    },
+    {
+      "path": "dist/assets/js/simulation-evidence.mjs",
+      "sha256": "85470e4974fcd8f1cfdc08de1da02d62026e0ddf4344f8805d2bc3b4be1565a4"
+    },
+    {
+      "path": "dist/assets/js/ui/decision-views.mjs",
+      "sha256": "360a21e97d2ea84d96bbe3f966164ca6843875d5dd2f52175e24ea94d68edc63"
+    },
+    {
+      "path": "dist/assets/js/ui/dom.mjs",
+      "sha256": "904a7dd59314aeb55890eeed860c21f671c36a355c59de9b62ea80604afb7c26"
+    },
+    {
+      "path": "dist/assets/js/ui/format.mjs",
+      "sha256": "cf3c81f24f9cc70b5953d9bb2f9988723052dc11173e1dd05fbb01eb48d43c56"
+    },
+    {
+      "path": "dist/assets/js/ui/templates.mjs",
+      "sha256": "a902bb88bad0da25d83460f27e5859fa116e8f3dc0b4b6f90b2be2385292968e"
+    },
+    {
+      "path": "dist/assets/js/ui/ticker-rotation.mjs",
+      "sha256": "a5d6e767b81c8da2e60cd5692ebc8705972e6900d244970e5c3e2d474b384a71"
+    },
+    {
+      "path": "dist/assets/js/ui/validation-review.mjs",
+      "sha256": "48351b93a56332ca379cdfee53f036e37a94dbcd70d93c23b26968cbf4eb7f63"
+    },
+    {
+      "path": "dist/assets/js/ui/value-flash.mjs",
+      "sha256": "6717593760856b743d3828bf4b6977ca1db04723750aa61f51c8ac12d2420b89"
+    },
+    {
+      "path": "dist/assets/js/ui/views.mjs",
+      "sha256": "b190f463dca424705fbe2bc5d2030b6c81bf25eab9da9d73a55eb59f2b53d239"
+    },
+    {
+      "path": "dist/assets/js/universe.mjs",
+      "sha256": "aa101a10bf02860e0c52bb4c462edded33157e425df6e5d6792b9bd29796607f"
+    }
+  ],
+  "evidence": {
+    "inputs_uncompressed_sha256": "746fd6f5de4f60d05cee8a389f65349779c3338c1e3f2c9ce5422d2a32d77a37",
+    "protocol_sha256": "10190973ab04da55d8a14c6cc3c606896045eea4c5fce329812c747bf24aed76",
+    "eps_archive_sha256": "37286e413f228ade436fa0e34317db751d44f93335fcd334232d850b7e5fdaa6",
+    "price_audit_sha256": "40288c050be14cb2981a477a65ad9d0749cfb03cc7ceda61709d7b491914028c",
+    "canonical_market_sha256": "4581c5a532b62f5929756a4e33324577f08edeb070483e8940a53c4db4cf157a",
+    "production_sources_sha256": "b5febd86812094a3942536b506347b2bbdd35aff65b08d9603a65978df9a9850",
+    "input_compiler_sha256": "d51fb48739a046f4a3a2b33ff06977c3d9efe46764fd82adb2ea1ce2490d6788",
+    "stock_compiler_sha256": "6589205ce5aff8bc84605756ab35b36ecc424504422d4f7248f5936d93264de2",
+    "runner_sha256": "dbc571d3b882e322634a791ec593ddd8efcf633605c8de8bff0f88321eee4fac"
+  }
+}
