@@ -4,7 +4,14 @@ import {readFileSync,writeFileSync,mkdtempSync,rmSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {createHash} from 'node:crypto';
-import {riskAttribution,gainFailures,verifyCandidate,verifySources} from '../scripts/attribute_scoped_pilot.mjs';
+import {riskAttribution,gainFailures,verifyCandidate,verifySources,assertEquivalent} from '../scripts/attribute_scoped_pilot.mjs';
+
+test('cross-runtime verification tolerates roundoff but never decision, sample or material numeric changes',()=>{
+  assertEquivalent({value:.1+.2,passes:false,rows:[1]}, {value:.3,passes:false,rows:[1]});
+  for(const value of [{value:.300001,passes:false,rows:[1]},
+      {value:.3,passes:true,rows:[1]},{value:.3,passes:false,rows:[1,2]}])
+    assert.throws(()=>assertEquivalent(value,{value:.3,passes:false,rows:[1]}),/mismatch/);
+});
 
 test('risk audit distinguishes a point violation from an uncertainty-only rejection at the boundary',()=>{
   const rows=riskAttribution({rows:[

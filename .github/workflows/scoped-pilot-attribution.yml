@@ -21,9 +21,7 @@ jobs:
           node-version: '22'
       - run: node --test tests/scoped-pilot-attribution.test.mjs
       - name: Replay original selection paths for fixed finalists
-        run: |
-          node scripts/attribute_scoped_pilot.mjs
-          git diff --exit-code -- data/historical/scoped-pilot-attribution-v1/report.json
+        run: node scripts/attribute_scoped_pilot.mjs --verify
       - uses: actions/upload-artifact@v4
         with:
           name: pilot-attribution-${{ github.sha }}

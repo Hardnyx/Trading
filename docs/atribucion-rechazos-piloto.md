@@ -80,6 +80,8 @@ node scripts/attribute_scoped_pilot.mjs
 node --test tests/scoped-pilot-attribution.test.mjs
 ```
 
-El workflow `scoped-pilot-attribution.yml` reproduce el informe y exige que
-no cambie. Requiere los módulos exactos del piloto; un cambio futuro del
+El workflow `scoped-pilot-attribution.yml` reproduce el informe y compara
+campos discretos, estructura y hashes exactamente. Los números admiten
+una tolerancia relativa/absoluta de 1e-12 por redondeo entre versiones de
+V8; no permite cambios en decisiones ni en la muestra. Requiere los módulos exactos del piloto; un cambio futuro del
 motor debe usar una copia de esos módulos o ejecutarse desde este commit.

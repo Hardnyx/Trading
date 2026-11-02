@@ -14,6 +14,18 @@ import {tradePlan} from '../dist/assets/js/policy.mjs';
 
 const ROOT=fileURLToPath(new URL('../',import.meta.url));
 const check=(ok,message)=>{if(!ok)throw Error(message);};
+// V8 versions can differ in the last bits of transcendental functions.
+// Discrete fields, keys and array order remain exact; only finite floats have a tolerance.
+export function assertEquivalent(actual,expected,path='report') {
+  if(typeof actual==='number'&&typeof expected==='number') {
+    check(Number.isFinite(actual)&&Number.isFinite(expected)&&
+      Math.abs(actual-expected)<=1e-12*Math.max(1,Math.abs(expected)),`Numerical mismatch: ${path}`);
+  } else if(actual&&expected&&typeof actual==='object'&&typeof expected==='object') {
+    check(Array.isArray(actual)===Array.isArray(expected)&&
+      isDeepStrictEqual(Object.keys(actual).sort(),Object.keys(expected).sort()),`Structure mismatch: ${path}`);
+    for(const key of Object.keys(expected))assertEquivalent(actual[key],expected[key],path+'.'+key);
+  } else check(actual===expected,`Value mismatch: ${path}`);
+}
 export function verifySources(manifest, root=ROOT) {
   check(manifest.length>0,'Missing archived production manifest');
   for(const source of manifest)
@@ -50,7 +62,7 @@ export function attributeOrigin(origin,result,protocol) {
   check(isDeepStrictEqual(x.assets.map(a=>a.symbol),result.prepared.symbols),'Prepared universe mismatch');
   for(const key of ['anchors','covariance','innovationCovariance','buyAllowed']) {
     const archivedKey={innovationCovariance:'innovation_covariance',buyAllowed:'buy_allowed'}[key]||key;
-    check(isDeepStrictEqual(JSON.parse(JSON.stringify(x[key])),result.prepared[archivedKey]),`Prepared ${key} mismatch`);
+    assertEquivalent(JSON.parse(JSON.stringify(x[key])),result.prepared[archivedKey],'prepared.'+key);
   }
   const selection=result.proposal.diagnostics.reliableSelection,
     paths=result.proposal.diagnostics.stability.commonPaths,
@@ -112,7 +124,7 @@ export function attributeOrigin(origin,result,protocol) {
     model_rejections,candidates};
 }
 
-export function main(output='data/historical/scoped-pilot-attribution-v1/report.json') {
+export function main(output='data/historical/scoped-pilot-attribution-v1/report.json',verify=false) {
   const base=resolve(ROOT,'data/historical/scoped-engine-pilot-v1'),
     inputs=readFileSync(resolve(base,'inputs.json.gz')),results=readFileSync(resolve(base,'results.json.gz')),
     bundle=JSON.parse(gunzipSync(inputs)),full=JSON.parse(gunzipSync(results)),
@@ -135,8 +147,10 @@ export function main(output='data/historical/scoped-pilot-attribution-v1/report.
       return attributeOrigin(origin,full.results[i],bundle.protocol);
     })};
   const target=resolve(ROOT,output);mkdirSync(dirname(target),{recursive:true});
-  writeFileSync(target,JSON.stringify(report,null,2)+'\n');
+  if(verify)assertEquivalent(report,JSON.parse(readFileSync(target)));
+  else writeFileSync(target,JSON.stringify(report,null,2)+'\n');
   console.log(JSON.stringify(report.origins.map(o=>({cut:o.cut,finalists:o.finalists,model_rejections:o.model_rejections})),null,2));
   return report;
 }
-if(process.argv[1]&&resolve(process.argv[1])===fileURLToPath(import.meta.url))main(...process.argv.slice(2));
+if(process.argv[1]&&resolve(process.argv[1])===fileURLToPath(import.meta.url))
+  main(process.argv.slice(2).find(a=>a!=='--verify'),process.argv.includes('--verify'));
