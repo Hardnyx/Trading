@@ -4,6 +4,12 @@
 ya mide errores frente a un proxy de retorno total. El informe original y
 sus archivos permanecen intactos; no se certifican flujos ni probabilidades.
 
+**Ampliación del 2-nov:** la [atribución de rechazos](atribucion-rechazos-piloto.md)
+reproduce los controles de las finalistas y el
+[contraste de distribuciones](distribuciones-piloto-integrado.md) puntúa el
+proceso bruto de retorno total a 21/63/252 sesiones. Se mantienen separados
+del piloto original y no validan su cuenta ni los dividendos en efectivo.
+
 El 31-oct-2026 se ejecutó el compositor de producción 0.35.0 en dos fechas
 reconstruidas. En ambas conservó la cuenta inicial de USD 100.000 en efectivo.
 Ninguna transición examinada resultó admisible bajo todos los controles.

@@ -1,0 +1,37 @@
+name: Scoped pilot distribution scores
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/scoped_pilot_distributions.mjs'
+      - 'scripts/score_scoped_distributions.mjs'
+      - 'tests/scoped-pilot-distributions.test.mjs'
+      - 'tests/scoped-distribution-scores.test.mjs'
+      - 'data/historical/scoped-pilot-distributions-v1/**'
+      - 'data/historical/scoped-pilot-distribution-scores-v1/**'
+      - 'docs/protocolo-distribuciones-piloto-v1.json'
+      - '.github/workflows/scoped-distribution-scores.yml'
+permissions:
+  contents: read
+jobs:
+  reproduce:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test tests/scoped-pilot-distributions.test.mjs tests/scoped-distribution-scores.test.mjs
+      - name: Verify archived forecast reconstruction
+        run: node scripts/scoped_pilot_distributions.mjs
+      - name: Verify scores against frozen outcomes
+        run: node scripts/score_scoped_distributions.mjs --verify
+      - uses: actions/upload-artifact@v4
+        with:
+          name: scoped-distribution-scores-${{ github.sha }}
+          path: data/historical/scoped-pilot-distribution-scores-v1/report.json
+          retention-days: 90

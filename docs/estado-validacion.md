@@ -21,6 +21,7 @@ conserva los cambios y cifras anteriores.
 | Piloto integrado de desarrollo | 2 cortes ejecutados; ambos mantienen 100% CASH | Compositor y revisión robusta reales, universo parcial y variante EWMA; 0/48 cortes certificados y sin evaluar resultados realizados |
 | Contraste descriptivo de anclas del piloto | 38 acciones por corte, 2 años solapados; MAE 19,86/46,54 pp frente a 19,71/45,49 pp del ancla común SPY | No mejora ese comparador; proxy bruto ajustado, no realización de flujos ni calibración del simulador |
 | Atribución de rechazos del piloto | 23 finalistas reproducidas por corte; las 22 inversiones fallan riesgo pese a superar el umbral económico | Probabilidad de pérdida con margen de Monte Carlo decisiva; no calibra límites ni acredita superioridad del efectivo |
+| Distribuciones reconstruidas del piloto | 38 acciones por corte a 21/63/252 sesiones; CRPS y Brier mejores que EWMA cero en 5/6 grupos | Dos orígenes retrospectivos; sesgos anuales −11,50/−38,93 pp, flujos en efectivo sin conciliar y 0/48 cortes certificados |
 | Candidato de oro con factores rezagados | 34 orígenes; R² fuera de muestra −0,057 frente a media histórica | Empeora el MSE un 5,7%; permanece en sombra |
 
 ## Recuperación de fuentes históricas (30-oct)
@@ -106,6 +107,17 @@ muestreo pasarían todos los controles de riesgo 16 y 3 alternativas,
 respectivamente. Es una descomposición diagnóstica, sin cambiar la decisión
 ni acreditar los límites. El informe nuevo conserva motivos por modelo;
 no repite búsqueda o confirmación y no reescribe el piloto original.
+
+El [contraste de distribuciones del 2-nov](distribuciones-piloto-integrado.md)
+archiva primero las distribuciones implícitas en el núcleo original y luego
+puntúa 21/63/252 sesiones contra precios congelados. Todas las 228 filas
+acción/horizonte se conservan, sin tratarlas como experimentos independientes.
+Mejora CRPS, Brier y RMSE frente a EWMA de retorno cero en cinco de seis
+grupos, pero las medias anuales subestiman el resultado en 11,50/38,93 pp y
+las probabilidades de pérdida anual son 45,73%/48,37% frente a frecuencias
+28,95%/10,53%. Evalúa retorno total bruto antes de separar dividendos:
+no valida los flujos en efectivo del piloto ni su cuenta. No es una prueba
+independiente, no calibra el motor y no cambia las predicciones publicadas.
 
 ## Cuenta histórica reconstruida de la señal (29-oct)
 
