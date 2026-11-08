@@ -1,0 +1,282 @@
+{
+  "schema": "first-cut-source-triage-v1",
+  "candidate_cut": "2024-12-31",
+  "selection_basis": "earliest-date-with-70pct-reconstructed-history-weight-public-SPY-source-and-explicit-CUSIP-observations-not-ex-post-performance",
+  "causal_cut_certified": false,
+  "sample_role": "previously-inspected-retrospective-development",
+  "source_chain": {
+    "market_commit": "8dcd06cfd06b2ca34ca6fb64e31d5b6344525cd5",
+    "provider_manifest_sha256": "e07d3771cccd89050d8d5a14e774ad7c17a4b46920204ce0b91b28a0e6908194",
+    "identifier_manifest_sha256": "cfbb3ad7848fbb9d0efaf21f557b030e0c5b849f7a3d6426bd078e963ae4ed31",
+    "statistical_protocol_sha256": "6a8d5f716292c04f8663a3e54a39e8dda5a7843fdae9a28045286570aba4addc"
+  },
+  "evidence_at_cut": {
+    "macro_verified": 16,
+    "macro_expected": 16,
+    "spy_accession": "0001752724-24-264697",
+    "spy_as_of": "2024-09-30",
+    "spy_available_after_day": "2024-11-29",
+    "spy_age_days": 92,
+    "original_explicit_ticker_weight": 0.96371326022406,
+    "research_history_weight": 0.70256651152596,
+    "point_compatible_weight": 0.71043457661952,
+    "price_identity_certified": false,
+    "original_price_vintages_verified": false,
+    "cashflow_execution_certified": false
+  },
+  "counts": {
+    "verified_sources": 2,
+    "blocked": 12,
+    "certified_components": 0
+  },
+  "independent_blockers": [
+    "historical_identifiers",
+    "historical_model_parameters"
+  ],
+  "stages": [
+    {
+      "component": "bond_etf_profiles",
+      "status": "blocked",
+      "upstream_blockers": [
+        "historical_identifiers"
+      ],
+      "direct_blockers": [
+        "missing-original-historical-bond-and-etf-profiles"
+      ],
+      "evidence": [
+        "data/historical/provider-inputs-v1/readiness.json",
+        "docs/pendientes.md"
+      ],
+      "recovery_owner_role": "historical-fixed-income-and-etf-data",
+      "license_review": "required-before-reuse-or-distribution",
+      "historical_input_certified": false
+    },
+    {
+      "component": "corporate_actions",
+      "status": "blocked",
+      "upstream_blockers": [
+        "historical_universe"
+      ],
+      "direct_blockers": [
+        "missing-causal-split-spinoff-merger-and-delisting-reconciliation"
+      ],
+      "evidence": [
+        "data/historical/price-reconciliation-v1/coverage.json",
+        "docs/precios-historicos.md"
+      ],
+      "recovery_owner_role": "security-master-and-corporate-actions",
+      "license_review": "required-before-reuse-or-distribution",
+      "historical_input_certified": false
+    },
+    {
+      "component": "fundamentals_and_quality",
+      "status": "blocked",
+      "upstream_blockers": [
+        "historical_universe"
+      ],
+      "direct_blockers": [
+        "missing-full-point-in-time-financials-quality-and-confidence-adapter"
+      ],
+      "evidence": [
+        "data/historical/expanded-stock-validation-v1/manifest.json",
+        "docs/fuentes-historicas.md"
+      ],
+      "recovery_owner_role": "point-in-time-financial-data",
+      "license_review": "required-before-reuse-or-distribution",
+      "historical_input_certified": false
+    },
+    {
+      "component": "historical_identifiers",
+      "status": "blocked",
+      "upstream_blockers": [],
+      "direct_blockers": [
+        "missing-verified-historical-cusip-instrument-price-links"
+      ],
+      "evidence": [
+        "data/historical/identifier-observations-v1/coverage.json",
+        "data/historical/identifier-sources-v1/manifest.json"
+      ],
+      "recovery_owner_role": "security-master-and-corporate-actions",
+      "license_review": "required-before-reuse-or-distribution",
+      "historical_input_certified": false
+    },
+    {
+      "component": "historical_model_parameters",
+      "status": "blocked",
+      "upstream_blockers": [],
+      "direct_blockers": [
+        "current-kernel-and-catalogue-have-no-per-cut-training-or-ex-ante-provenance"
+      ],
+      "evidence": [
+        "docs/protocolo-replay-integral-v1.json",
+        "data/historical/replay-plan-v1/coverage.json"
+      ],
+      "recovery_owner_role": "model-governance",
+      "license_review": "required-before-reuse-or-distribution",
+      "historical_input_certified": false
+    },
+    {
+      "component": "historical_universe",
+      "status": "blocked",
+      "upstream_blockers": [
+        "historical_identifiers"
+      ],
+      "direct_blockers": [
+        "missing-historical-membership-including-delisted-instruments"
+      ],
+      "evidence": [
+        "data/historical/identifier-observations-v1/coverage.json"
+      ],
+      "recovery_owner_role": "security-master-and-corporate-actions",
+      "license_review": "required-before-reuse-or-distribution",
+      "historical_input_certified": false
+    },
+    {
+      "component": "macro_vintages",
+      "status": "verified-source",
+      "upstream_blockers": [],
+      "direct_blockers": [],
+      "evidence": [
+        "data/historical/provider-inputs-v1/readiness.json",
+        "data/historical/provider-inputs-v1/manifest.json"
+      ],
+      "recovery_owner_role": "historical-data-engineering",
+      "license_review": "required-before-reuse-or-distribution",
+      "historical_input_certified": false
+    },
+    {
+      "component": "monte_carlo",
+      "status": "blocked",
+      "upstream_blockers": [
+        "return_forecasts",
+        "volatility_and_dependence"
+      ],
+      "direct_blockers": [
+        "historical-production-simulation-adapter-not-implemented"
+      ],
+      "evidence": [
+        "data/historical/replay-plan-v1/coverage.json"
+      ],
+      "recovery_owner_role": "model-engineering",
+      "license_review": "required-before-reuse-or-distribution",
+      "historical_input_certified": false
+    },
+    {
+      "component": "orders_and_account",
+      "status": "blocked",
+      "upstream_blockers": [
+        "portfolio_optimization",
+        "tradable_prices_and_distributions"
+      ],
+      "direct_blockers": [
+        "historical-orders-and-corporate-action-account-adapter-not-implemented"
+      ],
+      "evidence": [
+        "data/historical/replay-plan-v1/coverage.json",
+        "data/historical/cashflow-reconciliation-v1/report.json"
+      ],
+      "recovery_owner_role": "accounting-and-execution",
+      "license_review": "required-before-reuse-or-distribution",
+      "historical_input_certified": false
+    },
+    {
+      "component": "portfolio_optimization",
+      "status": "blocked",
+      "upstream_blockers": [
+        "monte_carlo",
+        "historical_universe"
+      ],
+      "direct_blockers": [
+        "historical-production-composer-adapter-not-implemented"
+      ],
+      "evidence": [
+        "data/historical/replay-plan-v1/coverage.json",
+        "data/historical/scoped-engine-pilot-v1/report.json"
+      ],
+      "recovery_owner_role": "portfolio-engineering",
+      "license_review": "required-before-reuse-or-distribution",
+      "historical_input_certified": false
+    },
+    {
+      "component": "return_forecasts",
+      "status": "blocked",
+      "upstream_blockers": [
+        "historical_universe",
+        "fundamentals_and_quality",
+        "bond_etf_profiles",
+        "tradable_prices_and_distributions",
+        "historical_model_parameters"
+      ],
+      "direct_blockers": [
+        "full-as-of-snapshot-and-production-valuation-adapter-not-implemented"
+      ],
+      "evidence": [
+        "data/historical/replay-plan-v1/coverage.json"
+      ],
+      "recovery_owner_role": "model-engineering",
+      "license_review": "required-before-reuse-or-distribution",
+      "historical_input_certified": false
+    },
+    {
+      "component": "spy_holdings_source",
+      "status": "verified-source",
+      "upstream_blockers": [],
+      "direct_blockers": [],
+      "evidence": [
+        "data/historical/provider-inputs-v1/readiness.json",
+        "data/historical/provider-inputs-v1/manifest.json"
+      ],
+      "recovery_owner_role": "historical-data-engineering",
+      "license_review": "required-before-reuse-or-distribution",
+      "historical_input_certified": false
+    },
+    {
+      "component": "tradable_prices_and_distributions",
+      "status": "blocked",
+      "upstream_blockers": [
+        "corporate_actions"
+      ],
+      "direct_blockers": [
+        "current-adjusted-history-is-not-certified-historical-execution-and-cashflows"
+      ],
+      "evidence": [
+        "data/historical/price-reconciliation-v1/coverage.json",
+        "data/historical/cashflow-reconciliation-v1/report.json"
+      ],
+      "recovery_owner_role": "pricing-and-cashflow-reconciliation",
+      "license_review": "required-before-reuse-or-distribution",
+      "historical_input_certified": false
+    },
+    {
+      "component": "volatility_and_dependence",
+      "status": "blocked",
+      "upstream_blockers": [
+        "tradable_prices_and_distributions",
+        "historical_model_parameters"
+      ],
+      "direct_blockers": [
+        "per-cut-refit-and-production-risk-adapter-not-implemented"
+      ],
+      "evidence": [
+        "data/historical/replay-plan-v1/coverage.json"
+      ],
+      "recovery_owner_role": "risk-model-engineering",
+      "license_review": "required-before-reuse-or-distribution",
+      "historical_input_certified": false
+    }
+  ],
+  "next_action": "Obtain dated vendor instrument identity and as-of risk-parameter provenance before enabling historical forecasts or account replay.",
+  "source_paths": [
+    "docs/protocolo-replay-integral-v1.json",
+    "data/historical/replay-plan-v1/coverage.json",
+    "data/historical/provider-inputs-v1/readiness.json",
+    "data/historical/identifier-observations-v1/coverage.json",
+    "data/historical/price-reconciliation-v1/coverage.json",
+    "data/historical/full-engine-input-audit-v1/manifest.json",
+    "data/historical/provider-inputs-v1/manifest.json",
+    "data/historical/identifier-sources-v1/manifest.json"
+  ],
+  "full_engine_replay_ready": false,
+  "production_eligible": false,
+  "predictive_validation": "not-established"
+}
