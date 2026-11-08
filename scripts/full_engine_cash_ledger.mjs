@@ -142,11 +142,14 @@ export function verifyAccountInputs({calendar,assets,decisions,flows=[],initialC
       'Sealed forecast must be issued after the cut close and published before next-session opening');
     check(d.model_status==='proposed'||d.model_status==='hold',
       'No feasible proposal was available at the decision cut');
-    const target=weights(d.positions);
-    for(const symbol of target.keys())
+    const publishedWeights=weights(d.positions);
+    // A published HOLD must preserve the existing account, not cause a
+    // fresh optimization or a drift-correcting rebalance at a later close.
+    const target=d.model_status==='hold'?null:publishedWeights;
+    if(target)for(const symbol of target.keys())
       check(symbol==='CASH'||assetMap.has(symbol),
-        'Held asset is missing from raw-price and dividend event index');
-    execs.set(execute,{...d,target});
+        'Target asset is missing from raw-price and dividend event index');
+    execs.set(execute,{...d,target,publishedWeights});
   }
   const flowByDate=new Map();
   for(const f of flows){
@@ -254,7 +257,20 @@ export function replayCashAccount({
       check(dayState.cash>=-epsilon(lastNav),'Insufficient settled cash for withdrawals');
       let marked=valuation(dayState,date,assetMap);
       const decision=execs.get(date);
-      if(decision){
+      if(decision && decision.model_status==='hold'){
+        const capital=marked.nav;
+        const receipt={cut:decision.cut,execute:date,
+          first_publication:decision.publication.first_commit,
+          original_forecast_sha256:decision.forecast_sha256,
+          decision_kind:'hold',published_weights:[...decision.publishedWeights]
+            .map(([symbol,weight])=>({symbol,weight})),
+          target_weights:null,shadow_trade_count:0,trading_cost:0,
+          notional:0,before_nav:capital,after_nav:capital};
+        decisionsObserved.push(receipt);
+        postings.push({type:'hold-no-trade',date,cut:decision.cut,
+          forecast_sha256:decision.forecast_sha256});
+      }
+      if(decision && decision.model_status!=='hold'){
         const capital=marked.nav,positions=Object.entries(dayState.units)
           .map(([symbol,quantity])=>({symbol,weight:quantity*atDate(symbol)/capital})),
           target=[...decision.target].map(([symbol,weight])=>({symbol,weight}));
@@ -294,6 +310,7 @@ export function replayCashAccount({
         check(Math.abs(marked.nav-(capital-plan.total))<=epsilon(capital),
           'Trade settlement violated the self-financing identity');
         decisionsObserved.push({cut:decision.cut,execute:date,
+          decision_kind:'rebalance',
           first_publication:decision.publication.first_commit,
           original_forecast_sha256:decision.forecast_sha256,
           target_weights:target,shadow_trade_count:tradeRows.length,

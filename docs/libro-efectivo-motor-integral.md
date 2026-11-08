@@ -19,3 +19,5 @@ La contabilidad emplea los costos base de `policy.mjs` y calcula órdenes **hipo
 **Pendiente:** un origen mensual original, precios de ejecución capturados en su momento, eventos corporativos con cobertura oficial, consentimiento de la fuente y conciliación con la política real de órdenes. Hasta entonces, H3.2 es un adaptador de investigación sin libro de resultados de mercado, no una prueba de rendimiento financiero.
 
 Se comprueban todas las sesiones originales de SPY dentro del intervalo, sin permitir ocultar la primera sesión de ejecución. Se rechazan eventos duplicados, ajustes corporativos no conciliados y una emisión anterior al cierre de origen; un deslistado exige un registro de liquidación específico que este adaptador todavía no admite.
+
+**Semántica de HOLD:** la orden sellada con estado `hold` no establece una nueva asignación objetivo ni invoca `tradePlan`; conserva las unidades y el efectivo existentes incluso con dividendos pendientes. La distribución publicada se conserva únicamente como evidencia para revisar divergencias con la cuenta simulada. La decisión `proposed` sigue calculando el rebalanceo a precios de la primera sesión observada.

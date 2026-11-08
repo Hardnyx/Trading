@@ -164,3 +164,33 @@ test('a purported pre-close issue cannot become an original post-close decision'
    publication:{...first.publication,committed_at:'2026-11-30T20:00:00Z'}}]}),
    /after the cut close/);
 });
+
+
+test('an original HOLD preserves the existing units despite a different published allocation',()=>{
+ const hold={...first,cut:days[2],execute:days[3],
+  issued_at:'2026-12-02T23:00:00Z',
+  publication:{verified:true,first_commit:'f'.repeat(40),
+    committed_at:'2026-12-03T00:00:00Z'},
+  forecast_sha256:'e'.repeat(64),model_status:'hold',
+  positions:[{symbol:'CASH',weight:1}]};
+ const result=run({decisions:[first,hold]});
+ assert.equal(result.status,'complete',JSON.stringify(result.issues));
+ assert.equal(result.decisions.length,2);
+ assert.equal(result.decisions[1].decision_kind,'hold');
+ assert.equal(result.decisions[1].target_weights,null);
+ assert.equal(result.decisions[1].shadow_trade_count,0);
+ assert.equal(result.decisions[1].trading_cost,0);
+ assert.equal(result.nav[3].holdings[0].quantity,10);
+ assert.equal(result.nav[3].cash,500);
+ assert.equal(result.nav[3].receivables,10);
+ assert.equal(result.journal.filter(x=>x.type==='hold-no-trade').length,1);
+});
+test('an initial HOLD cannot create a purchase even with noncash published weights',()=>{
+ const hold={...first,model_status:'hold'};
+ const result=run({decisions:[hold]});
+ assert.equal(result.status,'complete');
+ assert.deepEqual(result.final_units,{});
+ assert.ok(result.nav.every(row=>row.nav===1000));
+ assert.equal(result.decisions[0].shadow_trade_count,0);
+ assert.equal(result.decisions[0].decision_kind,'hold');
+});
