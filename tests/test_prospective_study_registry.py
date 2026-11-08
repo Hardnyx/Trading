@@ -10,7 +10,7 @@ import tempfile
 import unittest
 from scripts.prospective_study_registry import (
     read_contract, check_contract, inspect, candidate_preflight, utc,
-    validate_capture_archives
+    validate_capture_archives, assert_published_before_next_open
 )
 
 
@@ -180,6 +180,18 @@ class ProspectiveStudyRegistryTests(unittest.TestCase):
         old["independent_holdout"]["registered"]=True
         with self.assertRaisesRegex(ValueError,"reclassified"):
             check_contract(self.reg,old)
+
+    def test_first_publication_must_precede_first_next_session_open(self):
+        cut = "2026-11-30"
+        issue = "2026-11-30T23:00:00Z"
+        self.assertTrue(assert_published_before_next_open(
+            cut, issue, "2026-12-01T00:10:00Z"))
+        with self.assertRaisesRegex(ValueError, "after the earliest"):
+            assert_published_before_next_open(
+                cut, issue, "2026-12-01T15:00:00Z")
+        with self.assertRaisesRegex(ValueError, "predates"):
+            assert_published_before_next_open(
+                cut, issue, "2026-11-30T20:00:00Z")
 
     def test_naive_timestamp_is_not_accepted(self):
         with self.assertRaisesRegex(ValueError,"Timezone required"):

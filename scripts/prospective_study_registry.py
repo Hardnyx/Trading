@@ -286,6 +286,24 @@ def verify_published_sources(root, commit, hashes):
                 "Published code differs from source hash: " + path)
 
 
+def assert_published_before_next_open(cut, issued_at, published_at):
+    """Conservative weekday gate; no claim of a certified exchange calendar."""
+    session = iso_day(cut, "decision cut")
+    first_weekday = next(
+        session + timedelta(days=n) for n in range(1, 5)
+        if (session + timedelta(days=n)).weekday() < 5)
+    new_york = ZoneInfo("America/New_York")
+    next_open = datetime(first_weekday.year, first_weekday.month,
+                         first_weekday.day, 9, 30, tzinfo=new_york)
+    published = utc(published_at, "first publication")
+    issued = utc(issued_at, "issuance")
+    require(published >= issued, "First publication predates the forecast issuance")
+    require(published < next_open.astimezone(timezone.utc) and
+            issued < next_open.astimezone(timezone.utc),
+            "First publication arrived after the earliest next-session open")
+    return True
+
+
 def first_publication(root, path, raw):
     """Use the actual first Git add and original bytes, not a claimed commit time."""
     def git(*args):
@@ -327,9 +345,9 @@ def inspect(root=ROOT):
         months.add(current["month"])
         published = first_publication(root, path, raw)
         verify_published_sources(root, published["commit"], sources)
-        require(utc(published["at"], "publication") >=
-                utc(record["issued_at"], "issuance") and
-                utc(published["at"], "publication").date() >=
+        assert_published_before_next_open(
+            record["cut"], record["issued_at"], published["at"])
+        require(utc(published["at"], "publication").date() >=
                 iso_day(reg["sampling"]["first_possible_cut"], "first possible cut"),
                 "Original forecast was not first published within study")
         rows.append({**current, "first_publication": published})
