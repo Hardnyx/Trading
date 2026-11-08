@@ -142,6 +142,10 @@ export function verifyAccountInputs({calendar,assets,decisions,flows=[],initialC
       'Sealed forecast must be issued after the cut close and published before next-session opening');
     check(d.model_status==='proposed'||d.model_status==='hold',
       'No feasible proposal was available at the decision cut');
+    check(d.account_basis===undefined||
+      (d.account_basis==='settled-investable-only'&&
+       d.research_cohort==='continuous-account-research-v2'),
+      'Unregistered account basis or research cohort');
     const publishedWeights=weights(d.positions);
     // A published HOLD must preserve the existing account, not cause a
     // fresh optimization or a drift-correcting rebalance at a later close.
@@ -271,20 +275,26 @@ export function replayCashAccount({
           forecast_sha256:decision.forecast_sha256});
       }
       if(decision && decision.model_status!=='hold'){
-        const capital=marked.nav,positions=Object.entries(dayState.units)
-          .map(([symbol,quantity])=>({symbol,weight:quantity*atDate(symbol)/capital})),
+        const capital=marked.nav,investable=capital-marked.receivables,
           target=[...decision.target].map(([symbol,weight])=>({symbol,weight}));
-        positions.push({symbol:'CASH',weight:dayState.cash/capital});
-        // Unsettled receivables are not free cash for target rebalances.
-        check(marked.receivables<=epsilon(capital),
-          'Receivables require a funded-cash sizing rule before rebalancing');
+        // The composer does not optimize dividend claims. Only an explicitly
+        // separate research cohort may trade the settled investable subaccount.
+        check(marked.receivables<=epsilon(capital)||
+          (decision.account_basis==='settled-investable-only'&&
+           decision.research_cohort==='continuous-account-research-v2'),
+          'Receivables require a registered settled-investable research decision');
+        check(positive(investable),
+          'Pending dividend claims leave no positive investable account');
+        const positions=Object.entries(dayState.units)
+          .map(([symbol,quantity])=>({symbol,weight:quantity*atDate(symbol)/investable}));
+        positions.push({symbol:'CASH',weight:dayState.cash/investable});
         const symbols=new Set([...positions.map(x=>x.symbol),
           ...target.map(x=>x.symbol)]);
         const quotes=[...symbols].filter(x=>x!=='CASH')
           .map(symbol=>({symbol,price:atDate(symbol)}));
         check(quotes.every(x=>positive(x.price)),
           'Missing exact next-session close for target instrument');
-        const plan=tradePlan(quotes,target,positions,capital,costs);
+        const plan=tradePlan(quotes,target,positions,investable,costs);
         check(plan.complete&&plan.total>=0&&plan.investableCapital>0&&
           plan.turnover<=(costs.maxTurnover??1)+1e-7,
           'Unfunded rebalance, invalid cost basis or turnover limit');
@@ -315,6 +325,11 @@ export function replayCashAccount({
           original_forecast_sha256:decision.forecast_sha256,
           target_weights:target,shadow_trade_count:tradeRows.length,
           trading_cost:plan.total,notional:stats.trade_notional,
+          account_basis:decision.account_basis??'total-nav-no-receivables',
+          research_cohort:decision.research_cohort??null,
+          investable_before:investable,
+          segregated_dividend_receivables:capital-investable,
+          investable_after:plan.investableCapital,
           before_nav:capital,after_nav:marked.nav});
       }
       const components=stats.price_pnl+stats.entitlements-

@@ -142,6 +142,44 @@ test('sells, exits and later decisions use actual held units rather than resetti
  assert.equal(r.decisions[1].shadow_trade_count,1);
 });
 
+test('a registered research rebalance segregates unsettled dividends from trading capital',()=>{
+ const original=run();
+ assert.equal(original.nav[2].receivables,10);
+ const d={...first,cut:days[2],execute:days[3],issued_at:'2026-12-02T23:00:00Z',
+  publication:{verified:true,first_commit:'f'.repeat(40),committed_at:'2026-12-03T00:00:00Z'},
+  forecast_sha256:'e'.repeat(64),account_basis:'settled-investable-only',
+  research_cohort:'continuous-account-research-v2',
+  positions:[{symbol:'AAA',weight:.25},{symbol:'CASH',weight:.75}]};
+ const result=run({decisions:[first,d]});
+ assert.equal(result.status,'complete',JSON.stringify(result.issues));
+ const receipt=result.decisions[1],state=result.nav[3];
+ assert.equal(receipt.decision_kind,'rebalance');
+ assert.equal(receipt.account_basis,'settled-investable-only');
+ assert.equal(receipt.segregated_dividend_receivables,10);
+ assert.equal(receipt.investable_before,995);
+ assert.ok(Math.abs(state.cash-746.25)<1e-7);
+ assert.ok(Math.abs(state.holdings[0].market_value-248.75)<1e-7);
+ assert.equal(state.receivables,10);
+ assert.ok(Math.abs(state.nav-1005)<1e-7);
+ assert.equal(result.nav[4].cash,756.25);
+ assert.equal(result.nav[4].receivables,0);
+ assert.ok(result.nav.every(x=>Math.abs(x.identity_residual)<1e-6));
+});
+test('unregistered or legacy monthly decisions cannot spend outstanding dividend claims',()=>{
+ const base={...first,cut:days[2],execute:days[3],issued_at:'2026-12-02T23:00:00Z',
+  publication:{verified:true,first_commit:'f'.repeat(40),committed_at:'2026-12-03T00:00:00Z'},
+  forecast_sha256:'e'.repeat(64),
+  positions:[{symbol:'AAA',weight:.25},{symbol:'CASH',weight:.75}]};
+ const legacy=run({decisions:[first,base]});
+ assert.equal(legacy.status,'incomplete');
+ assert.equal(legacy.blocked_on,days[3]);
+ assert.match(legacy.issues[0].reason,/registered settled-investable/);
+ assert.throws(()=>run({decisions:[first,{...base,account_basis:'settled-investable-only'}]}),
+  /Unregistered account basis/);
+ assert.throws(()=>run({decisions:[first,{...base,
+  account_basis:'settled-investable-only',research_cohort:'some-other-cohort'}]}),
+  /Unregistered account basis/);
+});
 test('the exchange calendar cannot omit an observed SPY session',()=>{
  const full=assets(),hidden=days.filter(d=>d!==days[1]);
  assert.throws(()=>verifyAccountInputs({
