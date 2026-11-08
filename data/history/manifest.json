@@ -5,355 +5,355 @@
    "terms": "Public; quarterly survey medians as published, by survey quarter",
    "layout": "consensus/spf-median-level/<VARIABLE>.csv.gz",
    "raw_sha256": "d296e737331c406f7680414504a0d005472743709387f8fda6d969a1d2200977",
-   "observed_at": "2026-11-08T15:39:09.353611+00:00",
+   "observed_at": "2026-11-08T15:50:44.169896+00:00",
    "entries": {
     "NGDP": {
      "rows": 232,
      "first": "1968Q4",
      "last": "2026Q3",
-     "changed_files": 1
+     "changed_files": 0
     },
     "PGDP": {
      "rows": 232,
      "first": "1968Q4",
      "last": "2026Q3",
-     "changed_files": 1
+     "changed_files": 0
     },
     "CPROF": {
      "rows": 232,
      "first": "1968Q4",
      "last": "2026Q3",
-     "changed_files": 1
+     "changed_files": 0
     },
     "UNEMP": {
      "rows": 232,
      "first": "1968Q4",
      "last": "2026Q3",
-     "changed_files": 1
+     "changed_files": 0
     },
     "EMP": {
      "rows": 232,
      "first": "1968Q4",
      "last": "2026Q3",
-     "changed_files": 1
+     "changed_files": 0
     },
     "INDPROD": {
      "rows": 232,
      "first": "1968Q4",
      "last": "2026Q3",
-     "changed_files": 1
+     "changed_files": 0
     },
     "HOUSING": {
      "rows": 232,
      "first": "1968Q4",
      "last": "2026Q3",
-     "changed_files": 1
+     "changed_files": 0
     },
     "TBILL": {
      "rows": 232,
      "first": "1968Q4",
      "last": "2026Q3",
-     "changed_files": 1
+     "changed_files": 0
     },
     "BOND": {
      "rows": 232,
      "first": "1968Q4",
      "last": "2026Q3",
-     "changed_files": 1
+     "changed_files": 0
     },
     "BAABOND": {
      "rows": 232,
      "first": "1968Q4",
      "last": "2026Q3",
-     "changed_files": 1
+     "changed_files": 0
     },
     "TBOND": {
      "rows": 232,
      "first": "1968Q4",
      "last": "2026Q3",
-     "changed_files": 1
+     "changed_files": 0
     },
     "RGDP": {
      "rows": 232,
      "first": "1968Q4",
      "last": "2026Q3",
-     "changed_files": 1
+     "changed_files": 0
     },
     "RCONSUM": {
      "rows": 232,
      "first": "1968Q4",
      "last": "2026Q3",
-     "changed_files": 1
+     "changed_files": 0
     },
     "RNRESIN": {
      "rows": 232,
      "first": "1968Q4",
      "last": "2026Q3",
-     "changed_files": 1
+     "changed_files": 0
     },
     "RRESINV": {
      "rows": 232,
      "first": "1968Q4",
      "last": "2026Q3",
-     "changed_files": 1
+     "changed_files": 0
     },
     "RFEDGOV": {
      "rows": 232,
      "first": "1968Q4",
      "last": "2026Q3",
-     "changed_files": 1
+     "changed_files": 0
     },
     "RSLGOV": {
      "rows": 232,
      "first": "1968Q4",
      "last": "2026Q3",
-     "changed_files": 1
+     "changed_files": 0
     },
     "RCBI": {
      "rows": 232,
      "first": "1968Q4",
      "last": "2026Q3",
-     "changed_files": 1
+     "changed_files": 0
     },
     "REXPORT": {
      "rows": 232,
      "first": "1968Q4",
      "last": "2026Q3",
-     "changed_files": 1
+     "changed_files": 0
     },
     "CPI5YR": {
      "rows": 232,
      "first": "1968Q4",
      "last": "2026Q3",
-     "changed_files": 1
+     "changed_files": 0
     },
     "PCE5YR": {
      "rows": 232,
      "first": "1968Q4",
      "last": "2026Q3",
-     "changed_files": 1
+     "changed_files": 0
     },
     "CPI10": {
      "rows": 232,
      "first": "1968Q4",
      "last": "2026Q3",
-     "changed_files": 1
+     "changed_files": 0
     },
     "PCE10": {
      "rows": 232,
      "first": "1968Q4",
      "last": "2026Q3",
-     "changed_files": 1
+     "changed_files": 0
     },
     "RGDP10": {
      "rows": 232,
      "first": "1968Q4",
      "last": "2026Q3",
-     "changed_files": 1
+     "changed_files": 0
     },
     "PROD10": {
      "rows": 232,
      "first": "1968Q4",
      "last": "2026Q3",
-     "changed_files": 1
+     "changed_files": 0
     },
     "STOCK10": {
      "rows": 232,
      "first": "1968Q4",
      "last": "2026Q3",
-     "changed_files": 1
+     "changed_files": 0
     },
     "BOND10": {
      "rows": 232,
      "first": "1968Q4",
      "last": "2026Q3",
-     "changed_files": 1
+     "changed_files": 0
     },
     "BILL10": {
      "rows": 232,
      "first": "1968Q4",
      "last": "2026Q3",
-     "changed_files": 1
+     "changed_files": 0
     },
     "CPI": {
      "rows": 232,
      "first": "1968Q4",
      "last": "2026Q3",
-     "changed_files": 1
+     "changed_files": 0
     },
     "CORECPI": {
      "rows": 232,
      "first": "1968Q4",
      "last": "2026Q3",
-     "changed_files": 1
+     "changed_files": 0
     },
     "PCE": {
      "rows": 232,
      "first": "1968Q4",
      "last": "2026Q3",
-     "changed_files": 1
+     "changed_files": 0
     },
     "COREPCE": {
      "rows": 232,
      "first": "1968Q4",
      "last": "2026Q3",
-     "changed_files": 1
+     "changed_files": 0
     },
     "UBAR": {
      "rows": 232,
      "first": "1968Q4",
      "last": "2026Q3",
-     "changed_files": 1
+     "changed_files": 0
     },
     "SPR_TBOND_TBILL": {
      "rows": 232,
      "first": "1968Q4",
      "last": "2026Q3",
-     "changed_files": 1
+     "changed_files": 0
     },
     "SPR_BAA_AAA": {
      "rows": 232,
      "first": "1968Q4",
      "last": "2026Q3",
-     "changed_files": 1
+     "changed_files": 0
     },
     "SPR_BAA_TBOND": {
      "rows": 232,
      "first": "1968Q4",
      "last": "2026Q3",
-     "changed_files": 1
+     "changed_files": 0
     },
     "SPR_AAA_TBOND": {
      "rows": 232,
      "first": "1968Q4",
      "last": "2026Q3",
-     "changed_files": 1
+     "changed_files": 0
     },
     "CPI05YF05": {
      "rows": 232,
      "first": "1968Q4",
      "last": "2026Q3",
-     "changed_files": 1
+     "changed_files": 0
     },
     "PCE05YF05": {
      "rows": 232,
      "first": "1968Q4",
      "last": "2026Q3",
-     "changed_files": 1
+     "changed_files": 0
     },
     "CPI02YF03": {
      "rows": 232,
      "first": "1968Q4",
      "last": "2026Q3",
-     "changed_files": 1
+     "changed_files": 0
     },
     "PCE02YF03": {
      "rows": 232,
      "first": "1968Q4",
      "last": "2026Q3",
-     "changed_files": 1
+     "changed_files": 0
     },
     "CPI07YF03": {
      "rows": 232,
      "first": "1968Q4",
      "last": "2026Q3",
-     "changed_files": 1
+     "changed_files": 0
     },
     "PCE07YF03": {
      "rows": 232,
      "first": "1968Q4",
      "last": "2026Q3",
-     "changed_files": 1
+     "changed_files": 0
     },
     "RR1_TBILL_PGDP": {
      "rows": 232,
      "first": "1968Q4",
      "last": "2026Q3",
-     "changed_files": 1
+     "changed_files": 0
     },
     "RR2_TBILL_PGDP": {
      "rows": 232,
      "first": "1968Q4",
      "last": "2026Q3",
-     "changed_files": 1
+     "changed_files": 0
     },
     "RR3_TBILL_PGDP": {
      "rows": 232,
      "first": "1968Q4",
      "last": "2026Q3",
-     "changed_files": 1
+     "changed_files": 0
     },
     "RR1_TBILL_CPI": {
      "rows": 232,
      "first": "1968Q4",
      "last": "2026Q3",
-     "changed_files": 1
+     "changed_files": 0
     },
     "RR2_TBILL_CPI": {
      "rows": 232,
      "first": "1968Q4",
      "last": "2026Q3",
-     "changed_files": 1
+     "changed_files": 0
     },
     "RR3_TBILL_CPI": {
      "rows": 232,
      "first": "1968Q4",
      "last": "2026Q3",
-     "changed_files": 1
+     "changed_files": 0
     },
     "RR1_TBILL_CCPI": {
      "rows": 232,
      "first": "1968Q4",
      "last": "2026Q3",
-     "changed_files": 1
+     "changed_files": 0
     },
     "RR2_TBILL_CCPI": {
      "rows": 232,
      "first": "1968Q4",
      "last": "2026Q3",
-     "changed_files": 1
+     "changed_files": 0
     },
     "RR3_TBILL_CCPI": {
      "rows": 232,
      "first": "1968Q4",
      "last": "2026Q3",
-     "changed_files": 1
+     "changed_files": 0
     },
     "RR1_TBILL_PCE": {
      "rows": 232,
      "first": "1968Q4",
      "last": "2026Q3",
-     "changed_files": 1
+     "changed_files": 0
     },
     "RR2_TBILL_PCE": {
      "rows": 232,
      "first": "1968Q4",
      "last": "2026Q3",
-     "changed_files": 1
+     "changed_files": 0
     },
     "RR3_TBILL_PCE": {
      "rows": 232,
      "first": "1968Q4",
      "last": "2026Q3",
-     "changed_files": 1
+     "changed_files": 0
     },
     "RR1_TBILL_CPCE": {
      "rows": 232,
      "first": "1968Q4",
      "last": "2026Q3",
-     "changed_files": 1
+     "changed_files": 0
     },
     "RR2_TBILL_CPCE": {
      "rows": 232,
      "first": "1968Q4",
      "last": "2026Q3",
-     "changed_files": 1
+     "changed_files": 0
     },
     "RR3_TBILL_CPCE": {
      "rows": 232,
      "first": "1968Q4",
      "last": "2026Q3",
-     "changed_files": 1
+     "changed_files": 0
     }
    },
    "errors": []
@@ -362,14 +362,14 @@
    "source": "Kenneth R. French Data Library (CRSP-based)",
    "terms": "Free for research; cite Fama and French",
    "layout": "factors/<NAME>/<YEAR>.csv.gz, percent",
-   "observed_at": "2026-11-08T15:39:09.353611+00:00",
+   "observed_at": "2026-11-08T15:50:44.169896+00:00",
    "entries": {
     "ff5-daily": {
      "rows": 15918,
      "first": "1963-07-01",
      "last": "2026-09-30",
      "files": 64,
-     "changed_files": 64,
+     "changed_files": 0,
      "columns": [
       "Mkt-RF",
       "SMB",
@@ -386,7 +386,7 @@
      "first": "1926-11-03",
      "last": "2026-09-30",
      "files": 101,
-     "changed_files": 101,
+     "changed_files": 0,
      "columns": [
       "Mom"
      ],
@@ -400,14 +400,14 @@
    "source": "FRED, Federal Reserve Bank of St. Louis",
    "terms": "Public series; cite FRED and the original source",
    "layout": "macro/<SERIES>/<YEAR>.csv.gz",
-   "observed_at": "2026-11-08T15:39:09.353611+00:00",
+   "observed_at": "2026-11-08T15:50:44.169896+00:00",
    "entries": {
     "DGS3MO": {
      "rows": 11295,
      "first": "1981-09-01",
      "last": "2026-11-05",
      "files": 46,
-     "changed_files": 46,
+     "changed_files": 0,
      "frequency": "daily",
      "description": "Treasury 3-month constant maturity",
      "raw_sha256": "ada4828f1ee3a26ec537c960ae424c3e569e0383eb6b2c46db824046910814e0"
@@ -417,7 +417,7 @@
      "first": "1962-01-02",
      "last": "2026-11-05",
      "files": 65,
-     "changed_files": 65,
+     "changed_files": 0,
      "frequency": "daily",
      "description": "Treasury 1-year constant maturity",
      "raw_sha256": "eb58f75a18521d92f8e1301414b2d3468f3c22147c37494a146b701f120fe32f"
@@ -427,7 +427,7 @@
      "first": "1976-06-01",
      "last": "2026-11-05",
      "files": 51,
-     "changed_files": 51,
+     "changed_files": 0,
      "frequency": "daily",
      "description": "Treasury 2-year constant maturity",
      "raw_sha256": "11e56ccb09b79dc799ee3760ec408356ee5dabc9fdcba7bd7e026ebd24f2747c"
@@ -437,7 +437,7 @@
      "first": "1962-01-02",
      "last": "2026-11-05",
      "files": 65,
-     "changed_files": 65,
+     "changed_files": 0,
      "frequency": "daily",
      "description": "Treasury 5-year constant maturity",
      "raw_sha256": "aef3518fb19e5e9f91121d50b891a3fa7ef79f4a881d18c70f50f56995c47f39"
@@ -447,7 +447,7 @@
      "first": "1962-01-02",
      "last": "2026-11-05",
      "files": 65,
-     "changed_files": 65,
+     "changed_files": 0,
      "frequency": "daily",
      "description": "Treasury 10-year constant maturity",
      "raw_sha256": "b475ba7f607331389c112cdf0f3bfea981eaab609de34645b49dfd02e9797ea4"
@@ -457,7 +457,7 @@
      "first": "1977-02-15",
      "last": "2026-11-05",
      "files": 50,
-     "changed_files": 50,
+     "changed_files": 0,
      "frequency": "daily",
      "description": "Treasury 30-year constant maturity",
      "raw_sha256": "4f7811759ed200952e95944a7f15fd7a675fb9f9bfc0b564ab909dcbb896308c"
@@ -467,7 +467,7 @@
      "first": "1982-01-04",
      "last": "2026-11-06",
      "files": 45,
-     "changed_files": 45,
+     "changed_files": 0,
      "frequency": "daily",
      "description": "10-year minus 3-month Treasury spread",
      "raw_sha256": "5de2b90d00398eeb3409a101b2d26c85bb2cedf380786dcda186e9833f88658b"
@@ -477,7 +477,7 @@
      "first": "1954-07-01",
      "last": "2026-11-05",
      "files": 73,
-     "changed_files": 73,
+     "changed_files": 0,
      "frequency": "daily",
      "description": "Effective federal funds rate",
      "raw_sha256": "ae456dcfeac0540c4312d575c9cd8d255303a8bdeebbe2a64f55d889290d9156"
@@ -487,7 +487,7 @@
      "first": "1934-01-01",
      "last": "2026-10-01",
      "files": 93,
-     "changed_files": 93,
+     "changed_files": 0,
      "frequency": "monthly",
      "description": "3-month Treasury bill, secondary market",
      "raw_sha256": "33fae406051a658c316580f8e8b5e461157e6663bc03b35648cc7cd3e89ee26b"
@@ -497,7 +497,7 @@
      "first": "2003-01-02",
      "last": "2026-11-05",
      "files": 24,
-     "changed_files": 24,
+     "changed_files": 0,
      "frequency": "daily",
      "description": "10-year TIPS real yield",
      "raw_sha256": "4a0fb7917211c53d08a09f61cc1ee1d2d98953ff99e94dbdfa7bfdf5cea3eff5"
@@ -507,7 +507,7 @@
      "first": "2003-01-02",
      "last": "2026-11-06",
      "files": 24,
-     "changed_files": 24,
+     "changed_files": 0,
      "frequency": "daily",
      "description": "10-year breakeven inflation",
      "raw_sha256": "d829504eaf98f640211fd569d97df9b6afc86050dccb1ba2f877adc5167326f4"
@@ -517,7 +517,7 @@
      "first": "2003-01-02",
      "last": "2026-11-06",
      "files": 24,
-     "changed_files": 24,
+     "changed_files": 0,
      "frequency": "daily",
      "description": "5-year breakeven inflation",
      "raw_sha256": "33d40b927adef613eabee5cef65507d38597c5cfde02e95b24c75471984a3319"
@@ -527,7 +527,7 @@
      "first": "2006-01-02",
      "last": "2026-10-30",
      "files": 21,
-     "changed_files": 21,
+     "changed_files": 0,
      "frequency": "daily",
      "description": "Nominal broad US dollar index",
      "raw_sha256": "908a19a96d1ba529ef51ae559b8bc384bf8af4d4013185426e5ee9c3cca4213f"
@@ -537,7 +537,7 @@
      "first": "1983-01-03",
      "last": "2026-11-05",
      "files": 44,
-     "changed_files": 44,
+     "changed_files": 0,
      "frequency": "daily",
      "description": "Moody's Aaa corporate bond yield",
      "raw_sha256": "4a1ffbdc2453531de2d6425f03c739f751c76ad5c7ca07aa26747469eaaea260"
@@ -547,7 +547,7 @@
      "first": "1986-01-02",
      "last": "2026-11-05",
      "files": 41,
-     "changed_files": 41,
+     "changed_files": 0,
      "frequency": "daily",
      "description": "Moody's Baa corporate bond yield",
      "raw_sha256": "271c759577723bdfe09a65da9083af4d3e5712845eb150c738c767efa4b834a7"
@@ -557,7 +557,7 @@
      "first": "1983-01-03",
      "last": "2026-11-05",
      "files": 44,
-     "changed_files": 44,
+     "changed_files": 0,
      "frequency": "daily",
      "description": "Moody's Aaa minus 10-year Treasury",
      "raw_sha256": "ffa32de679fe49e5a078a96fae6376af84f27b9ff659fe47370e6fb55c46aa0e"
@@ -567,7 +567,7 @@
      "first": "1986-01-02",
      "last": "2026-11-05",
      "files": 41,
-     "changed_files": 41,
+     "changed_files": 0,
      "frequency": "daily",
      "description": "Moody's Baa minus 10-year Treasury",
      "raw_sha256": "60e1cbec9010b311e8aeba6905e970226434de169250ece5dd338fad879ff990"
@@ -577,7 +577,7 @@
      "first": "1990-01-02",
      "last": "2026-11-05",
      "files": 37,
-     "changed_files": 37,
+     "changed_files": 0,
      "frequency": "daily",
      "description": "CBOE volatility index",
      "raw_sha256": "c62f03723d469d30df7481999c2c8ed69168f6924b74e25163681d9cd2dff2f9"
@@ -587,7 +587,7 @@
      "first": "1971-01-08",
      "last": "2026-10-30",
      "files": 56,
-     "changed_files": 56,
+     "changed_files": 0,
      "frequency": "weekly",
      "description": "Chicago Fed national financial conditions index",
      "raw_sha256": "eee8241d5d7ca3e1ec1d1c4a392f53edd2613e85a63072517887e3f9028e8096"
@@ -597,7 +597,7 @@
      "first": "1967-01-07",
      "last": "2026-10-31",
      "files": 60,
-     "changed_files": 60,
+     "changed_files": 0,
      "frequency": "weekly",
      "description": "Initial unemployment claims",
      "raw_sha256": "f84a9c9c6831eeb41b5b15125008f5d48d72c91453d75ad9e05118d40702f428"
@@ -607,7 +607,7 @@
      "first": "1854-12-01",
      "last": "2026-10-01",
      "files": 173,
-     "changed_files": 173,
+     "changed_files": 0,
      "frequency": "monthly",
      "description": "NBER recession indicator",
      "raw_sha256": "7d28698513be7460870afa883c2325d3502ddaecd6b1e781ed5f655126341b44"
@@ -617,7 +617,7 @@
      "first": "1947-01-01",
      "last": "2026-09-01",
      "files": 80,
-     "changed_files": 80,
+     "changed_files": 0,
      "frequency": "monthly",
      "description": "CPI all items, seasonally adjusted",
      "raw_sha256": "8556b710094027fa4724641d48be620cc37c04abfa15a0c496378cf1146c1549"
@@ -627,7 +627,7 @@
      "first": "1957-01-01",
      "last": "2026-09-01",
      "files": 70,
-     "changed_files": 70,
+     "changed_files": 0,
      "frequency": "monthly",
      "description": "Core CPI, seasonally adjusted",
      "raw_sha256": "182058ceeb094cb2af1dfe7474553c50d779e3907c9472302d30c0d64ea147d0"
@@ -637,7 +637,7 @@
      "first": "1948-01-01",
      "last": "2026-10-01",
      "files": 79,
-     "changed_files": 79,
+     "changed_files": 0,
      "frequency": "monthly",
      "description": "Unemployment rate",
      "raw_sha256": "fb669461abc34e00324b940be6bad1c7f89117652f28587196a7b8bf4a9f56a1"
@@ -647,7 +647,7 @@
      "first": "1939-01-01",
      "last": "2026-10-01",
      "files": 88,
-     "changed_files": 88,
+     "changed_files": 0,
      "frequency": "monthly",
      "description": "Nonfarm payrolls",
      "raw_sha256": "968f9252d00246e2b6cf40307e01eef7a413ec936fcc45c7498347a509a2dc32"
@@ -657,7 +657,7 @@
      "first": "1948-01-01",
      "last": "2026-10-01",
      "files": 79,
-     "changed_files": 79,
+     "changed_files": 0,
      "frequency": "monthly",
      "description": "Labour force participation rate",
      "raw_sha256": "e780815329d133f6a4948ea1cc1589a56a6501ff3018684dbb5fcc568312de7b"
@@ -667,7 +667,7 @@
      "first": "1964-01-01",
      "last": "2026-10-01",
      "files": 63,
-     "changed_files": 63,
+     "changed_files": 0,
      "frequency": "monthly",
      "description": "Average hourly earnings, production workers",
      "raw_sha256": "54d8fb85836b34d675559812fd6993ee9b16d2130319eed5c0ffbca05d438472"
@@ -677,7 +677,7 @@
      "first": "1919-01-01",
      "last": "2026-09-01",
      "files": 108,
-     "changed_files": 108,
+     "changed_files": 0,
      "frequency": "monthly",
      "description": "Industrial production index",
      "raw_sha256": "0fc53a503386efaf83f17cf0cc6d77b3980830a91c9dfa9ebab97b4cf1aa5feb"
@@ -687,7 +687,7 @@
      "first": "1952-11-01",
      "last": "2026-09-01",
      "files": 75,
-     "changed_files": 75,
+     "changed_files": 0,
      "frequency": "monthly",
      "description": "University of Michigan consumer sentiment",
      "raw_sha256": "3076277f9f21f4bd3dc77fd68add84d417e5cce23f3adb96dc70313b3ad2dd46"
@@ -699,2867 +699,2867 @@
    "source": "Yahoo Finance chart API (unofficial)",
    "terms": "Unofficial endpoint; personal research use; restated after splits",
    "layout": "prices/<SYMBOL>/<YEAR>.csv.gz (split-adjusted OHLC, volume) and events.csv.gz (dividends, splits)",
-   "observed_at": "2026-11-08T15:39:09.353611+00:00",
+   "observed_at": "2026-11-08T15:50:44.169896+00:00",
    "entries": {
     "AAPL": {
      "rows": 11569,
      "first": "1980-12-12",
      "last": "2026-11-06",
      "files": 47,
-     "changed_files": 48,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 92,
      "splits": 5,
-     "raw_sha256": "b1652e6343a0c355b28a39f717e11fe658cf40ad3b2d8563d04411816725e6d7"
+     "raw_sha256": "09315b89f10bd6000b7b19e2d211be40eca5bc23978e885752e32456828ff9ad"
     },
     "ABBV": {
      "rows": 3484,
      "first": "2013-01-02",
      "last": "2026-11-06",
      "files": 14,
-     "changed_files": 15,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 56,
      "splits": 0,
-     "raw_sha256": "f8a17d943ce56645952f6f503e677ccdc14c33414461c9d5e0570ce9c131e09b"
+     "raw_sha256": "20a7dc524a6be0325ade01723064df48a8ae15761d780a28bdd7d42c459facc7"
     },
     "ABT": {
      "rows": 11757,
      "first": "1980-03-17",
      "last": "2026-11-06",
      "files": 47,
-     "changed_files": 48,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 177,
      "splits": 7,
-     "raw_sha256": "dcac194a93f96e8e2b7dafd47827e5b56d397218df46e2aa0d608b7acbc520ea"
+     "raw_sha256": "46f62da434c3d94a90de267d9cd4e4d75a749454a44581501e56aad4f5c01b88"
     },
     "ACN": {
      "rows": 6364,
      "first": "2001-07-19",
      "last": "2026-11-06",
      "files": 26,
-     "changed_files": 27,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 51,
      "splits": 0,
-     "raw_sha256": "ce12e8b2c9f24c7c596644062404d30b789b3b4fe3a113c43de244934d208b82"
+     "raw_sha256": "e06609e767e6c11e7e45ede0691d860250afa2d35d226c705b31556d030bb642"
     },
     "ACWI": {
      "rows": 4684,
      "first": "2008-03-28",
      "last": "2026-11-06",
      "files": 19,
-     "changed_files": 20,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 38,
      "splits": 0,
-     "raw_sha256": "4bc0cb790f292db65dd89016b57d1d07e486c6d9769a5ed1fb9a8826b283ccf6"
+     "raw_sha256": "4071f3a59b0feb2b384a83cf06ad66f35accd62d6c30b561a29fbd96cb29481f"
     },
     "ACWX": {
      "rows": 4682,
      "first": "2008-04-01",
      "last": "2026-11-06",
      "files": 19,
-     "changed_files": 20,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 37,
      "splits": 0,
-     "raw_sha256": "fb4a865c66a6ed740e5dd0bfbc02bd6a888dda1ab73ea3c69c10358b21516940"
+     "raw_sha256": "ed3d55e9a06fc8511cd03ad76fd8a6629108f15de092af5aae086e6aa707ad01"
     },
     "ADBE": {
      "rows": 10137,
      "first": "1986-08-13",
      "last": "2026-11-06",
      "files": 41,
-     "changed_files": 42,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 63,
      "splits": 6,
-     "raw_sha256": "b3118e2e09af73d1be62ce838cda8c7a1009c045c23675f6d81a86bf26a36621"
+     "raw_sha256": "e23b3d4f03c9b7d49f4c09e33bcd8b309df8c4b9ab8154c8a64b02ced0758ac8"
     },
     "ADP": {
      "rows": 11757,
      "first": "1980-03-17",
      "last": "2026-11-06",
      "files": 47,
-     "changed_files": 48,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 175,
      "splits": 7,
-     "raw_sha256": "5c3a87ee73e37ba68b2fff0a44a5772d8e4e53e6f3f5ce14714472e656f26786"
+     "raw_sha256": "2be4271cb35031e3e6c806d8c91351a9a7ce8f9b04db3906c402ad5549a6487a"
     },
     "ADSK": {
      "rows": 10420,
      "first": "1985-06-28",
      "last": "2026-11-06",
      "files": 42,
-     "changed_files": 43,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 63,
      "splits": 4,
-     "raw_sha256": "0e97d5df93109c62d8d8be5bd6e46c9825b33e4e6fd48f7a381f8b07a2fa1d83"
+     "raw_sha256": "ef7ff6c68b412f728722ec337d8e68748520b616f7275f2a949df019e0c886c5"
     },
     "AEP": {
      "rows": 14335,
      "first": "1970-01-02",
      "last": "2026-11-06",
      "files": 57,
-     "changed_files": 58,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 224,
      "splits": 0,
-     "raw_sha256": "a88cac9e593661edcf0c0fcba62cfd803d385f12f989b2e66fcfb84ed96857ab"
+     "raw_sha256": "13f67c95de2e5d7b87d0935fcf41b2482bec205035d42f31086a144a080ba41c"
     },
     "AGG": {
      "rows": 5815,
      "first": "2003-09-29",
      "last": "2026-11-06",
      "files": 24,
-     "changed_files": 25,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 276,
      "splits": 0,
-     "raw_sha256": "f330ef01919c9ba6d68be900abdd42beb47cb611111ac1579235e8cc9ac62a88"
+     "raw_sha256": "497e85d4299b447d5b6685fed1b9feff1ea5010b9eaefd46af7f0455d1541ec9"
     },
     "AJG": {
      "rows": 10679,
      "first": "1984-06-20",
      "last": "2026-11-06",
      "files": 43,
-     "changed_files": 44,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 152,
      "splits": 3,
-     "raw_sha256": "ffe35d1f2120e1bd7d0ce3de56f0c9884568f48cca2e150ba9fc8d5ac0ca8cae"
+     "raw_sha256": "dbc2e3478d48f3b25d65fbce6726e1f90e7c7fd254a7f17dd5a778890ec224f6"
     },
     "AMAT": {
      "rows": 11757,
      "first": "1980-03-17",
      "last": "2026-11-06",
      "files": 47,
-     "changed_files": 48,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 86,
      "splits": 9,
-     "raw_sha256": "ad94f991b17c24641915091c32ebb52006f3cd8595c98acbbe49e0fb7ed49ed7"
+     "raw_sha256": "b5bda99542805bcc4fc45d0e6fd731906cef2dc9ed3248379d5d8a55b38c345f"
     },
     "AMD": {
      "rows": 11757,
      "first": "1980-03-17",
      "last": "2026-11-06",
      "files": 47,
-     "changed_files": 48,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 0,
      "splits": 4,
-     "raw_sha256": "5aba7af3102fac296c979fb89b9ca7fcd39b29c0027d5520b1eaa23bdb5ade40"
+     "raw_sha256": "ad1fc1b50764c248c6b266acd87d69ea80a34791adabcf93f12dd580016ae2ae"
     },
     "AMGN": {
      "rows": 10934,
      "first": "1983-06-17",
      "last": "2026-11-06",
      "files": 44,
-     "changed_files": 45,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 61,
      "splits": 5,
-     "raw_sha256": "2f6032a1ee260ee169e76edd17636331865bc68e31c3d02ead2a62c2b9c13c63"
+     "raw_sha256": "71c6af2013fa8a0ff64b0139cf77e8cd4446626c55e39e44cdece6b719d0598f"
     },
     "AMT": {
      "rows": 7219,
      "first": "1998-02-27",
      "last": "2026-11-06",
      "files": 29,
-     "changed_files": 30,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 60,
      "splits": 0,
-     "raw_sha256": "1bbb854e0721c6048c9f3f7f8768d4a2fa06584c1869a40738cf5217df3df6a1"
+     "raw_sha256": "2fa607d63ef39a9a57af83bb0e1eec6251e64567e30047b5aef65b856e910a9b"
     },
     "AMZN": {
      "rows": 7417,
      "first": "1997-05-15",
      "last": "2026-11-06",
      "files": 30,
-     "changed_files": 31,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 0,
      "splits": 4,
-     "raw_sha256": "c50c39f4747cdce0ec55628b400c01cee9fdea77931039cc2050f0c3885dbeff"
+     "raw_sha256": "b498ad24f502e188a8cd8fcda2291cd374c62faa353509db902b0343bcfcc8ca"
     },
     "ANET": {
      "rows": 3125,
      "first": "2014-06-06",
      "last": "2026-11-06",
      "files": 13,
-     "changed_files": 14,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 0,
      "splits": 2,
-     "raw_sha256": "65999c545a198d9c62e8fab339bc35a90ca05e2c683cfd8dbfe97350b3ff460d"
+     "raw_sha256": "1a7e9037327e030c27996d7b5a246101ba0437b6ceb4573de7a7c1f6b1844f70"
     },
     "AON": {
      "rows": 11704,
      "first": "1980-06-02",
      "last": "2026-11-06",
      "files": 47,
-     "changed_files": 48,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 162,
      "splits": 4,
-     "raw_sha256": "1247a808037cbffc83d42d43b5e7131ce506d9f4f613f1446ddc30d5d9a23c62"
+     "raw_sha256": "07493cdd5b6498b2a2db329916b2b2936f007f8479a61343896043b23501152c"
     },
     "APD": {
      "rows": 11757,
      "first": "1980-03-17",
      "last": "2026-11-06",
      "files": 47,
-     "changed_files": 48,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 173,
      "splits": 4,
-     "raw_sha256": "32e1d140c9df19f1bcb34bed3dce459262aa44de0687f9eca7001c178bc5b214"
+     "raw_sha256": "447d18a20d2e0c84d4323f6cc0723fdfdca7fba14757d5a7ffc64e8ca08bd83f"
     },
     "AVGO": {
      "rows": 4341,
      "first": "2009-08-06",
      "last": "2026-11-06",
      "files": 18,
-     "changed_files": 19,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 64,
      "splits": 1,
-     "raw_sha256": "7475b1dbc870d97da17d175edcf2b7a7436cb6137483e74b197523d501a85173"
+     "raw_sha256": "054ec450d2cbbbbc580c8e8ddce0d0905aa91794210824a6dccd5d989066c4a1"
     },
     "AXP": {
      "rows": 13723,
      "first": "1972-06-01",
      "last": "2026-11-06",
      "files": 55,
-     "changed_files": 56,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 200,
      "splits": 6,
-     "raw_sha256": "01bc9504c43d3ec574a1036b1bfd2aa3abcf0b51fa55f6cea8e051ac81c1ba40"
+     "raw_sha256": "875b830669b49a5554e8bf8373a10ad415d5b0216435356eb3d177cce8e2cb10"
     },
     "AZO": {
      "rows": 8966,
      "first": "1991-04-02",
      "last": "2026-11-06",
      "files": 36,
-     "changed_files": 37,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 0,
      "splits": 2,
-     "raw_sha256": "899eaacf6367b87b5aefe239e3b59fdfeb5b0f4aba9f40a5178e2bcfcb5abb89"
+     "raw_sha256": "e793be1b8cc864d16d3384399f2c47788967b4fe0c0f4790a6b9577f7a81cc0c"
     },
     "BAC": {
      "rows": 13543,
      "first": "1973-02-21",
      "last": "2026-11-06",
      "files": 54,
-     "changed_files": 55,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 162,
      "splits": 3,
-     "raw_sha256": "3d566115c74bba4f9db6ee61b918539730e40e1ec1f003ccdc9145388480f572"
+     "raw_sha256": "2fa343122cdbc3730f7d4900ece1477231b043e57a33f82d9237d48d15373658"
     },
     "BDX": {
      "rows": 13543,
      "first": "1973-02-21",
      "last": "2026-11-06",
      "files": 54,
-     "changed_files": 55,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 176,
      "splits": 6,
-     "raw_sha256": "72b2537677b2024362292b89766a232237517bc0408cd1636ccae920982c077f"
+     "raw_sha256": "1555cead5654ba7784f239990934271ce253856290dd183850bebf404c3a0c32"
     },
     "BIL": {
      "rows": 4893,
      "first": "2007-05-30",
      "last": "2026-11-06",
      "files": 20,
-     "changed_files": 21,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 128,
      "splits": 1,
-     "raw_sha256": "e46cb71cefbec65165ae1b69dc8f68aedde58cb6f9263bc4331c8a187e383a0c"
+     "raw_sha256": "76f885650dc3229037f45f1253c33ce39f14a24d78128022ad501ba2b5d670d3"
     },
     "BKLN": {
      "rows": 3945,
      "first": "2011-03-03",
      "last": "2026-11-06",
      "files": 16,
-     "changed_files": 17,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 187,
      "splits": 0,
-     "raw_sha256": "f2e07178146e4438c0f174427d387ac79066c218f3908e04681652dd69f94d85"
+     "raw_sha256": "f1a6a1f5efecfc6358a39c40130d7113a6de62a0c33dc6cf3d37a5c1572b2c71"
     },
     "BKNG": {
      "rows": 6945,
      "first": "1999-03-31",
      "last": "2026-11-06",
      "files": 28,
-     "changed_files": 29,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 11,
      "splits": 2,
-     "raw_sha256": "81c2e5ae324a6609ed71e2d67dcea870c3861602bda37f992e8422046580b8e2"
+     "raw_sha256": "a3f7839cbdab24f0f5292da49e5cb35643ae6f448ffcabd1fe2b2406d8b78626"
     },
     "BLK": {
      "rows": 6817,
      "first": "1999-10-01",
      "last": "2026-11-06",
      "files": 28,
-     "changed_files": 29,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 93,
      "splits": 0,
-     "raw_sha256": "54d137f5e3185b64f142b0c2a9432560172de884348f453677a91a2efdecff81"
+     "raw_sha256": "375fbb4fb5e4018c06ec78177b16146119c6cbfbd4108fe16f186100ad52fdae"
     },
     "BND": {
      "rows": 4928,
      "first": "2007-04-10",
      "last": "2026-11-06",
      "files": 20,
-     "changed_files": 21,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 232,
      "splits": 0,
-     "raw_sha256": "38168d25cae31135048c85758aaf9c01a9aae96e2ed750db7bf39636f7357f12"
+     "raw_sha256": "b16658631d58d9537738f59eceaae4df4cd7350cbaa855a6cf0529c542486531"
     },
     "BNDX": {
      "rows": 3379,
      "first": "2013-06-04",
      "last": "2026-11-06",
      "files": 14,
-     "changed_files": 15,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 160,
      "splits": 0,
-     "raw_sha256": "63ddf36e7940e430dd18839f874ae1396fbf1ef383652251c549aac57c84b0bf"
+     "raw_sha256": "ad2a207e0502ab990b1ba09de6f70625b6adc2f5c0b489592d6e70424896c615"
     },
     "BSX": {
      "rows": 8679,
      "first": "1992-05-19",
      "last": "2026-11-06",
      "files": 35,
-     "changed_files": 36,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 0,
      "splits": 2,
-     "raw_sha256": "0652fa7004e55bd64eccbd931ec182b3cb0f600eefaf89e4fdccf5056fb3f11e"
+     "raw_sha256": "f749c21b5cf4fa1bfc971ae41d4329206393c4efc256b07b99c6c7b9ffa10e5e"
     },
     "C": {
      "rows": 12566,
      "first": "1977-01-03",
      "last": "2026-11-06",
      "files": 50,
-     "changed_files": 51,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 152,
      "splits": 10,
-     "raw_sha256": "aad479c2aa797c74aa84865eb7fd07c7a939f6f5459b580ef72f767cab535d22"
+     "raw_sha256": "70d6ae34fcfa048095b77fad12b0e81e36a515d605b8bd9dbf0b959888f63520"
     },
     "CAT": {
      "rows": 14335,
      "first": "1970-01-02",
      "last": "2026-11-06",
      "files": 57,
-     "changed_files": 58,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 180,
      "splits": 4,
-     "raw_sha256": "ffde036b361c66859c8ea560aeb5e87b87507a707368622cc02aae76bae560c4"
+     "raw_sha256": "3048874625577149f58cb5d975fa89f41e8bd207dedb2681e4a985ab5caca2aa"
     },
     "CB": {
      "rows": 8464,
      "first": "1993-03-25",
      "last": "2026-11-06",
      "files": 34,
-     "changed_files": 35,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 133,
      "splits": 1,
-     "raw_sha256": "be358af820d7f7a2a5d740de5b0ab2d895131a9fe8a09ef675cb733f58639a40"
+     "raw_sha256": "8e2cddd0715391eeedd908c70d01d186844b9751add51e8ca98e3d17e11a2bb6"
     },
     "CDNS": {
      "rows": 9929,
      "first": "1987-06-10",
      "last": "2026-11-06",
      "files": 40,
-     "changed_files": 41,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 0,
      "splits": 3,
-     "raw_sha256": "93ac506b027d3ce60080e5461f1de6de995a5300df8d36069b0410a7bee43741"
+     "raw_sha256": "651b0e3965a5e10a265a3ce156efabab99312509b7c94adbc10dce567c5b406d"
     },
     "CI": {
      "rows": 11242,
      "first": "1982-03-31",
      "last": "2026-11-06",
      "files": 45,
-     "changed_files": 46,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 139,
      "splits": 2,
-     "raw_sha256": "cda5817af80784370953a09e2299dff8a65d6778a7421a516e069550d555c0bf"
+     "raw_sha256": "0d2d8bda2b17a93907287d6e9444e6f6aec8e685a94284dfadf41b66d1378bc5"
     },
     "CL": {
      "rows": 13494,
      "first": "1973-05-02",
      "last": "2026-11-06",
      "files": 54,
-     "changed_files": 55,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 214,
      "splits": 5,
-     "raw_sha256": "3ad519ffabfaaf3b758ca1c482b22ae28e93599714bbe21b2343967e6651c5be"
+     "raw_sha256": "784da186cefbae0ee4d7e00f7d9af2c2a77b2c8e1044e4790225e24040efd165"
     },
     "CMCSA": {
      "rows": 11757,
      "first": "1980-03-17",
      "last": "2026-11-06",
      "files": 47,
-     "changed_files": 48,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 122,
      "splits": 13,
-     "raw_sha256": "2fb114076b4238f773583cc788bdb3c510b33002e49d8a9cb042cdb88ed6cb07"
+     "raw_sha256": "5deb1f14fe440faad2447e5cafdfdd6c6de2011f1824b564fb8ee3ceb0548cab"
     },
     "CME": {
      "rows": 6018,
      "first": "2002-12-06",
      "last": "2026-11-06",
      "files": 25,
-     "changed_files": 26,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 109,
      "splits": 1,
-     "raw_sha256": "aaacb0b7d57ab59332862e0fa4aed1a650af065957b1a11018eb944944e7f525"
+     "raw_sha256": "5be4847eaa789ddea0930a646cd47550012e12ee86c22cbe6438ea95a4f7a686"
     },
     "CMG": {
      "rows": 5229,
      "first": "2006-01-26",
      "last": "2026-11-06",
      "files": 21,
-     "changed_files": 22,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 0,
      "splits": 1,
-     "raw_sha256": "7e7d2e4471030c2184e4f539d3341862521d3f8b5b8ae1e3a9fb4f7a9a81413a"
+     "raw_sha256": "75f0dba335d4e86dd3657818622dd1d536fd4d8110fdcf3e187bcbad3b966c32"
     },
     "CMI": {
      "rows": 13543,
      "first": "1973-02-21",
      "last": "2026-11-06",
      "files": 54,
-     "changed_files": 55,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 168,
      "splits": 3,
-     "raw_sha256": "ff4c2502e02582486628f05f255520bf1f8d3f2c0f28515f4e98b54fb7671b73"
+     "raw_sha256": "341608d6c5b80ee5d16f93bd4478e9763e291a5e6419d9d7e873c17590414bff"
     },
     "COP": {
      "rows": 11304,
      "first": "1981-12-31",
      "last": "2026-11-06",
      "files": 46,
-     "changed_files": 47,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 187,
      "splits": 3,
-     "raw_sha256": "28afccc3d0d30b4999cce8436d128f8f532f6c3f51e536a7a4e0ffaeb218075a"
+     "raw_sha256": "b15e0ab8c0529c9a20fa8187896809542826c0898559b70a4200d684a6a28124"
     },
     "COST": {
      "rows": 10162,
      "first": "1986-07-09",
      "last": "2026-11-06",
      "files": 41,
-     "changed_files": 42,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 96,
      "splits": 2,
-     "raw_sha256": "1587806aecf8d3697613981d0887ac6e9bd4a0b2690c5fbb6bac630992f7b841"
+     "raw_sha256": "cf4b74d1e35c1ae82ef27ee8f60adbd3302f820fb151fdfe68fbd7e0a45da147"
     },
     "CRM": {
      "rows": 5631,
      "first": "2004-06-23",
      "last": "2026-11-06",
      "files": 23,
-     "changed_files": 24,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 11,
      "splits": 1,
-     "raw_sha256": "889e40b399e9dbe2e47071c5a61687b37dbfd447b7705818681dbe27466a7835"
+     "raw_sha256": "df33cc487b156dd9e1f0c2be10c3cf8833cf5a64fde70dd67b24eb817f6bc83f"
     },
     "CRWD": {
      "rows": 1863,
      "first": "2019-06-12",
      "last": "2026-11-06",
      "files": 8,
-     "changed_files": 9,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 0,
      "splits": 1,
-     "raw_sha256": "79ff68259e68be3e0ccc58b4110f4ee8d7fc66d1a195deaa71435cf7e4a27db4"
+     "raw_sha256": "db866d95dfb9bb75242893a424d6712335f02de4d193f495723fedf32e555a5a"
     },
     "CSCO": {
      "rows": 9248,
      "first": "1990-02-16",
      "last": "2026-11-06",
      "files": 37,
-     "changed_files": 38,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 63,
      "splits": 9,
-     "raw_sha256": "a01cd4b45cd4538e33d8df7e72bb0fa4b31ff3ce0ba0d4062ffb80331279ff47"
+     "raw_sha256": "e224dc97e8d2876028c18f4f61ca1d9b6c94c834a3151ea99291788268bb2483"
     },
     "CTAS": {
      "rows": 10890,
      "first": "1983-08-19",
      "last": "2026-11-06",
      "files": 44,
-     "changed_files": 45,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 58,
      "splits": 6,
-     "raw_sha256": "9d0a4b1517cd3622ddd8e302ffffeca760be5501d0c0869ed410866a1ad8ecf3"
+     "raw_sha256": "468e5d5c9ef76f877a2a2d5f77ce6ff7d948d0ade6398492fac3fe3c8c9105f9"
     },
     "CVX": {
      "rows": 14335,
      "first": "1970-01-02",
      "last": "2026-11-06",
      "files": 57,
-     "changed_files": 58,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 198,
      "splits": 4,
-     "raw_sha256": "698f3874d7e83f72e803cb91f711b39015ee506cd3a441ce8c17d8ec587e627b"
+     "raw_sha256": "9c80532d040136b4c5809128f12073be50b2b52eebc524e8116876c66eb26973"
     },
     "DDOG": {
      "rows": 1794,
      "first": "2019-09-19",
      "last": "2026-11-06",
      "files": 8,
-     "changed_files": 9,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 0,
      "splits": 0,
-     "raw_sha256": "0c199de04d3edd47dc5bda788f78a50879c8cc8f5a1ebcb0a5605d5f4bf2ac33"
+     "raw_sha256": "61a360eac765e9d7d7727e815acb39152a4d76cbb132074150b2fb236ba95fb5"
     },
     "DE": {
      "rows": 13723,
      "first": "1972-06-01",
      "last": "2026-11-06",
      "files": 55,
-     "changed_files": 56,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 217,
      "splits": 4,
-     "raw_sha256": "989936340ae924eab8cf346d8b7751ff68631695285764081bdace7e95624077"
+     "raw_sha256": "da75ecc2a8493802aee6833b0736de542636ba35abda8d2960e7dd11aebff2d4"
     },
     "DELL": {
      "rows": 2571,
      "first": "2016-08-17",
      "last": "2026-11-06",
      "files": 11,
-     "changed_files": 12,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 19,
      "splits": 2,
-     "raw_sha256": "a8b3bf60ebac49a9d93012b55f37d3537dd7d0569ca770a0c8f3c428bb721e8a"
+     "raw_sha256": "e236da6e4452c61f30621d7a638490e9830523a37f62d14f399e194476d68567"
     },
     "DG": {
      "rows": 4271,
      "first": "2009-11-13",
      "last": "2026-11-06",
      "files": 18,
-     "changed_files": 19,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 47,
      "splits": 0,
-     "raw_sha256": "461119c7a3d93bbf6103e52e1a22889e16d8ffaea1f45db32823c0b4b735fb25"
+     "raw_sha256": "f15bfb93fca0a6ca50617df869a47e392a380533f1c81bf7fe642d37cf58f89f"
     },
     "DGRO": {
      "rows": 3121,
      "first": "2014-06-12",
      "last": "2026-11-06",
      "files": 13,
-     "changed_files": 14,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 49,
      "splits": 0,
-     "raw_sha256": "f79ca37341e225621a217700450bf97318d53353b6582cabd368ef52eb48c576"
+     "raw_sha256": "e2b72265c8ec3d410b31acbd7d748c181fc41c0d7e2750b9b6cd906c690aaadb"
     },
     "DHR": {
      "rows": 12063,
      "first": "1978-12-29",
      "last": "2026-11-06",
      "files": 49,
-     "changed_files": 50,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 136,
      "splits": 7,
-     "raw_sha256": "0000b52c455645ab00ace4c886f5b0a1d1c915b4d9e646f1cff962c0e0b320b8"
+     "raw_sha256": "986b4fe067fd858157c0de8d8725cff167fb08b35ac2fb010c80f3dc55dbb4e8"
     },
     "DIA": {
      "rows": 7246,
      "first": "1998-01-20",
      "last": "2026-11-06",
      "files": 29,
-     "changed_files": 30,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 341,
      "splits": 0,
-     "raw_sha256": "254204f4f1d3c0c85984111adf931cbba8ee44cdd21d8f46efefeafbb3ea8e22"
+     "raw_sha256": "af4ee41eb38fc483c59d8003b62ca63cfabdb516eaec50803d4531dd04d091eb"
     },
     "DIS": {
      "rows": 14335,
      "first": "1970-01-02",
      "last": "2026-11-06",
      "files": 57,
-     "changed_files": 58,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 100,
      "splits": 6,
-     "raw_sha256": "bec91d897c8482e9feea969ffcbe07b37e7c764c849786310d6ab000c43fa204"
+     "raw_sha256": "3934b06e57cdc25e43c2c970164bb9684871e7ca4f71f154452586f843054f9e"
     },
     "DLTR": {
      "rows": 7972,
      "first": "1995-03-07",
      "last": "2026-11-06",
      "files": 32,
-     "changed_files": 33,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 0,
      "splits": 6,
-     "raw_sha256": "0d395c129569377507fb64b53d72c9af8f2764132f7138b595177816870406d7"
+     "raw_sha256": "e2ff462997a873cc4c7f3b8f97cd442daa36cb2bfc7d8e3df78bbe05f200a98b"
     },
     "DTE": {
      "rows": 14335,
      "first": "1970-01-02",
      "last": "2026-11-06",
      "files": 57,
-     "changed_files": 58,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 228,
      "splits": 1,
-     "raw_sha256": "639cf54bdb8a204851c89d97fb6278d82034127ba5cbe10eeefdce68449895c5"
+     "raw_sha256": "7f03cb0c162b5ce1a8efa64f6f61572a499d2c00814d3dfe87c4472c6653c80e"
     },
     "DUK": {
      "rows": 11757,
      "first": "1980-03-17",
      "last": "2026-11-06",
      "files": 47,
-     "changed_files": 48,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 174,
      "splits": 4,
-     "raw_sha256": "548355e0010be72f99e2b4c36c7caa579bd1ea1d61aa83d0516e4089f26e26ce"
+     "raw_sha256": "e2447c647d3ed77e1ac8336017151529145cfdcd33271716f74ceed42b7797de"
     },
     "ECH": {
      "rows": 4771,
      "first": "2007-11-20",
      "last": "2026-11-06",
      "files": 20,
-     "changed_files": 21,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 43,
      "splits": 0,
-     "raw_sha256": "3add6eb5915a010ae4136cc24b1f8eaeda5a1fda00d426867f372e5461a73b03"
+     "raw_sha256": "8a282c5fe419d2a8c66ab9218a5584a2aca4f65334062c36f3c7f2a8383352a4"
     },
     "ED": {
      "rows": 14335,
      "first": "1970-01-02",
      "last": "2026-11-06",
      "files": 57,
-     "changed_files": 58,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 225,
      "splits": 2,
-     "raw_sha256": "6203a7ef1ceca5795bae68d18d29e732faee626041f02485ec3db945145d722d"
+     "raw_sha256": "6892afda579df79b9cde435b97ade9b1e92e3e448570a7d9020ce9cf04f0d333"
     },
     "EEM": {
      "rows": 5931,
      "first": "2003-04-14",
      "last": "2026-11-06",
      "files": 24,
-     "changed_files": 25,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 47,
      "splits": 2,
-     "raw_sha256": "faefb26de0fba9218c6fc8728a401e0f5193be2596cdd93da2cdc4b947c60bee"
+     "raw_sha256": "c11ae6d8f6ce00acedf0561b6c8d4cc66d2de8bcd5b2ec2aec35016f2130fc7a"
     },
     "EFA": {
      "rows": 6337,
      "first": "2001-08-27",
      "last": "2026-11-06",
      "files": 26,
-     "changed_files": 27,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 47,
      "splits": 1,
-     "raw_sha256": "cd017c7699204f16f8cdd35fd5df0b8e687ead27a022cf7b6bdd0be7a3d02b4c"
+     "raw_sha256": "5e898f681f3236bacc4ef2becc9de7dd8bbb7c059d45a71caed86c71ea12f500"
     },
     "EMB": {
      "rows": 4751,
      "first": "2007-12-19",
      "last": "2026-11-06",
      "files": 20,
-     "changed_files": 21,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 226,
      "splits": 0,
-     "raw_sha256": "3b2d01aaa35ee3c255d4e7f870e3d7f4b48d7d38acd5f20eb08f842f34a86a52"
+     "raw_sha256": "906cee0cf3cdc622a2c7d82c9b0748bb247c0aaecb2e3df708f37dec36094d11"
     },
     "EMR": {
      "rows": 13723,
      "first": "1972-06-01",
      "last": "2026-11-06",
      "files": 55,
-     "changed_files": 56,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 217,
      "splits": 4,
-     "raw_sha256": "727f2a92cef1b9c97c41c80506910414155acb61a7f569a0af6f36014890b497"
+     "raw_sha256": "c5b2e3d9fc51625c716f1dcaf096c6ea2b9ffbaf09827683c5739354ab11f98f"
     },
     "EOG": {
      "rows": 9342,
      "first": "1989-10-04",
      "last": "2026-11-06",
      "files": 38,
-     "changed_files": 39,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 155,
      "splits": 3,
-     "raw_sha256": "c12c7c96976c1d9b49310e67f3a3965a4f568eb5b2253a15571b3145b2d3845c"
+     "raw_sha256": "ef3c8c68320639f7c60e602269e5cc10988b0b510ed1ceaa3c6d88e47cb0b925"
     },
     "EPU": {
      "rows": 4373,
      "first": "2009-06-22",
      "last": "2026-11-06",
      "files": 18,
-     "changed_files": 19,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 64,
      "splits": 0,
-     "raw_sha256": "05b34500c5cb743a3bd0fc7df3807568e4256d86d68719ff9097dfaa097570e9"
+     "raw_sha256": "7ea91401d33f824fd65cf5d4596fe5a750db82be114ab620116f8bab0079f39d"
     },
     "ETN": {
      "rows": 13723,
      "first": "1972-06-01",
      "last": "2026-11-06",
      "files": 55,
-     "changed_files": 56,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 216,
      "splits": 6,
-     "raw_sha256": "44b89df8dd93c815813e2a8484d76746d032dcfb651ed46704761578f005ec69"
+     "raw_sha256": "cfabff8c948e0341fe3ba05536de417a28b4b2ad85acb541cd3b1dc40da04834"
     },
     "EWA": {
      "rows": 7711,
      "first": "1996-03-18",
      "last": "2026-11-06",
      "files": 31,
-     "changed_files": 32,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 57,
      "splits": 0,
-     "raw_sha256": "f7079eb23b0ab5b869e0c556846a85204deb5c8f44ac36f96567c3807bb653a6"
+     "raw_sha256": "92ef66c42f146783894cfadbc24068469dc872b0273f5eb826d398f7eddaa5dd"
     },
     "EWC": {
      "rows": 7711,
      "first": "1996-03-18",
      "last": "2026-11-06",
      "files": 31,
-     "changed_files": 32,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 56,
      "splits": 0,
-     "raw_sha256": "c9ef9d3132a3daa675fde018b2419564b9e99657181be762e388d0f3ec339d9c"
+     "raw_sha256": "c69c0f0daa0fc01d439dd56daed6798e27fae25ca0f87f610d9e745a2a437672"
     },
     "EWG": {
      "rows": 7711,
      "first": "1996-03-18",
      "last": "2026-11-06",
      "files": 31,
-     "changed_files": 32,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 42,
      "splits": 0,
-     "raw_sha256": "2dab78974abe666954f28b4c3b4d50881396a9417a61dd6b7335abfc24c68c78"
+     "raw_sha256": "98f1e6b37497caa7e02bfa75e2927e3b0e24859d4cf0cc025b149a162bcf0ead"
     },
     "EWJ": {
      "rows": 7711,
      "first": "1996-03-18",
      "last": "2026-11-06",
      "files": 31,
-     "changed_files": 32,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 50,
      "splits": 1,
-     "raw_sha256": "c9517aa9c39d42e4684e9ea281d49739a92ca75b9bc0cdde531b619639d57f40"
+     "raw_sha256": "400b721d13a46720986adbdf4aa2ddef1c6dc5b7aaa1635385ecabee51e37662"
     },
     "EWT": {
      "rows": 6633,
      "first": "2000-06-23",
      "last": "2026-11-06",
      "files": 27,
-     "changed_files": 28,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 24,
      "splits": 1,
-     "raw_sha256": "a2189e145732f2f2b58dcfb63d3d24cbf5c82b2ecbf771d9f69e7c82aa00ad51"
+     "raw_sha256": "2e3b0257cde9db77cf70ff778c67114ebe46a6e4faf8007151d90f7b9a6f1c55"
     },
     "EWU": {
      "rows": 7711,
      "first": "1996-03-18",
      "last": "2026-11-06",
      "files": 31,
-     "changed_files": 32,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 56,
      "splits": 1,
-     "raw_sha256": "d6782f853d9becaefb9346ec98013994db877b504fb36f69b8747810753104e8"
+     "raw_sha256": "f165f5bd48e4a282d58b0dbda4749a9a594390e3a858c90183ac79254b286bf9"
     },
     "EWW": {
      "rows": 7711,
      "first": "1996-03-18",
      "last": "2026-11-06",
      "files": 31,
-     "changed_files": 32,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 58,
      "splits": 0,
-     "raw_sha256": "dd00f76ffd9cd198820e8879232e13958f0f961e03d494dcc7df0f43377324ab"
+     "raw_sha256": "39df5866549b46e117959cbb1b4566cc56931fbd0b34f27d98094e3e66687ec9"
     },
     "EWZ": {
      "rows": 6619,
      "first": "2000-07-14",
      "last": "2026-11-06",
      "files": 27,
-     "changed_files": 28,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 57,
      "splits": 0,
-     "raw_sha256": "7a326480a6e235eb8d516c2a1e5f4853c83737cba2f779ecfbc04f92bc8d7cd9"
+     "raw_sha256": "54b3c7f97785ed811f1bb5a85582b27b76376d4587d70b686ed0f486a6f6d5a2"
     },
     "FAST": {
      "rows": 9879,
      "first": "1987-08-20",
      "last": "2026-11-06",
      "files": 40,
-     "changed_files": 41,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 97,
      "splits": 9,
-     "raw_sha256": "9fb44b1144f4df659df99a3c895c963fa080eb6fd5e9896f55077845f4c97cd9"
+     "raw_sha256": "b88bedd3f53993ed9f54c1c60881669d9f01d1ffb0e44c6ff1eaff4f3afe4a02"
     },
     "FCX": {
      "rows": 7886,
      "first": "1995-07-10",
      "last": "2026-11-06",
      "files": 32,
-     "changed_files": 33,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 102,
      "splits": 1,
-     "raw_sha256": "a316835c204347def1089481883284036978a9e04ac66c7cf56133b827528e31"
+     "raw_sha256": "36765cd25e189289a8bad43b2381fea8cb170b4f35b002244f725fd7ee02d2f1"
     },
     "FDX": {
      "rows": 12245,
      "first": "1978-04-12",
      "last": "2026-11-06",
      "files": 49,
-     "changed_files": 50,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 98,
      "splits": 6,
-     "raw_sha256": "d3086cf410f7c6cca2afde60cb6b924c94f6ee521cc260e3bdaf31dcbd1773d9"
+     "raw_sha256": "b855f917d4d58e9473771c5b81b6ac1af62c31ef86123fc65de6ecf82bb5ee1c"
     },
     "FTNT": {
      "rows": 4268,
      "first": "2009-11-18",
      "last": "2026-11-06",
      "files": 18,
-     "changed_files": 19,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 0,
      "splits": 2,
-     "raw_sha256": "c506a26611b08e5630cd17afd815493347deff22bc791d078619dc9ec3fcebf8"
+     "raw_sha256": "cb28879ebe5a4bef0936b6e77310a140e20f39dc35ed4d5acf14f65933949ed2"
     },
     "FXI": {
      "rows": 5556,
      "first": "2004-10-08",
      "last": "2026-11-06",
      "files": 23,
-     "changed_files": 24,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 40,
      "splits": 1,
-     "raw_sha256": "e63bf939bcaceef97fce11b7784009caf29fb0f4d826f8ae8be48845035415b5"
+     "raw_sha256": "130d8833d161215e662e812be75144bc12df0b623fe0ed5e4367237f4e252f8b"
     },
     "GE": {
      "rows": 14335,
      "first": "1970-01-02",
      "last": "2026-11-06",
      "files": 57,
-     "changed_files": 58,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 228,
      "splits": 10,
-     "raw_sha256": "553d3599224468b6d958397cc382b418d282db741ba101965bdac383b3adb826"
+     "raw_sha256": "224e89d0af7430c13c8631570ce00d847ca58b081510e8c2cc3c98cd69f20375"
     },
     "GILD": {
      "rows": 8761,
      "first": "1992-01-22",
      "last": "2026-11-06",
      "files": 35,
-     "changed_files": 36,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 46,
      "splits": 5,
-     "raw_sha256": "3116ec2c61dd3513546a1f93a97ed15721866d8accc96c7cc3e7978a011c931d"
+     "raw_sha256": "eb5a5e364b564fc691aa4b0dd0afb058a429fcf3bf7ddb6112adc1ba0024a42e"
     },
     "GLD": {
      "rows": 5527,
      "first": "2004-11-18",
      "last": "2026-11-06",
      "files": 23,
-     "changed_files": 24,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 0,
      "splits": 0,
-     "raw_sha256": "9511e60a8037a77172b4d2bfab6ce5314d9e98e50a2e03eca2f91c9c92964b25"
+     "raw_sha256": "193965e51c0f66b0136749f7c5392976b0a3469d3a0e2a94f71e1938d6f9986c"
     },
     "GOOGL": {
      "rows": 5591,
      "first": "2004-08-19",
      "last": "2026-11-06",
      "files": 23,
-     "changed_files": 24,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 10,
      "splits": 2,
-     "raw_sha256": "a680bc0a74585b8671a5f21ced609713d4403584af8546c689d9718331de0429"
+     "raw_sha256": "fb44fcb070c1c6c4e9574c58918eb97b3fb33a890190d825183c5990ded665b9"
     },
     "GS": {
      "rows": 6922,
      "first": "1999-05-04",
      "last": "2026-11-06",
      "files": 28,
-     "changed_files": 29,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 110,
      "splits": 0,
-     "raw_sha256": "44fd8a568cbed25e475377dede236b6f2ff975a9b8f100625170bc12e1768da8"
+     "raw_sha256": "58c3252079c868c0f1988fd77830762803181fa572cb6e34bc38f2c772cd1e40"
     },
     "HCA": {
      "rows": 3940,
      "first": "2011-03-10",
      "last": "2026-11-06",
      "files": 16,
-     "changed_files": 17,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 37,
      "splits": 0,
-     "raw_sha256": "914fb5d34003deda72c93bec803c4df6137f7c1c30587ff19e7703236afe70c3"
+     "raw_sha256": "b7e69672a8e64de7a86beb5e93d47a8a026ae5cf2735506c6b2afc2a865f42c1"
     },
     "HD": {
      "rows": 11374,
      "first": "1981-09-22",
      "last": "2026-11-06",
      "files": 46,
-     "changed_files": 47,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 157,
      "splits": 13,
-     "raw_sha256": "f27c896ac09c0b51bd646dcec51a47e348417b1bc7375b7912e315f9ea0ef3ec"
+     "raw_sha256": "cde62edb56f8c540ff7fe9da3af23e016020a4fd3bb306e1b6791c573b02c8f0"
     },
     "HON": {
      "rows": 14335,
      "first": "1970-01-02",
      "last": "2026-11-06",
      "files": 57,
-     "changed_files": 58,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 226,
      "splits": 8,
-     "raw_sha256": "48ca53d217b9ec448d1745ba19147785b6c9e8a79563e251f174253e4f39e325"
+     "raw_sha256": "016407ad7bfa30dda35ff2d8f1ecdcc6a0ceb5ea70fcfab680428c40f018ac8d"
     },
     "HPE": {
      "rows": 2780,
      "first": "2015-10-19",
      "last": "2026-11-06",
      "files": 12,
-     "changed_files": 13,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 44,
      "splits": 2,
-     "raw_sha256": "2e81ae049d73eb58d5a09ca4a469b11f91928a19a12889a95f27bb8b6c5c4693"
+     "raw_sha256": "2d5b1b30e6368bb75a4fd0f988abac1d5d8f471650aa1fa7c697c01f8efd35ab"
     },
     "HPQ": {
      "rows": 14335,
      "first": "1970-01-02",
      "last": "2026-11-06",
      "files": 57,
-     "changed_files": 58,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 213,
      "splits": 8,
-     "raw_sha256": "0f87c38b4096ef65855315ccae1b8b5d4e5fb7b961e9ea9c159360626e6ff80b"
+     "raw_sha256": "6ee5452dc6c9f6237340fa4db43e95e039e05d4e762b102624ec7100ea8b057c"
     },
     "HUM": {
      "rows": 11304,
      "first": "1981-12-31",
      "last": "2026-11-06",
      "files": 46,
-     "changed_files": 47,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 107,
      "splits": 4,
-     "raw_sha256": "5ff424fc4ef4e1db00c160ce9df4907a9cbac336836c655a0930a95134c7f3ca"
+     "raw_sha256": "fcbde61848ad26dfd0c71bc2f296d49af19654eb8a43a70261b7d0936f20e0ae"
     },
     "HYG": {
      "rows": 4927,
      "first": "2007-04-11",
      "last": "2026-11-06",
      "files": 20,
-     "changed_files": 21,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 233,
      "splits": 0,
-     "raw_sha256": "70242dd9e7a292a047a4ca92a4d5a20ba2a3d2f59a4513776c9def67b5c0b475"
+     "raw_sha256": "f9be9001e88396e3ece73ba94b9d4db72510b6052450de22e4c409b03a0af1c4"
     },
     "IAU": {
      "rows": 5479,
      "first": "2005-01-28",
      "last": "2026-11-06",
      "files": 22,
-     "changed_files": 23,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 0,
      "splits": 2,
-     "raw_sha256": "bb92f9f54ce4cd758a1570c1120ca8420342b150089b12fee9dc2a67b50eb174"
+     "raw_sha256": "eb7f3b4fd849215e91a3299c879e5fb6135a7608962296818c17f270ffe1e620"
     },
     "IBB": {
      "rows": 6473,
      "first": "2001-02-12",
      "last": "2026-11-06",
      "files": 26,
-     "changed_files": 27,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 56,
      "splits": 1,
-     "raw_sha256": "fd01448f3223f39eaf4557569552d6d0db3a0be39c4859d072d447ee91abf646"
+     "raw_sha256": "63a1807704bc32c440d7c80da4d3c3e35279a6b12ae44da8e2f0b3ef81b07e7e"
     },
     "IBM": {
      "rows": 14335,
      "first": "1970-01-02",
      "last": "2026-11-06",
      "files": 57,
-     "changed_files": 58,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 226,
      "splits": 5,
-     "raw_sha256": "5e50c83aae2e7588140b2a2e68a518800aeb5684e2539ee6fd51bf02ef62245b"
+     "raw_sha256": "619acc3ca5718992fc4bd92bad35be5fa2aace2078cbb87f758880e3e2d83fa2"
     },
     "ICE": {
      "rows": 5276,
      "first": "2005-11-16",
      "last": "2026-11-06",
      "files": 22,
-     "changed_files": 23,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 52,
      "splits": 1,
-     "raw_sha256": "0676f95a2721ce7cf9af3984daeb6bb19b8d6e7b43c48fcd529cca0a42d7a9d9"
+     "raw_sha256": "e1ac0924786878cfb2a2d515750350ec98acf5227db5a33393f0583df39cca24"
     },
     "IEF": {
      "rows": 6109,
      "first": "2002-07-30",
      "last": "2026-11-06",
      "files": 25,
-     "changed_files": 26,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 291,
      "splits": 0,
-     "raw_sha256": "63aaab1079134b52ff3eaf51f9ab4d5c5929c7ee1e23de36f582e354629f9ab0"
+     "raw_sha256": "6161f53f1c32052f9d064c0dfd4b2a113bd47fb37b96ea63fe953ded9c77e6c0"
     },
     "IEI": {
      "rows": 4988,
      "first": "2007-01-11",
      "last": "2026-11-06",
      "files": 20,
-     "changed_files": 21,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 236,
      "splits": 0,
-     "raw_sha256": "590998932aeec8c1bfac6092197339cb36d937e986c706b2d16b6b9f11486368"
+     "raw_sha256": "36a40c6c9df4ce4b73d4dd9c977997f5189c2bec09d1718ce162e61faa6f4202"
     },
     "IGSB": {
      "rows": 4988,
      "first": "2007-01-11",
      "last": "2026-11-06",
      "files": 20,
-     "changed_files": 21,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 236,
      "splits": 1,
-     "raw_sha256": "6793e45ba1e8f9666355b133aa6f4aa96fbbcda9fd2487cd4fea89b2f661eddd"
+     "raw_sha256": "93c8e1ca7cee2ff3135e5df41a77c071e6403d5150dfc603f9e6a2e9e896a623"
     },
     "IJH": {
      "rows": 6652,
      "first": "2000-05-26",
      "last": "2026-11-06",
      "files": 27,
-     "changed_files": 28,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 108,
      "splits": 2,
-     "raw_sha256": "ff93ea67fccdef9e6d51fd35d620894ebb2e2cd4c0812d8f5aa41f10e568cec3"
+     "raw_sha256": "5bd7d989145ad83c66200040cd4d4dc124870971a465b147d08975501a12da7d"
     },
     "IJR": {
      "rows": 6652,
      "first": "2000-05-26",
      "last": "2026-11-06",
      "files": 27,
-     "changed_files": 28,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 106,
      "splits": 2,
-     "raw_sha256": "32a91f7202158ce456a9fb793daedf22fc063cea383401ec7058ea825e71901a"
+     "raw_sha256": "f329939255ddd5fe213057930a847fefca8c215cec54136fa929d4c7c04902f4"
     },
     "INDA": {
      "rows": 3712,
      "first": "2012-02-03",
      "last": "2026-11-06",
      "files": 15,
-     "changed_files": 16,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 22,
      "splits": 0,
-     "raw_sha256": "c41b0d6c99892e6b6a94824f2f179efe8b93b88e81336cc7dcf5137a88838c42"
+     "raw_sha256": "5eb6a753d38fb173d1ea55fbee7323bd37616fa781b8ce5ec82840d2fa3f6015"
     },
     "INTC": {
      "rows": 11757,
      "first": "1980-03-17",
      "last": "2026-11-06",
      "files": 47,
-     "changed_files": 48,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 128,
      "splits": 8,
-     "raw_sha256": "1e95c868c22d86131015d7561c9d17f9c542b409e666aa730b6512e6f1b2697d"
+     "raw_sha256": "319993449738afc678e0a0d4185f9d3b35218b44c97440cc1b15e563c13f3694"
     },
     "INTU": {
      "rows": 8473,
      "first": "1993-03-12",
      "last": "2026-11-06",
      "files": 34,
-     "changed_files": 35,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 61,
      "splits": 3,
-     "raw_sha256": "342cfbe4f5d29a8cef961b0db4e3485d396388b7cb68f941e0aa678c82fcb290"
+     "raw_sha256": "82d62b8cccf6ae322bdbac8c8cd55db97e56fcb5204ebfe35d8332883770b04d"
     },
     "ISRG": {
      "rows": 6638,
      "first": "2000-06-16",
      "last": "2026-11-06",
      "files": 27,
-     "changed_files": 28,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 0,
      "splits": 3,
-     "raw_sha256": "e3ccc4b7625a455603dd557a8cc8620dcdd7fe89572965c73b3c5d9a5852f77b"
+     "raw_sha256": "df828b79796ae426954245f5b55476531cb69f5a0e3c633a18b6a86f6f149f18"
     },
     "ITOT": {
      "rows": 5735,
      "first": "2004-01-23",
      "last": "2026-11-06",
      "files": 23,
-     "changed_files": 24,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 93,
      "splits": 2,
-     "raw_sha256": "30b55639f24167776ba20319d87b718194101f4381fb4b14be4864bed8c2d504"
+     "raw_sha256": "45c17449ee3c5fe0cc41e703662f3919d682f581f93b370995a557cbc57c26d9"
     },
     "ITW": {
      "rows": 13529,
      "first": "1973-03-13",
      "last": "2026-11-06",
      "files": 54,
-     "changed_files": 55,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 160,
      "splits": 5,
-     "raw_sha256": "2438e3aa47aebd9faf510cbc7b70923220e605a3adf79c6b2cb5306dea5a1ffb"
+     "raw_sha256": "2bd8e18fa77c090ffb51aac402b3d91b2d3b9a37bf83f8860830025038553418"
     },
     "IWB": {
      "rows": 6657,
      "first": "2000-05-19",
      "last": "2026-11-06",
      "files": 27,
-     "changed_files": 28,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 108,
      "splits": 0,
-     "raw_sha256": "31e673b0a4319d18aeed84ab7927a4186f040ea97f084dd0b5282b84d5609e06"
+     "raw_sha256": "4f0f6468e893b6adab759fb96f08bf7e56fedbb9a4a3b0c8e6a0506d93954dea"
     },
     "IWD": {
      "rows": 6652,
      "first": "2000-05-26",
      "last": "2026-11-06",
      "files": 27,
-     "changed_files": 28,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 107,
      "splits": 0,
-     "raw_sha256": "ea745b522672d1793bc007b9ed9c25da4ca24160424029fa2695157b49b9c198"
+     "raw_sha256": "e297ce7ee599ca706705a05fdacb4acfef947cf2fd590d7cdb15c265cd015447"
     },
     "IWF": {
      "rows": 6652,
      "first": "2000-05-26",
      "last": "2026-11-06",
      "files": 27,
-     "changed_files": 28,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 108,
      "splits": 1,
-     "raw_sha256": "3d2e455613df8cd0444bb147e8e43c94324689fd17e21f3e92db382044a5a2a7"
+     "raw_sha256": "2df0770bb560c2593bc0f3dd50630da814822496de245d3bccdff434ca48e9ae"
     },
     "IWM": {
      "rows": 6652,
      "first": "2000-05-26",
      "last": "2026-11-06",
      "files": 27,
-     "changed_files": 28,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 107,
      "splits": 1,
-     "raw_sha256": "750e5724090ffbc75bf908e41bae91f16076023ed8c05a9db9a66f06a374c975"
+     "raw_sha256": "7531d31fd295877a3d552b53f70498775c90dce38f85ca5fe435e4df1c5e1aaa"
     },
     "JNJ": {
      "rows": 14335,
      "first": "1970-01-02",
      "last": "2026-11-06",
      "files": 57,
-     "changed_files": 58,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 227,
      "splits": 6,
-     "raw_sha256": "723c29453429171953f58af5c9479cdcd4ef34fa5f139a3e5e6b7dde7244e8f5"
+     "raw_sha256": "427755c2b2d58aa1bca12229eec76b49dcf5819ff8471ddf5ef56f8c6cab195f"
     },
     "JNK": {
      "rows": 4762,
      "first": "2007-12-04",
      "last": "2026-11-06",
      "files": 20,
-     "changed_files": 21,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 226,
      "splits": 1,
-     "raw_sha256": "13e31c692e5abeb74ced97a254d38f378c6a47eb2ef0df99dc13d182024999ae"
+     "raw_sha256": "f3479f4b917601bc03583297f33540c5009cd89bfbd5c86ffc076b7fd22cec85"
     },
     "JPM": {
      "rows": 11757,
      "first": "1980-03-17",
      "last": "2026-11-06",
      "files": 47,
-     "changed_files": 48,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 172,
      "splits": 4,
-     "raw_sha256": "bcbadb02b6785f7309750a0a04204ccc11c2676d6890d5f4dbd79249db2adc0d"
+     "raw_sha256": "1f2538303861bd0ee8fce8b96a02673f87c21447bcc6b0061bfd87c36c0d0cbb"
     },
     "KLAC": {
      "rows": 11614,
      "first": "1980-10-08",
      "last": "2026-11-06",
      "files": 47,
-     "changed_files": 48,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 87,
      "splits": 6,
-     "raw_sha256": "660e9d0c44123edac029037cfefd95eec317cbe75a1ae0f88c4bdfe45a11f9c6"
+     "raw_sha256": "8582dbcf35bfefd3920daa58f596b21b1e15c76ae2f9502bdad6d8019e4ffdd1"
     },
     "KMB": {
      "rows": 11757,
      "first": "1980-03-17",
      "last": "2026-11-06",
      "files": 47,
-     "changed_files": 48,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 168,
      "splits": 5,
-     "raw_sha256": "9695e98358fa1dae036531f80c5299dbf5132f3e307dfb182c18fc289a6008b6"
+     "raw_sha256": "d8627f7f634723d9ff297dde267136b15cf6ddb9d803a4ebda5c38fa9c85a6ce"
     },
     "KO": {
      "rows": 14335,
      "first": "1970-01-02",
      "last": "2026-11-06",
      "files": 57,
-     "changed_files": 58,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 227,
      "splits": 6,
-     "raw_sha256": "f4775b76c4723ae1af2f6b49a5c75c3ac3c4a512195a0eba0d0f296e9e408243"
+     "raw_sha256": "889fd85661539aba9dc30ad44d190ea3e055002aa85004ca6dfa0afa9584489c"
     },
     "KRE": {
      "rows": 5127,
      "first": "2006-06-22",
      "last": "2026-11-06",
      "files": 21,
-     "changed_files": 22,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 80,
      "splits": 0,
-     "raw_sha256": "24a42f0192ea6282ff1071da207bbb9765c0dc6f2ace0d6f08d4375d9b9541a5"
+     "raw_sha256": "b25f2aeee90c55bb1d51380238c9a617f5c03ed1c7bfe558a289567c5226aed1"
     },
     "KWEB": {
      "rows": 3338,
      "first": "2013-08-01",
      "last": "2026-11-06",
      "files": 14,
-     "changed_files": 15,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 14,
      "splits": 0,
-     "raw_sha256": "c8fdd47a662ff6823701a0115878b76a893898f3c9698a4994ec7d157f50fba1"
+     "raw_sha256": "d437f7bbfde3157a17df64a036c56030337413eb24397b2349e4807c1bf39051"
     },
     "LIN": {
      "rows": 8659,
      "first": "1992-06-17",
      "last": "2026-11-06",
      "files": 35,
-     "changed_files": 36,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 137,
      "splits": 1,
-     "raw_sha256": "7a08b66a1e41857bbe1ac3cb7bcbb90cb992654430b04abcc0fab0eaa7830922"
+     "raw_sha256": "33edf3aeb214a8dd4c36f6e4de07d21d40e2ee5a9df8449d96c39da94f1bc1d5"
     },
     "LLY": {
      "rows": 13723,
      "first": "1972-06-01",
      "last": "2026-11-06",
      "files": 55,
-     "changed_files": 56,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 217,
      "splits": 4,
-     "raw_sha256": "d4f3372bb134c6bd630e5d2962efe23a50f110d09940aec0ca3ba2769dd5004c"
+     "raw_sha256": "13fe125a9cf996a270482dbca147568a1267fe6cb26f73707e246d02acf2cee9"
     },
     "LMT": {
      "rows": 14334,
      "first": "1970-01-02",
      "last": "2026-11-06",
      "files": 57,
-     "changed_files": 58,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 170,
      "splits": 3,
-     "raw_sha256": "e56902b7485c7c49fb3f64ef86eee29b97be87665e756b134053f6c98a164dc3"
+     "raw_sha256": "f3ff98404060430f7cdbb06102e0380eaac5a19120816afc53a247269d881edc"
     },
     "LOW": {
      "rows": 11757,
      "first": "1980-03-17",
      "last": "2026-11-06",
      "files": 47,
-     "changed_files": 48,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 166,
      "splits": 5,
-     "raw_sha256": "2cc6711080bcc4f98f91b2ba4b5dfd04318422950d300d51e057829aba4bf006"
+     "raw_sha256": "b470ed3f1306c2272c03fc5846427edc8891be42c78a1b2b3f2e027259c219f6"
     },
     "LQD": {
      "rows": 6109,
      "first": "2002-07-30",
      "last": "2026-11-06",
      "files": 25,
-     "changed_files": 26,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 290,
      "splits": 0,
-     "raw_sha256": "1825fb8628b693ce998b0da3fee6dd32b898e5bb1e70dccaf27ea224adb5798f"
+     "raw_sha256": "6b8593e0dada046c0c7cc8c504767e04a678c6a72444a2cef1ef26cc5680ae6a"
     },
     "LRCX": {
      "rows": 10711,
      "first": "1984-05-04",
      "last": "2026-11-06",
      "files": 43,
-     "changed_files": 44,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 50,
      "splits": 3,
-     "raw_sha256": "bef7985e4afcf23d6bae0cf0d5d03742b4e8368115e1773c6cc898e643d569e1"
+     "raw_sha256": "84552c833f631f805924ab97d7260185c77defe5ba913a714259207acbbbc9e7"
     },
     "MA": {
      "rows": 5146,
      "first": "2006-05-25",
      "last": "2026-11-06",
      "files": 21,
-     "changed_files": 22,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 81,
      "splits": 1,
-     "raw_sha256": "71091e6a799e3bc23c929bed0f80f9301963a32684fb32e5352efd6b993a2764"
+     "raw_sha256": "32fafde450e86044272d2ff0b19d3d62baf6d91b3524c51028245ba5202bde55"
     },
     "MCD": {
      "rows": 14335,
      "first": "1970-01-02",
      "last": "2026-11-06",
      "files": 57,
-     "changed_files": 58,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 178,
      "splits": 9,
-     "raw_sha256": "b5a637ce19dfae65406efce79d9fd608d29fddbd7e89c2960fb20b0a0bbf18a0"
+     "raw_sha256": "6663b35df655a7fae7eb2b5bfae45c539d5864e4dbd263e8b2a6b6312c5b6237"
     },
     "MCHI": {
      "rows": 3925,
      "first": "2011-03-31",
      "last": "2026-11-06",
      "files": 16,
-     "changed_files": 17,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 31,
      "splits": 0,
-     "raw_sha256": "bbc9e1217bfd44fd920cd5cfbe7e492193a685a2729862fbc3cabcf684f8034b"
+     "raw_sha256": "08b7b7600f7f153bceee324ab8f47c361fb908e058e8a3462d539c73c2b4b23f"
     },
     "MCHP": {
      "rows": 8468,
      "first": "1993-03-19",
      "last": "2026-11-06",
      "files": 34,
-     "changed_files": 35,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 96,
      "splits": 8,
-     "raw_sha256": "5a1ad70e22b968f712c361d350777a0b12c87d304cb6c02475dc0905d3768871"
+     "raw_sha256": "1f3ae398b385f1e8c5c8380d274634a19f8d8e635c7dea22a2c58a42e64972f6"
     },
     "MCO": {
      "rows": 8059,
      "first": "1994-10-31",
      "last": "2026-11-06",
      "files": 33,
-     "changed_files": 34,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 104,
      "splits": 1,
-     "raw_sha256": "2b61713c67de5e3b76395a65d207749ab8d297d16b1e35cdcd78e65a9f95df01"
+     "raw_sha256": "b7f374ef3d6af3dba973354553a09864fba764f8884d14bfa1079292f7bcc5cf"
     },
     "MDLZ": {
      "rows": 6389,
      "first": "2001-06-13",
      "last": "2026-11-06",
      "files": 26,
-     "changed_files": 27,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 101,
      "splits": 0,
-     "raw_sha256": "2b353a5cd2dd142417c2e8c46114b96da7a505f070f13815db9e0c193876beb4"
+     "raw_sha256": "6bc4b6e61da2d5f4c08471a0b0a97bc67694c4db13214588175bf4627062f39b"
     },
     "MDT": {
      "rows": 13494,
      "first": "1973-05-02",
      "last": "2026-11-06",
      "files": 54,
-     "changed_files": 55,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 180,
      "splits": 7,
-     "raw_sha256": "db8dfbb0b5a31020dc17072ee600675374faba0d473637a145126cc1d2588567"
+     "raw_sha256": "9651ae9f4145519d06784af5726340eef998cc6d60a22047a3db21bb93ab2cc2"
     },
     "META": {
      "rows": 3639,
      "first": "2012-05-18",
      "last": "2026-11-06",
      "files": 15,
-     "changed_files": 16,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 11,
      "splits": 0,
-     "raw_sha256": "f41aadab3c2191428e78c02b4af474a31ca3869fbcfca5ddea9241a07ba37417"
+     "raw_sha256": "a6c50d060cf693daad9d8334a1ba968aa34bad19ec3124c2a2b675b3e77b7c94"
     },
     "MPC": {
      "rows": 3866,
      "first": "2011-06-24",
      "last": "2026-11-06",
      "files": 16,
-     "changed_files": 17,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 61,
      "splits": 1,
-     "raw_sha256": "6378874d3c868db1f40d6a5ccab7507aeab74a880b51d81561f372dabfb1782b"
+     "raw_sha256": "ac0a9fa4f022197be978d1bbb35ba897ba2b845b1047324e103af3bd924875e8"
     },
     "MPWR": {
      "rows": 5526,
      "first": "2004-11-19",
      "last": "2026-11-06",
      "files": 23,
-     "changed_files": 24,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 51,
      "splits": 0,
-     "raw_sha256": "db15bfc54500d183acd683ef73cbebfb6c7ce664273a6c93039c0df3a96ea690"
+     "raw_sha256": "c0829ec64fd0f545c303b233dc0ef316ee075afa37fd5737f1dd542535bc44de"
     },
     "MRK": {
      "rows": 14335,
      "first": "1970-01-02",
      "last": "2026-11-06",
      "files": 57,
-     "changed_files": 58,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 225,
      "splits": 6,
-     "raw_sha256": "19188f86ad02a347f41f155e55aef9f5b13dd0d65de6cde449499f7846013d16"
+     "raw_sha256": "ada37cf2e21c880eb116a2068a5f1e66ca85e2304273ad65f089710bbbce089e"
     },
     "MRSH": {
      "rows": 13543,
      "first": "1973-02-21",
      "last": "2026-11-06",
      "files": 54,
-     "changed_files": 55,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 176,
      "splits": 4,
-     "raw_sha256": "7cf6e0f945a6556138d041ac93c5530f155f9411c6b42fa928444b3732d97a74"
+     "raw_sha256": "c3a32ff64bbd977f5587d5ddb0a3e040543acc7c9b1a30b51b6746434d9f00cb"
     },
     "MS": {
      "rows": 8486,
      "first": "1993-02-23",
      "last": "2026-11-06",
      "files": 34,
-     "changed_files": 35,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 136,
      "splits": 2,
-     "raw_sha256": "1c3fc9210631fcffecc7777aa5eace62599b9ecbb5f6b0355ff22089b6b8c06a"
+     "raw_sha256": "c9a4906aa996d9da811d9f92820c0a9f8375ce6c01f18062fd6edf8cf8527ff4"
     },
     "MSFT": {
      "rows": 10243,
      "first": "1986-03-13",
      "last": "2026-11-06",
      "files": 41,
-     "changed_files": 42,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 91,
      "splits": 9,
-     "raw_sha256": "200d271e1acd6d6c366073b1431198ab25bb82773306dc2b0bf078a96ff12fc1"
+     "raw_sha256": "85be16af748019e88c5f96f6affada0244ec8b8c0085a6ff131c926958f98ce1"
     },
     "MTUM": {
      "rows": 3411,
      "first": "2013-04-18",
      "last": "2026-11-06",
      "files": 14,
-     "changed_files": 15,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 54,
      "splits": 1,
-     "raw_sha256": "456c12a1b7076a5ba984fb3b2c7db2ef70c5d667ac138c2ad5fd2c2d22fec451"
+     "raw_sha256": "73d661411ccc617854176257a4462662096171faa821bdc6a109cf5c0747b2bd"
     },
     "MU": {
      "rows": 10692,
      "first": "1984-06-01",
      "last": "2026-11-06",
      "files": 43,
-     "changed_files": 44,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 34,
      "splits": 3,
-     "raw_sha256": "356d41507b16f99dffe14ed6fa9a59b2cd357e9c629ab789442233e3b30f554e"
+     "raw_sha256": "34c17ecc6d3b87c8e31b14cba15d2b6c4d7cecbf851a7f5d5cdb025100770a66"
     },
     "MUB": {
      "rows": 4822,
      "first": "2007-09-10",
      "last": "2026-11-06",
      "files": 20,
-     "changed_files": 21,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 227,
      "splits": 0,
-     "raw_sha256": "a0cce5edddb1c359444954562a421b6667d0d067c155eb45ff7864eddf89e747"
+     "raw_sha256": "e2005cce289c676aa965d9a5e398be16e40eb9e12d739b902d29c2728aa2bb6b"
     },
     "NEE": {
      "rows": 13543,
      "first": "1973-02-21",
      "last": "2026-11-06",
      "files": 54,
-     "changed_files": 55,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 174,
      "splits": 3,
-     "raw_sha256": "e5f22d9b028c7551d371d58adb3b3f32cf7d09982368098834de5a7a6ac7a943"
+     "raw_sha256": "f0a393bcfe3f835957cb30e94526cbca46e344513c1181177159d48cff1b63a7"
     },
     "NEM": {
      "rows": 11757,
      "first": "1980-03-17",
      "last": "2026-11-06",
      "files": 47,
-     "changed_files": 48,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 162,
      "splits": 3,
-     "raw_sha256": "f0f47c3fa2e7e4a3820f8f6a72aee6b02ba4b85d5f419480337ef6054101a7c0"
+     "raw_sha256": "6f0256a3982983989d04740cc087ca702f0f1c045b87ff77ed342248c6016e40"
     },
     "NET": {
      "rows": 1798,
      "first": "2019-09-13",
      "last": "2026-11-06",
      "files": 8,
-     "changed_files": 9,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 0,
      "splits": 0,
-     "raw_sha256": "71911a5323dba04f1f8c0af722533ad5f726fcaf0bf8f6d8fb63cc5cd55ec27b"
+     "raw_sha256": "a42dfdff8d6fe7924f1b85e04ab86f79315984be549f2e2db04f0195c894b6ca"
     },
     "NFLX": {
      "rows": 6155,
      "first": "2002-05-23",
      "last": "2026-11-06",
      "files": 25,
-     "changed_files": 26,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 0,
      "splits": 3,
-     "raw_sha256": "114a35d246f7115705818706d2b4433e421b37cee4344f4ec50c101c5ce5bc45"
+     "raw_sha256": "adf07c78e03392bc07a7877776068d18e9cdb9c844f3199a891c1af3711ca593"
     },
     "NKE": {
      "rows": 11577,
      "first": "1980-12-02",
      "last": "2026-11-06",
      "files": 47,
-     "changed_files": 48,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 157,
      "splits": 6,
-     "raw_sha256": "344059d7cb61ef0d0579109d85c4a1b34d8c8ef6043f27d0e84ca4320fa7b1b2"
+     "raw_sha256": "ebe08546ce4adba6c15185fb572f902a16343786905126f54fff8d0eb69fac67"
     },
     "NOW": {
      "rows": 3610,
      "first": "2012-06-29",
      "last": "2026-11-06",
      "files": 15,
-     "changed_files": 16,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 0,
      "splits": 1,
-     "raw_sha256": "9cf5a96bd9c51f6e3f16c8021df883ef7ff6d1090facf2c06345f6859ee923a3"
+     "raw_sha256": "974da0b746c8963984e9c638e32470466ab42a0fbcdebf3a790f21ffe45b79c2"
     },
     "NUE": {
      "rows": 11757,
      "first": "1980-03-17",
      "last": "2026-11-06",
      "files": 47,
-     "changed_files": 48,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 173,
      "splits": 6,
-     "raw_sha256": "31e374616c0d19bbb0b15fa1615158ea15a090498320ed73c2ca6bb4087d600a"
+     "raw_sha256": "c0f7e281a78b059c5414459e2da63421be5af84c11653df87011668f2c7b967a"
     },
     "NVDA": {
      "rows": 6992,
      "first": "1999-01-22",
      "last": "2026-11-06",
      "files": 28,
-     "changed_files": 29,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 56,
      "splits": 6,
-     "raw_sha256": "754f9eef9d6c9f6ed6b9af6140dcaeb2c276b8c61425b1f15707ca491ff24042"
+     "raw_sha256": "7f3f5f2fbfa1e2478576f95a98328a39f5e888175d95f7b3d8078acb766ba465"
     },
     "O": {
      "rows": 8068,
      "first": "1994-10-18",
      "last": "2026-11-06",
      "files": 33,
-     "changed_files": 34,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 384,
      "splits": 2,
-     "raw_sha256": "c56d493c94bce2d3fd532cf36207c0032b636058ae3b4592e175d775eebc3006"
+     "raw_sha256": "efe313e048b31e7682398f55f061db2a0cd7ddff5416a8ea1b2a3be90cb91c10"
     },
     "ON": {
      "rows": 6670,
      "first": "2000-05-02",
      "last": "2026-11-06",
      "files": 27,
-     "changed_files": 28,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 0,
      "splits": 0,
-     "raw_sha256": "142e025bb4a1238c72dac4d3da2d2a5c7bb2153fbf20b5961f630f4faa015c12"
+     "raw_sha256": "df1850556107434e7d5983ac99f1d47dee89d0bb59b238fa5dbd54d6e679224b"
     },
     "ORCL": {
      "rows": 10244,
      "first": "1986-03-12",
      "last": "2026-11-06",
      "files": 41,
-     "changed_files": 42,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 70,
      "splits": 10,
-     "raw_sha256": "f521f81bcd69ad07f1193c3ca2ea84ecc78375e6762fb920002da0eddffd15b3"
+     "raw_sha256": "725184f454b1d8f6415ae223c781c1a926f8c261a3e9f6b8e66cdb502f8a75ad"
     },
     "ORLY": {
      "rows": 8444,
      "first": "1993-04-23",
      "last": "2026-11-06",
      "files": 34,
-     "changed_files": 35,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 0,
      "splits": 4,
-     "raw_sha256": "63c8acde82d83f9947d3d75fc6f83bc7b2dbfb84f6aa272d83f052f4b85d90ca"
+     "raw_sha256": "d98977decb4fd42ef02c00dd83405554979fea2e6f8141afec1a470431af49c1"
     },
     "OXY": {
      "rows": 11304,
      "first": "1981-12-31",
      "last": "2026-11-06",
      "files": 46,
-     "changed_files": 47,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 178,
      "splits": 3,
-     "raw_sha256": "8f2e1092a4e3511afe68a468aa6773dbc592d445ef32b0356f3dc923aaf3b7df"
+     "raw_sha256": "441448dcbd7cf5c59e29b174e1d03ad045648b4d67f9f867105ef6c9c31370b3"
     },
     "PANW": {
      "rows": 3596,
      "first": "2012-07-20",
      "last": "2026-11-06",
      "files": 15,
-     "changed_files": 16,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 0,
      "splits": 2,
-     "raw_sha256": "69eb684495e7d65c5423fddc0eaa2e35e1049e127430d2b35a0fe5e0fbc1295b"
+     "raw_sha256": "800ba9887bf4a2d514da6c41cafc8d46487083449e2ca216333d7a71aa1cbcae"
     },
     "PCAR": {
      "rows": 11757,
      "first": "1980-03-17",
      "last": "2026-11-06",
      "files": 47,
-     "changed_files": 48,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 190,
      "splits": 9,
-     "raw_sha256": "67aa23a8cc68bfbce1c63b5fbc9d08755c408de33f378154e7d02f819f885986"
+     "raw_sha256": "3d5f5ea60b1f8a99a7a077e8a54f50a215ec33cea96517eed9b479b1adabe167"
     },
     "PEP": {
      "rows": 13723,
      "first": "1972-06-01",
      "last": "2026-11-06",
      "files": 55,
-     "changed_files": 56,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 219,
      "splits": 4,
-     "raw_sha256": "16a79e56fcfbe3ade16dda26555879c5c8382407a8a88e90ecfb9b6d5c855795"
+     "raw_sha256": "0c00aca42b50a45ce55d6a1d7a0714d25cd11369e94c5947ae99f189aab95524"
     },
     "PFE": {
      "rows": 13723,
      "first": "1972-06-01",
      "last": "2026-11-06",
      "files": 55,
-     "changed_files": 56,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 218,
      "splits": 6,
-     "raw_sha256": "b21571f172830cf532951ed371382ab03d93e0bc64f8b660605528fbce2adc7d"
+     "raw_sha256": "e272d150836d610c74b91dfd6d2a9a2e83d5e6ecab8f59f2c1bcffe47ca340f3"
     },
     "PG": {
      "rows": 14335,
      "first": "1970-01-02",
      "last": "2026-11-06",
      "files": 57,
-     "changed_files": 58,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 229,
      "splits": 6,
-     "raw_sha256": "612be135becf4e709e7c8b7215b09adf3820b6e8e3b3dc072390ee290b446763"
+     "raw_sha256": "f8a62207684ff907f5a533c62a3a177e9b076737755753a8de3bed0a0ec7c160"
     },
     "PGR": {
      "rows": 11757,
      "first": "1980-03-17",
      "last": "2026-11-06",
      "files": 47,
-     "changed_files": 48,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 126,
      "splits": 8,
-     "raw_sha256": "108ded36fc9e44a33bfda131838c3ea04d5323c9859c525fe5f1c21d873b78c0"
+     "raw_sha256": "56479a7fed0ffd1eac06721f0e1a432ddba1c4d60ccbbfbd0258aaf9b3a3719b"
     },
     "PH": {
      "rows": 11757,
      "first": "1980-03-17",
      "last": "2026-11-06",
      "files": 47,
-     "changed_files": 48,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 164,
      "splits": 4,
-     "raw_sha256": "17716161b8165de839fc10277be2637a4ac5571287d60e759eb7ab5907a1614f"
+     "raw_sha256": "8eae994a94cfc7377f692823e164806bd8e3a99260a83cfc9f84642811d1bb6d"
     },
     "PLD": {
      "rows": 7284,
      "first": "1997-11-21",
      "last": "2026-11-06",
      "files": 30,
-     "changed_files": 31,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 115,
      "splits": 0,
-     "raw_sha256": "50583a9bb7380dc3e4bf6b8b65a0aefe0b648826c4255b981dba7b44975f5429"
+     "raw_sha256": "7d51524c75cf0e4df66ff439453681bcf204bbf1f9acdfa4a77a184b588fba58"
     },
     "PNC": {
      "rows": 12850,
      "first": "1975-11-17",
      "last": "2026-11-06",
      "files": 52,
-     "changed_files": 53,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 160,
      "splits": 3,
-     "raw_sha256": "de9e6daac3c030df658e2ae9e07d630d9806923b34e9b5d64e6ae9601ea04039"
+     "raw_sha256": "c873e4807703f8680ae8e0fc9c061cb2604dc6628c8692d71cada01b6fdefb54"
     },
     "PSX": {
      "rows": 3665,
      "first": "2012-04-12",
      "last": "2026-11-06",
      "files": 15,
-     "changed_files": 16,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 57,
      "splits": 0,
-     "raw_sha256": "26dadda95c91b9217f4dcc815a42d6dc1f03973fc0efbaac7c22bf877a20f7c1"
+     "raw_sha256": "ec74423e047ad6d31e3252e3cafd55ffeb62c4aabbc5c18d2f72f3f0831b5fda"
     },
     "QCOM": {
      "rows": 8787,
      "first": "1991-12-13",
      "last": "2026-11-06",
      "files": 36,
-     "changed_files": 37,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 96,
      "splits": 4,
-     "raw_sha256": "e3ea4876a86a32d9508a8b0f24f47749ddd7d47261550fca54cad9fd54d31138"
+     "raw_sha256": "f0759a6f482c87c8f7efbd2c8fcb3c18fcf318e4c9de4ede9827e6132af36315"
     },
     "QQQ": {
      "rows": 6960,
      "first": "1999-03-10",
      "last": "2026-11-06",
      "files": 28,
-     "changed_files": 29,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 90,
      "splits": 1,
-     "raw_sha256": "4f014899878b7ab958444d17e0e969e1709fd573332cba8d369cb06eca28adc0"
+     "raw_sha256": "ffa27b381060ccf54cd2cb79a8065726a89c006e435e5c78a69dd7260d346dfb"
     },
     "QUAL": {
      "rows": 3348,
      "first": "2013-07-18",
      "last": "2026-11-06",
      "files": 14,
-     "changed_files": 15,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 52,
      "splits": 1,
-     "raw_sha256": "49a4055e8219903652d54c262c1ed45ceea8562c4c4bbae504de9ac9086146f2"
+     "raw_sha256": "f18f26f1856a1810e2177bf84a8c5990de3459b87703bca4fd8d89c1be30ec9f"
     },
     "REGN": {
      "rows": 8966,
      "first": "1991-04-02",
      "last": "2026-11-06",
      "files": 36,
-     "changed_files": 37,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 7,
      "splits": 0,
-     "raw_sha256": "a942edb619bd97f569ec84c64ece456db5a8f43643a20b3569a6ed5c0746d002"
+     "raw_sha256": "9399c5e2edcfdeeb34f209c371a1dac360e10698e72d8d6010d3aff9bc15e1c2"
     },
     "ROK": {
      "rows": 11304,
      "first": "1981-12-31",
      "last": "2026-11-06",
      "files": 46,
-     "changed_files": 47,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 180,
      "splits": 2,
-     "raw_sha256": "6911051231e18026622a98b5d836bc58ddc8d686d0ce3f94d7ccbf2b88fe9818"
+     "raw_sha256": "1620b4944c967b9811aec7bb3add4c1fb37d739eb975fbd9fb86f6ece5fc531f"
     },
     "ROST": {
      "rows": 10392,
      "first": "1985-08-08",
      "last": "2026-11-06",
      "files": 42,
-     "changed_files": 43,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 128,
      "splits": 5,
-     "raw_sha256": "9727734016f9daea9790909758fbc8a33fb38964034c63745bde604ee35e4ece"
+     "raw_sha256": "a3f583bb9d8b51a18b2353c4938c04cc15b0d1121e005b32fd07f7c8a412d9bd"
     },
     "RSP": {
      "rows": 5919,
      "first": "2003-05-01",
      "last": "2026-11-06",
      "files": 24,
-     "changed_files": 25,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 93,
      "splits": 1,
-     "raw_sha256": "7d1476a5335830d72b9476e838c4d39226a8f6c42e7ee98d3506255a4ceff351"
+     "raw_sha256": "51778583826d575f6450389e558e29bf8d6bb94b8b52673d259d80803d1585f4"
     },
     "RTX": {
      "rows": 14335,
      "first": "1970-01-02",
      "last": "2026-11-06",
      "files": 57,
-     "changed_files": 58,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 226,
      "splits": 6,
-     "raw_sha256": "2945f24725bbf00abc2e3d177a1e78cb6eabbf6146fb045a136147d610b27201"
+     "raw_sha256": "0bed2247419f403f3f9f4bbbb36c5e69aa3c6367274ec33de101e06dfb11e44f"
     },
     "SBUX": {
      "rows": 8652,
      "first": "1992-06-26",
      "last": "2026-11-06",
      "files": 35,
-     "changed_files": 36,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 66,
      "splits": 6,
-     "raw_sha256": "77c0102bd993a35166fb8184c4e39f21ed77cddc52e425d7feefd7574a05dc51"
+     "raw_sha256": "8661a6ff8468e57bcb0e157bccb1b7364418990fca47e727e574a71a22b60240"
     },
     "SCHB": {
      "rows": 4279,
      "first": "2009-11-03",
      "last": "2026-11-06",
      "files": 18,
-     "changed_files": 19,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 69,
      "splits": 2,
-     "raw_sha256": "fad057dddbb0bf2d4e238fd5a79b62a21a441a139b86dcdf8591aff3e4332634"
+     "raw_sha256": "367e193f4924a18c762bb43d41c64a104b8d923d7a12ef6062b044b0b1f225a2"
     },
     "SCHD": {
      "rows": 3784,
      "first": "2011-10-20",
      "last": "2026-11-06",
      "files": 16,
-     "changed_files": 17,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 60,
      "splits": 1,
-     "raw_sha256": "e5c8aab84f5a518d31e667cdc91495d6e4fc5875443ce574dd50be61d86e6e72"
+     "raw_sha256": "d01567550e816a541448f997ee1731d261c90111cdab4e3e28be25bdc5e93d21"
     },
     "SCHW": {
      "rows": 9857,
      "first": "1987-09-22",
      "last": "2026-11-06",
      "files": 40,
-     "changed_files": 41,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 150,
      "splits": 8,
-     "raw_sha256": "fe5ccbe634404e93263b7e117a00ecb3b76af7d15287ded8315798a0b361918a"
+     "raw_sha256": "6fcf88a62a327fcbea9b3fa3eb8b29a2fe9f15b4d8b5f9c43c259494233c5783"
     },
     "SCHX": {
      "rows": 4279,
      "first": "2009-11-03",
      "last": "2026-11-06",
      "files": 18,
-     "changed_files": 19,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 69,
      "splits": 2,
-     "raw_sha256": "4d3125d48bff4bc3ad008adb4a110de91bf822f3b9035afe6522d71b25edc9dd"
+     "raw_sha256": "34b57c4e0055c59e6ca07c5cb3b38b5b9dba48da00944ae51fbb8a6e4fecbc5a"
     },
     "SGOV": {
      "rows": 1619,
      "first": "2020-06-01",
      "last": "2026-11-06",
      "files": 7,
-     "changed_files": 8,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 75,
      "splits": 0,
-     "raw_sha256": "d043b1ccb86eefa70f8133d7ae34abe1ff5ba0c54e77264d2e4d832a95a682c2"
+     "raw_sha256": "8f01aa7c8e015fd4fea1fa7ae8b17b83175c58da0e43cdda4e115ad79fcf10ad"
     },
     "SHV": {
      "rows": 4988,
      "first": "2007-01-11",
      "last": "2026-11-06",
      "files": 20,
-     "changed_files": 21,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 184,
      "splits": 0,
-     "raw_sha256": "a48eab30abfd3ee1b3c2c918d2159334d87fe12eba51a9123a5f3d86e8419123"
+     "raw_sha256": "c5b908f637b56e1ac76464e7a504261a49e3a869cc7f61aabf8b24cdd1c5a764"
     },
     "SHW": {
      "rows": 11757,
      "first": "1980-03-17",
      "last": "2026-11-06",
      "files": 47,
-     "changed_files": 48,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 165,
      "splits": 6,
-     "raw_sha256": "a777bcdb17200cb9ef88be27171da5a0fb4d2cab5f5c3a83be2b847e8e0d7095"
+     "raw_sha256": "0a6ebb8490fded26e50fbfbf49a8a2cf8fb6ccc0c0979bf8974c8bc2be6702a8"
     },
     "SHY": {
      "rows": 6109,
      "first": "2002-07-30",
      "last": "2026-11-06",
      "files": 25,
-     "changed_files": 26,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 290,
      "splits": 0,
-     "raw_sha256": "d037152a8e34ec1d057d215006eeaedb525a505ed7b874672c33cc58f1d416b5"
+     "raw_sha256": "2b6a2850f6bc585ba6236ea44bf546212601e51ac837153e7d275c060e4145d0"
     },
     "SLB": {
      "rows": 11304,
      "first": "1981-12-31",
      "last": "2026-11-06",
      "files": 46,
-     "changed_files": 47,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 180,
      "splits": 2,
-     "raw_sha256": "08265617e0df90227a178f65f0124afd0d3136981910f1dafef11f4750b74a04"
+     "raw_sha256": "b69b9a21371042dd6bccfd94128afbafaef053ed0766925a17c77bc4bfd16a07"
     },
     "SLV": {
      "rows": 5165,
      "first": "2006-04-28",
      "last": "2026-11-06",
      "files": 21,
-     "changed_files": 22,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 0,
      "splits": 1,
-     "raw_sha256": "383806d5ca8f2f437407e9e21b33578074c986cfcbbd11448ea4792e08374b40"
+     "raw_sha256": "6b4325b0d66854607aaffed292880fb37c224c07d94e310e7ee41a2cad0ea5f9"
     },
     "SMH": {
      "rows": 6647,
      "first": "2000-06-05",
      "last": "2026-11-06",
      "files": 27,
-     "changed_files": 28,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 14,
      "splits": 1,
-     "raw_sha256": "3cfbe35c208dcf620e175a6a0d60a37ca2a964bb4ba10b4f0c41c532cf7b7c74"
+     "raw_sha256": "e4f1028e7c6adb74b51b821290a82a584eedb459f3640a17793b9197b38792d9"
     },
     "SNPS": {
      "rows": 8737,
      "first": "1992-02-26",
      "last": "2026-11-06",
      "files": 35,
-     "changed_files": 36,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 0,
      "splits": 2,
-     "raw_sha256": "8427008d8201178ad1fc8ec8e3f2b528a3fce6e371ee97f16faa743951c0c4de"
+     "raw_sha256": "434e43c13964274b9297141c97655caca2f92d1b079b5b588d5c56794a4d7c03"
     },
     "SO": {
      "rows": 11304,
      "first": "1981-12-31",
      "last": "2026-11-06",
      "files": 46,
-     "changed_files": 47,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 179,
      "splits": 2,
-     "raw_sha256": "99ec3074a840cc29fe4450d040c66578b61d9b8021984e05cebf2b7695b69e6b"
+     "raw_sha256": "c7a37c8932c4822064abe619504704d57ac96a2218162195fa120e008d5cc5ca"
     },
     "SOXX": {
      "rows": 6368,
      "first": "2001-07-13",
      "last": "2026-11-06",
      "files": 26,
-     "changed_files": 27,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 78,
      "splits": 2,
-     "raw_sha256": "140134918a3c9bfdb76467279e3795dff83f72286d4b902cbe63ba64ce7c1447"
+     "raw_sha256": "18f0e9a1f8ca6c4c56e553f92365224bda3d1c89d40abd3963e74a135413d3ec"
     },
     "SPDW": {
      "rows": 4916,
      "first": "2007-04-26",
      "last": "2026-11-06",
      "files": 20,
-     "changed_files": 21,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 36,
      "splits": 0,
-     "raw_sha256": "0cb7d1dc062f2f41bb6ba8fdf8d98447fe5de56f065ca6799c5a52ad297e7206"
+     "raw_sha256": "4dcab1bcf00321357bcb4ff5b67a1dda60bd0fdd5481c9ca48d3d88868d9226e"
     },
     "SPEM": {
      "rows": 4939,
      "first": "2007-03-23",
      "last": "2026-11-06",
      "files": 20,
-     "changed_files": 21,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 37,
      "splits": 1,
-     "raw_sha256": "6cb1991c5e3429596b656644c4d3cf1f1e17d245633c342dcef30639667738b1"
+     "raw_sha256": "a44ffba15a5db58b14d1221cef9b0ab09a2d4b123a8db16a8ce130b6b6eb15d4"
     },
     "SPGI": {
      "rows": 13543,
      "first": "1973-02-21",
      "last": "2026-11-06",
      "files": 54,
-     "changed_files": 55,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 168,
      "splits": 5,
-     "raw_sha256": "270484f6b811f5a71f057cc0592e1dfac167fd4a8827508cb9ac9c2971592dc9"
+     "raw_sha256": "1610f955798f215a8f585816fdac90b3e666fed9a7be55d2ab5fefcbc98d06c8"
     },
     "SPLV": {
      "rows": 3901,
      "first": "2011-05-05",
      "last": "2026-11-06",
      "files": 16,
-     "changed_files": 17,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 184,
      "splits": 0,
-     "raw_sha256": "0cec4d35300e604c53f97733b0a7f7d7b0ef56bd0674ee5c7318d3d1fb8e2d57"
+     "raw_sha256": "864d4b35c50f55febb720da4c3c77e69594fa7a0f02be391bad5412ee8f30d03"
     },
     "SPSM": {
      "rows": 3355,
      "first": "2013-07-09",
      "last": "2026-11-06",
      "files": 14,
-     "changed_files": 15,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 55,
      "splits": 1,
-     "raw_sha256": "c335c421c147034cf1e510ee9b3b9bdfd7aff59e7c5a67a1b178965abcaaaf0f"
+     "raw_sha256": "62aa764e0016f29e6ca14d8cfb200e53b072ba7e918c2185ab1484b9ad4f8864"
     },
     "SPTM": {
      "rows": 6558,
      "first": "2000-10-10",
      "last": "2026-11-06",
      "files": 27,
-     "changed_files": 28,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 104,
      "splits": 1,
-     "raw_sha256": "19eb807daf94e22d1717de8a2c3557d94268203cfcd916c08fa910b8bf514711"
+     "raw_sha256": "e024604772ee4c0156b00fd8da660df7d96e52acbd0c2df2b8f7f6304e0ce6d5"
     },
     "SPY": {
      "rows": 8502,
      "first": "1993-01-29",
      "last": "2026-11-06",
      "files": 34,
-     "changed_files": 35,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 136,
      "splits": 0,
-     "raw_sha256": "a5da038d36839e13993aadadf8b95a6cfe6c2dd32697ac01b54dff0258a9ac5f"
+     "raw_sha256": "3b46439a726f0ceb7120f89ac9ded6f8455ffaa719f97d678dde2fefde2d7e5d"
     },
     "SYK": {
      "rows": 11757,
      "first": "1980-03-17",
      "last": "2026-11-06",
      "files": 47,
-     "changed_files": 48,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 87,
      "splits": 9,
-     "raw_sha256": "e7ec835f19184db5649c26b45b37166b6955ae00e6de7a11e190f8c44b6251e5"
+     "raw_sha256": "4b42c6b23e0aa38d6fd55fff508db589980bea6bba64ef736e9facd1cdd792c6"
     },
     "TEAM": {
      "rows": 2744,
      "first": "2015-12-09",
      "last": "2026-11-06",
      "files": 12,
-     "changed_files": 13,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 0,
      "splits": 0,
-     "raw_sha256": "5da5b37a1598090e4b71d3a0a03d48efcb75ac53cd3563fb41bafa09cdff5b79"
+     "raw_sha256": "f8b5b572181d705146cea00feab4f1109693b2a5413b47da6cbc24ea945f3c80"
     },
     "TFC": {
      "rows": 11756,
      "first": "1980-03-18",
      "last": "2026-11-06",
      "files": 47,
-     "changed_files": 48,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 156,
      "splits": 5,
-     "raw_sha256": "ef3936ad5f87c4856e42e3ec68e995b81dfc0bb1c3d33eedb305d1068c9ca047"
+     "raw_sha256": "80885924a1dbcd3629802383d4c0804071e88e5449a053f58192deb2371f7c18"
     },
     "TGT": {
      "rows": 13543,
      "first": "1973-02-21",
      "last": "2026-11-06",
      "files": 54,
-     "changed_files": 55,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 174,
      "splits": 5,
-     "raw_sha256": "d2a4fa50f7572425a09e50ebc4a78fe5d7ae6f04dff2ed33bf751581c55cee28"
+     "raw_sha256": "3952db31b8d5e3f92df78eaf7a9351845a455ae526f594d82d64b6801d4753ae"
     },
     "TIP": {
      "rows": 5767,
      "first": "2003-12-05",
      "last": "2026-11-06",
      "files": 24,
-     "changed_files": 25,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 202,
      "splits": 0,
-     "raw_sha256": "5b098524f54d90d21e9ac6b477b50b60851dce6f3ac3c19fa871948b86e6bce5"
+     "raw_sha256": "de1153b2b83e0df778f8bcbf9b4267a8e2a3251bfd9b1fe53f3d4b141042a71c"
     },
     "TJX": {
      "rows": 9917,
      "first": "1987-06-26",
      "last": "2026-11-06",
      "files": 40,
-     "changed_files": 41,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 157,
      "splits": 5,
-     "raw_sha256": "536aee7aac7bb6719f81eb85529edbc15380a9663426b724f0e7d2485ac81a8b"
+     "raw_sha256": "ce0d2a4b2e3fde05df7d49e755fceed6b60b0273e95430d06b1f77cd9afef7cf"
     },
     "TLT": {
      "rows": 6109,
      "first": "2002-07-30",
      "last": "2026-11-06",
      "files": 25,
-     "changed_files": 26,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 289,
      "splits": 0,
-     "raw_sha256": "e089bd4a2bcdb29780e3aea62a76ad8559d322d2cb459c667b2b7a06ea3f63d6"
+     "raw_sha256": "d7cd4bd5ca4b3824bfc4ae4a1536ce2aade97b2733ebb1efc0973810ac544b75"
     },
     "TMO": {
      "rows": 11757,
      "first": "1980-03-17",
      "last": "2026-11-06",
      "files": 47,
-     "changed_files": 48,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 63,
      "splits": 6,
-     "raw_sha256": "5205e9b6e05fda13886a0930c31353e02b75922a0ba0ecd16df96fbef58f2a67"
+     "raw_sha256": "4453e932fc5718aedd09ffea44cd0dfe9e4d9e9b7791dc8e51dc8e0e421b6611"
     },
     "TMUS": {
      "rows": 4921,
      "first": "2007-04-19",
      "last": "2026-11-06",
      "files": 20,
-     "changed_files": 21,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 13,
      "splits": 1,
-     "raw_sha256": "3012b3bde2cb999a4db46e917675ea4fb794f96a6fee22c9b96f5690c2645c0e"
+     "raw_sha256": "c8c7575717faf1dd02ca1423441c2c4fd01b3386f73f2aba27a70138efba72aa"
     },
     "TRV": {
      "rows": 12850,
      "first": "1975-11-17",
      "last": "2026-11-06",
      "files": 52,
-     "changed_files": 53,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 158,
      "splits": 2,
-     "raw_sha256": "3a0de8c444bcf8eeaca508bb798469e069fd6d6faef0a6bd67500e2425d36df3"
+     "raw_sha256": "a80de237cc140e4c3140059a82132d610aab923e3779ab23c64f67133894555f"
     },
     "TSLA": {
      "rows": 4116,
      "first": "2010-06-29",
      "last": "2026-11-06",
      "files": 17,
-     "changed_files": 18,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 0,
      "splits": 2,
-     "raw_sha256": "869ae5b2fa57f658ecada874a2b7667a85fa04d92bf106e2afba1618befb9ad1"
+     "raw_sha256": "0e6267ae12e4812a1f705853000c8e0f8441a6523256dff6c27e39e45b51ee80"
     },
     "TXN": {
      "rows": 13723,
      "first": "1972-06-01",
      "last": "2026-11-06",
      "files": 55,
-     "changed_files": 56,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 218,
      "splits": 6,
-     "raw_sha256": "49688e7b91152d8b3bcdff0afa34d7d4344f81ca0dca2ce2c580b05ad6315640"
+     "raw_sha256": "a94107f219f290c350fc71eabb14ca16bc697af1e4b4e3528bbd52d5b0c1ba44"
     },
     "UBER": {
      "rows": 1885,
      "first": "2019-05-10",
      "last": "2026-11-06",
      "files": 8,
-     "changed_files": 9,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 0,
      "splits": 0,
-     "raw_sha256": "d7c55b7a4de274e80b92183206eda71c96a75015a2408c0de69c1b3fb481782f"
+     "raw_sha256": "282f31d763c16835293c79d4c992fc383df4d58d4bb555ffeb5367c6a2376d3b"
     },
     "UNH": {
      "rows": 10596,
      "first": "1984-10-17",
      "last": "2026-11-06",
      "files": 43,
-     "changed_files": 44,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 87,
      "splits": 5,
-     "raw_sha256": "ec67b2d7f360455df30e31b109fc93daf8664cdb86624a604fc2d8a09ace5fc3"
+     "raw_sha256": "07888da40df8eb28ca9eda0bf21622fa13f877b7e5806b80e64b3b1ddbc69d3a"
     },
     "UNP": {
      "rows": 11809,
      "first": "1980-01-02",
      "last": "2026-11-06",
      "files": 47,
-     "changed_files": 48,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 187,
      "splits": 5,
-     "raw_sha256": "b6688c90f27b2125e774dac0b198f2c713298d63d81b6757e59ac2076c1e034d"
+     "raw_sha256": "52b78f154611b0ccd235dabb4579a1051ea9e5dfc447a95aaf243a1643105801"
     },
     "UPS": {
      "rows": 6789,
      "first": "1999-11-10",
      "last": "2026-11-06",
      "files": 28,
-     "changed_files": 29,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 108,
      "splits": 0,
-     "raw_sha256": "bae7db29a4d72d4765fcf046f2dfd0c9be72311a6067b6dc554e69c3482685f3"
+     "raw_sha256": "fb5e830d5e0167fa1c745c3bfd88e1a12a8193f599a050f7fdbc5f9fd77ba8b5"
     },
     "URTH": {
      "rows": 3727,
      "first": "2012-01-12",
      "last": "2026-11-06",
      "files": 15,
-     "changed_files": 16,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 31,
      "splits": 0,
-     "raw_sha256": "58735000b9d7f49176a1464cb2fd07c7e6155c7d874af3992c3e5dac4a12c49b"
+     "raw_sha256": "d6e600e5a15bb4ffaf512d9542199add635c2a5efb84217e3966e79a156c5bc0"
     },
     "USB": {
      "rows": 13493,
      "first": "1973-05-03",
      "last": "2026-11-06",
      "files": 54,
-     "changed_files": 55,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 151,
      "splits": 5,
-     "raw_sha256": "dc979a65e2e9bc11f33b717a85c2394afbdb28916c79849547e7fe31f5c5c983"
+     "raw_sha256": "5b6ddf1e6839b4d50d080b4b642dd91671941e3c808a78549310a751d08f46aa"
     },
     "USMV": {
      "rows": 3784,
      "first": "2011-10-20",
      "last": "2026-11-06",
      "files": 16,
-     "changed_files": 17,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 62,
      "splits": 0,
-     "raw_sha256": "b71e1ac4241a7b2a32f1ef6ad6db8b002e07670fca32057dc3a17d6b3d24e593"
+     "raw_sha256": "24eb47b4e90a41d1777b071ee7c4760324f6ef2d3dfb13ed6ce2ece60613cd21"
     },
     "V": {
      "rows": 4690,
      "first": "2008-03-19",
      "last": "2026-11-06",
      "files": 19,
-     "changed_files": 20,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 73,
      "splits": 1,
-     "raw_sha256": "46798d29ce3e34e4a9c84af9849d2880225bad0202ae8a226b7b92bab8b2ddc3"
+     "raw_sha256": "a400b7ec4e826b8e9ccb0bfcaae740556fe4b3c092e47afc7649913ef2d8c21d"
     },
     "VB": {
      "rows": 5730,
      "first": "2004-01-30",
      "last": "2026-11-06",
      "files": 23,
-     "changed_files": 24,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 68,
      "splits": 0,
-     "raw_sha256": "1e97b30447d683c4503c3ba6325be55f7bcc2b8d3a4a3a4c30b0802c2edf4bf9"
+     "raw_sha256": "42ed085c0d4c75766d1b4d10474dcf62d126370b1f6797461d3bb56560e47dfb"
     },
     "VBK": {
      "rows": 5730,
      "first": "2004-01-30",
      "last": "2026-11-06",
      "files": 23,
-     "changed_files": 24,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 64,
      "splits": 0,
-     "raw_sha256": "b9e18f919045b571c95b6f5c4d22b18c194831eefe9b2cea22802c53b0f2175a"
+     "raw_sha256": "1c38fb34b1ef442d59f1abcd504fa2d5c714fa26837a03fc094cb1e8df3e8771"
     },
     "VBR": {
      "rows": 5730,
      "first": "2004-01-30",
      "last": "2026-11-06",
      "files": 23,
-     "changed_files": 24,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 67,
      "splits": 0,
-     "raw_sha256": "87c92a525fe93ed3866639d3f3c68cda3c93a3c1fd288c7a63d19422bbb2e31c"
+     "raw_sha256": "5b812d9089c71390574b8d0ebcc11f1cf34432bbfe0e21f58bdade16b3953312"
     },
     "VCIT": {
      "rows": 4265,
      "first": "2009-11-23",
      "last": "2026-11-06",
      "files": 18,
-     "changed_files": 19,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 201,
      "splits": 0,
-     "raw_sha256": "6bea25ca466c9beb2e8c99eb18a816c48caac84b5a06392f9e0719a0f8c7c278"
+     "raw_sha256": "993fb66933f101b06936cb84bd959456a8a7ddbd305f157e78fd26bc8b056544"
     },
     "VCSH": {
      "rows": 4265,
      "first": "2009-11-23",
      "last": "2026-11-06",
      "files": 18,
-     "changed_files": 19,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 201,
      "splits": 0,
-     "raw_sha256": "7ffa936fbe5fde8c6a26fdc5bf889a7ddd6068cbbfc8613ca68b017c992e07a5"
+     "raw_sha256": "de42f4001db3bdb788fa7f9a02d65facde023fe72639fecb2bcd5b68bea81857"
     },
     "VEA": {
      "rows": 4853,
      "first": "2007-07-26",
      "last": "2026-11-06",
      "files": 20,
-     "changed_files": 21,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 67,
      "splits": 0,
-     "raw_sha256": "060c4cf301edfe352f944fb7af31d1b24bd745d46977d72dee63dd6ad0939157"
+     "raw_sha256": "803c81d22140846d064f4386baf67f106f9d83ffe2786ee4f96b7ad49bf193dc"
     },
     "VGIT": {
      "rows": 4265,
      "first": "2009-11-23",
      "last": "2026-11-06",
      "files": 18,
-     "changed_files": 19,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 201,
      "splits": 0,
-     "raw_sha256": "640bb86368b33c30c1c03c082d72dedf942104bfb753d47fb26314ff5aace68e"
+     "raw_sha256": "0b907413ae9adfc0b546ac9bb6fa48b076418c3069f405312d5f769c26af6840"
     },
     "VGLT": {
      "rows": 4238,
      "first": "2010-01-04",
      "last": "2026-11-06",
      "files": 17,
-     "changed_files": 18,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 201,
      "splits": 0,
-     "raw_sha256": "75d6f366b48033ead1deea506f2a38597beeef0b18f281815f2a11ff5bdac6de"
+     "raw_sha256": "45139912c1d226474b85facad2e06a2ae9da5c730b99f708fff3516fee5eda96"
     },
     "VGSH": {
      "rows": 4265,
      "first": "2009-11-23",
      "last": "2026-11-06",
      "files": 18,
-     "changed_files": 19,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 201,
      "splits": 0,
-     "raw_sha256": "a8096ec2eb58a597f109c2ef612eb22e83a89138ebe0c42c7c46d226e878b27a"
+     "raw_sha256": "63a57aafa8b3565c47fd38cbe7fa371bf300f8e4cc14bd8ab134a8d49e8f6759"
     },
     "VIG": {
      "rows": 5163,
      "first": "2006-05-02",
      "last": "2026-11-06",
      "files": 21,
-     "changed_files": 22,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 82,
      "splits": 0,
-     "raw_sha256": "04adf39863928dae8202b8744334d8c3dee9ee4b413c6610868046c83f71053c"
+     "raw_sha256": "6c2b9e589b1ece95472f013ffd947f0d947df58ba0e37e7a4e0e0514fab26a1c"
     },
     "VLO": {
      "rows": 11303,
      "first": "1982-01-04",
      "last": "2026-11-06",
      "files": 45,
-     "changed_files": 46,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 162,
      "splits": 3,
-     "raw_sha256": "6362c0918c170489483822a9725ff9d61e8252e89b875c0db4f2be0327266ddd"
+     "raw_sha256": "6f0a75b6b493cddd6d13d511bc76fba11deabce8dd8d5b2afee2d914772abfcd"
     },
     "VNQ": {
      "rows": 5563,
      "first": "2004-09-29",
      "last": "2026-11-06",
      "files": 23,
-     "changed_files": 24,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 88,
      "splits": 0,
-     "raw_sha256": "30f5f937fa4d06d92d2ff7a5165b71688f400929a2dfd379471d5d729a08dfa9"
+     "raw_sha256": "ea608281227a0165091c76a93c8c8b890b5234967d9b750a4555258e31a40104"
     },
     "VO": {
      "rows": 5730,
      "first": "2004-01-30",
      "last": "2026-11-06",
      "files": 23,
-     "changed_files": 24,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 65,
      "splits": 1,
-     "raw_sha256": "c0bc8f66ad5b9b13863451981782d2a165bb96e7fa89a0637ac7e7d7e914decf"
+     "raw_sha256": "0644a2d99ced7edec7927144ff5a66e7a5079365f1d657a7c88fab57977f645d"
     },
     "VOE": {
      "rows": 5082,
      "first": "2006-08-25",
      "last": "2026-11-06",
      "files": 21,
-     "changed_files": 22,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 63,
      "splits": 0,
-     "raw_sha256": "fb7e30ce3ced72d1e0e6c4550e79a8900c9195f684127053b8de5b996380ae0b"
+     "raw_sha256": "bbcf6aa2dcaaffabc5d20586e8fcbb35c694ba442f20dec474cb3ea706eeb232"
     },
     "VOT": {
      "rows": 5082,
      "first": "2006-08-25",
      "last": "2026-11-06",
      "files": 21,
-     "changed_files": 22,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 62,
      "splits": 0,
-     "raw_sha256": "90472082580157adcf435094fdb773301f414c7da5064bc2604474af41b72a08"
+     "raw_sha256": "fb2ae725f22342e97ea208567ef47d32a27078fc51aa4c02fabe3a5d54ab4c64"
     },
     "VRTX": {
      "rows": 8887,
      "first": "1991-07-24",
      "last": "2026-11-06",
      "files": 36,
-     "changed_files": 37,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 0,
      "splits": 1,
-     "raw_sha256": "36e5edade29d7a3e45d87fe2173e191a8192bb3af1708bf5414fbbf620470116"
+     "raw_sha256": "8eac03720642208653cdb021d85d63ae0ab6d3b902cefd87de068db25f177644"
     },
     "VT": {
      "rows": 4621,
      "first": "2008-06-26",
      "last": "2026-11-06",
      "files": 19,
-     "changed_files": 20,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 61,
      "splits": 0,
-     "raw_sha256": "57067a25e8c9e45d8d63f9222cb4fed1bb07b33d47031a591525eae1933cc43b"
+     "raw_sha256": "539be8fe66ea37b27e4b619a04a2daab4423c4f6e56e825c9455bd4c401b8e8c"
     },
     "VTI": {
      "rows": 6387,
      "first": "2001-06-15",
      "last": "2026-11-06",
      "files": 26,
-     "changed_files": 27,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 102,
      "splits": 1,
-     "raw_sha256": "dc5e0aee8c96d9fa5a0141f678622a7f0b6bf2f7f553b3fc83a03f97fef23b1b"
+     "raw_sha256": "360aa48f4b2eb0289a31661b8c39cdad5939554ce632ce6937233b1a1d538eda"
     },
     "VTV": {
      "rows": 5730,
      "first": "2004-01-30",
      "last": "2026-11-06",
      "files": 23,
-     "changed_files": 24,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 91,
      "splits": 0,
-     "raw_sha256": "f632fbf2b730e6ea0747d81982f7b863b4b9ecaf5d680ca12b5d83e3d2849477"
+     "raw_sha256": "6353aa7add3cd71c4be543080142b5e8ea512d4c8aa1fe4e1d60a45da0036187"
     },
     "VUG": {
      "rows": 5730,
      "first": "2004-01-30",
      "last": "2026-11-06",
      "files": 23,
-     "changed_files": 24,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 91,
      "splits": 1,
-     "raw_sha256": "9a5a18309597ff6b573dbf190713c346a9a958119b4d21cfdbfcbc6fb98982e4"
+     "raw_sha256": "b4755b723e616c7e990e9ca7c24188e638185216a2970466043c00f685f53795"
     },
     "VV": {
      "rows": 5730,
      "first": "2004-01-30",
      "last": "2026-11-06",
      "files": 23,
-     "changed_files": 24,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 91,
      "splits": 0,
-     "raw_sha256": "4a44ba63249133c46e1b40036b5098c89fd086b47e7467df66c89c947bf5b22d"
+     "raw_sha256": "22286f6c99c80a89b00562e900857a63dd410c9c83730faa6b38a3546a0e7485"
     },
     "VWO": {
      "rows": 5451,
      "first": "2005-03-10",
      "last": "2026-11-06",
      "files": 22,
-     "changed_files": 23,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 63,
      "splits": 1,
-     "raw_sha256": "29c6cd45aab8ed89061c4a1fced701f6b46d7afbfdc6bf8be98eec2ef2c882fb"
+     "raw_sha256": "42b2d57698145e06d13ec47326b74c2561bba483ae98af6a4404cd0bd3fa5732"
     },
     "VXUS": {
      "rows": 3968,
      "first": "2011-01-28",
      "last": "2026-11-06",
      "files": 16,
-     "changed_files": 17,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 58,
      "splits": 0,
-     "raw_sha256": "67e4766f660870f29c126453a7b5eb18ac39e84507bd3a3ad33770e38d406d31"
+     "raw_sha256": "b1cca80cb03eacd1f9009039461ebbd7aebf07eefd4a7e40fa9e24b82a6fd5ff"
     },
     "VZ": {
      "rows": 10825,
      "first": "1983-11-21",
      "last": "2026-11-06",
      "files": 44,
-     "changed_files": 45,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 170,
      "splits": 6,
-     "raw_sha256": "f9e1c8b7d586668665c04a7127f85f8a60d991c1a90a20b9b801151bf1a67dee"
+     "raw_sha256": "400862b7932d6ba5ae7a9c8a812d6957bb537d50b8e484a4ae6916314252dad4"
     },
     "WDAY": {
      "rows": 3537,
      "first": "2012-10-12",
      "last": "2026-11-06",
      "files": 15,
-     "changed_files": 16,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 0,
      "splits": 0,
-     "raw_sha256": "ff1928838b6c3f7bcb9c848d9e18af2349b00d62771b604aa6a940a5efaef24f"
+     "raw_sha256": "cbd3a25533f981cf3320d6a6cc0cf4c36518827708a35f82849af2059c5f2de0"
     },
     "WEC": {
      "rows": 11757,
      "first": "1980-03-17",
      "last": "2026-11-06",
      "files": 47,
-     "changed_files": 48,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 161,
      "splits": 4,
-     "raw_sha256": "385491793e8b46e7fde38f651ecee90db16d34309329791e9a54d27d2b890149"
+     "raw_sha256": "1041b104280c29e5fea7936deefb57bef0dd7b993d2e9d55a86874e0371ed5b9"
     },
     "WFC": {
      "rows": 13723,
      "first": "1972-06-01",
      "last": "2026-11-06",
      "files": 55,
-     "changed_files": 56,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 220,
      "splits": 6,
-     "raw_sha256": "32b0ab947356c145fb8ef1d6d30425e051d54a0716112c9fdc25d76f9cfeb12a"
+     "raw_sha256": "4902eb253b57178b626f45682eee14619a882554fa4bf4dac06b325efbab8976"
     },
     "WM": {
      "rows": 9667,
      "first": "1988-06-22",
      "last": "2026-11-06",
      "files": 39,
-     "changed_files": 40,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 98,
      "splits": 0,
-     "raw_sha256": "93af24e8a02c62b2625bba1a07eec7e2c1b035dada37a173e56aacf8c66d2e3d"
+     "raw_sha256": "c070421a1bff16a251b8cc73705a8e235ec5423748d516fecb88d578398e52a2"
     },
     "WMT": {
      "rows": 13663,
      "first": "1972-08-25",
      "last": "2026-11-06",
      "files": 55,
-     "changed_files": 56,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 209,
      "splits": 10,
-     "raw_sha256": "a2caed62cc1c5caa20748c9325c38812de7e5c4bf31d4170baedd8e5fcbbca88"
+     "raw_sha256": "b1d7d5d59b1a7878f84e04bb7e9175a79b39527f49dda3305d2b12311cdc2dea"
     },
     "XBI": {
      "rows": 5222,
      "first": "2006-02-06",
      "last": "2026-11-06",
      "files": 21,
-     "changed_files": 22,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 47,
      "splits": 1,
-     "raw_sha256": "3c2eb981895aefbefb7157eee69b7f61c8f4aa0be81053c73a32fc11e746f2db"
+     "raw_sha256": "9d9cbaebd51c794f57ce03665eecc1259065179669901c9f68ce4eff59fc22f4"
     },
     "XLB": {
      "rows": 7012,
      "first": "1998-12-22",
      "last": "2026-11-06",
      "files": 29,
-     "changed_files": 30,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 111,
      "splits": 1,
-     "raw_sha256": "8647ebd08b434ce4fe50dd67f1701030fb69149634dd161e87555069a482cd4b"
+     "raw_sha256": "43559f88fe7426ad077de5d95398fb6ce09f4edf73730587e87d6484818e6069"
     },
     "XLC": {
      "rows": 2109,
      "first": "2018-06-19",
      "last": "2026-11-06",
      "files": 9,
-     "changed_files": 10,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 33,
      "splits": 0,
-     "raw_sha256": "3b2d12e5904c3ddebb4304ace512175130e858b7c1b4198136df8c1186c6ae44"
+     "raw_sha256": "4c4c3620499aa0c0e2cfec4e0605dd53d97bee28d477d959a4a786d5a7588ac0"
     },
     "XLE": {
      "rows": 7012,
      "first": "1998-12-22",
      "last": "2026-11-06",
      "files": 29,
-     "changed_files": 30,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 112,
      "splits": 1,
-     "raw_sha256": "33525bf4096ce263c9141ee6bcadd462b08f69374776560a36a7051411ada27f"
+     "raw_sha256": "20c87a0fca7c6ae286705cf5cac3301f0ecaff6961d95a6ea70b4433a6d371db"
     },
     "XLF": {
      "rows": 7012,
      "first": "1998-12-22",
      "last": "2026-11-06",
      "files": 29,
-     "changed_files": 30,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 111,
      "splits": 1,
-     "raw_sha256": "878a565c587ba27b6d57197aa36dbcb5ddcb30babec93ff7c6324c3a6820d2ca"
+     "raw_sha256": "85e504867979bf26c1c43455905c0fca5c9e9b46cdb68b4a986a06b80b8fdc0a"
     },
     "XLI": {
      "rows": 7012,
      "first": "1998-12-22",
      "last": "2026-11-06",
      "files": 29,
-     "changed_files": 30,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 110,
      "splits": 0,
-     "raw_sha256": "96d9e04964dc10463fefe994e973a9ffa64c554a7973918bdd942bd099b00945"
+     "raw_sha256": "203351534c03e9952800b2b67fb247e764a2a85532b28ae1b44ac2e8a9df3f96"
     },
     "XLK": {
      "rows": 7012,
      "first": "1998-12-22",
      "last": "2026-11-06",
      "files": 29,
-     "changed_files": 30,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 85,
      "splits": 1,
-     "raw_sha256": "50c4e0a309b3a232d740398e9dfc7acd5b91ed398c8ecc3207dc1d759fe8902d"
+     "raw_sha256": "08094ca78e05d956b6350c10aaf75358382ec7226de0be88ea9b378bd3c83edc"
     },
     "XLP": {
      "rows": 7012,
      "first": "1998-12-22",
      "last": "2026-11-06",
      "files": 29,
-     "changed_files": 30,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 111,
      "splits": 0,
-     "raw_sha256": "a3f38537f330df9eefb7f29b4ccab85054a7e3e15c1d0785eb4714ef5951c631"
+     "raw_sha256": "75fde47f98526303fd5691403da2bffa62e453be2cfb44dc1aaa0db8f41c5b4e"
     },
     "XLRE": {
      "rows": 2787,
      "first": "2015-10-08",
      "last": "2026-11-06",
      "files": 12,
-     "changed_files": 13,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 44,
      "splits": 0,
-     "raw_sha256": "f60a1a790a208536688edea6ad9f9443ff16c24859819d5c17c9d293f5fbb240"
+     "raw_sha256": "af80feac27946d43e2fe1302ad2e2c4d557ecd5ff994d7969d7c170bb5002310"
     },
     "XLU": {
      "rows": 7012,
      "first": "1998-12-22",
      "last": "2026-11-06",
      "files": 29,
-     "changed_files": 30,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 112,
      "splits": 1,
-     "raw_sha256": "1bfec0ebc434afdaf15e4f8c80e190e838e271adce28304669125320fab11679"
+     "raw_sha256": "29d6674c75158c240fa853f9ac24ff17517c83f6e09989de2e0147a14dd12f90"
     },
     "XLV": {
      "rows": 7012,
      "first": "1998-12-22",
      "last": "2026-11-06",
      "files": 29,
-     "changed_files": 30,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 106,
      "splits": 0,
-     "raw_sha256": "e09503e93fc6e95b8ec0926377e19a7301226386e5026a5138ef744d2afde2a3"
+     "raw_sha256": "de56f37cc213c8c338812aa59045b6aad02107e2677870f2380c134a04af2617"
     },
     "XLY": {
      "rows": 7012,
      "first": "1998-12-22",
      "last": "2026-11-06",
      "files": 29,
-     "changed_files": 30,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 111,
      "splits": 1,
-     "raw_sha256": "4fa885de908fec44fb6011bd116f66aafda2e83506a66c69641a7d5a1061556b"
+     "raw_sha256": "1240a6e0661993ebe8516127faa7e47d6c14e94de689301c183918a9649702ca"
     },
     "XOM": {
      "rows": 14335,
      "first": "1970-01-02",
      "last": "2026-11-06",
      "files": 57,
-     "changed_files": 58,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 228,
      "splits": 5,
-     "raw_sha256": "9a5a208f8db688d1ef159254b166bdd6cc052a10b0d4c60db6bf43720885e26b"
+     "raw_sha256": "8bab9752e64e3cdedd62198ff44a6c3254d8708e291f858283c40aab6576452b"
     },
     "YUM": {
      "rows": 7331,
      "first": "1997-09-17",
      "last": "2026-11-06",
      "files": 30,
-     "changed_files": 31,
+     "changed_files": 1,
      "currency": "USD",
      "dividends": 89,
      "splits": 3,
-     "raw_sha256": "5e41767fe883ba04334355e6deefc6375f8d89923c1258809803c0ad73e49aad"
+     "raw_sha256": "dd1b438d77da1f46e6f77ba5098d9e681f3cdba16370aa466faaeb1aa0ec59d0"
     }
    },
    "errors": []
@@ -3569,14 +3569,14 @@
    "terms": "Public; model probabilities, not observations",
    "layout": "recession/nyfed-yield-curve.csv.gz",
    "note": "Rows dated up to 12 months after the last spread hold the model's forecast for that month.",
-   "observed_at": "2026-11-08T15:39:09.353611+00:00",
+   "observed_at": "2026-11-08T15:50:44.169896+00:00",
    "entries": {
     "recession_model": {
      "rows": 826,
      "first": "1959-01-31",
      "last": "2027-10-31",
      "files": 1,
-     "changed_files": 1,
+     "changed_files": 0,
      "columns": [
       "spread_10y_3m",
       "recession_probability_12m",
@@ -3591,19 +3591,19 @@
    "source": "Wikipedia, List of S&P 500 companies (secondary)",
    "terms": "CC BY-SA; secondary source, current members only",
    "layout": "universe/sp500-constituents.csv.gz; survivors only, no removed companies",
-   "observed_at": "2026-11-08T15:39:09.353611+00:00",
+   "observed_at": "2026-11-08T15:50:44.169896+00:00",
    "entries": {
     "universe": {
      "rows": 503,
      "files": 1,
-     "changed_files": 1,
+     "changed_files": 0,
      "columns": [
       "security",
       "gics_sector",
       "date_added",
       "cik"
      ],
-     "raw_sha256": "2f274878bfe6dc56d5b7bf8480a9ea894d1bbb0bb313f9260a292f4e8a64123f"
+     "raw_sha256": "c82e7995641c8d0b5430286420d82559d0859b59d6128dced7e27716c64a6d85"
     }
    },
    "errors": []
@@ -3613,14 +3613,14 @@
    "terms": "Public academic dataset; cite Shiller",
    "layout": "valuation/shiller-monthly.csv.gz; recent months contain Shiller's own estimates",
    "note": "The public file ends where Shiller last updated it; it is not extended here.",
-   "observed_at": "2026-11-08T15:39:09.353611+00:00",
+   "observed_at": "2026-11-08T15:50:44.169896+00:00",
    "entries": {
     "valuation": {
      "rows": 1833,
      "first": "1871-01-01",
      "last": "2023-09-01",
      "files": 1,
-     "changed_files": 1,
+     "changed_files": 0,
      "columns": [
       "price",
       "dividend",
