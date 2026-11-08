@@ -1,0 +1,317 @@
+{
+  "schema": "full-engine-first-cut-inventory-v1",
+  "examined_on_utc": "2026-11-08",
+  "candidate_cut": "2024-12-31",
+  "candidate_selection": {
+    "rule": "Earliest scheduled origin with >=70% retrospective reconstructed price-history weight, dated public SPY holdings and nonzero original explicit CUSIP/ticker observations; outcome returns are not consulted",
+    "historical_selection_threshold": 0.7,
+    "retrospective_only": true,
+    "does_not_certify_eligibility": true
+  },
+  "status": "blocked",
+  "eligible_full_engine": false,
+  "predictive_validation": "not-established",
+  "input_audit": {
+    "components_expected": 14,
+    "components_verified_source": 2,
+    "components_blocked": 12,
+    "source_spy_cut": "2024-09-30",
+    "original_spy_public_after_day": "2024-11-29",
+    "universe_continuity_verified": false,
+    "original_price_vintages_verified": false,
+    "model_parameter_asof_verified": false
+  },
+  "components": [
+    {
+      "component": "bond_etf_profiles",
+      "status": "blocked",
+      "dependencies": [
+        "historical_identifiers"
+      ],
+      "blockers": [
+        "dependency:historical_identifiers",
+        "missing-original-historical-bond-and-etf-profiles"
+      ],
+      "evidence": [
+        "data/historical/provider-inputs-v1/readiness.json",
+        "docs/pendientes.md"
+      ],
+      "source_at_cut": null,
+      "access_license_review": "required-before-reuse-or-distribution",
+      "recovery_owner_role": "historical-fixed-income-and-etf-data",
+      "named_owner_assigned": false
+    },
+    {
+      "component": "corporate_actions",
+      "status": "blocked",
+      "dependencies": [
+        "historical_universe"
+      ],
+      "blockers": [
+        "dependency:historical_universe",
+        "missing-causal-split-spinoff-merger-and-delisting-reconciliation"
+      ],
+      "evidence": [
+        "data/historical/price-reconciliation-v1/coverage.json",
+        "docs/precios-historicos.md"
+      ],
+      "source_at_cut": null,
+      "access_license_review": "required-before-reuse-or-distribution",
+      "recovery_owner_role": "security-master-and-corporate-actions",
+      "named_owner_assigned": false
+    },
+    {
+      "component": "fundamentals_and_quality",
+      "status": "blocked",
+      "dependencies": [
+        "historical_universe"
+      ],
+      "blockers": [
+        "dependency:historical_universe",
+        "missing-full-point-in-time-financials-quality-and-confidence-adapter"
+      ],
+      "evidence": [
+        "data/historical/expanded-stock-validation-v1/manifest.json",
+        "docs/fuentes-historicas.md"
+      ],
+      "source_at_cut": null,
+      "access_license_review": "required-before-reuse-or-distribution",
+      "recovery_owner_role": "point-in-time-financial-data",
+      "named_owner_assigned": false
+    },
+    {
+      "component": "historical_identifiers",
+      "status": "blocked",
+      "dependencies": [
+        "spy_holdings_source"
+      ],
+      "blockers": [
+        "missing-verified-historical-cusip-instrument-price-links"
+      ],
+      "evidence": [
+        "data/historical/identifier-observations-v1/coverage.json",
+        "data/historical/identifier-sources-v1/manifest.json"
+      ],
+      "source_at_cut": {
+        "exact_cusip_ticker_mapped_spy_weight": 0.96371326022406,
+        "verified_continuous_price_binding": false
+      },
+      "access_license_review": "required-before-reuse-or-distribution",
+      "recovery_owner_role": "security-master-and-corporate-actions",
+      "named_owner_assigned": false
+    },
+    {
+      "component": "historical_model_parameters",
+      "status": "blocked",
+      "dependencies": [],
+      "blockers": [
+        "current-kernel-and-catalogue-have-no-per-cut-training-or-ex-ante-provenance"
+      ],
+      "evidence": [
+        "docs/protocolo-replay-integral-v1.json",
+        "data/historical/replay-plan-v1/coverage.json"
+      ],
+      "source_at_cut": null,
+      "access_license_review": "required-before-reuse-or-distribution",
+      "recovery_owner_role": "model-governance",
+      "named_owner_assigned": false
+    },
+    {
+      "component": "historical_universe",
+      "status": "blocked",
+      "dependencies": [
+        "historical_identifiers"
+      ],
+      "blockers": [
+        "dependency:historical_identifiers",
+        "missing-historical-membership-including-delisted-instruments"
+      ],
+      "evidence": [
+        "data/historical/identifier-observations-v1/coverage.json"
+      ],
+      "source_at_cut": null,
+      "access_license_review": "required-before-reuse-or-distribution",
+      "recovery_owner_role": "security-master-and-corporate-actions",
+      "named_owner_assigned": false
+    },
+    {
+      "component": "macro_vintages",
+      "status": "verified-source",
+      "dependencies": [],
+      "blockers": [],
+      "evidence": [
+        "data/historical/provider-inputs-v1/readiness.json",
+        "data/historical/provider-inputs-v1/manifest.json"
+      ],
+      "source_at_cut": {
+        "verified": 16,
+        "expected": 16,
+        "information_cutoff": "strict-prior-day-vintage"
+      },
+      "access_license_review": "required-before-reuse-or-distribution",
+      "recovery_owner_role": "historical-data-engineering",
+      "named_owner_assigned": false
+    },
+    {
+      "component": "monte_carlo",
+      "status": "blocked",
+      "dependencies": [
+        "return_forecasts",
+        "volatility_and_dependence"
+      ],
+      "blockers": [
+        "dependency:return_forecasts",
+        "dependency:volatility_and_dependence",
+        "historical-production-simulation-adapter-not-implemented"
+      ],
+      "evidence": [
+        "data/historical/replay-plan-v1/coverage.json"
+      ],
+      "source_at_cut": null,
+      "access_license_review": "required-before-reuse-or-distribution",
+      "recovery_owner_role": "model-engineering",
+      "named_owner_assigned": false
+    },
+    {
+      "component": "orders_and_account",
+      "status": "blocked",
+      "dependencies": [
+        "portfolio_optimization",
+        "tradable_prices_and_distributions"
+      ],
+      "blockers": [
+        "dependency:portfolio_optimization",
+        "dependency:tradable_prices_and_distributions",
+        "historical-orders-and-corporate-action-account-adapter-not-implemented"
+      ],
+      "evidence": [
+        "data/historical/replay-plan-v1/coverage.json",
+        "data/historical/cashflow-reconciliation-v1/report.json"
+      ],
+      "source_at_cut": null,
+      "access_license_review": "required-before-reuse-or-distribution",
+      "recovery_owner_role": "accounting-and-execution",
+      "named_owner_assigned": false
+    },
+    {
+      "component": "portfolio_optimization",
+      "status": "blocked",
+      "dependencies": [
+        "monte_carlo",
+        "historical_universe"
+      ],
+      "blockers": [
+        "dependency:monte_carlo",
+        "dependency:historical_universe",
+        "historical-production-composer-adapter-not-implemented"
+      ],
+      "evidence": [
+        "data/historical/replay-plan-v1/coverage.json",
+        "data/historical/scoped-engine-pilot-v1/report.json"
+      ],
+      "source_at_cut": null,
+      "access_license_review": "required-before-reuse-or-distribution",
+      "recovery_owner_role": "portfolio-engineering",
+      "named_owner_assigned": false
+    },
+    {
+      "component": "return_forecasts",
+      "status": "blocked",
+      "dependencies": [
+        "macro_vintages",
+        "historical_universe",
+        "fundamentals_and_quality",
+        "bond_etf_profiles",
+        "tradable_prices_and_distributions",
+        "historical_model_parameters"
+      ],
+      "blockers": [
+        "dependency:historical_universe",
+        "dependency:fundamentals_and_quality",
+        "dependency:bond_etf_profiles",
+        "dependency:tradable_prices_and_distributions",
+        "dependency:historical_model_parameters",
+        "full-as-of-snapshot-and-production-valuation-adapter-not-implemented"
+      ],
+      "evidence": [
+        "data/historical/replay-plan-v1/coverage.json"
+      ],
+      "source_at_cut": null,
+      "access_license_review": "required-before-reuse-or-distribution",
+      "recovery_owner_role": "model-engineering",
+      "named_owner_assigned": false
+    },
+    {
+      "component": "spy_holdings_source",
+      "status": "verified-source",
+      "dependencies": [],
+      "blockers": [],
+      "evidence": [
+        "data/historical/provider-inputs-v1/readiness.json",
+        "data/historical/provider-inputs-v1/manifest.json"
+      ],
+      "source_at_cut": {
+        "accession": "0001752724-24-264697",
+        "as_of": "2024-09-30",
+        "available_after_day": "2024-11-29",
+        "age_days": 92
+      },
+      "access_license_review": "required-before-reuse-or-distribution",
+      "recovery_owner_role": "historical-data-engineering",
+      "named_owner_assigned": false
+    },
+    {
+      "component": "tradable_prices_and_distributions",
+      "status": "blocked",
+      "dependencies": [
+        "corporate_actions"
+      ],
+      "blockers": [
+        "dependency:corporate_actions",
+        "current-adjusted-history-is-not-certified-historical-execution-and-cashflows"
+      ],
+      "evidence": [
+        "data/historical/price-reconciliation-v1/coverage.json",
+        "data/historical/cashflow-reconciliation-v1/report.json"
+      ],
+      "source_at_cut": {
+        "research_history_spy_weight": 0.70256651152596,
+        "point_compatible_spy_weight": 0.71043457661952,
+        "execution_cashflows_verified": false,
+        "original_price_vintages_verified": false
+      },
+      "access_license_review": "required-before-reuse-or-distribution",
+      "recovery_owner_role": "pricing-and-cashflow-reconciliation",
+      "named_owner_assigned": false
+    },
+    {
+      "component": "volatility_and_dependence",
+      "status": "blocked",
+      "dependencies": [
+        "macro_vintages",
+        "tradable_prices_and_distributions",
+        "historical_model_parameters"
+      ],
+      "blockers": [
+        "dependency:tradable_prices_and_distributions",
+        "dependency:historical_model_parameters",
+        "per-cut-refit-and-production-risk-adapter-not-implemented"
+      ],
+      "evidence": [
+        "data/historical/replay-plan-v1/coverage.json"
+      ],
+      "source_at_cut": null,
+      "access_license_review": "required-before-reuse-or-distribution",
+      "recovery_owner_role": "risk-model-engineering",
+      "named_owner_assigned": false
+    }
+  ],
+  "remaining_accountability": "Owner roles are proposed; individual assignment, license review, original data vintages and per-cut source checks remain pending. This inventory is not the H1.4 certification report.",
+  "input_files": [
+    "data/historical/replay-plan-v1/coverage.json",
+    "data/historical/provider-inputs-v1/readiness.json",
+    "data/historical/identifier-observations-v1/coverage.json",
+    "data/historical/price-reconciliation-v1/coverage.json",
+    "data/historical/expanded-stock-validation-v1/manifest.json"
+  ]
+}

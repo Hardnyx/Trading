@@ -1,0 +1,78 @@
+{
+  "schema": "study-feasibility-v1",
+  "examined_on_utc": "2026-11-08",
+  "sample_role": "previously-inspected-retrospective-development",
+  "underlying_protocol": "docs/protocolo-replay-integral-v1.json",
+  "protocol_status": "unchanged",
+  "study": {
+    "scheduled_origins": 48,
+    "first_origin": "2022-10-31",
+    "last_origin": "2026-09-30",
+    "full_engine_eligible_origins": 0,
+    "full_engine_executed_origins": 0,
+    "independent_holdout_registered": false,
+    "archived_reconstructed_stock_origins": 8,
+    "first_diagnostic_cut": "2024-12-31"
+  },
+  "primary_inference": {
+    "family_tests": 7,
+    "one_sided_familywise_alpha": 0.05,
+    "method": "Holm step-down",
+    "block_lengths_months": [
+      12,
+      24
+    ],
+    "minimum_blocks_each_length": 4,
+    "minimum_origins_for_largest_block": 96,
+    "shortfall_in_scheduled_origins": 48,
+    "blocks_with_current_calendar": {
+      "12": 4,
+      "24": 2
+    },
+    "meets_full_length_block_minimum": false,
+    "mature_outcomes_not_inferred_from_scheduled_dates": true
+  },
+  "optimistic_sensitivity": {
+    "method": "Normal approximation, Holm first-step alpha/7, 80% nominal power, iid non-overlapping blocks, known standardized paired-effect variance",
+    "not_empirical_power": true,
+    "minimum_detectable_effect_in_block_sd": {
+      "48": {
+        "12": 1.646,
+        "24": 2.328
+      },
+      "96": {
+        "12": 1.164,
+        "24": 1.646
+      },
+      "120": {
+        "12": 1.041,
+        "24": 1.472
+      }
+    }
+  },
+  "source_inventory": {
+    "macro_verified": 768,
+    "macro_expected": 768,
+    "fresh_public_spy_cuts": 26,
+    "identifier_cuts_with_explicit_tickers": 12,
+    "price_cuts_with_research_histories": 10,
+    "continuous_price_identity_verified": false,
+    "execution_cashflows_verified": false,
+    "retrospective_engine_pilot_cuts": 2
+  },
+  "decision": "NO_CONFIRMATORY_TEST_WITH_PRESENT_DATA",
+  "permitted_use": "Engineering replay and descriptive, explicitly retrospective forecasting diagnostics; no claim of positive predictive skill or economic advantage",
+  "next_dependencies": [
+    "H0.3: register a prospective confirmatory cohort and revised feasible scope without modifying v1",
+    "H1.1/H1.2: close exact first-cut input gaps and audit original vintages",
+    "H2: establish a sufficiently long causal monthly history and mature outcomes before inferential testing"
+  ],
+  "source_files": [
+    "docs/protocolo-replay-integral-v1.json",
+    "data/historical/replay-plan-v1/coverage.json",
+    "data/historical/provider-inputs-v1/readiness.json",
+    "data/historical/identifier-observations-v1/coverage.json",
+    "data/historical/price-reconciliation-v1/coverage.json",
+    "data/historical/expanded-stock-validation-v1/manifest.json"
+  ]
+}
