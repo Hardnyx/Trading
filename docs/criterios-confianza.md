@@ -51,6 +51,16 @@ verdadero ni al óptimo global; elegir el propio líder da cero por identidad.
 No se fija la cartera anterior y una mejora respaldada puede justificar
 un cambio importante.
 
+## Criterio transversal de control de sobreajuste
+
+La [política de sobreajuste](politica-control-sobreajuste.md) exige separar
+los datos de diseño de los de confirmación, evitar usar resultados futuros
+en calibraciones, registrar todos los ensayos, congelar decisiones antes de
+puntuar y reiniciar la cohorte confirmatoria ante cambios sustanciales.
+Un buen backtest, estabilidad de pesos o pasar pruebas no demuestra ausencia
+de sobreajuste. Una mejora de parámetros obtenida mirando la misma prueba
+convierte esa prueba en desarrollo, no en confirmación independiente.
+
 ## 3. Evidencia predictiva
 
 Desde el núcleo 1.0.0 se sellan distribuciones del simulador real a 1, 5 y

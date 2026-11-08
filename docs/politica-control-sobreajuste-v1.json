@@ -1,0 +1,59 @@
+{
+  "schema": "trading-overfitting-control-v1",
+  "adopted_on_utc": "2026-11-08",
+  "role": "research-governance-addendum-not-frozen-protocol-amendment",
+  "current_assessment": "not-established",
+  "no_claim_of_zero_overfitting": true,
+  "frozen_studies": {
+    "development_protocol": "docs/protocolo-replay-integral-v1.json",
+    "prospective_protocol": "docs/protocolo-confirmacion-integral-v2.json",
+    "original_development_cuts": 48,
+    "independent_eligible_origins": 0
+  },
+  "selection": {
+    "historical_retrospective_data": "development-only",
+    "previously_inspected_history_as_holdout": false,
+    "no_confirmatory_outcome_guided_tuning": true,
+    "no_lookahead_in_features_or_labels": true,
+    "all_tried_variants_recorded": true,
+    "no_seed_shopping": true,
+    "no_horizon_or_metric_cherry_picking": true,
+    "no_exclusion_based_on_realized_performance": true,
+    "preregister_candidate_and_baselines_before_confirmatory_scores": true,
+    "report_all_primary_hypotheses": true
+  },
+  "temporal_validation": {
+    "default": "chronological-expanding-or-rolling-walk-forward",
+    "nested_training_only_when_tuning": true,
+    "all_learned_preprocessing_inside_training": true,
+    "training_labels_mature_before_selection": true,
+    "purge_train_labels_overlapping_inner_validation": true,
+    "embargo_documented_if_design_requires": true,
+    "no_random_k_fold_for_time_series": true,
+    "no_training_on_outer_or_confirmatory_outcomes": true
+  },
+  "revision_policy": {
+    "model_affecting_changes_start_new_cohort": true,
+    "outcomes_inspected_before_change_force_exploratory_role": true,
+    "previously_scored_confirmatory_period_never_reused_for_new_model": true,
+    "do_not_pool_incompatible_source_or_model_cohorts": true,
+    "score_review_no_automatic_reoptimization": true,
+    "record_all_candidate_trials_and_search_space": true
+  },
+  "inference": {
+    "primary_tests": 7,
+    "holm_familywise_alpha": 0.05,
+    "minimum_eligible_mature_months": 96,
+    "no_interim_primary_hypothesis_peeking_without_registered_alpha_spending": true,
+    "no_automatic_proof_from_holm_after_model_search": true,
+    "minimum_economic_effect_and_power_still_pending": true,
+    "avoid_unsupported_overfit_free_conclusion": true
+  },
+  "acceptance": {
+    "development_result_may_select_model_but_not_certify_skill": true,
+    "prospective_frozen_comparable_origin_required": true,
+    "no_promote_on_software_tests_or_parameter_stability": true,
+    "failure_or_insufficient_power_reported_unfavorable_or_inconclusive": true,
+    "formal_prediction_skill_unestablished": true
+  }
+}
