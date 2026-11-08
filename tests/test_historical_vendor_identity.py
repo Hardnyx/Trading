@@ -9,7 +9,7 @@ import tempfile
 import unittest
 
 from scripts.historical_vendor_identity import (
-    COLUMNS, SCHEMA, local_file, parse_export, read_evidence, reconcile,
+    COLUMNS, SCHEMA, local_file, parse_export, read_evidence, reconcile, valid_cusip,
     request_hash, row_state, template_csv,
 )
 
@@ -88,6 +88,17 @@ class VendorIdentityTests(unittest.TestCase):
         report = reconcile(request_bundle(), rows, [], "c" * 64)
         self.assertEqual(report["excluded_row_reasons"]["not-effective-at-cut"], 2)
         self.assertEqual(report["counts"]["no-temporally-admissible-identity"], 1)
+
+    def test_check_digit_rejects_well_formed_wrong_cusips(self):
+        self.assertTrue(valid_cusip("037833100"))
+        self.assertTrue(valid_cusip("594918104"))
+        self.assertTrue(valid_cusip("02079K305"))
+        self.assertTrue(valid_cusip("*@#000009"))
+        self.assertFalse(valid_cusip("037833101"))
+        self.assertFalse(valid_cusip("594918105"))
+        self.assertFalse(valid_cusip("03783310O"))
+        with self.assertRaisesRegex(ValueError, "check digit"):
+            parse_export(csv_bytes([example(cusip="037833101")]), "2024-12-31")
 
     def test_rejects_symbol_as_permanent_namespace(self):
         with self.assertRaisesRegex(ValueError, "Unstable or invalid"):

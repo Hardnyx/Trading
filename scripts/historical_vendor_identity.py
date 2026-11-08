@@ -45,6 +45,21 @@ def sha256(raw):
     return hashlib.sha256(raw).hexdigest()
 
 
+
+def valid_cusip(cusip):
+    """Check ANSI X9.6 body alphabet and the ninth Mod-10 check digit."""
+    if not isinstance(cusip, str) or not re.fullmatch(r"[A-Z0-9*@#]{8}[0-9]", cusip):
+        return False
+    special = {"*": 36, "@": 37, "#": 38}
+    total = 0
+    for position, char in enumerate(cusip[:8]):
+        value = int(char) if char.isdigit() else (
+            ord(char) - 55 if "A" <= char <= "Z" else special[char])
+        weighted = value * (2 if position % 2 else 1)
+        total += weighted // 10 + weighted % 10
+    return (10 - total % 10) % 10 == int(cusip[-1])
+
+
 def request_hash(requests):
     return sha256(canonical({"cut": requests["cut"], "requests": requests["requests"]}))
 
@@ -80,8 +95,8 @@ def parse_export(raw, snapshot_as_of):
                 f"Malformed vendor CSV at line {number}")
         record = {k: v.strip() for k, v in row.items()}
         cusip = record["cusip"]
-        require(bool(re.fullmatch(r"[A-Z0-9*@#]{8}[0-9]", cusip)),
-                f"Invalid CUSIP format at line {number}")
+        require(valid_cusip(cusip),
+                f"Invalid CUSIP format or check digit at line {number}")
         require(record["record_as_of"] == snapshot_as_of and
                 iso(record["record_as_of"]) == snapshot_as_of,
                 f"Historical snapshot mismatch at line {number}")

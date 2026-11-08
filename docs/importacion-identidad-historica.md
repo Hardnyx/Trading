@@ -62,3 +62,5 @@ La conciliación produce cada posición con estado explícito, fuentes con SHA25
 - Los datos retrospectivos se usan en desarrollo; una muestra confirmatoria necesita definición previa independiente.
 
 El workflow de checks genera solo la plantilla pública SEC como artefacto de investigación. Las pruebas usan datos sintéticos: **no aportan observaciones nuevas del mercado ni información privada**.
+
+**Integridad del CUSIP:** el importador comprueba el noveno carácter de control (módulo 10, ANSI X9.6) además del formato del identificador, incluyendo las codificaciones `*`, `@` y `#`. Un CUSIP con dígito de control incorrecto se rechaza antes de intentar cualquier vínculo con un instrumento de mercado. La verificación del dígito no autentica al proveedor ni certifica que ese instrumento fuera negociable en la fecha.
