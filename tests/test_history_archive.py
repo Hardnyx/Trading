@@ -58,6 +58,11 @@ class Partitions(unittest.TestCase):
             self.assertEqual(changed["changed_files"], 1)  # only 2026
             text = gzip.decompress((target / "2026.csv.gz").read_bytes()).decode()
             self.assertEqual(text, "date,value\n2026-01-02,2.0\n2026-01-05,3.0\n")
+            # Same content compressed differently (another zlib) is not a change.
+            other = gzip.compress(gzip.decompress((target / "2025.csv.gz").read_bytes()), compresslevel=1, mtime=0)
+            (target / "2025.csv.gz").write_bytes(other)
+            self.assertEqual(h.write_yearly(target, ["date", "value"], rows + [["2026-01-05", 3.0]])["changed_files"], 0)
+            self.assertEqual((target / "2025.csv.gz").read_bytes(), other)
             # A year the source no longer publishes is removed, not kept stale.
             h.write_yearly(target, ["date", "value"], [["2026-01-02", 2.0]])
             self.assertFalse((target / "2025.csv.gz").exists())

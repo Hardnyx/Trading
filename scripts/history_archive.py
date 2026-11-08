@@ -117,9 +117,18 @@ def gzip_csv(header, rows):
 
 
 def write_if_changed(path, data):
+    """Compare content, not bytes: zlib versions compress identical text differently."""
     path.parent.mkdir(parents=True, exist_ok=True)
-    if path.exists() and path.read_bytes() == data:
-        return False
+    if path.exists():
+        current = path.read_bytes()
+        if current == data:
+            return False
+        if path.suffix == ".gz":
+            try:
+                if gzip.decompress(current) == gzip.decompress(data):
+                    return False
+            except (OSError, EOFError):
+                pass  # an unreadable file is replaced
     path.write_bytes(data)
     return True
 
