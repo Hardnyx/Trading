@@ -5,6 +5,7 @@ import {MODEL_VERSION,currentAccount} from '../dist/assets/js/policy.mjs?v=0.35.
 import {composeMultiStart} from '../dist/assets/js/composer.mjs?v=0.35.0';
 
 export const ACCOUNT_RESEARCH_COHORT='continuous-account-research-v1';
+export const SEGREGATED_RESEARCH_COHORT='continuous-account-research-v2';
 export const FIXED_SEARCH=Object.freeze({candidates:300,paths:600,finalPaths:3000});
 const hash=b=>createHash('sha256').update(b).digest('hex');
 const guard=(ok,why)=>{if(!ok)throw Error(why)};
@@ -42,7 +43,7 @@ function nextOpen(cut){
  return t;
 }
 /** Convert a cut-matched ledger close into the existing supported account API. */
-export function prepareContinuousAccountRequest({snapshot,ledger,ledgerBytes,issuedAt}){
+function prepareAccountRequest({snapshot,ledger,ledgerBytes,issuedAt},{segregateReceivables=false}={}){
  const cut=snapshot?.price_as_of;
  guard(day(cut)&&postClose(snapshot?.generated_at,cut),
   'Original market snapshot must be collected after New York close');
@@ -73,8 +74,38 @@ export function prepareContinuousAccountRequest({snapshot,ledger,ledgerBytes,iss
   Array.isArray(last.holdings)&&number(last.receivables)&&last.receivables>=0&&
   Math.abs(last.cash-ledger.final_cash)<=tolerance(last.nav),
   'Account NAV or final settled cash is invalid');
- guard(last.receivables<=tolerance(last.nav)&&ledger.pending_receivables.length===0,
-  'Unsettled dividends cannot enter an optimizer without receivables');
+ let segregated=0;
+ if(!segregateReceivables){
+  guard(last.receivables<=tolerance(last.nav)&&ledger.pending_receivables.length===0,
+   'Unsettled dividends cannot enter an optimizer without receivables');
+ }else{
+  const claims=ledger.pending_receivables;
+  const used=new Set();
+  for(const claim of claims){
+   guard(claim&&typeof claim.symbol==='string'&&day(claim.ex_date)&&
+    day(claim.pay_date)&&claim.ex_date<=cut&&claim.pay_date>cut&&
+    positive(claim.gross)&&positive(claim.quantity)&&
+    number(claim.per_share)&&claim.per_share>0&&
+    Math.abs(claim.quantity*claim.per_share-claim.gross)<=tolerance(claim.gross),
+    'Unsettled dividend is missing a valid previously declared entitlement');
+   const key=[claim.symbol,claim.ex_date,claim.pay_date,claim.gross].join('|');
+   guard(!used.has(key),'Duplicate unsettled entitlement');
+   used.add(key);
+   const original=ledger.journal.filter(p=>p.type==='dividend-receivable'&&
+    p.symbol===claim.symbol&&p.ex_date===claim.ex_date&&
+    p.pay_date===claim.pay_date&&number(p.gross)&&
+    Math.abs(p.gross-claim.gross)<=tolerance(claim.gross));
+   const alreadyPaid=ledger.journal.some(p=>p.type==='dividend-payment'&&
+    p.symbol===claim.symbol&&p.ex_date===claim.ex_date);
+   guard(original.length===1&&!alreadyPaid,
+    'Unsettled dividend has no unique original unpaid entitlement');
+   segregated+=claim.gross;
+  }
+  guard(Math.abs(segregated-last.receivables)<=tolerance(last.nav),
+   'Unsettled entitlements do not reconcile to receivables in total NAV');
+ }
+ const investable=last.nav-segregated;
+ guard(positive(investable),'No positive investable NAV after segregating claims');
  const market=new Map(snapshot.assets.map(x=>[x.symbol,x]));
  guard(market.size===snapshot.assets.length,'Duplicate symbols in original snapshot');
  const holdings=[],seen=new Set();let invested=0;
@@ -98,7 +129,7 @@ export function prepareContinuousAccountRequest({snapshot,ledger,ledgerBytes,iss
  guard(ledger.final_units&&Object.keys(ledger.final_units).length===seen.size&&
   Object.keys(ledger.final_units).every(k=>seen.has(k)),
   'Hidden final units were omitted from the current account');
- guard(Math.abs(invested+last.cash-last.nav)<=tolerance(last.nav),
+ guard(Math.abs(invested+last.cash-investable)<=tolerance(last.nav),
   'NAV contains unrepresented assets or liabilities');
  const preset=referenceRequest(snapshot);
  guard(preset.settings.account?.enabled===false&&preset.settings.baseline===null&&
@@ -108,13 +139,18 @@ export function prepareContinuousAccountRequest({snapshot,ledger,ledgerBytes,iss
   (preset.settings.execution.capitalGainsTax??0)===0,
   'Reference economics cannot value this cash-only account');
  const request={...preset,settings:{...preset.settings,
-  capital:last.nav,baseline:null,account:{enabled:true,cash:last.cash,positions:holdings}}};
- const valued=currentAccount(snapshot,request.settings.account,null,last.nav);
- guard(Math.abs(valued.capital-last.nav)<=tolerance(last.nav)&&
+  capital:investable,baseline:null,account:{enabled:true,cash:last.cash,positions:holdings}}};
+ const valued=currentAccount(snapshot,request.settings.account,null,investable);
+ guard(Math.abs(valued.capital-investable)<=tolerance(last.nav)&&
   Math.abs(valued.positions.reduce((s,p)=>s+p.weight,0)-1)<1e-8,
   'Existing optimizer values carried state differently from the cash ledger');
- return {schema:'account-aware-research-request-v1',
-  cohort_id:ACCOUNT_RESEARCH_COHORT,
+ return {schema:segregateReceivables?
+   'account-aware-research-request-v2':'account-aware-research-request-v1',
+  cohort_id:segregateReceivables?SEGREGATED_RESEARCH_COHORT:ACCOUNT_RESEARCH_COHORT,
+  account_basis:segregateReceivables?'settled-investable-only':'total-nav-no-receivables',
+  total_account_nav:last.nav,investable_account_nav:investable,
+  segregated_receivables:segregated,
+  unsettled_claims:segregateReceivables?ledger.pending_receivables.map(c=>({...c})):[],
   reference_id:REFERENCE_ID,engine_version:MODEL_VERSION,
   cut,issued_at:issuedAt,request,search:{...FIXED_SEARCH},
   state_sha256:hash(ledgerBytes),
@@ -124,10 +160,27 @@ export function prepareContinuousAccountRequest({snapshot,ledger,ledgerBytes,iss
   original_v2_cohort_reused:false,source_lineage_certified:false,
   confirmatory_eligible:false,predictive_validation:'not-established'};
 }
+/** Retain the original no-receivable research cohort unchanged. */
+export function prepareContinuousAccountRequest(input){
+ return prepareAccountRequest(input,{segregateReceivables:false});
+}
+/** Explicit separate cohort: do not allow dividend claims to finance trades. */
+export function prepareSegregatedAccountRequest(input){
+ return prepareAccountRequest(input,{segregateReceivables:true});
+}
 /** Strict handoff; deliberately not connected to captureMonthlyProposal(v2). */
-export function continuousAccountHandoff(prepared){
- guard(prepared?.schema==='account-aware-research-request-v1'&&
-  prepared.cohort_id===ACCOUNT_RESEARCH_COHORT&&
+function accountHandoff(prepared,segregated){
+ const cohort=segregated?SEGREGATED_RESEARCH_COHORT:ACCOUNT_RESEARCH_COHORT;
+ const schema=segregated?'account-aware-research-request-v2':'account-aware-research-request-v1';
+ guard(prepared?.schema===schema&&
+  prepared.cohort_id===cohort&&
+  prepared.account_basis===(segregated?'settled-investable-only':'total-nav-no-receivables')&&
+  number(prepared.total_account_nav)&&positive(prepared.investable_account_nav)&&
+  number(prepared.segregated_receivables)&&prepared.segregated_receivables>=0&&
+  Math.abs(prepared.total_account_nav-prepared.investable_account_nav-
+   prepared.segregated_receivables)<=tolerance(prepared.total_account_nav)&&
+  (!segregated?prepared.segregated_receivables===0:
+   Array.isArray(prepared.unsettled_claims))&&
   prepared.confirmatory_eligible===false&&
   JSON.stringify(prepared.search)===JSON.stringify(FIXED_SEARCH)&&
   prepared.request.settings.account?.enabled===true&&
@@ -136,16 +189,26 @@ export function continuousAccountHandoff(prepared){
   prepared.request.settings.seed===20261024&&
   hash(Buffer.from(JSON.stringify(prepared.request)))===prepared.request_sha256,
   'Invalid research cohort, altered search or unregistered account');
- return {schema:'account-aware-research-handoff-v1',
-  cohort_id:ACCOUNT_RESEARCH_COHORT,cut:prepared.cut,
+ return {schema:segregated?'account-aware-research-handoff-v2':
+   'account-aware-research-handoff-v1',
+  cohort_id:cohort,account_basis:prepared.account_basis,
+  total_account_nav:prepared.total_account_nav,
+  investable_account_nav:prepared.investable_account_nav,
+  segregated_receivables:prepared.segregated_receivables,cut:prepared.cut,
   account_state_sha256:prepared.state_sha256,
   request:prepared.request,search:{...FIXED_SEARCH},
   original_v2_cohort_reused:false,confirmatory_eligible:false,
   predictive_validation:'not-established'};
 }
+export function continuousAccountHandoff(prepared){
+ return accountHandoff(prepared,false);
+}
+export function segregatedAccountHandoff(prepared){
+ return accountHandoff(prepared,true);
+}
 /** Explicit research-only composer; without publication, no causal confirmation. */
-export function composeContinuousAccountResearch(snapshot,prepared){
- const handoff=continuousAccountHandoff(prepared);
+function runResearchComposer(snapshot,prepared,segregated){
+ const handoff=accountHandoff(prepared,segregated);
  guard(snapshot?.price_as_of===handoff.cut&&
   snapshot.generated_at&&handoff.request.settings.account.enabled===true&&
   hash(Buffer.from(JSON.stringify(snapshot)))===prepared.market_snapshot_sha256,
@@ -155,9 +218,22 @@ export function composeContinuousAccountResearch(snapshot,prepared){
  guard(proposal?.as_of===handoff.cut&&proposal.current_account?.capital>0&&
   proposal.account_source==='Cantidades y efectivo ingresados',
   'Composer rejected carried account state');
- return {schema:'continuous-account-research-proposal-v1',
-  cohort_id:ACCOUNT_RESEARCH_COHORT,cut:handoff.cut,
+ return {schema:segregated?'continuous-account-research-proposal-v2':
+   'continuous-account-research-proposal-v1',
+  cohort_id:handoff.cohort_id,
+  account_basis:handoff.account_basis,
+  total_account_nav:handoff.total_account_nav,
+  investable_account_nav:handoff.investable_account_nav,
+  segregated_receivables:handoff.segregated_receivables,
+  cut:handoff.cut,
   account_state_sha256:handoff.account_state_sha256,proposal,
   original_v2_cohort_reused:false,first_git_publication_certified:false,
   confirmatory_eligible:false,predictive_validation:'not-established'};
+}
+
+export function composeContinuousAccountResearch(snapshot,prepared){
+ return runResearchComposer(snapshot,prepared,false);
+}
+export function composeSegregatedAccountResearch(snapshot,prepared){
+ return runResearchComposer(snapshot,prepared,true);
 }

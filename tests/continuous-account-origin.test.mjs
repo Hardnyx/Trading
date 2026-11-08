@@ -3,7 +3,9 @@ import assert from 'node:assert/strict';
 import {currentAccount} from '../dist/assets/js/policy.mjs?v=0.35.0';
 import {referenceRequest} from '../dist/assets/js/reference-preset.mjs?v=0.35.0';
 import {prepareContinuousAccountRequest,continuousAccountHandoff,
- ACCOUNT_RESEARCH_COHORT,FIXED_SEARCH} from '../scripts/continuous_account_origin.mjs';
+ prepareSegregatedAccountRequest,segregatedAccountHandoff,
+ ACCOUNT_RESEARCH_COHORT,SEGREGATED_RESEARCH_COHORT,FIXED_SEARCH}
+ from '../scripts/continuous_account_origin.mjs';
 
 const cut='2026-12-31',issued='2026-12-31T23:00:00Z';
 const asset=(symbol,price)=>({symbol,currency:'USD',price_date:cut,price,
@@ -63,6 +65,66 @@ test('unpaid dividend is never silently converted into investable cash',()=>{
  assert.throws(()=>run({ledger:a}),/Unsettled dividends/);
  const b=book();b.pending_receivables=[{symbol:'AAA',gross:20,pay_date:'2027-01-04'}];
  assert.throws(()=>run({ledger:b}),/Unsettled dividends/);
+});
+const pendingBook=()=>{
+ const b=book(),claim={symbol:'AAA',ex_date:'2026-12-30',
+  pay_date:'2027-01-05',gross:10,quantity:5,per_share:2};
+ b.nav.at(-1).nav=1060;
+ b.nav.at(-1).receivables=10;
+ b.pending_receivables=[claim];
+ b.journal.push({date:'2026-12-30',type:'dividend-receivable',
+  symbol:'AAA',ex_date:claim.ex_date,pay_date:claim.pay_date,gross:10});
+ return b;
+};
+test('v2 keeps dividend claims in total NAV but outside the optimizer capital',()=>{
+ const ledger=pendingBook();
+ const p=prepareSegregatedAccountRequest({snapshot:snapshot(),ledger,
+  ledgerBytes:Buffer.from(JSON.stringify(ledger)),issuedAt:issued});
+ assert.equal(p.cohort_id,SEGREGATED_RESEARCH_COHORT);
+ assert.equal(p.account_basis,'settled-investable-only');
+ assert.equal(p.total_account_nav,1060);
+ assert.equal(p.investable_account_nav,1050);
+ assert.equal(p.segregated_receivables,10);
+ assert.equal(p.request.settings.capital,1050);
+ assert.equal(p.request.settings.account.cash,500);
+ assert.equal(p.request.settings.account.positions[0].quantity,5);
+ assert.deepEqual(p.unsettled_claims,ledger.pending_receivables);
+ const h=segregatedAccountHandoff(p);
+ assert.equal(h.account_basis,'settled-investable-only');
+ assert.equal(h.investable_account_nav,1050);
+ assert.equal(h.confirmatory_eligible,false);
+ assert.throws(()=>continuousAccountHandoff(p),/Invalid research cohort/);
+ assert.throws(()=>prepareContinuousAccountRequest({snapshot:snapshot(),ledger,
+  ledgerBytes:Buffer.from(JSON.stringify(ledger)),issuedAt:issued}),
+  /Unsettled dividends/);
+});
+test('v2 rejects invented, duplicated, paid or misvalued entitlements',()=>{
+ const runV2=ledger=>prepareSegregatedAccountRequest({snapshot:snapshot(),ledger,
+  ledgerBytes:Buffer.from(JSON.stringify(ledger)),issuedAt:issued});
+ const invalid=[
+  b=>{b.pending_receivables[0].gross=15},
+  b=>{b.pending_receivables[0].quantity=6},
+  b=>{b.pending_receivables[0].pay_date='2026-12-30'},
+  b=>{b.pending_receivables.push({...b.pending_receivables[0]})},
+  b=>{b.journal=b.journal.filter(x=>x.type!=='dividend-receivable')},
+  b=>{b.journal.push({type:'dividend-payment',date:cut,
+   symbol:'AAA',ex_date:'2026-12-30',gross:10})},
+  b=>{b.nav.at(-1).receivables=20;b.nav.at(-1).nav=1070},
+ ];
+ for(const mutate of invalid){
+  const b=pendingBook();mutate(b);
+  assert.throws(()=>runV2(b),/Unsettled dividend|Duplicate unsettled|Unsettled entitlements/);
+ }
+});
+test('v2 research handoff cannot be silently relabeled as the registered v2 study',()=>{
+ const b=pendingBook();
+ const p=prepareSegregatedAccountRequest({snapshot:snapshot(),ledger:b,
+  ledgerBytes:Buffer.from(JSON.stringify(b)),issuedAt:issued});
+ assert.throws(()=>segregatedAccountHandoff({...p,
+  cohort_id:'full-engine-prospective-registration-v2'}),/Invalid research cohort/);
+ assert.throws(()=>segregatedAccountHandoff({...p,
+  request:{...p.request,settings:{...p.request.settings,capital:1060}}}),
+  /Invalid research cohort/);
 });
 test('held positions must match the original close and final share balance',()=>{
  const market=snapshot();market.assets[1].price=111;
