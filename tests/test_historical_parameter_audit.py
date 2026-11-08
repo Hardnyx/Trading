@@ -23,6 +23,8 @@ class HistoricalParameterAuditTests(unittest.TestCase):
             self.assertFalse(cut["historical_model_parameters_certified"])
             self.assertEqual(cut["engine_calibration_end"], cut["cut"])
             self.assertEqual(cut["risk_policy"]["volatilityMode"], "ewma")
+            self.assertEqual(cut["registered_request_seed"], self.protocol["seed"])
+            self.assertEqual(len(cut["registered_request_sha256"]), 64)
 
     def test_future_training_price_fails_before_replay(self):
         origin = copy.deepcopy(self.bundle["origins"][0])
@@ -47,8 +49,6 @@ class HistoricalParameterAuditTests(unittest.TestCase):
     def test_2026_policy_cannot_be_promoted_to_contemporaneous(self):
         p = copy.deepcopy(self.protocol)
         p["registered_on"] = "2024-01-01"
-        for source in (self.bundle, self.full, self.summary):
-            source = source  # No archive mutation is needed for a protocol mismatch.
         with self.assertRaisesRegex(ValueError, "registration was historically"):
             build_report(p, self.summary, self.bundle, self.full)
 

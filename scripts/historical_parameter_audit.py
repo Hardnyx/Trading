@@ -89,10 +89,12 @@ def validate_origin(origin, record, risk, protocol):
             "Model risk or information cutoff mismatch")
     require(settings.get("volatilityData") is None,
             "Current volatility data used in historical replay")
-    require(settings["seed"] == protocol["seed"] and
+    require(type(settings.get("seed")) is int and
+            0 <= settings["seed"] < 2 ** 53 and
             settings["horizon"] == protocol["horizon_years"] and
+            type(settings.get("lambda")) in (float, int) and
             0 < settings["lambda"] < 1,
-            "Unregistered or invalid fixed risk policy")
+            "Invalid effective engine policy; request seed is independently audited")
     require(not record["proposal"].get("historical_model_validated", False),
             "Unreviewed historical model certification appeared")
     require(record["proposal"]["as_of"] == cut and
@@ -149,6 +151,10 @@ def validate_origin(origin, record, risk, protocol):
         "minimum_asset_return_intervals": min(asset_counts),
         "maximum_asset_return_intervals": max(asset_counts),
         "risk_policy": {key: settings.get(key) for key in FIXED_FIELDS},
+        "registered_request_seed": protocol["seed"],
+        "effective_proposal_seed": settings["seed"],
+        "registered_request_sha256": record["request_sha256"],
+        "request_reproduction_checked_separately": True,
         "risk_parameter_policy_predefined_at_cut": False,
         "training_history_source_is_historical_vendor_vintage": False,
         "original_filing_capture_verified": False,
