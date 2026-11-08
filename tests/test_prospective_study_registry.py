@@ -1,12 +1,16 @@
 """Prospective preregistration guards; software tests never assert economic skill."""
 import copy
+import gzip
+import hashlib
 import json
 from pathlib import Path
 import subprocess
 import sys
+import tempfile
 import unittest
 from scripts.prospective_study_registry import (
-    read_contract, check_contract, inspect, candidate_preflight, utc
+    read_contract, check_contract, inspect, candidate_preflight, utc,
+    validate_capture_archives
 )
 
 
@@ -47,6 +51,74 @@ class ProspectiveStudyRegistryTests(unittest.TestCase):
         self.assertEqual(report["prior_development_cuts_excluded"], 48)
         self.assertEqual(report["eligible_mature_months"], 0)
         self.assertFalse(report["formal_inference_allowed"])
+
+    def test_original_input_archives_and_proposal_hashes_are_reconciled(self):
+        from pathlib import Path
+
+        def digest(value):
+            return hashlib.sha256(value).hexdigest()
+
+        def serialized(value):
+            return json.dumps(value, ensure_ascii=False, separators=(",", ":"))
+
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            cut = "2026-11-30"
+            stamp = "2026-11-30T22:00:00Z"
+            market = {"price_as_of": cut, "generated_at": stamp, "assets": [
+                {"symbol": "SPY", "price_date": cut, "history": [
+                    {"date": cut, "adj_close": 100}]}]}
+            volatility = {"as_of": cut, "source_market_generated_at": stamp}
+            sources = {"dist/assets/js/module-%s.mjs" % i: "a"*64
+                       for i in range(35)}
+            request = {"settings":{"asOf":cut,"informationAsOf":cut,
+                                   "seed":20261024,"account":{"enabled":False}}}
+            proposal = {"as_of":cut,"information_as_of":cut,
+                        "calibration_end":cut,"model_version":"0.35.0",
+                        "status":"hold","settings":{"informationAsOf":cut},
+                        "positions":[{"symbol":"CASH","weight":1}],
+                        "trade_plan":{"orders":[]}}
+            original_market = serialized(market).encode()
+            original_vol = serialized(volatility).encode()
+            meta = {"cut":cut,"market_archive":"inputs/"+cut+".market.json.gz",
+                    "volatility_archive":"inputs/"+cut+".volatility.json.gz",
+                    "market_sha256":digest(original_market),
+                    "volatility_sha256":digest(original_vol),
+                    "market_collected_at":stamp,"original_capture_only":True}
+            origin = {"cut":cut,"issued_at":"2026-11-30T23:00:00Z",
+                "market_collected_at":stamp,"engine_version":"0.35.0",
+                "status":"hold",
+                "input_market_archive":meta["market_archive"],
+                "input_volatility_archive":meta["volatility_archive"],
+                "input_manifest_json":serialized(meta),
+                "source_hashes_json":serialized(sources),
+                "policy_json":serialized(request),"proposal_json":serialized(proposal),
+                "evidence":{"market_sha256":digest(original_market),
+                    "risk_calibration_sha256":digest(original_vol),
+                    "inputs_sha256":digest(serialized(meta).encode()),
+                    "model_sha256":digest(serialized(sources).encode()),
+                    "policy_sha256":digest(serialized(request).encode()),
+                    "forecast_sha256":digest(serialized(proposal).encode())},
+                "original_price_vintages_certified":False,
+                "source_publication_certified":False,
+                "account_cashflows_certified":False,
+                "full_engine_confirmatory_eligible":False,
+                "production_eligible":False,
+                "predictive_validation":"not-established"}
+            base = root / "data/confirmatory/full-engine-v2/inputs"
+            base.mkdir(parents=True)
+            (base / (cut + ".market.json.gz")).write_bytes(gzip.compress(original_market))
+            vol_path = base / (cut + ".volatility.json.gz")
+            vol_path.write_bytes(gzip.compress(original_vol))
+            self.assertEqual(validate_capture_archives(root, origin), sources)
+            vol_path.write_bytes(gzip.compress(b'{"as_of":"2026-12-01"}'))
+            with self.assertRaisesRegex(ValueError,"Archived original input"):
+                validate_capture_archives(root, origin)
+            vol_path.write_bytes(gzip.compress(original_vol))
+            bad = copy.deepcopy(origin)
+            bad["proposal_json"] = serialized({**proposal, "status":"buy"})
+            with self.assertRaisesRegex(ValueError,"Frozen serialized proposal"):
+                validate_capture_archives(root, bad)
 
     def test_exact_original_tests_and_family_preserved(self):
         self.assertTrue(check_contract(self.reg,self.old))

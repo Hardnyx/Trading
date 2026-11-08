@@ -1,6 +1,7 @@
 """Register H0.3 future full-engine cohort without promoting past or signal-only data."""
 import argparse
-from datetime import date, datetime, timezone
+from datetime import date, datetime, timezone, timedelta
+from zoneinfo import ZoneInfo
 import gzip
 import hashlib
 import json
@@ -169,6 +170,122 @@ def candidate_preflight(origin, reg):
             "confirmatory_eligible": False}
 
 
+def validate_capture_archives(root, origin):
+    """Audit original compressed inputs and serialized proposal/policy bytes."""
+    root = Path(root)
+    cut = origin["cut"]
+    base = root / "data/confirmatory/full-engine-v2"
+    expected_market = "inputs/" + cut + ".market.json.gz"
+    expected_vol = "inputs/" + cut + ".volatility.json.gz"
+    require(origin.get("input_market_archive") == expected_market and
+            origin.get("input_volatility_archive") == expected_vol,
+            "Original input archives differ from registered first-capture cut")
+    evidence = origin["evidence"]
+    for field, archive in (("market_sha256", expected_market),
+                           ("risk_calibration_sha256", expected_vol)):
+        path = base / archive
+        require(path.is_file() and path.stat().st_size < 100_000_000,
+                "Missing or oversized original source archive")
+        raw = gzip.decompress(path.read_bytes())
+        require(sha(raw) == evidence[field],
+                "Archived original input bytes differ from recorded SHA256")
+        obj = json.loads(raw)
+        if field == "market_sha256":
+            require(obj.get("price_as_of") == cut and
+                    obj.get("generated_at") == origin["market_collected_at"] and
+                    any(a.get("symbol") == "SPY" and a.get("price_date") == cut and
+                        a.get("history", [])[-1].get("date") == cut
+                        for a in obj.get("assets", []) if a.get("history")),
+                    "Original market lacks the matching observed session")
+            require(all(row.get("date", "") <= cut
+                        for asset in obj["assets"] for row in asset.get("history", [])),
+                    "Original market contains a future price")
+        else:
+            require(obj.get("as_of") == cut and
+                    obj.get("source_market_generated_at") == origin["market_collected_at"],
+                    "Original risk calibration and market timestamps differ")
+
+    serialized = (
+        ("inputs_sha256", "input_manifest_json"),
+        ("model_sha256", "source_hashes_json"),
+        ("policy_sha256", "policy_json"),
+        ("forecast_sha256", "proposal_json"),
+    )
+    for digest_field, key in serialized:
+        value = origin.get(key)
+        require(isinstance(value, str) and
+                sha(value.encode("utf-8")) == evidence[digest_field],
+                "Frozen serialized " + key + " hash mismatch")
+    metadata = json.loads(origin["input_manifest_json"])
+    require(metadata == {
+        "cut": cut,
+        "market_archive": expected_market,
+        "volatility_archive": expected_vol,
+        "market_sha256": evidence["market_sha256"],
+        "volatility_sha256": evidence["risk_calibration_sha256"],
+        "market_collected_at": origin["market_collected_at"],
+        "original_capture_only": True,
+    }, "First-capture inputs manifest disagrees with archived bytes")
+    request = json.loads(origin["policy_json"])
+    settings = request["settings"]
+    require(settings["asOf"] == settings["informationAsOf"] == cut and
+            settings["seed"] == 20261024 and
+            settings["account"]["enabled"] is False,
+            "Frozen reference request contains future information or personal positions")
+    proposal = json.loads(origin["proposal_json"])
+    require(proposal["as_of"] == proposal["information_as_of"] ==
+            proposal["calibration_end"] == cut and
+            proposal["model_version"] == origin["engine_version"] and
+            proposal["status"] == origin["status"] != "no_feasible" and
+            proposal["settings"]["informationAsOf"] == cut and
+            isinstance(proposal.get("positions"), list) and
+            isinstance(proposal.get("trade_plan"), dict),
+            "Original full-engine proposal is incomplete or from a different cut")
+    sources = json.loads(origin["source_hashes_json"])
+    require(isinstance(sources, dict) and len(sources) >= 30,
+            "Incomplete original source tree manifest")
+    for path, digest in sources.items():
+        require(re.fullmatch(
+            r"scripts/(?:capture_full_engine_origin|seal_forecast)\.mjs|"
+            r"dist/assets/js/[\w/.-]+\.mjs", path) is not None and
+            ".." not in Path(path).parts and
+            HEX.fullmatch(digest) is not None,
+            "Source tree contains invalid paths or hashes")
+    day = iso_day(cut, "decision cut")
+    require(day.weekday() < 5 and
+            (lambda next_day:
+                next_day.strftime("%Y-%m") != day.strftime("%Y-%m"))(
+                    next(d for i in range(1, 5)
+                         if (d := day + timedelta(days=i)).weekday() < 5)),
+            "Not a conservative monthly close")
+    require(all(origin.get(field) is False for field in
+                ("original_price_vintages_certified", "source_publication_certified",
+                 "account_cashflows_certified", "full_engine_confirmatory_eligible",
+                 "production_eligible")),
+            "Candidate was falsely promoted to certified")
+    require(origin.get("predictive_validation") == "not-established",
+            "Predictive skill asserted in first-capture evidence")
+    for label, stamp in (("issuance", origin["issued_at"]),
+                         ("market capture", origin["market_collected_at"])):
+        ny = utc(stamp, label).astimezone(ZoneInfo("America/New_York"))
+        require(ny.date() == day and ny.hour >= 16,
+                "Original " + label + " was not on the post-close New York day")
+    return sources
+
+
+def verify_published_sources(root, commit, hashes):
+    """Compare source modules in the actual first-publication Git tree."""
+    for path, digest in hashes.items():
+        try:
+            data = subprocess.check_output(
+                ["git", "show", commit + ":" + path], cwd=root,
+                stderr=subprocess.DEVNULL)
+        except subprocess.CalledProcessError as error:
+            raise ValueError("Source module missing from first forecast publication") from error
+        require(sha(data) == digest,
+                "Published code differs from source hash: " + path)
+
+
 def first_publication(root, path, raw):
     """Use the actual first Git add and original bytes, not a claimed commit time."""
     def git(*args):
@@ -204,10 +321,12 @@ def inspect(root=ROOT):
         require(path.name == record.get("cut", "") + ".json.gz",
                 "First-capture file name differs from its date")
         current = candidate_preflight(record, reg)
+        sources = validate_capture_archives(root, record)
         require(current["month"] not in months,
                 "Duplicate full-engine first capture in monthly cohort")
         months.add(current["month"])
         published = first_publication(root, path, raw)
+        verify_published_sources(root, published["commit"], sources)
         require(utc(published["at"], "publication") >=
                 utc(record["issued_at"], "issuance") and
                 utc(published["at"], "publication").date() >=

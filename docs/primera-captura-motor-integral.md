@@ -13,3 +13,5 @@ A rejected candidate creates an immutable research attempt under `data/confirmat
 **No forecast skill is certified by capturing a proposal.** The snapshot is a hypothetical account without a live broker ledger. The full-instrument forecasts, PIT vendor chain, cash-flow reconciliation, and independent materiality/power preregistration remain blockers. Recording a `hold` or CASH decision cannot be counted as an independently demonstrated economic advantage.
 
 Reproduce the unit tests with `node --test tests/full-engine-first-capture.test.mjs` and run the read-only gate using `python scripts/prospective_study_registry.py --verify`.
+
+The registry now also decompresses and verifies both original archives, rehashes the exact serialized request/proposal/source manifest, compares policy and proposal cut clocks, and checks every module against the first-publication Git commit. Source metadata and hashes still cannot establish vendor timestamp authenticity or economic eligibility.
