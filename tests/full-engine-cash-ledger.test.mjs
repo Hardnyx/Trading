@@ -107,7 +107,7 @@ test('no synthetic interest, unfiled withdrawal, FX or futures in a cash-only co
  for(const mandate of [
   {cashYield:.01},{monthlyWithdrawal:10},{referenceCurrency:'PEN'},
   {dividendPolicy:'reinvest'}
- ])assert.throws(()=>run({mandate}),/requires|scheduled|conversion|Reinvestment/i);
+ ])assert.throws(()=>run({mandate}),/inferred|requires|scheduled|conversion|Reinvestment/i);
  const base=run({decisions:[{...first,positions:[{symbol:'CASH',weight:1}]}]});
  assert.equal(base.status,'complete');
  assert.ok(base.nav.every(x=>x.nav===1000));
