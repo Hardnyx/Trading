@@ -25,6 +25,12 @@ jobs:
       - run: python scripts/historical_identity_requests.py --output out/historical-identity-requests-v1.json.gz
       - run: python scripts/historical_vendor_identity.py --template out/historical-vendor-identity-template.csv
       - run: python scripts/historical_parameter_audit.py
+      - run: node scripts/benchmark_expanding_mean.mjs out/retrospective-expanding-mean-benchmark-v1.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: retrospective-expanding-mean-benchmark
+          path: out/retrospective-expanding-mean-benchmark-v1.json
+          retention-days: 30
       - uses: actions/upload-artifact@v4
         with:
           name: historical-parameter-provenance
