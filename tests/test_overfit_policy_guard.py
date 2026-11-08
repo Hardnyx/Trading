@@ -6,7 +6,8 @@ import sys
 import unittest
 
 from scripts.overfit_policy_guard import (
-    ROOT, audit, check_policy, check_temporal_fold, check_trial
+    ROOT, audit, check_policy, check_temporal_fold, check_trial,
+    verify_append_only_log
 )
 
 BASE_FOLD = {
@@ -116,6 +117,18 @@ class OverfitPolicyGuardTests(unittest.TestCase):
             bad = dict(changed, **{key: value})
             with self.assertRaises(ValueError, msg=key):
                 check_trial(bad)
+
+    def test_model_trial_history_is_append_only(self):
+        old = {"schema": "trading-model-trial-log-v1",
+               "trials": [dict(BASE_TRIAL)]}
+        new = {"schema": "trading-model-trial-log-v1",
+               "trials": [dict(BASE_TRIAL), dict(BASE_TRIAL, trial_id="next")]}
+        self.assertTrue(verify_append_only_log(old, new))
+        new["trials"][0]["reason"] = "Rewritten after inspection"
+        with self.assertRaisesRegex(ValueError, "not append-only"):
+            verify_append_only_log(old, new)
+        with self.assertRaisesRegex(ValueError, "not append-only"):
+            verify_append_only_log(old, {"schema": old["schema"], "trials": []})
 
     def test_trial_selection_is_not_predictive_skill(self):
         with self.assertRaisesRegex(ValueError, "certify predictive skill"):

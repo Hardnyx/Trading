@@ -36,3 +36,5 @@ El criterio es de aceptación en H0, H1, H3, H4, H5 y H6, no solo una recomendac
 **Límite:** el verificador puede revisar archivos declarados y decisiones codificadas, no demostrar que se documentó cada ensayo realizado fuera del repositorio. El control también exige revisión humana del historial de cambios y de la trazabilidad de los datos y resultados. Los protocolos v1 y v2 anteriores **no se editan**; cualquier cambio a hipótesis, familia de pruebas, efectos o regla confirmatoria requiere una versión explícita y una nueva ventana futura, nunca una reescritura.
 
 **Aceptación:** no declarar «modelo libre de overfitting». Declarar, según evidencia independiente, que el resultado es *respaldado*, *no respaldado* o *inconcluso*, con resultados adversos y todas las variantes relevantes expuestas.
+
+**Integridad del registro:** la CI revisa el historial completo de Git del archivo de ensayos y rechaza borrados, reordenamientos o cambios retrospectivos de entradas ya publicadas. Esta garantía cubre los ensayos *registrados* después de adoptar la política, no experimentos ejecutados fuera del repositorio ni intentos anteriores cuyo inventario no es exhaustivo.

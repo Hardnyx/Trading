@@ -8,6 +8,7 @@ from datetime import date, datetime
 import hashlib
 import json
 from pathlib import Path
+import subprocess
 
 ROOT = Path(__file__).resolve().parents[1]
 POLICY = "docs/politica-control-sobreajuste-v1.json"
@@ -204,6 +205,39 @@ def check_trial(trial):
     return True
 
 
+
+def verify_append_only_log(prior, current):
+    """Previously recorded trials cannot be removed, reordered or edited."""
+    require(prior.get("schema") == current.get("schema"),
+            "Previous trial registry schema changed")
+    older = prior.get("trials")
+    newer = current.get("trials")
+    require(isinstance(older, list) and isinstance(newer, list) and
+            newer[:len(older)] == older,
+            "Recorded model trials are not append-only")
+    return True
+
+
+def audit_trail(root, current):
+    """Audit all Git versions of the log; no claim about unlogged experiments."""
+    root = Path(root)
+    def git(*args):
+        return subprocess.check_output(
+            ["git", *args], cwd=root, stderr=subprocess.DEVNULL
+        ).decode("utf-8").strip()
+    try:
+        require(git("rev-parse", "--is-shallow-repository") == "false",
+                "Full Git history is required for the model trial ledger")
+        revisions = git("log", "--format=%H", "--", LOG).splitlines()
+        for commit in revisions:
+            old = json.loads(git("show", commit + ":" + LOG))
+            verify_append_only_log(old, current)
+        return len(revisions)
+    except subprocess.CalledProcessError as exc:
+        raise ValueError("Cannot independently audit prior model trial log") from exc
+
+
+
 def audit(root=ROOT):
     root = Path(root)
     policy = check_policy(root)
@@ -213,6 +247,7 @@ def audit(root=ROOT):
             "new_trials_from_policy_adoption_only; not a complete reconstruction of all prior model trials" and
             isinstance(ledger.get("trials"), list),
             "Tuning log falsely represents prior attempts as fully documented")
+    history_versions = audit_trail(root, ledger)
     seen = set()
     for trial in ledger["trials"]:
         check_trial(trial)
@@ -220,6 +255,7 @@ def audit(root=ROOT):
         seen.add(trial["trial_id"])
     return {"policy": policy["schema"], "status": "guardrails-active-no-proof-of-generalization",
             "already_inspected_development_months": 48, "newly_logged_trials": len(seen),
+            "trial_log_git_versions_audited": history_versions,
             "eligible_confirmatory_months_certified_here": 0,
             "model_overfitting_absence_proven": False,
             "predictive_skill": "not-established"}
