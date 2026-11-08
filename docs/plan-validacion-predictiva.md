@@ -1,0 +1,158 @@
+# Plan de proyecto: validación predictiva
+
+**Revisión:** 8 de noviembre de 2026 (UTC). **Motor:** 0.35.0. **Núcleo de precios:** 1.0.0.
+**Base examinada:** [`6460234`](https://github.com/Hardnyx/Trading/commit/64602349dd9a08a92afff2f28e07b2146ba87c31).
+**Estado del objetivo:** capacidad predictiva y ventaja económica sin acreditar.
+
+Este documento organiza el trabajo por resultados, dependencias y criterios de cierre. Es la referencia para elegir el siguiente trabajo de validación. El [estado de validación](estado-validacion.md) conserva los diagnósticos y su historia; el [backlog técnico](pendientes.md) detalla pendientes. Una entrega técnica cerrada no cierra automáticamente un hito de validación.
+
+## Resultado que buscamos
+
+Determinar, con datos disponibles en cada decisión y evidencia independiente, si el motor:
+
+1. Predice retornos mejor que las referencias declaradas.
+2. Describe la incertidumbre y las pérdidas con precisión suficiente para el uso declarado.
+3. Produce decisiones con valor económico neto frente a alternativas comparables.
+
+El entregable final es una conclusión reproducible por afirmación: **respaldada, no respaldada o inconclusa**, con alcance, incertidumbre y limitaciones. Terminar el estudio no garantiza demostrar habilidad predictiva. Si los resultados no respaldan el motor, el proyecto debe registrarlo y delimitar su uso.
+
+## Dónde estamos y por qué no hemos terminado
+
+Los avances han cerrado piezas de software, recuperación de datos e investigación. Faltaba una ruta de cierre que conectara esas piezas con un estudio completo, evaluable e independiente. Este plan establece esa ruta; no añade evidencia predictiva por sí mismo.
+
+| Medida comprobada | Estado | Implicación para el objetivo |
+|---|---|---|
+| Replay causal integral | **0/48 cortes admisibles** | Ningún corte reúne todavía todas las entradas históricas exigidas. No significa 48 errores de predicción ni 0% de avance del proyecto |
+| Piloto del compositor real | 2 cortes; ambos mantienen 100% CASH | Prueba integración y restricciones bajo supuestos retrospectivos y variante EWMA; no una cuenta causal continua |
+| Pronósticos históricos reconstruidos | 8 orígenes; 8/7/4 maduros a 21/63/252 sesiones | Solo 8/5/1 intervalos temporales sin solapamiento; los seis orígenes añadidos no ejecutan el optimizador |
+| Resultados maduros de acciones | 722 filas; 190 pendientes | Instrumentos y horizontes no son réplicas independientes |
+| Reconstrucción de flujos en efectivo | 283/722 filas conciliadas bajo supuestos; 439 bloqueadas | Faltan eventos y certificaciones; no es porcentaje de validación ni cuenta ejecutable certificada |
+| Señal mensual prospectiva | 2 sellos publicados, en 2 cohortes de código distintas; 0 maduros en cada horizonte | Conservar separación de cohortes; aún no hay contraste prospectivo maduro |
+| Núcleo exacto prospectivo | 9 sellos; 6/2/0 orígenes puntuados a 1/5/21 sesiones | Muestra en acumulación; a cinco sesiones solo hay un intervalo sin solapamiento |
+| Diseño estadístico integral v1 | 48 fechas previstas; sensibilidad exige al menos 96 orígenes mensuales elegibles y maduros | Completar las 48 fechas no permite cerrar esa inferencia |
+| Muestra confirmatoria independiente | Sin registrar para el estudio integral | El periodo ya examinado sigue siendo desarrollo retrospectivo |
+
+Los resultados históricos usan el mercado congelado al **30 de octubre de 2026**. Los contadores prospectivos proceden de [signal-validation.json](../dist/data/signal-validation.json) y [simulator-validation.json](../dist/data/simulator-validation.json), actualizados el 7-nov a las 03:07 y 03:04 UTC, respectivamente, con mercado observado al 6-nov. Son una fotografía de esta revisión; esos archivos siguen actualizándose.
+
+El [protocolo integral v1](protocolo-replay-integral-v1.md) exige al menos cuatro bloques para cada longitud de 12 y 24 meses: **4 × 24 = 96 orígenes**, frente a 48 fechas previstas. Además, cada horizonte pierde los resultados aún inmaduros. Esta limitación ya estaba declarada como muestra insuficiente; ahora constituye una decisión explícita del proyecto. No se resuelve sumando acciones, trayectorias Monte Carlo o ventanas solapadas.
+
+Los contrastes reconstruidos favorables frente a EWMA de media cero tampoco sustituyen las pruebas primarias contra la media histórica expansiva entrenada solo con pasado y contra BPA/precio. Los retornos brutos reinvertidos y la riqueza con dividendos en efectivo son objetivos distintos; solo se puntúan previsión y realización compatibles.
+
+## Entregas técnicas logradas
+
+Fechas de entrega en Lima, salvo los cortes UTC expresamente indicados. Los commits fijan la versión de la evidencia y sus pruebas; los archivos enlazados permiten inspeccionar el resultado. Las cantidades describen cobertura o ejecución, no habilidad predictiva.
+
+| ID | Resultado verificable y fecha | Evidencia y pruebas asociadas | Commit y límite |
+|---|---|---|---|
+| A01 | Cobertura y protocolo integral registrados, 30-oct | [Plan de 48 cortes](../data/historical/replay-plan-v1/coverage.json), [protocolo legible por máquina](protocolo-replay-integral-v1.json), `tests/test_historical_replay_plan.py` | [`4891487`](https://github.com/Hardnyx/Trading/commit/4891487); contrato de investigación, sin corte causal certificado |
+| A02 | Macro fechada: 768/768 combinaciones de 16 series y 48 cortes; documentos originales SPY recuperados, 30-oct | [Cobertura de entradas](../data/historical/replay-plan-v1/coverage.json), `tests/test_historical_replay_inputs.py` | [`f930f93`](https://github.com/Hardnyx/Trading/commit/f930f93); holdings con antigüedad aceptable solo en 26/48 cortes |
+| A03 | 92 N-PORT de comparación, 34.709 observaciones explícitas CUSIP/ticker; historias de investigación para 1.424 marcas en 10 cortes, 31-oct | [Identificadores](../data/historical/identifier-observations-v1/coverage.json), [precios](../data/historical/price-reconciliation-v1/coverage.json), `tests/test_historical_identifiers.py` | [`b3ed7db`](https://github.com/Hardnyx/Trading/commit/b3ed7db), [`331a99a`](https://github.com/Hardnyx/Trading/commit/331a99a); no certifican identidad continua, vintages de precios ni ejecución |
+| A04 | Compositor, Monte Carlo y decisión robusta ejecutados en 2 cortes, 31-oct; rechazos reproducidos, 2-nov | [Piloto](../data/historical/scoped-engine-pilot-v1/report.json), [atribución](../data/historical/scoped-pilot-attribution-v1/report.json), `tests/scoped-engine-pilot.test.mjs`, `tests/scoped-pilot-attribution.test.mjs` | [`b2d1532`](https://github.com/Hardnyx/Trading/commit/b2d1532), [`ab84417`](https://github.com/Hardnyx/Trading/commit/ab84417); 127/134 acciones utilizables, 22 inversiones rechazadas por riesgo en cada corte; no superioridad demostrada de CASH |
+| A05 | Cohorte de 8 orígenes congelada antes de puntuar; 722 filas maduras puntuadas, 2-nov | [Manifiesto](../data/historical/expanded-stock-validation-v1/manifest.json), [resultados](../data/historical/expanded-stock-validation-scores-v1/report.json), `tests/expanded-stock-validation.test.mjs`, `tests/expanded-stock-scores.test.mjs` | [`c323b81`](https://github.com/Hardnyx/Trading/commit/c323b81), [`39ff3b2`](https://github.com/Hardnyx/Trading/commit/39ff3b2); incluye los 2 orígenes originales, no se suman como 10; estudio retrospectivo parcial |
+| A06 | 14 eventos de dividendos PFE/MSFT permiten pasar de 253 a 283 filas conciliadas, 2-nov | [Fuentes](../data/historical/issuer-cashflows-v1/manifest.json), [conciliación](../data/historical/cashflow-reconciliation-v1/report.json), `tests/historical-cashflows.test.mjs`, `tests/test_issuer_cashflow_inputs.py` | [`55fef5c`](https://github.com/Hardnyx/Trading/commit/55fef5c); impuesto y rendimiento del efectivo supuestos en cero; 439 bloqueadas; no se recalificaron previsiones incompatibles |
+| A07 | Sellado mensual prospectivo y verificación de publicación operativos, 29-oct; evidencia automática hasta 6-nov Lima | [Señales](../dist/data/signal-validation.json), [núcleo](../dist/data/simulator-validation.json), `tests/signal-ledger.test.mjs`, `tests/simulator-validation.test.mjs` | [`c4172ee`](https://github.com/Hardnyx/Trading/commit/c4172ee), [`6460234`](https://github.com/Hardnyx/Trading/commit/6460234); infraestructura y acumulación, sin promoción automática |
+
+Reproducción de informes congelados existentes, sin descargar nuevos datos ni cambiar pronósticos:
+
+```bash
+node scripts/attribute_scoped_pilot.mjs --verify
+node scripts/score_expanded_stock_validation.mjs --verify
+node scripts/audit_historical_cashflows.mjs --verify
+```
+
+Estas comprobaciones reproducen entregas parciales. El inventario de pruebas no afirma que se hayan vuelto a ejecutar todas durante una revisión documental. Las comprobaciones y resultados nuevos se registran en la entrega correspondiente.
+
+## Roadmap de resultados
+
+**Prioridad P0:** elimina un bloqueo del estudio. **P1:** análisis que depende de esas entradas. **P2:** mejoras que no desbloquean el objetivo actual. Los hitos se cierran por aceptación, no por cantidad de commits.
+
+| Hito | Resultado y prioridad | Dependencia | Estado y criterio de cierre |
+|---|---|---|---|
+| H0 | Estudio definido y evaluable, P0 | Ninguna | **Parcial, activo.** Diagnóstico de viabilidad documentado; falta un contrato que resuelva muestra, alcance, potencia y separación confirmatoria antes de puntuar evidencia nueva |
+| H1 | Primer corte completo admisible, P0 | Contrato H0 para certificarlo; inventario puede avanzar en paralelo | **Bloqueado por datos.** Un snapshot pasa todas las comprobaciones de disponibilidad, universo, identidad, unidades y entradas del motor, con exclusiones declaradas |
+| H2 | Tramo histórico completo y trazable, P0 | H0 + H1 | **Bloqueado.** Cada fecha del calendario contratado tiene snapshot admisible o exclusión explícita; el estudio cumple su regla de muestra, sin ocultar huecos |
+| H3 | Replay del motor y cuenta continua reproducibles, P0 | H1 permite integrar; H2 permite cerrar | **Parcial técnico.** Pilotos ejecutados; falta reproducción causal de todas las decisiones, operaciones, flujos y NAV del tramo contratado |
+| H4 | Calidad predictiva y riesgo medidos, P1 | H0 + H2 + pronósticos archivados de H3 | **Bloqueado para el motor completo.** Informe con objetivos compatibles, referencias primarias, dependencia, multiplicidad y límites de potencia; admite conclusión negativa o inconclusa |
+| H5 | Valor económico neto medido, P1 | H3 + reglas comparativas H0 | **Bloqueado.** Cuenta conciliada frente a mantener y referencias pasivas comparables, con costos base y sensibilidad; distingue riesgo asumido de valor añadido |
+| H6 | Confirmación independiente y decisión de uso, P1 | Registro independiente H0; resultados H4/H5 y maduración | **En acumulación, sin cierre.** Conclusión por afirmación y cohorte, muestra independiente suficiente según protocolo, límites de uso y revisión fechados |
+
+La ruta de construcción es **H0 → H1 → H2/H3 → H4/H5 → H6**. La adquisición de datos y el sellado prospectivo continúan en paralelo. H2 y H3 pueden desarrollarse conjuntamente después de integrar el primer corte; las dependencias de cierre permanecen. No hay fechas de finalización defendibles hasta resolver disponibilidad de datos y tamaño de muestra. La maduración futura no se acelera con programación.
+
+## EDT: tareas, entregables y aceptación
+
+Los nombres de archivos siguientes son **entregables propuestos, todavía no creados**, salvo los enlaces a evidencia existente. Cada entrega debe conservar entradas, versiones y comandos necesarios para reproducirla.
+
+### H0 · Contrato evaluable
+
+- **H0.1, completado en esta revisión:** confrontar calendario, maduración y regla de bloques del protocolo v1. Entregable: diagnóstico de 48 frente a 96 orígenes en este plan, verificable en el JSON del protocolo. No cierra H0.
+- **H0.2, siguiente resultado:** inventariar historia realmente recuperable y decidir un diseño viable. Entregable: `docs/diseno-estudio-validacion.md`, con universo, fechas, rol de cada muestra, afirmaciones, efecto mínimo de interés, análisis de potencia/sensibilidad, costos y limitaciones. Cierre: demuestra qué se puede evaluar con la muestra disponible y qué seguirá inconcluso. Si no existe diseño viable, registra el bloqueo y su condición de salida; no simula un cierre.
+- **H0.3:** registrar el contrato en una nueva versión justificada del protocolo y separar desarrollo de confirmación independiente antes de observar sus resultados. Cierre: reglas de elegibilidad, objetivos, referencias, exclusiones, multiplicidad, revisiones y suficiencia muestral legibles por máquina y comprobadas. Conservar v1 y resultados anteriores; no reducir umbrales después de ver resultados para obtener significación.
+
+Expandir historia hasta cumplir v1 o definir otro diseño estadístico defendible son alternativas que H0.2 debe evaluar. No basta cambiar 96 por 48. El periodo ya examinado no se vuelve independiente al congelarlo ahora; una política actual aplicada al pasado sigue siendo retrospectiva, aunque sus entradas sean causales.
+
+### H1 · Primer corte completo
+
+- **H1.1:** producir `data/historical/full-engine-input-audit-v1/manifest.json` con la matriz exacta de entradas requeridas, fuente, fecha de disponibilidad, licencia/acceso, evidencia, ausencia y responsable de recuperación. Elegir el primer corte que satisfaga reglas previas de elegibilidad, nunca por su rentabilidad posterior. Cierre: se sabe qué falta para ese corte y qué tarea elimina cada ausencia.
+- **H1.2:** recuperar y conciliar universo histórico, deslistados/identificadores, precios en unidades coherentes, fundamentos conocidos entonces, macro, holdings, perfiles de ETF/bonos, calidad y calibración de riesgo histórica exigidas por el contrato. Conservar originales, hashes y límites de uso. Un extractor disponible no equivale a datos históricos recibidos y certificados; datos privados autorizados no se publican en el repositorio.
+- **H1.3:** conciliar splits y dividendos, fechas ex/pago, efectivo y derechos por cobrar para los instrumentos y horizontes contratados. La [cola de flujos](../data/historical/cashflow-reconciliation-v1/report.json) orienta recuperación; PNC/LOW/EOG no sustituyen el criterio de primer corte completo. Una fuente de resultados futuros solo alimenta la realización, nunca el pronóstico.
+- **H1.4:** ejecutar auditoría automática de disponibilidad, cobertura, unidades y entrada del motor. Entregables: snapshot congelado y `data/historical/full-engine-input-audit-v1/report.json`. Cierre: primer corte admisible bajo el contrato H0, con todas las entradas obligatorias y exclusiones permitidas trazadas. No basta alcanzar el 70% de cobertura usado en el estudio parcial.
+
+H1 puede reutilizar datos y código existentes, pero no hereda su certificación. Un resultado reconstruido con correcciones ex post conserva esa etiqueta hasta acreditar su compatibilidad con el estudio.
+
+### H2 · Tramo de datos
+
+- **H2.1:** extender la auditoría H1 a todas las fechas del calendario registrado, con versiones y huellas. Entregable: manifiesto del tramo y matriz de cobertura por fecha/componente.
+- **H2.2:** revisar cobertura, supervivencia, antigüedad y disponibilidad con una regla uniforme. Cierre: ninguna fecha desaparece; exclusiones y efectos sobre muestra/potencia están cuantificados. Si los huecos impiden una cuenta continua o la muestra mínima, H2 sigue bloqueado. No se convierten datos ausentes en una decisión de mantener CASH.
+
+### H3 · Motor y cuenta
+
+- **H3.1:** ejecutar `referenceRequest` y `composeMultiStart` con snapshot, mandato, calibración y versiones registradas. Congelar distribución predictiva, candidatas, restricciones, incertidumbre de búsqueda y decisión antes de incorporar sus resultados. Primera integración tras H1; repetición en todo el tramo tras H2.
+- **H3.2:** construir libro continuo de posiciones, órdenes y flujos con ejecución en el cierre de la siguiente sesión observada conforme al contrato, no al mismo cierre de decisión. Registrar costos, efectivo, derechos por cobrar, retiros y NAV. Entregable: `data/historical/full-engine-replay-v1/`, con libro e informe por corte.
+- **H3.3:** conciliar cambios patrimoniales y reproducir decisiones desde entradas congeladas. Cierre: identidad contable sin errores materiales, trazabilidad de cada operación y exclusión, ausencia de información futura y variación Monte Carlo/búsqueda informada. Los dos pilotos actuales son base de integración, no aceptación causal del tramo.
+
+### H4 · Pronóstico y riesgo
+
+- **H4.1:** realizar puntuación pareada a 21/63/252 sesiones con instrumentos, fechas y objetivos iguales. Bajo v1: tres contrastes MSE de media predictiva frente a media histórica expansiva, y tres diferencias de IC Spearman frente a BPA TTM/precio; usar entrenamiento anterior al origen y mínimos del protocolo aplicable.
+- **H4.2:** informar CRPS, Brier, cobertura, varianza, VaR/ES y drawdown con número de orígenes/eventos y dependencia temporal/transversal. El contraste descriptivo con EWMA cero sigue identificado como secundario. No declarar calibradas colas con pocos eventos.
+- **H4.3:** aplicar inferencia, multiplicidad y sensibilidad registradas, incluyendo la familia de siete pruebas primarias en v1 junto con H5. Entregable: `docs/resultados-predictivos-integrales.md` y métricas reproducibles. Cierre: todas las afirmaciones tienen resultado y límite de inferencia; una muestra insuficiente se informa como tal, sin promoverla a validación.
+
+### H5 · Decisiones netas
+
+- **H5.1:** comparar la cuenta del motor con mantener y referencias pasivas bajo el mismo mandato, ejecución, efectivo y costos. Bajo v1, el séptimo contraste primario es la diferencia anualizada de retornos logarítmicos mensuales frente a SPY + CASH con beta fijada ex ante. Informar duración, crédito y otras diferencias de exposición.
+- **H5.2:** reproducir escenario base y sensibilidad de triple spread/deslizamiento; declarar impuestos, rendimiento realizado del efectivo, rotación, drawdown y restricciones. Entregable: `docs/resultados-economicos-integrales.md` con libro conciliado y efectos pareados. Cierre: se distingue ventaja neta, ausencia de ventaja e incertidumbre, sin escoger el benchmark ganador después de observarlo.
+
+### H6 · Confirmación y decisión
+
+- **H6.1:** mantener registros prospectivos inmutables y verificar publicación antes de la apertura. Registrar muestra confirmatoria y revisiones antes de puntuarla; conservar cohortes distintas cuando cambien código, núcleo o definición causal según el protocolo. Los registros actuales continúan sin esperar H2.
+- **H6.2:** al madurar la muestra suficiente, repetir el análisis registrado con corrección de revisiones sucesivas y sin mezclar cohortes incompatibles. Los umbrales de revisión diagnóstica de [criterios de confianza](criterios-confianza.md) no autorizan promoción automática ni sustituyen requisitos confirmatorios.
+- **H6.3:** emitir `docs/conclusion-validacion-predictiva.md` con dictamen por afirmación, evidencia histórica/prospectiva separada, validez de datos, potencia, limitaciones y uso permitido. Cierre: decisión explícita y reproducible. H6 no se marca terminado por acumular sellos inmaduros; si no hay evidencia suficiente, permanece abierto o se cierra el alcance del proyecto dejando expresamente la validación inconclusa.
+
+## Próximo trabajo y control de avance
+
+| Orden | Trabajo concreto | Qué debe cambiar al terminar | Bloqueo actual |
+|---|---|---|---|
+| 1 | H0.2: diseño y disponibilidad de muestra | Pasar de una limitación conocida a un alcance estadísticamente evaluable y una decisión documentada | Historia causal recuperable, potencia y muestra independiente sin resolver |
+| 2 | H0.3: contrato versionado | Disponer de reglas comprobables antes de nuevas puntuaciones | Depende de la decisión H0.2 |
+| En paralelo | H1.1: inventario del primer corte | Sustituir “faltan datos” por una lista exacta de entradas, fuentes y ausencias | No certificar corte hasta cerrar H0 |
+| Después | H1.2–H1.4: recuperar y auditar | Pasar de 0 cortes admisibles a un primer corte completo bajo el contrato | Ausencias identificadas en H1.1 |
+| Continuo | H6.1: sellado y maduración | Añadir evidencia prospectiva verificable a su cohorte | Tiempo de mercado; no garantiza suficiencia ni resultado favorable |
+
+Mantener un resultado de ingeniería activo, con adquisición de datos y acumulación prospectiva en paralelo. Las mejoras de interfaz, nuevos modelos o fuentes y la recuperación adicional de eventos se priorizan si eliminan un bloqueo identificado de esta ruta o si el usuario las pide. No sustituir un hito bloqueado por investigación nueva sin explicar su dependencia.
+
+Cada entrega debe actualizar este plan y dejar un registro breve:
+
+```text
+Hito y tarea:
+Resultado anterior → resultado observado:
+Criterio de aceptación: cumplido / parcial / bloqueado, con razón
+Evidencia y corte de datos:
+Fecha, comandos y resultados de comprobación:
+Commit publicado:
+Bloqueo restante y siguiente resultado:
+```
+
+Para la propia entrega documental se usa el commit que introduce este archivo; los cierres posteriores incorporan su SHA a esta tabla o a un registro enlazado. No inventar fechas futuras, porcentajes globales ni cierres retroactivos. El número de datos recuperados, pruebas aprobadas o commits publicados sirve para describir entregas, no para medir capacidad predictiva.
+
+| Fecha | Tarea y cambio | Aceptación y comprobación | Bloqueo restante |
+|---|---|---|---|
+| 8-nov-2026 UTC | H0.1: diagnóstico de viabilidad y ruta de resultados explícitos | Contraste documental de 48 cortes frente a mínimo 96; cifras trazadas a JSON, 61 enlaces locales y 12 referencias de commits comprobados; `git diff --check`, puntuación ampliada y conciliación de flujos con `--verify` aprobadas. Commit: el que introduce este plan | H0.2/H0.3; no se ha modificado el protocolo, completado un corte ni demostrado habilidad predictiva |

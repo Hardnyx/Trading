@@ -1,5 +1,7 @@
 # Trading · lo que falta
 
+El [plan por resultados de validación predictiva](plan-validacion-predictiva.md), revisado el 8-nov-2026 UTC, establece la ruta crítica y la siguiente entrega. Este backlog conserva el detalle técnico: antes de elegir una tarea, vincularla con un hito y comprobar que elimina un bloqueo de esa ruta.
+
 Backlog actualizado el 29 de octubre de 2026 para el motor 0.35.0, corte de
 precios examinado del 28-oct, 260 instrumentos (160 acciones, 100 ETF).
 Consultar las pruebas y los cierres en `docs/estado-validacion.md`. Cero
@@ -12,12 +14,14 @@ Este archivo lista **solo lo que falta**. Para el funcionamiento, consultar
 ## Cómo usar y mantener este archivo
 
 - Antes de trabajar, elige por prioridad (P0 → P2) y comprueba que el
-  bloqueo indicado no siga vigente.
+  bloqueo indicado no siga vigente. Dentro de cada prioridad, sigue las
+  dependencias y la próxima entrega del plan por resultados.
 - Cada punto tiene evidencia y criterio de terminado. No lo marques como
   cerrado sin cumplir ese criterio con datos del corte vigente.
 - Al cerrarlo, bórralo de aquí y registra el resultado en
-  `docs/estado-validacion.md`. Si descubres un pendiente nuevo, añádelo con
-  su evidencia.
+  `docs/estado-validacion.md` y actualiza el hito, fecha, evidencia, pruebas
+  y commit en `docs/plan-validacion-predictiva.md`. Si descubres un pendiente
+  nuevo, añádelo con su evidencia y dependencia.
 - Regla del proyecto: nada se promueve a producción por complejidad. Hace
   falta evidencia prospectiva con información conocida al corte.
 

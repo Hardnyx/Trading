@@ -6,6 +6,8 @@ Research, composición y seguimiento de una cartera personal de acciones y ETFs 
 
 [Abrir aplicación](https://hardnyx.github.io/Trading/)
 
+[**Plan del proyecto: resultados logrados, hitos pendientes y ruta de validación**](docs/plan-validacion-predictiva.md)
+
 ## Uso
 
 1. **F8 · Mandato:** objetivo, horizonte, moneda, metas, retiros, drawdown tolerable y liquidez. Configura costos y, si corresponde, las cantidades que realmente tienes.
@@ -17,6 +19,8 @@ Research, composición y seguimiento de una cartera personal de acciones y ETFs 
 La cuenta, tesis, supuestos y pronósticos quedan en este navegador. **Exportar cartera** permite conservarlos y trasladarlos. Los avisos requieren permiso del navegador y la página abierta; no hay vigilancia de la cartera personal con la página cerrada.
 
 ## Validación y evidencia
+
+El [plan de validación predictiva](docs/plan-validacion-predictiva.md) define el objetivo, la ruta crítica, las tareas y los criterios de cierre. Vincula cada entrega con evidencia, pruebas y commits; distingue las entregas técnicas de la validación del modelo.
 
 El modelo de producción y sus pronósticos **siguen siendo experimentales**. La versión 0.8.0 añade investigaciones independientes sobre vintages/point-in-time, GJR multifactorial, coexcedencias y colas, Student-t bivariante, registros de eventos SEC y estabilidad de selección. Estas pruebas no se convierten automáticamente en nuevas reglas de inversión.
 

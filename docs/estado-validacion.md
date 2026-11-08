@@ -1,5 +1,7 @@
 # Estado de validación de Trading
 
+**Plan de ejecución:** [resultados, hitos, dependencias y criterios de cierre](plan-validacion-predictiva.md), revisado el 8-nov-2026 UTC. Las cifras de este documento conservan las fechas de sus diagnósticos; para los contadores prospectivos posteriores consultar [señales](../dist/data/signal-validation.json) y [núcleo de precios](../dist/data/simulator-validation.json). No interpretar una entrega técnica como cierre de validación.
+
 **Actualizado:** 2 de noviembre de 2026 · motor 0.35.0 · diagnóstico del piloto con mercado congelado al 30-oct.
 **Estado:** escenarios condicionales de investigación; capacidad predictiva y
 ventaja económica sin acreditar. El [historial hasta 0.32.0](historial-validacion-hasta-0.32.md)
