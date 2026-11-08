@@ -1,3 +1,5 @@
 numpy>=1.26,<3
 scipy>=1.12,<2
 pypdf>=6,<7
+xlrd>=2,<3
+openpyxl>=3.1,<4

@@ -819,6 +819,14 @@ async function simulatorValidation() {
     const s=await response.json();return s.schema_version===1&&s.horizons?s:null;
   } catch {return null;}
 }
+// Inventory of the long research archive (data/history); never an engine input.
+async function historyInventory() {
+  try {
+    const r=await fetch(new URL('../../data/history-inventory.json',import.meta.url),{cache:'no-cache'});
+    if(!r.ok)return null;
+    const s=await r.json();return s.schema_version===1&&Array.isArray(s.datasets)?s:null;
+  } catch {return null;}
+}
 async function validationReview() {
   try {
     const r=await fetch(new URL('../../data/validation-review.json',import.meta.url),{cache:'no-cache'});
@@ -859,6 +867,7 @@ async function loadData() {
   checked.riskCalibration=await riskCalibration();
   checked.simulatorValidation=await simulatorValidation();
   checked.validationReview=await validationReview();
+  checked.historyInventory=await historyInventory();
   data = withCashAsset(checked);
   if (state.proposal &&
       (state.proposal.model_version !== MODEL_VERSION ||
@@ -925,6 +934,7 @@ setInterval(async () => {
     next.riskCalibration=await riskCalibration();
     next.simulatorValidation=await simulatorValidation();
     next.validationReview=await validationReview();
+    next.historyInventory=await historyInventory();
     data = withCashAsset(next);
     if (state.proposal &&
         (state.proposal.model_version !== MODEL_VERSION ||

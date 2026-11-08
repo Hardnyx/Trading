@@ -1735,6 +1735,29 @@ export function createViews(context) {
     );
   }
 
+  function historyInventoryPanel(inventory) {
+    if (!inventory) return "";
+    const period = (r) => r.first ? `${r.first.slice(0, 7)} → ${(r.last || "").slice(0, 7)}` : "Composición actual";
+    const extra = (r) => r.id === "prices"
+      ? `${fmt(r.observations, 0)} sesiones · ${fmt(r.dividends, 0)} dividendos · ${fmt(r.splits, 0)} splits · ${r.before_1990} desde antes de 1990`
+      : `${fmt(r.observations, 0)} observaciones`;
+    return panel(
+      "ARCHIVO HISTÓRICO DE INVESTIGACIÓN",
+      "",
+      template("history-inventory", {
+        items: inventory.datasets.map((r) => template("history-inventory-row", {
+          label: r.label,
+          series: fmt(r.series, 0),
+          period: period(r),
+          detail: extra(r) + (r.note ? ` · ${r.note}` : ""),
+          source: r.source,
+          checked: r.observed_at ? dateLabel(r.observed_at) : "—",
+          tone: r.errors ? "negative" : "",
+        })).join(""),
+        note: "Revisión actual de cada fuente, descargada en la fecha indicada; no son vintages originales ni alimentan el corte del motor. Se guarda en data/history del repositorio para investigación y validación.",
+      }),
+    );
+  }
   function sourcesView() {
     const errors = data.errors || [];
     return template("sources-view", {
@@ -1791,6 +1814,7 @@ export function createViews(context) {
               .join(""),
           }),
         ) +
+        historyInventoryPanel(data.historyInventory) +
         panel(
           "COBERTURA Y FECHAS",
           "",

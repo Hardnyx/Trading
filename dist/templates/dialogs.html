@@ -5,6 +5,34 @@
     <title>Plantillas de interfaz</title>
   </head>
   <body>
+    <template id="history-inventory-row">
+      <tr>
+        <td>{{label}}</td>
+        <td>{{series}}</td>
+        <td>{{period}}</td>
+        <td class="{{tone}}">{{detail}}</td>
+        <td>{{source}}</td>
+        <td>{{checked}}</td>
+      </tr>
+    </template>
+    <template id="history-inventory">
+      <div class="table-wrap">
+        <table class="coverage-table">
+          <thead>
+            <tr>
+              <th>CONJUNTO</th>
+              <th>SERIES</th>
+              <th>PERIODO</th>
+              <th>CONTENIDO</th>
+              <th>FUENTE</th>
+              <th>CAPTURA</th>
+            </tr>
+          </thead>
+          <tbody>{{{items}}}</tbody>
+        </table>
+      </div>
+      <p class="muted">{{note}}</p>
+    </template>
     <template id="provider-status-row">
       <tr>
         <td>{{name}}</td>
