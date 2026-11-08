@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {verifyAccountInputs,replayCashAccount} from '../scripts/full_engine_cash_ledger.mjs';
+import {prepareSegregatedAccountRequest,segregatedAccountHandoff} from '../scripts/continuous_account_origin.mjs';
 
 const days=['2026-11-30','2026-12-01','2026-12-02','2026-12-03','2026-12-04','2026-12-07'];
 const stamp='2026-11-30T23:00:00Z',published='2026-12-01T00:00:00Z';
@@ -179,6 +180,43 @@ test('unregistered or legacy monthly decisions cannot spend outstanding dividend
  assert.throws(()=>run({decisions:[first,{...base,
   account_basis:'settled-investable-only',research_cohort:'some-other-cohort'}]}),
   /Unregistered account basis/);
+});
+test('ex-dividend monthly decision carries prior ledger into the funded next close',()=>{
+ const prior=run({calendar:days.slice(0,3)});
+ assert.equal(prior.status,'complete');
+ assert.equal(prior.observed_through,days[2]);
+ assert.equal(prior.pending_receivables.length,1);
+ const snapshot={price_as_of:days[2],requested_as_of:days[2],
+  generated_at:'2026-12-02T22:00:00Z',
+  assets:[{symbol:'SPY',currency:'USD',price_date:days[2],price:102,
+   history:[{date:days[2],close:102,adj_close:102}]},
+   {symbol:'AAA',currency:'USD',price_date:days[2],price:99,
+    history:[{date:days[2],close:99,adj_close:99}]}],
+  macro:[]};
+ const state=prepareSegregatedAccountRequest({
+  snapshot,ledger:prior,ledgerBytes:Buffer.from(JSON.stringify(prior)),
+  issuedAt:'2026-12-02T23:00:00Z'});
+ const request=segregatedAccountHandoff(state);
+ assert.equal(request.investable_account_nav,995);
+ assert.equal(request.total_account_nav,1005);
+ assert.equal(request.segregated_receivables,10);
+ assert.equal(request.request.settings.account.cash,500);
+ assert.equal(request.request.settings.account.positions[0].quantity,5);
+ const second={...first,cut:days[2],execute:days[3],
+  issued_at:'2026-12-02T23:00:00Z',
+  publication:{verified:true,first_commit:'f'.repeat(40),
+   committed_at:'2026-12-03T00:00:00Z'},
+  forecast_sha256:'e'.repeat(64),
+  research_cohort:request.cohort_id,account_basis:request.account_basis,
+  model_status:'proposed',positions:[{symbol:'AAA',weight:.25},{symbol:'CASH',weight:.75}]};
+ const continued=run({decisions:[first,second]});
+ assert.equal(continued.status,'complete',JSON.stringify(continued.issues));
+ assert.deepEqual(continued.nav.slice(0,3),prior.nav);
+ assert.equal(continued.decisions[1].investable_before,995);
+ assert.equal(continued.decisions[1].segregated_dividend_receivables,10);
+ assert.equal(continued.nav[3].receivables,10);
+ assert.equal(continued.nav[4].receivables,0);
+ assert.ok(continued.nav.every(x=>Math.abs(x.identity_residual)<1e-6));
 });
 test('the exchange calendar cannot omit an observed SPY session',()=>{
  const full=assets(),hidden=days.filter(d=>d!==days[1]);

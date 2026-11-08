@@ -140,6 +140,13 @@ function prepareAccountRequest({snapshot,ledger,ledgerBytes,issuedAt},{segregate
   'Reference economics cannot value this cash-only account');
  const request={...preset,settings:{...preset.settings,
   capital:investable,baseline:null,account:{enabled:true,cash:last.cash,positions:holdings}}};
+ const claims=segregateReceivables?ledger.pending_receivables.map(c=>({...c})):[];
+ const claimsHash=hash(Buffer.from(JSON.stringify(claims)));
+ const contract={cohort_id:segregateReceivables?SEGREGATED_RESEARCH_COHORT:ACCOUNT_RESEARCH_COHORT,
+  cut,total_account_nav:last.nav,investable_account_nav:investable,
+  segregated_receivables:segregated,claims_sha256:claimsHash,
+  account_state_sha256:hash(ledgerBytes)};
+ const contractHash=hash(Buffer.from(JSON.stringify(contract)));
  const valued=currentAccount(snapshot,request.settings.account,null,investable);
  guard(Math.abs(valued.capital-investable)<=tolerance(last.nav)&&
   Math.abs(valued.positions.reduce((s,p)=>s+p.weight,0)-1)<1e-8,
@@ -150,7 +157,8 @@ function prepareAccountRequest({snapshot,ledger,ledgerBytes,issuedAt},{segregate
   account_basis:segregateReceivables?'settled-investable-only':'total-nav-no-receivables',
   total_account_nav:last.nav,investable_account_nav:investable,
   segregated_receivables:segregated,
-  unsettled_claims:segregateReceivables?ledger.pending_receivables.map(c=>({...c})):[],
+  unsettled_claims:claims,
+  claims_sha256:claimsHash,account_contract_sha256:contractHash,
   reference_id:REFERENCE_ID,engine_version:MODEL_VERSION,
   cut,issued_at:issuedAt,request,search:{...FIXED_SEARCH},
   state_sha256:hash(ledgerBytes),
@@ -179,8 +187,18 @@ function accountHandoff(prepared,segregated){
   number(prepared.segregated_receivables)&&prepared.segregated_receivables>=0&&
   Math.abs(prepared.total_account_nav-prepared.investable_account_nav-
    prepared.segregated_receivables)<=tolerance(prepared.total_account_nav)&&
-  (!segregated?prepared.segregated_receivables===0:
-   Array.isArray(prepared.unsettled_claims))&&
+  Array.isArray(prepared.unsettled_claims)&&
+  (!segregated?prepared.segregated_receivables===0&&
+    prepared.unsettled_claims.length===0:true)&&
+  hash(Buffer.from(JSON.stringify(prepared.unsettled_claims)))===prepared.claims_sha256&&
+  hash(Buffer.from(JSON.stringify({
+   cohort_id:prepared.cohort_id,cut:prepared.cut,
+   total_account_nav:prepared.total_account_nav,
+   investable_account_nav:prepared.investable_account_nav,
+   segregated_receivables:prepared.segregated_receivables,
+   claims_sha256:prepared.claims_sha256,
+   account_state_sha256:prepared.state_sha256,
+  })))===prepared.account_contract_sha256&&
   prepared.confirmatory_eligible===false&&
   JSON.stringify(prepared.search)===JSON.stringify(FIXED_SEARCH)&&
   prepared.request.settings.account?.enabled===true&&
