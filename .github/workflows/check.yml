@@ -31,12 +31,18 @@ jobs:
       - run: python scripts/historical_identity_requests.py --output out/historical-identity-requests-v1.json.gz
       - run: python scripts/historical_vendor_identity.py --template out/historical-vendor-identity-template.csv
       - run: python scripts/historical_parameter_audit.py
+      - run: python scripts/historical_risk_fit_intake.py --template out/historical-risk-fit-manifest-template.json
       - run: git fetch --no-tags --depth=1 origin b2d15329e2484ce103d7d729b90c65e4367b218d
       - run: node scripts/benchmark_expanding_mean.mjs out/retrospective-expanding-mean-benchmark-v1.json
       - uses: actions/upload-artifact@v4
         with:
           name: retrospective-expanding-mean-benchmark
           path: out/retrospective-expanding-mean-benchmark-v1.json
+          retention-days: 30
+      - uses: actions/upload-artifact@v4
+        with:
+          name: historical-risk-fit-request
+          path: out/historical-risk-fit-manifest-template.json
           retention-days: 30
       - uses: actions/upload-artifact@v4
         with:

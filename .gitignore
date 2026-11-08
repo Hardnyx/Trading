@@ -11,3 +11,6 @@ data/research/
 
 # Reproducible research outputs and local account inputs
 out/
+
+# Local licensed source extracts and historical fit evidence
+input/
