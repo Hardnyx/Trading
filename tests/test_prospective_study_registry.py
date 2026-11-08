@@ -83,6 +83,12 @@ class ProspectiveStudyRegistryTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError,pattern):
                 check_contract(reg,self.old)
 
+    def test_return_target_cannot_drop_arithmetic_log_distinction(self):
+        reg=copy.deepcopy(self.reg)
+        reg["forecast_target"]="arithmetic total return in USD including distributions"
+        with self.assertRaisesRegex(ValueError,"Model/publishing eligibility"):
+            check_contract(reg,self.old)
+
     def test_parent_cannot_be_reclassified_as_independent(self):
         old=copy.deepcopy(self.old)
         old["independent_holdout"]["registered"]=True

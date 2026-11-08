@@ -81,7 +81,7 @@
     "minimum_complete_blocks": 4
   },
   "primary_references": "unchanged from hashed frozen v1, including expanding mean, filed EPS/price and net beta-matched SPY plus cash",
-  "forecast_target": "arithmetic total return in USD including distributions",
+  "forecast_target": "arithmetic total return in USD including distributions; no mixing log and arithmetic forecasts",
   "execution_rule": "first observed next-session exchange close after monthly decision; no same-close execution",
   "costs_rule": "frozen v1 base and triple spread/slippage sensitivity; realized cash interest is never a forecast",
   "fixed_cohort": {
