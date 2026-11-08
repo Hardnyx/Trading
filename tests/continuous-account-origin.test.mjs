@@ -45,6 +45,19 @@ test('research handoff forbids seed or search-budget shopping',()=>{
  assert.throws(()=>continuousAccountHandoff({...input,
   search:{...FIXED_SEARCH,candidates:1000}}),/Invalid research cohort/);
 });
+test('account research rejects altered reference settings or market facts after preflight',()=>{
+ const prepared=run();
+ prepared.request.settings.mandate.riskAversion=20;
+ assert.throws(()=>continuousAccountHandoff(prepared),/Invalid research cohort/);
+ const second=run();
+ second.request.settings.seed=20261024;
+ second.request.settings.assetAssumptions={AAA:{expectedReturn:9,uncertainty:.1}};
+ assert.throws(()=>continuousAccountHandoff(second),/Invalid research cohort/);
+ const third=run();
+ assert.equal(third.market_snapshot_sha256.length,64);
+ assert.equal(third.request_sha256.length,64);
+});
+
 test('unpaid dividend is never silently converted into investable cash',()=>{
  const a=book();a.nav.at(-1).receivables=20;a.nav.at(-1).nav=1070;
  assert.throws(()=>run({ledger:a}),/Unsettled dividends/);

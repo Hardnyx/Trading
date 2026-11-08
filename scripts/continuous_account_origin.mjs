@@ -117,7 +117,10 @@ export function prepareContinuousAccountRequest({snapshot,ledger,ledgerBytes,iss
   cohort_id:ACCOUNT_RESEARCH_COHORT,
   reference_id:REFERENCE_ID,engine_version:MODEL_VERSION,
   cut,issued_at:issuedAt,request,search:{...FIXED_SEARCH},
-  state_sha256:hash(ledgerBytes),initial_account_nav:last.nav,
+  state_sha256:hash(ledgerBytes),
+  market_snapshot_sha256:hash(Buffer.from(JSON.stringify(snapshot))),
+  request_sha256:hash(Buffer.from(JSON.stringify(request))),
+  initial_account_nav:last.nav,
   original_v2_cohort_reused:false,source_lineage_certified:false,
   confirmatory_eligible:false,predictive_validation:'not-established'};
 }
@@ -130,7 +133,8 @@ export function continuousAccountHandoff(prepared){
   prepared.request.settings.account?.enabled===true&&
   prepared.request.settings.asOf===prepared.cut&&
   prepared.request.settings.informationAsOf===prepared.cut&&
-  prepared.request.settings.seed===20261024,
+  prepared.request.settings.seed===20261024&&
+  hash(Buffer.from(JSON.stringify(prepared.request)))===prepared.request_sha256,
   'Invalid research cohort, altered search or unregistered account');
  return {schema:'account-aware-research-handoff-v1',
   cohort_id:ACCOUNT_RESEARCH_COHORT,cut:prepared.cut,
@@ -143,7 +147,8 @@ export function continuousAccountHandoff(prepared){
 export function composeContinuousAccountResearch(snapshot,prepared){
  const handoff=continuousAccountHandoff(prepared);
  guard(snapshot?.price_as_of===handoff.cut&&
-  snapshot.generated_at&&handoff.request.settings.account.enabled===true,
+  snapshot.generated_at&&handoff.request.settings.account.enabled===true&&
+  hash(Buffer.from(JSON.stringify(snapshot)))===prepared.market_snapshot_sha256,
   'Research composer market or account origin changed');
  const proposal=composeMultiStart(snapshot,handoff.request.settings,
   handoff.request.overrides,handoff.request.rules,handoff.search);

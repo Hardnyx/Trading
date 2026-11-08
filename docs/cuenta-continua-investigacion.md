@@ -29,3 +29,5 @@ Las pruebas verifican la igualdad entre cantidades y pesos reconstruidos por el 
 La cohorte adicional queda asentada en el registro append-only de intentos, sin selección de variante por rendimiento. Antes de proponer pruebas confirmatorias deberán registrarse expresamente su política, origen inicial, calendario, reglas de cuenta, incertidumbre, potencia y muestras futuras independientes, conforme a la [política de sobreajuste](politica-control-sobreajuste.md).
 
 **Pruebas:** \`node --test tests/continuous-account-origin.test.mjs\`. H3.3 no se cierra hasta reproducir una cadena de decisiones mensuales y una cuenta continua con datos de primera captura y todas las partidas reconciliadas.
+
+**Inmutabilidad entre preparación y ejecución:** el adaptador conserva además los SHA256 de la solicitud completa y del snapshot de decisión. Antes de ejecutar el motor, los coteja con sus entradas actuales; así se rechaza un cambio posterior de supuestos, precios o datos de mercado aun cuando se conserve la misma fecha de corte. No son certificados de primera publicación externos.
