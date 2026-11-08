@@ -103,6 +103,9 @@ jobs:
           if [ -d data/simulator-validation ]; then git add data/simulator-validation; fi
           if [ -d data/risk-forecasts ]; then git add data/risk-forecasts; fi
           if [ -d data/distributions ]; then git add data/distributions; fi
+          if [ -d data/confirmatory/full-engine-v2 ]; then
+            git add data/confirmatory/full-engine-v2
+          fi
           if [ "$REPOSITORY_PRIVATE" = 'true' ] && [ -d data/research ]; then
             git add -f data/research
           fi

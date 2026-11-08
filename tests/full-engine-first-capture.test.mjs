@@ -32,7 +32,7 @@ test('only a conservative final weekday qualifies as a candidate',()=>{
   assert.equal(lastWeekdayCandidate('2026-11-30'),true);
   assert.equal(lastWeekdayCandidate('2026-11-27'),false);
   assert.equal(lastWeekdayCandidate('2026-11-29'),false);
-  assert.equal(lastWeekdayCandidate('2026-02-30'),false);
+  assert.throws(()=>lastWeekdayCandidate('2026-02-30'),/Invalid calendar date/);
 });
 test('first original archive binds the proposal to model, policy and raw inputs',()=>{
   const result=bundle(),r=result.candidate;

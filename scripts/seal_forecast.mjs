@@ -9,6 +9,7 @@ import { composeMultiStart } from "../dist/assets/js/composer.mjs?v=0.35.0";
 import { referenceRequest } from "../dist/assets/js/reference-preset.mjs?v=0.35.0";
 import { adjustedReturn } from "../dist/assets/js/factors.mjs?v=0.35.0";
 import { reconcilePortfolioDistributions } from "../dist/assets/js/distribution-ledger.mjs?v=0.35.0";
+import { captureMonthlyProposal } from "./capture_full_engine_origin.mjs";
 
 export function nextSessionStart(cutDate){
   if(!/^\d{4}-\d{2}-\d{2}$/.test(cutDate))throw Error("Invalid market cut");
@@ -44,7 +45,8 @@ export function prospectiveEligibility(snapshot, issuedAt){
 }
 function hash(bytes){return createHash("sha256").update(bytes).digest("hex")}
 export function buildSealedOrigin(snapshot, volatility, marketBytes, volatilityBytes,
-                                  now,search={candidates:300,paths:600,finalPaths:3000}){
+                                  now,search={candidates:300,paths:600,finalPaths:3000},
+                                  onComputed=null){
   const state=prospectiveEligibility(snapshot,now);
   if(!state.eligible)throw Error("Nonprospective origin: "+state.reason);
   if(volatility.as_of!==snapshot.price_as_of ||
@@ -53,6 +55,7 @@ export function buildSealedOrigin(snapshot, volatility, marketBytes, volatilityB
   const preset=referenceRequest({...snapshot,volatility});
   const model=composeMultiStart(snapshot,preset.settings,preset.overrides,
                                preset.rules,search);
+  if(onComputed)onComputed(model,preset);
   const issueDate=newYorkParts(now).date;
   const maturity=new Date(snapshot.price_as_of+"T12:00:00Z");
   maturity.setUTCFullYear(maturity.getUTCFullYear()+1);
@@ -191,7 +194,9 @@ function main(){
     console.log("No prospective seal:",gate.reason);
     return;
   }
-  const origin=buildSealedOrigin(market,volatility,marketFile,volatilityFile,now);
+  let model=null,request=null;
+  const origin=buildSealedOrigin(market,volatility,marketFile,volatilityFile,now,
+    undefined,(proposal,preset)=>{model=proposal;request=preset;});
   const completedAt=new Date().toISOString(), completedGate=prospectiveEligibility(market,completedAt);
   if(!completedGate.eligible){
     if(args.has('--skip-ineligible')){console.log('No prospective seal after computation:',completedGate.reason);return;}
@@ -205,6 +210,27 @@ function main(){
   writeFileSync(location,JSON.stringify(origin,null,2)+"\n",{flag:"wx"});
   console.log("Sealed original forward forecast",location,
               "matures",origin.maturity_date,"status",origin.model_status);
+  if(market.price_as_of>='2026-11-09'){
+    // Only the proposal already computed above is eligible for monthly capture.
+    // A blocked attempt is retained separately, never treated as a forecast.
+    try{
+      const result=captureMonthlyProposal({market,volatility,
+        marketBytes:marketFile,volatilityBytes:volatilityFile,
+        proposal:model,request,issuedAt:completedAt});
+      if(result.status==='first-capture')console.log("Archived full-engine first capture",result.origin);
+      else if(result.status!=='not-month-end')console.log("Monthly capture",result.status);
+    }catch(error){
+      const path=join('data/confirmatory/full-engine-v2/attempts',market.price_as_of+'.json');
+      mkdirSync(dirname(path),{recursive:true});
+      if(!existsSync(path))writeFileSync(path,JSON.stringify({
+        cut:market.price_as_of,issued_at:completedAt,
+        status:'blocked-before-first-capture',reason:String(error.message),
+        market_sha256:hash(marketFile),volatility_sha256:hash(volatilityFile),
+        predictive_validation:'not-established',
+      },null,2)+'\n',{flag:'wx'});
+      console.log("Full-engine first capture blocked:",error.message);
+    }
+  }
 }
 if(process.argv[1] && import.meta.url===new URL("file://"+resolve(process.argv[1])).href)
   main();
