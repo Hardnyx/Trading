@@ -1,0 +1,80 @@
+{
+  "schema": "retrospective-expanding-mean-summary-v1",
+  "evidence_role": "previously-inspected-development-history",
+  "primary_reference": "return_mse",
+  "market_commit": "b2d15329e2484ce103d7d729b90c65e4367b218d",
+  "forecast_commit": "c323b8187c3bf0a52129333e5a7236304629f2f3",
+  "source_protocol": "docs/protocolo-replay-integral-v1.json",
+  "source_scores": "data/historical/expanded-stock-validation-scores-v1/report.json",
+  "run_url": "https://github.com/Hardnyx/Trading/actions/runs/42448464922",
+  "forecast_origins": 8,
+  "summary": {
+    "21": {
+      "forecast_origins": 8,
+      "mature_origins": 8,
+      "paired_origins": 8,
+      "paired_stock_rows": 304,
+      "nonoverlapping_paired_origin_cuts": [
+        "2024-12-31",
+        "2025-04-30",
+        "2025-06-30",
+        "2025-09-30",
+        "2025-12-31",
+        "2026-04-30",
+        "2026-06-30",
+        "2026-09-30"
+      ],
+      "nonoverlapping_paired_origins": 8,
+      "mean_origin_mse_candidate": 0.013448773312739153,
+      "mean_origin_mse_reference": 0.012703454979766927,
+      "mean_origin_mse_gain_reference_minus_candidate": -0.000745318332972228,
+      "origin_count_positive_gain": 0,
+      "blocked_primary_inference": true,
+      "primary_test_p_value": null,
+      "interpretation": "Equal-weighted per-origin descriptive MSE on matched surviving stocks; shared origin assets are not independent observations"
+    },
+    "63": {
+      "forecast_origins": 8,
+      "mature_origins": 7,
+      "paired_origins": 7,
+      "paired_stock_rows": 266,
+      "nonoverlapping_paired_origin_cuts": [
+        "2024-12-31",
+        "2025-04-30",
+        "2025-09-30",
+        "2025-12-31",
+        "2026-04-30"
+      ],
+      "nonoverlapping_paired_origins": 5,
+      "mean_origin_mse_candidate": 0.02612865345666274,
+      "mean_origin_mse_reference": 0.024322647420813283,
+      "mean_origin_mse_gain_reference_minus_candidate": -0.0018060060358494553,
+      "origin_count_positive_gain": 2,
+      "blocked_primary_inference": true,
+      "primary_test_p_value": null,
+      "interpretation": "Equal-weighted per-origin descriptive MSE on matched surviving stocks; shared origin assets are not independent observations"
+    },
+    "252": {
+      "forecast_origins": 8,
+      "mature_origins": 4,
+      "paired_origins": 4,
+      "paired_stock_rows": 152,
+      "nonoverlapping_paired_origin_cuts": [
+        "2024-12-31"
+      ],
+      "nonoverlapping_paired_origins": 1,
+      "mean_origin_mse_candidate": 0.35466587848818043,
+      "mean_origin_mse_reference": 0.3048231497341042,
+      "mean_origin_mse_gain_reference_minus_candidate": -0.04984272875407637,
+      "origin_count_positive_gain": 0,
+      "blocked_primary_inference": true,
+      "primary_test_p_value": null,
+      "interpretation": "Equal-weighted per-origin descriptive MSE on matched surviving stocks; shared origin assets are not independent observations"
+    }
+  },
+  "independent_holdout": false,
+  "certified_full_engine_cuts": 0,
+  "primary_p_values": null,
+  "predictive_validation": "not-established",
+  "interpretation": "Descriptive origin-equal-weighted MSE against expanding training-only arithmetic mean, on surviving retrospectively reconstructed stocks. Not full-engine, prospective or confirmatory."
+}

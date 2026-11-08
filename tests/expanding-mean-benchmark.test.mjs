@@ -85,3 +85,19 @@ test('primary sample size cannot be reduced without an explicit new protocol',()
   assert.equal(MIN_TRAINING_RETURNS,252);
   assert.throws(()=>buildBenchmark(scored,market,manifest,fake,251),/minimum cannot be relaxed/);
 });
+
+test('published development summary contains no significant or causal claim',()=>{
+  const recorded=JSON.parse(readFileSync(new URL('../data/historical/expanding-mean-benchmark-v1/summary.json',import.meta.url)));
+  assert.equal(recorded.forecast_origins,8);
+  assert.equal(recorded.certified_full_engine_cuts,0);
+  assert.equal(recorded.primary_p_values,null);
+  assert.equal(recorded.independent_holdout,false);
+  for(const h of [21,63,252]){
+    const s=recorded.summary[h];
+    assert.equal(s.primary_test_p_value,null);
+    assert.equal(s.blocked_primary_inference,true);
+    assert.ok(s.paired_origins<=s.mature_origins);
+    assert.ok(s.nonoverlapping_paired_origins<=s.paired_origins);
+    assert.ok(s.mean_origin_mse_gain_reference_minus_candidate<0);
+  }
+});

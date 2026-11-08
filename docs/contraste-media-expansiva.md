@@ -18,3 +18,17 @@ node --test tests/expanding-mean-benchmark.test.mjs
 El resultado se distribuye como artefacto de GitHub Actions, con SHA256 del reporte de puntajes, manifiesto, mercado, protocolo y código. Los 48 cortes del calendario histórico se conservan explícitamente como seleccionados o excluidos.
 
 **Limitación decisiva:** los precios ajustados pertenecen a un catálogo superviviente y fueron reconstruidos retrospectivamente; no son vintages históricos originales. Solo se archivaron ocho orígenes de pronósticos marginales, sin optimizador, órdenes, cuenta, universo integral o muestra independiente. Por ello esta métrica no demuestra una ventaja predictiva o económica, no sustituye las siete pruebas primarias y no reduce los 96 orígenes admisibles exigidos por v1.
+
+## Resultado calculado sobre los archivos congelados
+
+[Resumen numérico verificable](../data/historical/expanding-mean-benchmark-v1/summary.json), reproducido en GitHub Actions [ejecución 42448464922](https://github.com/Hardnyx/Trading/actions/runs/42448464922).
+
+| Horizonte (sesiones) | Orígenes con resultados | MSE motor | MSE media expansiva | Orígenes con ventaja del motor | Orígenes sin solapamiento |
+|---|---:|---:|---:|---:|---:|
+| 21 | 8 | 0.013449 | 0.012703 | 0 de 8 | 8 |
+| 63 | 7 | 0.026129 | 0.024323 | 2 de 7 | 5 |
+| 252 | 4 | 0.354666 | 0.304823 | 0 de 4 | 1 |
+
+**Resultado de desarrollo:** la referencia supera al motor en el MSE medio por origen en los tres horizontes. No hay potencia o muestra causal para una prueba formal; los resultados a 252 sesiones incluyen cuatro orígenes maduros pero solo **uno no solapado**. La evaluación se obtuvo antes de cualquier modificación de parámetros posterior; no se ajustan seeds, penalizaciones o anclas para revertir el resultado. El estado de la capacidad predictiva integral sigue **no acreditado**.
+
+El cálculo de CI exige que los valores publicados se reproduzcan exactamente. En caso contrario falla la compilación y debe revisarse la procedencia o registrar un estudio distinto, sin sobrescribir estos resultados.

@@ -185,6 +185,16 @@ export function main(output='out/retrospective-expanding-mean-benchmark-v1.json'
   requireThat(scored.evidence.market_sha256===digest(marketBytes),
     'Frozen outcome market SHA256 mismatch');
   const result=buildBenchmark(scored,JSON.parse(marketBytes),manifest,protocol);
+  const recorded = JSON.parse(readFileSync(resolve(ROOT,'data/historical/expanding-mean-benchmark-v1/summary.json')));
+  requireThat(recorded.schema==='retrospective-expanding-mean-summary-v1' &&
+    recorded.forecast_origins===result.origin_count &&
+    recorded.independent_holdout===false &&
+    recorded.certified_full_engine_cuts===0 &&
+    recorded.primary_p_values===null &&
+    recorded.market_commit===manifest.protocol.market_commit &&
+    recorded.forecast_commit===scored.evidence.forecast_commit &&
+    JSON.stringify(recorded.summary)===JSON.stringify(result.summary),
+    'Published retrospective baseline summary differs from frozen score');
   result.evidence={scored_report_sha256:digest(scoredBytes),
     frozen_manifest_sha256:digest(manifestBytes),
     source_protocol_sha256:digest(protocolBytes),
