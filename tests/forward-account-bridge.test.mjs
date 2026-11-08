@@ -94,7 +94,7 @@ test('missing issuer settlement source does not become zero dividend income',()=
 });
 test('a later return cannot change earlier simulated trades',()=>{
  const a=runForwardAccount(buildForwardAccount({capture,daily,sessionEvidence:sessions,issuerEvidence:evidence}));
- const altered=structuredClone(daily);
+ const altered=daily.map(row=>({...row,snapshot:structuredClone(row.snapshot)}));
  altered.at(-1).snapshot.assets[1].quote.close=300;
  altered.at(-1).bytes=Buffer.from(JSON.stringify(altered.at(-1).snapshot));
  altered.at(-1).source_sha256=sha(altered.at(-1).bytes);

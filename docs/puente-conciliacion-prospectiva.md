@@ -1,0 +1,21 @@
+# Puente de conciliación prospectiva del motor integral
+
+**Hito:** H3.3. **Alcance:** integración técnica, no prueba de ejecución real ni de capacidad predictiva.
+
+El módulo `scripts/forward_account_bridge.mjs` reconcilia la evidencia de primera captura con el libro `scripts/full_engine_cash_ledger.mjs`. El sello conserva exactamente el JSON de la propuesta y de la configuración del motor, sus hashes de origen y los bytes del mercado observados antes de su primera publicación. No recalcula `composeMultiStart`, modifica pesos, imputa precios ni aplica una selección retrospectiva de decisiones.
+
+El adaptador verifica que la propuesta pertenece a la cohorte mensual registrada después del 8 de noviembre de 2026, que su publicación original ocurrió antes de la siguiente apertura conservadora y que los SHA256 de propuesta, solicitud, fuentes y mercado coinciden. Antes de procesar archivos reales ejecuta la auditoría independiente `scripts/prospective_study_registry.py --verify`.
+
+Para obtener precios de ejecución y valoraciones posteriores utiliza archivos de `data/snapshots/` que representan observaciones de mercado capturadas y publicadas originalmente para esa fecha. En cada sesión escoge la **primera publicación verificada**; los archivos posteriores no pueden sustituir una cotización anterior favorable o desfavorable. No utiliza cierres ajustados por dividendos para una cuenta que también cobra dividendos en efectivo.
+
+Exige un calendario de sesiones de negociación suministrado por una fuente independiente y registrado en `data/confirmatory/full-engine-v2/exchange-sessions.json`. No inventa sesiones a partir de días laborables, ni presume que la lista de cotizaciones de SPY certifique los festivos de NYSE. Un hueco invalida el intervalo. El contrato de origen todavía utiliza un siguiente día laborable **conservador** para limitar publicaciones tardías; no sustituye una certificación oficial del calendario.
+
+Para cada instrumento requiere `data/confirmatory/full-engine-v2/cashflow-evidence/<SYMBOL>.json` con eventos de fecha exdividendo, fecha de pago, importes, splits, intervalo de cobertura y referencia SHA256 de una fuente original. El JSON por sí mismo, incluso con un indicador de fuente verificada, **no prueba autenticidad del emisor**. La revisión independiente de la fuente y de la cobertura sigue siendo necesaria; la conciliación se mantiene como investigación. Los historiales de Yahoo con ex-date pero sin pay-date no cumplen este requisito.
+
+La propuesta conserva su sentido original: una decisión de `hold` no produce operaciones. Una decisión `proposed` pasa al libro de cuenta con el cierre bruto de **la primera sesión observada posterior**, costos y NAV reconciliados. Las pruebas ejercitan el mecanismo sobre entradas **sintéticas**, no sobre rendimientos observados de inversión. Los certificados de existencia de archivos o publicación Git no se presentan como autenticación económica de precios de broker.
+
+**Limitación de continuidad:** el `referenceRequest` todavía calcula decisiones para una cuenta hipotética inicialmente vacía. No está justificado encadenar esas decisiones mensuales como si el motor hubiera optimizado una cartera ya invertida. Si aparecen múltiples sellos mensuales de ese tipo, el auditor bloquea expresamente el libro continuo hasta integrar posiciones, efectivo y derechos por cobrar anteriores **en la propia optimización**, sin modificar decisiones selladas a posteriori.
+
+**Verificación:** `node --test tests/forward-account-bridge.test.mjs` y `node scripts/forward_account_bridge.mjs`. El segundo comando es de solo lectura, se ejecuta en CI y informa `blocked-no-original-full-engine-capture` mientras no existan capturas reales. No genera archivos de rentabilidad ni cuenta meses para los contrastes formales.
+
+**Aceptación pendiente:** primera captura integral publicada, calendario verificado, serie completa de primeras cotizaciones por sesión, fuentes oficiales de liquidación de dividendos y acciones corporativas, continuidad real de estado de cuenta y conciliación de cada operación. El riesgo de sobreajuste permanece bajo la política transversal del estudio y no se ajustan parámetros en función de resultados nuevos.

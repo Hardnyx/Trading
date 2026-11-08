@@ -26,6 +26,7 @@ jobs:
       - run: python scripts/first_cut_source_audit.py --verify
       - run: python scripts/prospective_study_registry.py --verify
       - run: python scripts/overfit_policy_guard.py --verify
+      - run: node scripts/forward_account_bridge.mjs
       - run: python scripts/historical_identity_requests.py --output out/historical-identity-requests-v1.json.gz
       - run: python scripts/historical_vendor_identity.py --template out/historical-vendor-identity-template.csv
       - run: python scripts/historical_parameter_audit.py

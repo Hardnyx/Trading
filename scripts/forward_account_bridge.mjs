@@ -280,7 +280,6 @@ export function auditForwardAccount(root=ROOT){
  }
  if(answer.blockers.length)return answer;
  const month=captures[0].origin.month;
- const after=archiveFiles(root,'data/snapshots/'+month,'.json');
  // Future sessions require explicit month-by-month input archives.
  let cursor=month.slice(0,4)*12+Number(month.slice(5,7));
  const terminal=sessions.sessions.at(-1).slice(0,4)*12+
@@ -291,14 +290,15 @@ export function auditForwardAccount(root=ROOT){
   files.push(...archiveFiles(root,'data/snapshots/'+y+'-'+String(m).padStart(2,'0'),'.json'));
   cursor++;
  }
- const daily=files.map(path=>{
+ const daily=files.flatMap(path=>{
   const bytes=readFileSync(path),snapshot=JSON.parse(bytes);
-  return {snapshot,bytes,source_sha256:sha(bytes),
-   publication:gitFirstAdd(root,path,bytes),
-   path:relative(root,path).replaceAll('\\','/')};
- }).filter(row=>row.snapshot.price_as_of>captures[0].origin.cut&&
-  sessions.sessions.includes(row.snapshot.price_as_of)&&
-  row.snapshot.collection_mode==='current');
+  if(!(snapshot.price_as_of>captures[0].origin.cut&&
+       sessions.sessions.includes(snapshot.price_as_of)&&
+       snapshot.collection_mode==='current'))return [];
+  return [{snapshot,bytes,source_sha256:sha(bytes),
+    publication:gitFirstAdd(root,path,bytes),
+    path:relative(root,path).replaceAll('\\','/')}];
+ });
  answer.observed_sessions=daily.length;
  const input=buildForwardAccount({capture:captures[0],daily,
   sessionEvidence:sessions,issuerEvidence:cashflow});
