@@ -49,7 +49,8 @@ class OverfitPolicyGuardTests(unittest.TestCase):
     def test_current_registered_studies_remain_unvalidated(self):
         report = audit()
         self.assertEqual(report["already_inspected_development_months"], 48)
-        self.assertEqual(report["newly_logged_trials"], 0)
+        self.assertGreaterEqual(report["newly_logged_trials"], 1)
+        self.assertEqual(report["eligible_confirmatory_months_certified_here"], 0)
         self.assertFalse(report["model_overfitting_absence_proven"])
         self.assertEqual(report["predictive_skill"], "not-established")
 
