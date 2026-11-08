@@ -237,8 +237,9 @@ def inspect(root=ROOT):
 
 
 def main(argv=None):
-    argparse.ArgumentParser(description=__doc__).add_argument(
-        "--verify", action="store_true").parse_args(argv)
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--verify", action="store_true")
+    parser.parse_args(argv)
     result = inspect()
     print(json.dumps({k:v for k,v in result.items() if k != "new_file_evidence"},
                      sort_keys=True))

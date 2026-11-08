@@ -1,5 +1,9 @@
 """Prospective preregistration guards; software tests never assert economic skill."""
 import copy
+import json
+from pathlib import Path
+import subprocess
+import sys
 import unittest
 from scripts.prospective_study_registry import (
     read_contract, check_contract, inspect, candidate_preflight, utc
@@ -33,6 +37,16 @@ class ProspectiveStudyRegistryTests(unittest.TestCase):
         self.assertEqual(r["minimum_eligible_mature_months"],96)
         self.assertFalse(r["minimum_economic_effects_registered"])
         self.assertFalse(r["formal_inference_allowed"])
+
+    def test_cli_verify_runs_and_reports_zero_confirmatory_origins(self):
+        repo = Path(__file__).resolve().parents[1]
+        output = subprocess.check_output(
+            [sys.executable, str(repo / "scripts/prospective_study_registry.py"),
+             "--verify"], cwd=repo, text=True)
+        report = json.loads(output)
+        self.assertEqual(report["prior_development_cuts_excluded"], 48)
+        self.assertEqual(report["eligible_mature_months"], 0)
+        self.assertFalse(report["formal_inference_allowed"])
 
     def test_exact_original_tests_and_family_preserved(self):
         self.assertTrue(check_contract(self.reg,self.old))
