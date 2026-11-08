@@ -2,7 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {createHash} from 'node:crypto';
 import {decodeOriginalDecision,selectFirstPublishedCloses,buildForwardAccount,runForwardAccount,
-  auditForwardAccount} from '../scripts/forward_account_bridge.mjs';
+  auditForwardAccount,classifyDailySnapshot,partitionDailyArchives}
+  from '../scripts/forward_account_bridge.mjs';
 const sha=b=>createHash('sha256').update(b).digest('hex');
 const days=['2026-11-30','2026-12-01','2026-12-02','2026-12-03'];
 const market={price_as_of:days[0],generated_at:'2026-11-30T22:00:00Z',assets:[
@@ -48,6 +49,34 @@ const issuer=symbol=>({schema:'issuer-cash-settlement-v1',symbol,
 const evidence={AAA:issuer('AAA'),SPY:issuer('SPY')};
 const sessions={schema:'verified-us-exchange-sessions-v1',
  original_source_verified:true,source_sha256:'f'.repeat(64),sessions:days};
+
+test('weekend copy of Friday close is excluded regardless of legacy current label',()=>{
+ const friday={...daily[0].snapshot,price_as_of:'2026-11-06',
+  requested_as_of:'2026-11-08',collected_at:'2026-11-08T05:38:57Z',
+  collection_mode:'current'};
+ const classification=classifyDailySnapshot(friday);
+ assert.equal(classification.eligible,false);
+ assert.equal(classification.reason,'stale-market-close');
+ const filtered=partitionDailyArchives([daily[0],{
+  snapshot:friday,path:'weekend-legacy-republication'}]);
+ assert.equal(filtered.accepted.length,1);
+ assert.equal(filtered.excluded.length,1);
+ assert.deepEqual(filtered.reasons,{'stale-market-close':1});
+ const altered={...friday,collection_mode:'stale_market_close'};
+ assert.equal(classifyDailySnapshot(altered).eligible,false);
+});
+test('pre-close, historical request and absent raw SPY quote cannot qualify',()=>{
+ const original=daily[0].snapshot;
+ const before={...original,collected_at:'2026-12-01T15:00:00Z'};
+ assert.equal(classifyDailySnapshot(before).eligible,false);
+ const historical={...original,requested_as_of:'2026-10-01'};
+ assert.equal(classifyDailySnapshot(historical).reason,'historical-request');
+ const missing={...original,assets:original.assets.filter(a=>a.symbol!=='SPY')};
+ assert.equal(classifyDailySnapshot(missing).reason,'benchmark-original-close-missing');
+ assert.throws(()=>selectFirstPublishedCloses([{
+  ...daily[0],snapshot:{...original,requested_as_of:'2026-12-02'}}]),
+  /not its original current-market archive/);
+});
 
 test('original hashes and original Git publication bind the proposed orders',()=>{
  const d=decodeOriginalDecision(capture);

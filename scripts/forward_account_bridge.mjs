@@ -98,6 +98,44 @@ export function decodeOriginalDecision({origin,firstPublication,marketBytes}){
   initialAccount:proposal.current_account||null};
 }
 
+/** Eligibility is based on original market date, not the capture's label. */
+export function classifyDailySnapshot(snapshot){
+ const s=snapshot;
+ if(s?.schema_version!==1||!date(s.price_as_of)||!date(s.requested_as_of)||
+    !instant(s.collected_at))
+  return {eligible:false,reason:'invalid-capture-metadata'};
+ const local=ny(s.collected_at);
+ const observedDay=local.year+'-'+local.month+'-'+local.day;
+ if(s.requested_as_of!==observedDay)
+  return {eligible:false,reason:'historical-request'};
+ if(s.price_as_of!==s.requested_as_of)
+  return {eligible:false,reason:'stale-market-close'};
+ if(!postClose(s.collected_at,s.price_as_of))
+  return {eligible:false,reason:'pre-close-or-different-session'};
+ if(s.collection_mode!=='current')
+  return {eligible:false,reason:'not-original-current-capture'};
+ const spy=s.assets?.find(a=>a.symbol==='SPY');
+ if(spy?.price_date!==s.price_as_of||spy.quote?.date!==s.price_as_of||
+    !(spy.quote?.close>0))
+  return {eligible:false,reason:'benchmark-original-close-missing'};
+ return {eligible:true,reason:'post-close-original-candidate'};
+}
+export function partitionDailyArchives(rows){
+ const accepted=[],excluded=[],reasons={};
+ for(const row of rows){
+  const result=classifyDailySnapshot(row.snapshot);
+  if(result.eligible)accepted.push(row);
+  else{
+   excluded.push({path:row.path||null,
+    price_as_of:row.snapshot?.price_as_of||null,
+    requested_as_of:row.snapshot?.requested_as_of||null,
+    reason:result.reason});
+   reasons[result.reason]=(reasons[result.reason]||0)+1;
+  }
+ }
+ return {accepted,excluded,reasons};
+}
+
 /** Select the earliest original publication per date; later revisions cannot replace it. */
 export function selectFirstPublishedCloses(rows){
  requireEvidence(Array.isArray(rows),'Daily publication evidence is missing');
@@ -105,8 +143,7 @@ export function selectFirstPublishedCloses(rows){
  for(const row of rows){
   const s=row?.snapshot;
   requireEvidence(s?.schema_version===1&&date(s.price_as_of)&&
-    s.collection_mode==='current'&&s.requested_as_of===s.price_as_of&&
-    postClose(s.collected_at,s.price_as_of)&&
+    classifyDailySnapshot(s).eligible&&
     Buffer.isBuffer(row.bytes)&&sha(row.bytes)===row.source_sha256&&
     sameJson(JSON.parse(row.bytes.toString('utf8')),s),
     'A daily observation is not its original current-market archive');
@@ -290,15 +327,21 @@ export function auditForwardAccount(root=ROOT){
   files.push(...archiveFiles(root,'data/snapshots/'+y+'-'+String(m).padStart(2,'0'),'.json'));
   cursor++;
  }
- const daily=files.flatMap(path=>{
+ const candidateSnapshots=files.flatMap(path=>{
   const bytes=readFileSync(path),snapshot=JSON.parse(bytes);
   if(!(snapshot.price_as_of>captures[0].origin.cut&&
-       sessions.sessions.includes(snapshot.price_as_of)&&
-       snapshot.collection_mode==='current'))return [];
+       sessions.sessions.includes(snapshot.price_as_of)))return [];
   return [{snapshot,bytes,source_sha256:sha(bytes),
-    publication:gitFirstAdd(root,path,bytes),
     path:relative(root,path).replaceAll('\\','/')}];
  });
+ const selectedArchives=partitionDailyArchives(candidateSnapshots);
+ answer.excluded_snapshot_count=selectedArchives.excluded.length;
+ answer.excluded_snapshot_reasons=selectedArchives.reasons;
+ // Do not admit stale/repeated quotes even if their collection_mode was
+ // mislabeled 'current' by an older collector version.
+ const daily=selectedArchives.accepted.map(row=>({
+  ...row,publication:gitFirstAdd(root,
+    resolve(root,row.path),row.bytes)}));
  answer.observed_sessions=daily.length;
  const input=buildForwardAccount({capture:captures[0],daily,
   sessionEvidence:sessions,issuerEvidence:cashflow});

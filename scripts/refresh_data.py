@@ -788,6 +788,24 @@ def fmp_execution_allowed():
     return os.environ.get("GITHUB_ACTIONS") != "true" or os.environ.get("REPOSITORY_PRIVATE") == "true"
 
 
+def classify_observation(snapshot, collected):
+    """Classify an actual first-close candidate without relabeling older archives.
+
+    A current *request* is not proof of a current *closing price*.
+    The New York session must match and have ended before collection.
+    """
+    requested = snapshot["requested_as_of"]
+    price_as_of = snapshot["price_as_of"]
+    ny = collected.astimezone(NEW_YORK)
+    if requested != ny.date().isoformat():
+        return "historical_request"
+    if price_as_of != requested:
+        return "stale_market_close"
+    if ny.hour < 16:
+        return "pre_close"
+    return "current"
+
+
 def archive_observation(snapshot, directory=None, include_research=False):
     """Preserve what was observed at collection time without repeating price history."""
     if not include_research:
@@ -803,7 +821,7 @@ def archive_observation(snapshot, directory=None, include_research=False):
         'collected_at': snapshot['generated_at'],
         'requested_as_of': snapshot['requested_as_of'],
         'price_as_of': snapshot['price_as_of'],
-        'collection_mode': 'current' if snapshot['requested_as_of'] == new_york_date(collected) else 'historical_request',
+        'collection_mode': classify_observation(snapshot, collected),
         'source_snapshot_sha256': hashlib.sha256(source.encode('utf-8')).hexdigest(),
         'assets': [dict({k: v for k, v in asset.items() if k != 'history'},
                         quote=asset['history'][-1] if asset.get('history') else None)

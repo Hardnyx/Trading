@@ -29,7 +29,7 @@ class ObservationArchive(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             path = module.archive_observation(data, directory)
             saved = json.loads(path.read_text())
-            self.assertEqual(saved['collection_mode'], 'current')
+            self.assertEqual(saved['collection_mode'], 'stale_market_close')
             self.assertEqual(saved['assets'][0]['quote']['close'], 10)
             self.assertEqual(saved['assets'][0]['financials']['eps']['filed'], '2026-10-20')
             self.assertNotIn('history', saved['assets'][0])
@@ -37,6 +37,36 @@ class ObservationArchive(unittest.TestCase):
             self.assertEqual(len(saved['source_snapshot_sha256']), 64)
         self.assertEqual(data, before)
 
+
+    def test_fresh_close_is_only_current_after_matching_new_york_session(self):
+        with tempfile.TemporaryDirectory() as directory:
+            fresh = fixture()
+            fresh['generated_at'] = '2026-11-06T23:15:00Z'
+            fresh['requested_as_of'] = fresh['price_as_of'] = '2026-11-06'
+            fresh['assets'][0]['price_date'] = '2026-11-06'
+            fresh['assets'][0]['history'][-1]['date'] = '2026-11-06'
+            path = module.archive_observation(fresh, directory)
+            self.assertEqual(json.loads(path.read_text())['collection_mode'], 'current')
+
+            preclose = copy.deepcopy(fresh)
+            preclose['generated_at'] = '2026-11-06T18:15:00Z'
+            path = module.archive_observation(preclose, directory)
+            self.assertEqual(json.loads(path.read_text())['collection_mode'], 'pre_close')
+
+    def test_weekend_request_does_not_relabel_friday_close_as_current(self):
+        with tempfile.TemporaryDirectory() as directory:
+            stale = fixture()
+            stale['generated_at'] = '2026-11-08T05:38:57Z'
+            stale['requested_as_of'] = '2026-11-08'
+            stale['price_as_of'] = '2026-11-06'
+            path = module.archive_observation(stale, directory)
+            record = json.loads(path.read_text())
+            self.assertEqual(record['collection_mode'], 'stale_market_close')
+            self.assertEqual(record['price_as_of'], '2026-11-06')
+            self.assertEqual(record['requested_as_of'], '2026-11-08')
+            self.assertEqual(record['assets'][0]['quote']['date'], '2026-10-23')
+            # Preserve the source fact as-is. The audit must reject the stale
+            # session rather than silently replacing the quote or backdating.
 
     def test_public_snapshot_has_matching_deterministic_gzip_transport(self):
         with tempfile.TemporaryDirectory() as directory:
