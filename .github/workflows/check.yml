@@ -25,6 +25,7 @@ jobs:
       - run: python scripts/historical_identity_requests.py --output out/historical-identity-requests-v1.json.gz
       - run: python scripts/historical_vendor_identity.py --template out/historical-vendor-identity-template.csv
       - run: python scripts/historical_parameter_audit.py
+      - run: git fetch --no-tags --depth=1 origin b2d15329e2484ce103d7d729b90c65e4367b218d
       - run: node scripts/benchmark_expanding_mean.mjs out/retrospective-expanding-mean-benchmark-v1.json
       - uses: actions/upload-artifact@v4
         with:
