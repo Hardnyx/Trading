@@ -18,6 +18,22 @@
       "new_independent_holdout_required": true,
       "reuses_inspected_period": false,
       "claim_predictive_validation": false
+    },
+    {
+      "trial_id": "continuous-account-research-v2-20261108",
+      "reason": "Model existing dividend entitlements as non-investable claims at an account cut; compute research allocations from settled cash plus priced positions and reserve claims until documented settlement. The change follows accounting identity, not fitted returns.",
+      "recorded_at": "2026-11-08T15:08:17Z",
+      "result_data_used": "none",
+      "model_affecting": true,
+      "old_cohort": "continuous-account-research-v1/0.35.0/account-aware",
+      "new_cohort": "continuous-account-research-v2/0.35.0/settled-investable",
+      "first_eligible_new_origin": "2026-11-30",
+      "search_attempts": 1,
+      "all_search_attempts_logged": true,
+      "evidence_role": "research",
+      "new_independent_holdout_required": true,
+      "reuses_inspected_period": false,
+      "claim_predictive_validation": false
     }
   ]
 }
