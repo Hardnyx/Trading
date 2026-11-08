@@ -1,0 +1,127 @@
+{
+  "schema": "full-engine-prospective-registration-v2",
+  "registration_day_utc": "2026-11-08",
+  "status": "registered-methodology-inactive-confirmatory-inference",
+  "predecessor": {
+    "path": "docs/protocolo-replay-integral-v1.json",
+    "sha256": "6a8d5f716292c04f8663a3e54a39e8dda5a7843fdae9a28045286570aba4addc",
+    "role": "previously-inspected-development-history"
+  },
+  "baseline_engine_commit": "0cbf5cefa7c17700a17b75568c6a80e83e56123f",
+  "sampling": {
+    "first_possible_cut": "2026-11-09",
+    "first_month": "2026-11",
+    "origin_frequency": "monthly",
+    "cut_rule": "last observed US-exchange closing session of each NY calendar month",
+    "units": "origin-month with joint instrument cross-section",
+    "minimum_mature_eligible_months": 96,
+    "minimum_contiguous_months_for_largest_block": 96,
+    "horizons_sessions": [
+      21,
+      63,
+      252
+    ],
+    "exclude_previously_examined": true,
+    "no_outcome_driven_selection": true,
+    "retain_absent_months": true,
+    "exclude_missing_from_numerator_without_replacing_with_cash": true
+  },
+  "primary_tests": [
+    {
+      "id": "return_mse:21",
+      "parent": "return_mse",
+      "horizon_sessions": 21
+    },
+    {
+      "id": "return_mse:63",
+      "parent": "return_mse",
+      "horizon_sessions": 63
+    },
+    {
+      "id": "return_mse:252",
+      "parent": "return_mse",
+      "horizon_sessions": 252
+    },
+    {
+      "id": "ranking_ic:21",
+      "parent": "ranking_ic",
+      "horizon_sessions": 21
+    },
+    {
+      "id": "ranking_ic:63",
+      "parent": "ranking_ic",
+      "horizon_sessions": 63
+    },
+    {
+      "id": "ranking_ic:252",
+      "parent": "ranking_ic",
+      "horizon_sessions": 252
+    },
+    {
+      "id": "net_economic_value:21",
+      "parent": "net_economic_value",
+      "horizon_sessions": 21
+    }
+  ],
+  "multiplicity": {
+    "method": "Holm step-down",
+    "alpha": 0.05,
+    "direction": "one-sided positive advantage",
+    "missing_primary_p_value": 1
+  },
+  "bootstrap": {
+    "method": "paired circular moving-block bootstrap over origin months, resampling the entire cross-section jointly",
+    "block_lengths_months": [
+      12,
+      24
+    ],
+    "draws": 10000,
+    "seed": 20261030,
+    "interval": "percentile 95% two-sided",
+    "minimum_complete_blocks": 4
+  },
+  "primary_references": "unchanged from hashed frozen v1, including expanding mean, filed EPS/price and net beta-matched SPY plus cash",
+  "forecast_target": "arithmetic total return in USD including distributions",
+  "execution_rule": "first observed next-session exchange close after monthly decision; no same-close execution",
+  "costs_rule": "frozen v1 base and triple spread/slippage sensitivity; realized cash interest is never a forecast",
+  "fixed_cohort": {
+    "engine_version": "0.35.0",
+    "price_kernel_version": "1.0.0",
+    "reference_id": "default-20261024-4-regimes-v2",
+    "source_hashes_required": true,
+    "restart_incompatible_changes": true,
+    "never_pool_code_or_source_cohorts": true
+  },
+  "admission": {
+    "first_git_publication_verified": true,
+    "original_vendor_capture_required": true,
+    "source_parameter_lineage_required": true,
+    "snapshot_and_model_hashes_required": true,
+    "full_engine_decision_and_order_required": true,
+    "complete_cashflow_ledger_required": true,
+    "no_pre_registration_forecasts": true,
+    "prospective_outcomes_never_in_seal": true
+  },
+  "economic_effect_thresholds": {
+    "return_mse": null,
+    "ranking_ic": null,
+    "net_economic_value": null,
+    "status": "unjustified-power-not-established"
+  },
+  "activation": {
+    "registration_recorded": true,
+    "confirmatory_collection_open": false,
+    "formal_inference_enabled": false,
+    "blockers": [
+      "justify economic-effect magnitudes and prospective power before inspecting confirmation scores",
+      "publish original full-engine forecasts with independently verifiable first capture",
+      "verify all required original source vintages, model fits, holdings and cash flows",
+      "accumulate 96 eligible mature compatible months and at least four 24-month blocks"
+    ]
+  },
+  "other_evidence": {
+    "historical_development_origins": 48,
+    "existing_signal_protocol": "monthly-complete-stock-signal-v1",
+    "signal_seals_role": "ancillary stock-only, cannot be relabelled full-engine"
+  }
+}
