@@ -101,7 +101,7 @@ test('missing dividend source coverage leaves incomplete ledger and no fabricate
 test('the next execution cannot move forward to fix absent price or late publication',()=>{
  assert.throws(()=>run({decisions:[{...first,execute:days[2]}]}),/FIRST observed session/);
  assert.throws(()=>run({decisions:[{...first,publication:{...first.publication,
-  committed_at:'2026-12-01T15:00:00Z'}}]}),/after next-session opening/);
+  committed_at:'2026-12-01T15:00:00Z'}}]}),/before next-session opening/);
 });
 test('no synthetic interest, unfiled withdrawal, FX or futures in a cash-only cohort',()=>{
  for(const mandate of [
@@ -140,4 +140,27 @@ test('sells, exits and later decisions use actual held units rather than resetti
  assert.equal(r.nav[4].cash,r.nav[4].nav);
  assert.ok(r.nav[5].cash===r.nav[5].nav);
  assert.equal(r.decisions[1].shadow_trade_count,1);
+});
+
+test('the exchange calendar cannot omit an observed SPY session',()=>{
+ const full=assets(),hidden=days.filter(d=>d!==days[1]);
+ assert.throws(()=>verifyAccountInputs({
+   calendar:hidden,assets:full,decisions:[],costs:zero
+ }),/omits or inserts an original SPY trading session/);
+});
+test('duplicate corporate events and unsupported adjustments are rejected',()=>{
+ const duplicate=assets();
+ duplicate[1].distributions.events.push({...duplicate[1].distributions.events[0]});
+ assert.throws(()=>run({assets:duplicate}),/Duplicate dividend/);
+ const adjusted=assets();
+ adjusted[1].price_adjustments=[{date:days[2],ratio:.5}];
+ assert.throws(()=>run({assets:adjusted}),/Unreconciled delisting or corporate action/);
+ const split=assets();
+ split[1].splits.push({...split[1].splits[0]});
+ assert.throws(()=>run({assets:split}),/Duplicate split/);
+});
+test('a purported pre-close issue cannot become an original post-close decision',()=>{
+ assert.throws(()=>run({decisions:[{...first,issued_at:'2026-11-30T19:00:00Z',
+   publication:{...first.publication,committed_at:'2026-11-30T20:00:00Z'}}]}),
+   /after the cut close/);
 });

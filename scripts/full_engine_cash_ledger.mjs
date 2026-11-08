@@ -77,6 +77,10 @@ export function verifyAccountInputs({calendar,assets,decisions,flows=[],initialC
     check(asset&&typeof asset.symbol==='string'&&!assetMap.has(asset.symbol)&&
       asset.symbol!=='CASH'&&asset.currency==='USD'&&
       Array.isArray(asset.history),'Duplicate asset or unsupported currency');
+    check(!asset.delisted&&!asset.reorganization&&
+      !(asset.price_adjustments||[]).length&&
+      !(asset.reorganizations||[]).length,
+      'Unreconciled delisting or corporate action for '+asset.symbol);
     const prices=new Map();
     for(const row of asset.history){
       check(day(row.date)&&!prices.has(row.date)&&positive(row.close),
@@ -88,25 +92,35 @@ export function verifyAccountInputs({calendar,assets,decisions,flows=[],initialC
       day(index.coverage_start)&&day(index.coverage_end)&&
       index.coverage_start<=index.coverage_end&&Array.isArray(index.events),
       'An original complete cash-distribution index is required for '+asset.symbol);
-    const events=[];
+    const events=[],seenEvents=new Set();
     for(const event of index.events){
       check(event.kind==='dividend'&&day(event.ex_date)&&day(event.pay_date)&&
         event.ex_date<=event.pay_date&&finite(event.amount_per_share)&&
         event.amount_per_share>=0&&
         event.ex_date>=index.coverage_start&&event.ex_date<=index.coverage_end,
         'Unreconciled dividend ex/pay dates or gross amount');
+      const identity=[event.ex_date,event.pay_date,event.amount_per_share].join('|');
+      check(!seenEvents.has(identity),
+        'Duplicate dividend event in original cashflow ledger');
+      seenEvents.add(identity);
       events.push({...event,symbol:asset.symbol});
     }
-    const splits=[];
+    const splits=[],seenSplits=new Set();
     for(const event of asset.splits||[]){
       check(day(event.date)&&positive(event.ratio),
         'Unreconciled split date or share ratio');
+      check(!seenSplits.has(event.date),'Duplicate split event for '+asset.symbol);
+      seenSplits.add(event.date);
       splits.push({...event,symbol:asset.symbol});
     }
     assetMap.set(asset.symbol,{prices,index,events,splits});
   }
   check(assetMap.has('SPY')&&calendar.every(d=>assetMap.get('SPY').prices.has(d)),
     'Benchmark calendar lacks a matching raw SPY close');
+  const allSpySessions=[...assetMap.get('SPY').prices.keys()]
+    .filter(date=>date>=calendar[0]&&date<=calendar.at(-1)).sort();
+  check(JSON.stringify(allSpySessions)===JSON.stringify(calendar),
+    'Observed exchange calendar omits or inserts an original SPY trading session');
   const cuts=new Set(),execs=new Map(),monthCuts=new Set();
   for(const d of decisions){
     check(day(d.cut)&&session.has(d.cut)&&d.cut>=calendar[0]&&
@@ -121,9 +135,11 @@ export function verifyAccountInputs({calendar,assets,decisions,flows=[],initialC
       /^[a-f0-9]{40}$/.test(d.publication.first_commit||'')&&
       /^[a-f0-9]{64}$/.test(d.forecast_sha256||''),
       'First forecast publication and immutable identity must be audited');
-    check(timestamp(d.issued_at,'forecast issue')<=timestamp(d.publication.committed_at,'first publication')&&
-      timestamp(d.publication.committed_at,'first publication')<nyOpenUtc(execute),
-      'Sealed forecast became available after next-session opening');
+    const issued=timestamp(d.issued_at,'forecast issue'),
+      published=timestamp(d.publication.committed_at,'first publication');
+    check(issued>=nyOpenUtc(d.cut)+6.5*3600000&&
+      issued<=published&&published<nyOpenUtc(execute),
+      'Sealed forecast must be issued after the cut close and published before next-session opening');
     check(d.model_status==='proposed'||d.model_status==='hold',
       'No feasible proposal was available at the decision cut');
     const target=weights(d.positions);
