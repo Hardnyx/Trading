@@ -17,6 +17,12 @@ python scripts/historical_spy_exception_classification.py \
 
 El JSON contiene el número y peso por categoría original declarada. El CSV conserva las 26 filas y su posición exacta para revisión del documento. Ambos se generan en CI como artefactos públicos. La clasificación es descriptiva: `EC` se identifica como una etiqueta de acciones en N-PORT, pero un `assetCat` distinto o ausente **no** equivale automáticamente a no ser negociable; la categoría y el vínculo de precios requieren comprobación independiente.
 
+## Resultado sobre el documento original
+
+La ejecución de [GitHub Actions 42544845334](https://github.com/Hardnyx/Trading/actions/runs/42544845334) verificó que **26 de 26 posiciones con CUSIP inválido o ausente fueron declaradas con `assetCat = EC`** en el XML N-PORT original de SPY, por un peso conjunto de **0,03033173560207 del NAV** (3,03 puntos porcentuales). Las pruebas del programa y la reproducción de los archivos SEC terminaron correctamente.
+
+Por tanto, la hipótesis de que esas 26 posiciones fueran principalmente instrumentos no accionarios **no está respaldada por las categorías originales**. Permanecen como observaciones de renta variable común con identidad pendiente de conciliar. No se debe excluirlas para mejorar artificialmente la cobertura del piloto. La etiqueta `EC` no aporta el CUSIP correcto, prueba de negociación continua ni precio históricamente disponible.
+
 **Criterio de aceptación:** conciliación de la clasificación original de las 26 excepciones sin cambio del denominador SPY ni inclusión de valores inventados; casos adversariales que rechazan XML alterado, pesos cambiados, posiciones reordenadas, CUSIP incorrecto y entidades XML no seguras. No se declara ninguna identidad permanente ni se autoriza un nuevo corte integral.
 
 **Bloqueos:** recuperar los IDs históricos y continuidad de los 351 CUSIP válidos, resolver de manera independiente los campos no concluyentes de las 26 excepciones, reconstruir eventos, precios e historial de instrumentos deslistados. El diagnóstico no reduce automáticamente el universo objetivo ni valida el rendimiento del motor.
