@@ -23,3 +23,16 @@ Ningún resultado autoriza cambiar a `lag=24`, seleccionar una familia de innova
 - Datta y Du (2012), *Nonparametric HAC Estimation for Time Series Data with Missing Observations*, advierten que tratar observaciones faltantes como una serie equiespaciada sin regla validada puede alterar la inferencia: https://www.federalreserve.gov/econres/ifdp/nonparametric-hac-estimation-for-time-series-data-with-missing-observations.htm
 
 La rejilla no cubre cambios estructurales, volatilidad condicional, dependencia adversarial, pérdidas con colas sin varianza, meses no disponibles o coherencia de la cuenta de Trading. Holm necesita valores p marginales válidos y no repara un estimador HAC mal calibrado. Para usar un método nuevo habría que justificar sus supuestos, potencia, valor económico y publicar **otro registro antes de la nueva cohorte de observaciones**, sin alterar ni reinterpretar v2.
+
+## Reproducción del experimento congelado
+
+El evaluador [confirmatory_hac_stress.py](../scripts/confirmatory_hac_stress.py) calcula el estadístico con covarianzas centradas, ejecuta el procedimiento Holm completo, cuenta falsos rechazos bajo nulo global y parcial y registra límites binomiales simultáneos para los 64 escenarios. Comprueba el **SHA-1 del objeto Git** del diseño registrado antes de ejecutarse: si se modifica el JSON, falla en lugar de aceptar nuevas variantes silenciosamente. Las pruebas comprueban aritmética HAC contra una implementación escalar, equivalencia de Holm, cambios adversariales del contrato, semilla estable y separación de medias desplazadas.
+
+Para reproducir desde la raíz del repositorio:
+
+```bash
+python -m unittest tests.test_confirmatory_hac_stress
+python scripts/confirmatory_hac_stress.py --verify --output out/confirmatory-hac-independent-stress-v1.json
+```
+
+CI publica la salida como artefacto `confirmatory-hac-independent-stress`, pero un resultado favorable en esta rejilla **no** permite aprobar inferencia financiera. No cambian las reglas de captura prospectiva ni los siete efectos económicos pendientes.
