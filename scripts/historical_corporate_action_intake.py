@@ -8,7 +8,7 @@ explicit blockers instead of being silently dropped from the denominator.
 import argparse
 from collections import Counter, defaultdict
 import csv
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 import io
 import json
 import math
@@ -56,6 +56,9 @@ CASH_TYPES = frozenset({"CASH_DIVIDEND", "SPECIAL_CASH_DIVIDEND"})
 UNSUPPORTED = TYPES - CASH_TYPES - {"SPLIT"}
 MAX_FILE_BYTES = 30_000_000
 MAX_ROWS = 200_000
+# A missing ex-date bar or a long gap cannot verify a trading session.
+# This is a conservative diagnostic guard, not an exchange-calendar certificate.
+MAX_PRIOR_SESSION_GAP_DAYS = 7
 
 
 def require(ok, detail):
@@ -210,9 +213,20 @@ def read_event_sources(directory, cross, price_report):
     return rows, receipts, sha(manifest_bytes)
 
 
-def reconcile_actions(cross, prices, rows, receipts, manifest_sha):
-    """Do not apply actions. Account for duplicates, conflicts and missing bars."""
+def reconcile_actions(cross, prices, rows, receipts, manifest_sha, raw_bars):
+    """Match events to original raw bars; never create payments or adjusted prices."""
     base = private_template(cross, prices)
+    # Reject a substituted price report or a different set of raw bar originals.
+    rebuilt = assess_prices(
+        cross, raw_bars, prices["source_receipts"],
+        prices["price_manifest_sha256"],
+    )
+    require(canonical(rebuilt) == canonical(prices),
+            "Corporate events require the exact reported raw-price observations")
+    raw_sessions = defaultdict(dict)
+    for bar in raw_bars:
+        key = (bar["id_namespace"], bar["provider_instrument_id"])
+        raw_sessions[key][bar["session_date"]] = bar["raw_close"]
     candidates = candidate_requests(cross)
     owners = {(x["id_namespace"], x["provider_instrument_id"]): x
               for x in candidates}
@@ -235,26 +249,63 @@ def reconcile_actions(cross, prices, rows, receipts, manifest_sha):
         events_by_key[key].append(event)
         date_groups[key + (event["event_type"], event["ex_date"])].add(event["event_id"])
     counts = Counter()
+    observed_key_statuses = Counter()
     per_key = []
     for request in candidates:
         key = (request["id_namespace"], request["provider_instrument_id"])
         events = sorted(events_by_key[key], key=lambda e: (e["ex_date"], e["event_id"]))
         price = prices_by_key[key]
         has_prices = price["raw_bar_count"] > 0
-        labels = []
+        if not events:
+            observed_key_statuses["no-event-row-not-proof-of-event-absence"] += 1
+        else:
+            observed_key_statuses["one-or-more-reported-events"] += 1
+        labels, bridges = [], []
+        sessions = raw_sessions[key]
         for event in events:
-            group = key + (event["event_type"], event["ex_date"])
+            ex_day = event["ex_date"]
+            prior_days = [day for day in sessions if day < ex_day]
+            prior = max(prior_days) if prior_days else None
+            before = sessions.get(prior) if prior else None
+            on_ex_day = sessions.get(ex_day)
+            gap = ((date.fromisoformat(ex_day) -
+                    date.fromisoformat(prior)).days if prior else None)
+            # Prices here remain raw, retrospective and unlicensed for deployment.
+            # No actual cash payment or dividend-adjusted series is constructed.
+            bracketed = (
+                before is not None and on_ex_day is not None and
+                gap <= MAX_PRIOR_SESSION_GAP_DAYS
+            )
+            bridge = {
+                "prior_observed_session": prior, "ex_date": ex_day,
+                "calendar_days_between_observed_sessions": gap,
+                "prior_raw_close": before, "ex_date_raw_close": on_ex_day,
+                "ex_date_bracket_observed": bracketed,
+                "unadjusted_price_change": (
+                    on_ex_day / before - 1 if bracketed else None),
+                "split_neutral_price_change": (
+                    on_ex_day * event["split_ratio"] / before - 1
+                    if bracketed and event["event_type"] == "SPLIT" else None),
+                "cash_payment_created": False,
+                "historical_price_vintage_authenticated": False,
+            }
+            group = key + (event["event_type"], ex_day)
             if len(date_groups[group]) > 1:
                 state = "conflicting-event-type-and-ex-date"
-            elif not has_prices:
-                state = "no-raw-price-history-for-action"
+            elif event["record_as_of"] > ex_day:
+                state = "post-effective-event-record-quarantined"
             elif event["event_type"] in UNSUPPORTED:
                 state = "uninterpreted-reorganization-or-delisting"
+            elif not has_prices:
+                state = "no-raw-price-history-for-action"
             elif event["event_type"] in CASH_TYPES and event["pay_date"] > cross["cut"]:
                 state = "unsettled-cash-payment-at-cut"
+            elif not bracketed:
+                state = "missing-ex-date-raw-price-bracket"
             else:
                 state = "retrospective-event-candidate"
             labels.append(state)
+            bridges.append(bridge)
             counts[state] += 1
         per_key.append({
             **request,
@@ -265,8 +316,10 @@ def reconcile_actions(cross, prices, rows, receipts, manifest_sha):
                 {"event_id": event["event_id"], "event_type": event["event_type"],
                  "announced_on": event["announced_on"],
                  "ex_date": event["ex_date"], "pay_date": event["pay_date"],
-                 "event_status": state}
-                for event, state in zip(events, labels)
+                 "record_as_of": event["record_as_of"],
+                 "event_status": state,
+                 "raw_price_bridge": bridge}
+                for event, state, bridge in zip(events, labels, bridges)
             ],
             "independently_authenticated": False,
             "cashflows_reconciled": False,
@@ -285,6 +338,9 @@ def reconcile_actions(cross, prices, rows, receipts, manifest_sha):
         "source_receipts": receipts,
         "raw_event_count": len(rows),
         "event_status_counts": dict(sorted(counts.items())),
+        "security_key_event_coverage": dict(sorted(observed_key_statuses.items())),
+        "absence_of_reported_events_certified": False,
+        "session_calendar_verified": False,
         "source_positive_spy_positions": cross["positive_spy_positions"],
         "source_spy_weight": cross["positive_spy_weight"],
         "unique_security_keys": len(candidates),
@@ -346,7 +402,7 @@ def main(argv=None):
         events, event_receipts, digest = read_event_sources(
             args.event_evidence_dir, cross, price_report)
         report = reconcile_actions(cross, price_report, events,
-                                   event_receipts, digest)
+                                   event_receipts, digest, bars)
         target = Path(args.private_report)
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
