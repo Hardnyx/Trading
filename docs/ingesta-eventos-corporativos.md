@@ -47,3 +47,9 @@ python scripts/historical_corporate_action_intake.py \
 Las pruebas detectan claves de proveedor inexistentes, MIC/divisa incompatibles, IDs duplicados, múltiples importes del mismo tipo de evento y fecha, anuncios tardíos, eventos futuros, fechas de pago incompatibles, ratios/efectivo no finitos y hashes alterados. Los estados diagnósticos se mantienen sin autorizar ajustes de precios, pago de dividendos ni operaciones.
 
 **Criterio de cierre:** recuperar eventos reales desde fuentes autorizadas, contrastar su primera disponibilidad con evidencias externas, conciliar splits y su base accionaria, derechos ex-date/pago, efectivo, reorganizaciones, deslistes y eventuales ajustes de FX con las cotizaciones ejecutables. Las pruebas de software no constituyen evidencia de que esos datos existan ni de que el motor prediga retornos.
+
+## Resultado verificado en CI
+
+El commit [`f6d034d`](https://github.com/Hardnyx/Trading/commit/f6d034d8321846d3da8e45fbdb2feb16f671993f) aprobó [GitHub Actions 42567881890](https://github.com/Hardnyx/Trading/actions/runs/42567881890) y [Pages 42567881899](https://github.com/Hardnyx/Trading/actions/runs/42567881899), con **373 pruebas Python exitosas**. El workflow reabrió el contrato para **504 posiciones positivas de SPY** y generó solo la solicitud pública: **0 eventos corporativos reales del proveedor importados**. Los casos de prueba de splits, dividendos, fechas futuras y reorganizaciones son sintéticos.
+
+La recepción técnica **no cierra H1.3**, ni acredita que una fuente exista, que sus eventos fueran públicos en cada fecha, que los dividendos se pagaran efectivamente o que la cuenta del backtest esté conciliada. El motor y las 48 fechas del protocolo se mantienen sin aptitud de replay integral.
