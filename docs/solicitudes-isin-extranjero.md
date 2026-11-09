@@ -34,3 +34,47 @@ Los 26 ISIN son observaciones **expresas del documento SEC**, no conversiones de
 **Dato requerido del proveedor:** security master que devuelva una identidad de instrumento con vigencia, bolsa/MIC original, divisa de cotización, tipo de título, posibles ADR y cadena de eventos societarios, junto con fuente y fecha de publicación o reconstrucción. El ISIN por sí solo no establece que la acción fuera negociable en la bolsa considerada, ni qué serie de precios usar.
 
 Esta cola se mantiene **separada** de las 351 solicitudes basadas en CUSIP válidos. Ninguno de los 26 ISIN queda incorporado al motor ni certificado automáticamente. El criterio de aceptación técnico es recuperar de forma reproducible los identificadores de fuente como **solicitudes de adquisición de datos**, sin modificar el denominador histórico, los resultados del piloto o los parámetros del modelo; H1.2 permanece abierto.
+
+
+## Importar respuestas originales del proveedor por ISIN extranjero
+
+El adaptador [`historical_foreign_isin_vendor_identity.py`](../scripts/historical_foreign_isin_vendor_identity.py) permite procesar una respuesta del proveedor **sin convertirla en una serie de precios validada**. Reutiliza la comprobación de CSV, hashes SHA256, rutas seguras, fechas de instantánea y descarga, espacio de nombres estable y vigencia de `historical_vendor_identity.py`; la clave de emparejamiento es el **ISIN original** y nunca un ticker.
+
+Generar la plantilla pública del manifiesto:
+
+```bash
+python scripts/historical_foreign_isin_vendor_identity.py \
+  --template out/historical-foreign-isin-vendor-manifest-template-v1.json
+```
+
+El `manifest.json` privado debe colocarse en `input/historical-foreign-isin-vendor-v1/`, mantener los campos `protocol`, `cut`, `request_sha256` y `source_original_sha256` de la plantilla, y completar `exports` con registros como el siguiente (marcadores, **no prueba histórica**):
+
+```json
+{
+  "path": "provider.csv",
+  "sha256": "<SHA256 real de los bytes CSV>",
+  "provider": "<proveedor autorizado>",
+  "source_reference": "<ID de extracción>",
+  "snapshot_as_of": "2024-12-31",
+  "retrieved_at": "<hora de descarga UTC real, formato ISO 8601>",
+  "temporal_basis": "retrospective_asof_export"
+}
+```
+
+Las columnas **exactas** del CSV privado son:
+
+```csv
+original_isin,provider_instrument_id,id_namespace,security_type,currency,exchange_mic,valid_from,valid_to,record_as_of
+```
+
+`record_as_of` debe coincidir con `snapshot_as_of`. La vigencia `valid_to` es exclusiva, y ambos extremos deben existir para proponer una identidad efectiva al 31-dic-2024. Se permiten monedas de cotización distintas de USD y se conservan explícitas: **ni la convertibilidad histórica ni la accesibilidad en bolsas estadounidenses quedan demostradas por eso**. Nombres, tickers, ISIN usados como supuestos IDs permanentes, registros fuera de fecha, claves compartidas entre diferentes ISIN y respuestas discordantes no pasan el control.
+
+```bash
+python scripts/historical_foreign_isin_vendor_identity.py \
+  --evidence-dir input/historical-foreign-isin-vendor-v1 \
+  --report out/historical-foreign-isin-vendor-reconciliation-v1.json
+```
+
+Todo extracto licenciado y el informe detallado quedan **locales** bajo `input/` y `out/` ignorados por Git. CI publica **solo el manifiesto vacío** unido al hash del origen SEC. Aun una coincidencia inequívoca lleva el estado `retrospective-foreign-identity-candidate`, sin certificación de precio, eventos societarios, moneda, vigencia probada por tercero ni elegibilidad para replay.
+
+**Aceptación técnica:** ejecutar pruebas adversariales con exportaciones sintéticas y generar el manifiesto vacío cotejando 26 ISIN del original SEC. **H1.2 sigue bloqueado** hasta recibir e investigar datos originales de proveedor, resolver identidades y disponibilidad histórica de precios y definir qué títulos extranjeros/ADR cumplen criterios de negociación en el universo objetivo.

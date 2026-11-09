@@ -102,8 +102,9 @@ class VendorIdentityTests(unittest.TestCase):
             parse_export(csv_bytes([example(cusip="037833101")]), "2024-12-31")
 
     def test_rejects_symbol_as_permanent_namespace(self):
-        with self.assertRaisesRegex(ValueError, "Unstable or invalid"):
-            parse_export(csv_bytes([example(namespace="TICKER")]), "2024-12-31")
+        for namespace in ("TICKER", "ISIN"):
+            with self.assertRaisesRegex(ValueError, "Unstable or invalid"):
+                parse_export(csv_bytes([example(namespace=namespace)]), "2024-12-31")
 
     def test_rejects_manifest_future_source_and_altered_bytes(self):
         with tempfile.TemporaryDirectory() as tmp:

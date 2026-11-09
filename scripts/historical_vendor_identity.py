@@ -32,7 +32,7 @@ TEMPLATE_COLUMNS = (
     "original_spy_name", "weight", "cut",
 )
 ALLOWED_TYPES = {"COMMON_STOCK", "REIT", "ADR", "PREFERRED_STOCK"}
-INVALID_NAMESPACES = {"TICKER", "SYMBOL", "NAME", "CUSIP"}
+INVALID_NAMESPACES = {"TICKER", "SYMBOL", "NAME", "CUSIP", "ISIN"}
 MAX_SOURCE_BYTES = 20_000_000
 
 
@@ -80,7 +80,9 @@ def template_csv(requests):
     return buffer.getvalue()
 
 
-def parse_export(raw, snapshot_as_of):
+def parse_export(raw, snapshot_as_of, *, identifier_column="cusip", validator=valid_cusip):
+    """Validate the unchanged dated vendor metadata for CUSIP or original ISIN."""
+    require(identifier_column in ("cusip", "original_isin"), "Unsupported identifier column")
     require(len(raw) <= MAX_SOURCE_BYTES, "Source export exceeds 20 MB")
     try:
         content = raw.decode("utf-8-sig")
@@ -89,15 +91,16 @@ def parse_export(raw, snapshot_as_of):
     reader = csv.DictReader(io.StringIO(content, newline=""))
     fields = reader.fieldnames
     require(fields is not None and len(fields) == len(set(fields)) and
-            set(fields) == set(COLUMNS), "Vendor export columns changed")
+            set(fields) == set(identifier_column if c == "cusip" else c for c in COLUMNS),
+            "Vendor export columns changed")
     rows = []
     for number, row in enumerate(reader, start=2):
         require(None not in row and all(v is not None for v in row.values()),
                 f"Malformed vendor CSV at line {number}")
         record = {k: v.strip() for k, v in row.items()}
-        cusip = record["cusip"]
-        require(valid_cusip(cusip),
-                f"Invalid CUSIP format or check digit at line {number}")
+        identifier = record[identifier_column]
+        require(validator(identifier),
+                f"Invalid {identifier_column.upper()} format or check digit at line {number}")
         require(record["record_as_of"] == snapshot_as_of and
                 iso(record["record_as_of"]) == snapshot_as_of,
                 f"Historical snapshot mismatch at line {number}")
@@ -142,13 +145,17 @@ def local_file(root, relative):
     return target
 
 
-def read_evidence(directory, requests):
+def read_evidence(directory, requests, *, schema=SCHEMA, request_sha256=None,
+                  parser=parse_export):
     """Check exact local bytes and dates, preserving retrieval vs. as-of clocks."""
     root = Path(directory)
     manifest = json.loads((root / "manifest.json").read_bytes())
-    require(manifest.get("protocol") == SCHEMA and
+    expected_hash = request_hash(requests) if request_sha256 is None else request_sha256
+    require(re.fullmatch(r"[0-9a-f]{64}", expected_hash) is not None,
+            "Invalid request SHA256")
+    require(manifest.get("protocol") == schema and
             manifest.get("cut") == requests["cut"] and
-            manifest.get("request_sha256") == request_hash(requests),
+            manifest.get("request_sha256") == expected_hash,
             "Identity evidence manifest does not match frozen SEC requests")
     sources = manifest.get("exports")
     require(isinstance(sources, list) and sources, "No vendor exports supplied")
@@ -185,7 +192,7 @@ def read_evidence(directory, requests):
                 "Vendor snapshot temporal basis must be declared")
         # A self-described contemporaneous archive is not independently attested.
         # It remains research-only pending an external provenance audit.
-        parsed = parse_export(raw, snapshot)
+        parsed = parser(raw, snapshot)
         receipt = {
             "path": path, "sha256": source["sha256"], "provider": provider,
             "source_reference": source["source_reference"],
