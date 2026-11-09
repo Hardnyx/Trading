@@ -65,6 +65,7 @@ class SecNumericConcordanceTests(unittest.TestCase):
             self.assertEqual(result["original_primary_filename"], "annual.htm")
             self.assertTrue(result["original_header_matches_derived_fsd"])
             self.assertTrue(result["source_fsd_zip_hash_reverified"])
+            self.assertTrue(result["derived_fsd_rows_reproduced_from_original_zip"])
             self.assertEqual(result["comparison_counts"]["exact_match"], 1)
             self.assertEqual(result["selected_derived_rows"], 1)
             self.assertTrue(result["original_primary_sha256"])
@@ -72,6 +73,25 @@ class SecNumericConcordanceTests(unittest.TestCase):
             self.assertFalse(result["original_filing_publication_independently_verified"])
             self.assertEqual(result["eligible_full_engine_cuts_added"],0)
             self.assertEqual(result["predictive_validation"],"not-established")
+
+    def test_archive_reextract_rejects_edited_derived_rows(self):
+        with tempfile.TemporaryDirectory() as directory:
+            zp, report, original = self.fixture(directory)
+            changes = (
+                ("value_decimal_as_filed", "123.50001"),
+                ("ddate", "2023-09-30"),
+                ("segments", "ClassOfStock=Preferred;"),
+                ("uom", "shares"),
+            )
+            for key, wrong in changes:
+                modified = copy.deepcopy(report)
+                modified["facts"][0][key] = wrong
+                with self.subTest(key=key), self.assertRaisesRegex(
+                        ValueError, "FSD report data differ"):
+                    compare(modified, original, ORIGINAL, archive_path=zp)
+            without_source = compare(report, original, ORIGINAL)
+            self.assertFalse(
+                without_source["derived_fsd_rows_reproduced_from_original_zip"])
 
     def test_decimal_mismatch_and_no_float_tolerance(self):
         with tempfile.TemporaryDirectory() as directory:

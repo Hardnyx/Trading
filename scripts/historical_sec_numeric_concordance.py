@@ -20,11 +20,11 @@ import xml.etree.ElementTree as ET
 
 try:
     from scripts.filing_facts import TAGS
-    from scripts.historical_sec_fsd_intake import SCHEMA as FSD_SCHEMA, require
+    from scripts.historical_sec_fsd_intake import SCHEMA as FSD_SCHEMA, require, extract
     from scripts.historical_sec_original_filing import reconcile
 except ModuleNotFoundError:
     from filing_facts import TAGS
-    from historical_sec_fsd_intake import SCHEMA as FSD_SCHEMA, require
+    from historical_sec_fsd_intake import SCHEMA as FSD_SCHEMA, require, extract
     from historical_sec_original_filing import reconcile
 
 SCHEMA = "historical-sec-primary-inline-numeric-crosscheck-v1"
@@ -210,6 +210,30 @@ def compare(report, original_path, accession, *, archive_path=None,
     require(report.get("schema") == FSD_SCHEMA and
             isinstance(report.get("facts"), list),
             "Expected complete uncertified FSD NUM report")
+    source_rows_reconstructed = False
+    if archive_path is not None:
+        # Rehashing the ZIP alone would not detect edited extracted report
+        # rows. Recreate the exact requested selection from the source bytes.
+        require(isinstance(report.get("requested_ciks"), list)
+                and bool(report["requested_ciks"])
+                and isinstance(report.get("requested_tags"), list),
+                "FSD request selection provenance is incomplete")
+        regenerated = extract(
+            archive_path, report["cutoff_utc"], report["requested_ciks"],
+            tag_filters=report["requested_tags"], max_facts=200000)
+        require(regenerated["archive_sha256"] == report["archive_sha256"]
+                and regenerated["submissions"] == report["submissions"]
+                and regenerated["facts"] == report["facts"]
+                and regenerated["selected_submission_count"] ==
+                    report["selected_submission_count"]
+                and regenerated["selected_fact_count"] ==
+                    report["selected_fact_count"]
+                and regenerated["excluded_target_submissions_after_cutoff"] ==
+                    report["excluded_target_submissions_after_cutoff"]
+                and regenerated["excluded_target_nonfinancial_forms"] ==
+                    report["excluded_target_nonfinancial_forms"],
+                "FSD report data differ from original SEC ZIP re-extraction")
+        source_rows_reconstructed = True
     raw = Path(original_path).read_bytes()
     require(hashlib.sha256(raw).hexdigest() ==
             verified_header["original_filing_sha256"],
@@ -281,6 +305,8 @@ def compare(report, original_path, accession, *, archive_path=None,
         "original_primary_sha256": hashlib.sha256(primary).hexdigest(),
         "source_fsd_zip_hash_reverified":
             verified_header["fsd_original_zip_bytes_reverified"],
+        "derived_fsd_rows_reproduced_from_original_zip":
+            source_rows_reconstructed,
         "original_header_matches_derived_fsd":
             verified_header["header_form_filed_accepted_cik_accession_match"],
         "source_original_first_dissemination_verified": False,
