@@ -62,7 +62,7 @@ def evaluate(protocol):
             and schedule["exclude_missing_from_numerator_without_replacing_with_cash"] is True
             and protocol["activation"]["confirmatory_collection_open"] is False
             and protocol["activation"]["formal_inference_enabled"] is False
-            and protocol["horizons_sessions"] == [21, 63, 252]
+            and schedule["horizons_sessions"] == [21, 63, 252]
             and family == 7 and alpha == .05
             and draws == 10000 and blocks == (12, 24)
             and protocol["fixed_cohort"]["restart_incompatible_changes"] is True
