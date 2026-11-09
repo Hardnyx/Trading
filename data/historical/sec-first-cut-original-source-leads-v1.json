@@ -1,0 +1,34 @@
+{
+  "schema": "historical-sec-first-cut-original-source-leads-v1",
+  "cut": "2024-12-31T21:00:00Z",
+  "cut_kind": "illustrative-asof-research-candidate-not-verified-execution-calendar",
+  "evidence_role": "official-filing-index-discovery-not-original-byte-certification",
+  "sources": [
+    {
+      "issuer_as_shown": "MICROSOFT CORP",
+      "cik": "789019",
+      "accession": "0000950170-24-118967",
+      "form": "10-Q",
+      "period_end": "2024-09-30",
+      "filed_date": "2024-10-30",
+      "accepted_eastern": "2024-10-30 16:07:17",
+      "index_url": "https://www.sec.gov/Archives/edgar/data/789019/000095017024118967/0000950170-24-118967-index.html",
+      "full_submission_url": "https://www.sec.gov/Archives/edgar/data/789019/000095017024118967/0000950170-24-118967.txt",
+      "primary_document_url": "https://www.sec.gov/Archives/edgar/data/789019/000095017024118967/msft-20240930.htm",
+      "xbrl_instance_url": "https://www.sec.gov/Archives/edgar/data/789019/000095017024118967/msft-20240930_htm.xml",
+      "full_submission_size_bytes_reported_in_index": 20482578,
+      "original_full_submission_sha256": null,
+      "first_publication_independently_verified": false,
+      "original_full_submission_bytes_obtained": false,
+      "original_instance_bytes_obtained": false,
+      "derived_fsd_fact_reconciled": false,
+      "historic_cik_security_link_verified": false,
+      "eligible_for_full_engine_historical_replay": false
+    }
+  ],
+  "selected_after_inspecting_prediction_outcomes": false,
+  "access_checked_as": "public SEC index content via independent web lookup; no original bytes fetched",
+  "eligible_full_engine_cuts_added": 0,
+  "confirmatory_origins_added": 0,
+  "predictive_validation": "not-established"
+}
