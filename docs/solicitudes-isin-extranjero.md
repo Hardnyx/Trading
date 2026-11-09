@@ -88,3 +88,7 @@ No hay todavía ninguna identidad extranjera certificada, serie de cotizaciones 
 ## Contrato temporal común CUSIP/ISIN
 
 El importador de ISIN extranjero y el de CUSIP usan ahora la misma validación de intervalo efectivo y fecha declarada del proveedor. Una identidad que empieza después del `record_as_of` queda en cuarentena, aunque esté vigente al corte. Las pruebas incluyen **dos ISIN con dígito de control válido** y comprueban que una clave permanente reutilizada para dos ISIN originales no genera candidatos independientes. Las pruebas usan datos sintéticos y no sustituyen verificaciones de pertenencia histórica, proveedor, precios o FX.
+
+## Verificación de exclusividad y fecha efectiva
+
+La [CI 42614115839](https://github.com/Hardnyx/Trading/actions/runs/42614115839) aprobó 387 pruebas Python para el commit [`7d991f5`](https://github.com/Hardnyx/Trading/commit/7d991f51d03560200f778245b05b476ff6e5ba63), incluido un caso de colisión de ID nativo entre dos ISIN de dígito correcto y una instantánea anterior a la vigencia efectiva. El resumen SEC público mantiene **26 posiciones ISIN extranjeras y 478 con CUSIP válido** de 504 positivas, con **0 filas reales de proveedor**. Estas son condiciones técnicas necesarias, no datos nuevos sobre rentabilidad ni una prueba independiente de disponibilidad point-in-time.

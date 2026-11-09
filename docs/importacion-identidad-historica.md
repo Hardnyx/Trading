@@ -72,3 +72,7 @@ El campo `currency` del extracto CUSIP ahora se conserva explícitamente como `c
 ## Vigencia efectiva en la instantánea del proveedor
 
 El control temporal es común a CUSIP e ISIN: además de exigir `valid_from <= cut < valid_to`, requiere `valid_from <= record_as_of <= cut`. Una respuesta cuyo identificador aún **no era efectivo** en la fecha de la instantánea declarada queda identificada como `identity-begins-after-declared-snapshot`, aunque el instrumento ya estuviera vigente en el corte posterior. Una instantánea sin `record_as_of` o posterior al corte no produce candidato. Esta validación impide una forma concreta de anticipación de identificadores, sin demostrar autenticidad ni publicación contemporánea de la propia fuente.
+
+## Verificación de paridad temporal
+
+El commit [`7d991f5`](https://github.com/Hardnyx/Trading/commit/7d991f51d03560200f778245b05b476ff6e5ba63) superó la [CI 42614115839](https://github.com/Hardnyx/Trading/actions/runs/42614115839), con 387 pruebas Python correctas, y [Pages 42614115888](https://github.com/Hardnyx/Trading/actions/runs/42614115888). La validación de intervalo es compartida por CUSIP e ISIN. No se obtuvieron extractos nuevos de proveedor ni se confirmó un universo invertible para el primer corte.
