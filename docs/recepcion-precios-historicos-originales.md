@@ -62,3 +62,7 @@ Cada entrada privada de seguridad ahora contiene `raw_bar_sha256`, calculado sob
 ## Moneda original vinculada a la identidad
 
 La solicitud privada de cierres exige `quote_currency` explícito en el identificador permanente reconciliado. El importador **rechaza el campo ausente**: no sustituye por USD aunque la ruta CUSIP actualmente solo acepte registros estadounidenses cotizados en USD. La ruta ISIN extranjero conserva la moneda original declarada por el proveedor (por ejemplo GBP), que debe coincidir con el CSV de precios y con la plaza MIC. No se convierte GBP a USD ni se infiere un tipo de cambio histórico o una ejecución estadounidense. La prueba conjunta CUSIP/ISIN utiliza filas sintéticas de proveedor para verificar ambos recorridos.
+
+## Verificación del contrato de moneda
+
+El [commit `bdae67a`](https://github.com/Hardnyx/Trading/commit/bdae67a0da8bb8d6d7c9539cf1a8f21cf7be328e) completó [CI 42610807340](https://github.com/Hardnyx/Trading/actions/runs/42610807340) y [Pages 42610807404](https://github.com/Hardnyx/Trading/actions/runs/42610807404) correctamente, con **383 pruebas Python aprobadas**. La nueva prueba integrada comprueba que el proveedor CUSIP preserve USD y que la vía ISIN extranjero conserve GBP, rechazando la sustitución de la divisa y las claves sin moneda. Son identidades y barras **sintéticas**, no cotizaciones recibidas del mercado. La plantilla pública mantiene 504 posiciones positivas originales sin filas privadas de proveedor; ninguna fecha del motor completo se habilita por este cambio.
