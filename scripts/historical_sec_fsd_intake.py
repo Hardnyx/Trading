@@ -238,7 +238,7 @@ def extract(archive_path, cut_asof, ciks, *, tag_filters=(),
                 "value_decimal_as_filed": decimal_text(num["value"]),
                 "footnote_as_filed": num["footnote"],
                 "consolidated_unsegmented_candidate":
-                    coreg == "" and segments in ("", None),
+                    has_segments and coreg == "" and segments == "",
                 "ready_for_historical_valuation": False,
             })
             require(len(facts) <= max_facts,
