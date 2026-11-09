@@ -119,6 +119,9 @@ def review_source(raw, positions, exceptions, accession, original_sha, public_da
         if len(us_cusips) > 1:
             status = "ambiguous-original-us-isin-cusips"
             candidate = None
+        elif len(valid_isins) > 1:
+            status = "ambiguous-original-valid-isins"
+            candidate = None
         elif len(us_cusips) == 1:
             status = "structural-us-isin-cusip-candidate"
             candidate = us_cusips[0]

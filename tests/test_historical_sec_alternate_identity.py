@@ -57,6 +57,14 @@ class AlternateIdentityTests(unittest.TestCase):
         self.assertEqual(result[0]["review_status"], "ambiguous-original-us-isin-cusips")
         self.assertIsNone(result[0]["structural_us_isin_cusip_candidate"])
 
+    def test_multiple_distinct_non_us_isins_are_ambiguous(self):
+        raw, positions, exceptions = example("GB0002634946",
+                                        extra='<isin value="US0378331005"/>')
+        result = review_source(raw, positions, exceptions, "a", "b"*64,
+                               "2024-11-29", "2024-12-31")
+        self.assertEqual(result[0]["review_status"], "ambiguous-original-valid-isins")
+        self.assertIsNone(result[0]["structural_us_isin_cusip_candidate"])
+
     def test_other_description_is_literal_and_names_are_never_identifiers(self):
         node = ET.fromstring("""<invstOrSec><name>US0378331005</name>
           <identifiers><other otherDesc="ISIN" value="US0378331005"/>

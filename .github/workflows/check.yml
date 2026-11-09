@@ -33,6 +33,7 @@ jobs:
       - run: python scripts/historical_priority_vendor_queue.py --template out/historical-priority-vendor-requests-v1.csv --summary out/historical-priority-vendor-requests-v1.json --exceptions out/historical-priority-cusip-exceptions-v1.csv
       - run: python scripts/historical_spy_exception_classification.py --output out/historical-sec-cusip-exception-review-v1.json --csv out/historical-sec-cusip-exception-review-v1.csv
       - run: python scripts/historical_sec_alternate_identity.py --output out/historical-sec-alternate-identity-v1.json --csv out/historical-sec-alternate-identity-v1.csv
+      - run: python scripts/historical_foreign_isin_requests.py --output out/historical-foreign-isin-requests-v1.json --csv out/historical-foreign-isin-requests-v1.csv --review out/historical-foreign-isin-unresolved-v1.csv
       - run: python scripts/historical_vendor_identity.py --template out/historical-vendor-identity-template.csv
       - run: python scripts/historical_parameter_audit.py
       - run: python scripts/archived_ewma_independent_replay.py --output out/archived-ewma-independent-replay-v1.json
@@ -63,6 +64,14 @@ jobs:
         with:
           name: historical-vendor-identity-template
           path: out/historical-vendor-identity-template.csv
+          retention-days: 30
+      - uses: actions/upload-artifact@v4
+        with:
+          name: historical-foreign-isin-requests
+          path: |
+            out/historical-foreign-isin-requests-v1.json
+            out/historical-foreign-isin-requests-v1.csv
+            out/historical-foreign-isin-unresolved-v1.csv
           retention-days: 30
       - uses: actions/upload-artifact@v4
         with:
