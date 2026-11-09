@@ -33,3 +33,9 @@ python scripts/historical_identity_cross_namespace_gate.py \
 El reporte privado contiene trazabilidad de posiciones y claves de proveedor para investigar colisiones. Ambas rutas son obligatorias para una conciliación conjunta; pasar solo una se rechaza. Los directorios `input/` y `out/` están ignorados por Git. El workflow CI ejecuta **solo el modo sin exportaciones privadas** y publica el resumen sin IDs de proveedor.
 
 **Pendiente para H1.2:** recibir fuentes históricas originales, resolver efectividad temporal, identificadores, clases de acción, moneda/FX, cierres de negociación, dividendos, splits, delistings y naturaleza exacta de las 26 posiciones extranjeras. Incluso la ausencia de colisiones no certifica el universo integral ni la capacidad predictiva.
+
+## Comprobación sobre la fuente original
+
+El commit [`4b14f73`](https://github.com/Hardnyx/Trading/commit/4b14f73227bbf93b0668bfb201c559154b3b8c2d) pasó la [CI 42562653527](https://github.com/Hardnyx/Trading/actions/runs/42562653527) y el [despliegue 42562653244](https://github.com/Hardnyx/Trading/actions/runs/42562653244). Se aprobaron **355 pruebas Python** y se generó el contrato público sobre **504 posiciones positivas de SPY**, distribuidas en **478 con CUSIP válido** y **26 con ISIN extranjero original**. Se leyeron **0 filas de proveedor**; las colisiones verificadas en tests son sintéticas y no hay resultados de conciliación de un proveedor real.
+
+La ausencia de colisiones observadas **no está acreditada** hasta recibir ambos extractos reales. El control impide doble atribución cuando existan, pero no resuelve por sí solo la reconstrucción del universo histórico ni aporta nuevas observaciones de precios.
