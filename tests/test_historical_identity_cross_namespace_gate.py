@@ -157,6 +157,18 @@ class CrossNamespaceTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "positions or weights"):
             combine(original, foreign, c, f)
 
+
+    def test_cusip_and_foreign_keys_retain_their_original_vendor_currency(self):
+        original, foreign = fixtures()
+        report = combine(original, foreign, *reports(original, foreign))
+        self.assertEqual(report["positions"][0]["candidate_security_key"]["quote_currency"],
+                         "USD")
+        self.assertEqual(report["positions"][2]["candidate_security_key"]["quote_currency"],
+                         "GBP")
+        self.assertEqual(report["positions"][2]["candidate_security_key"]["exchange_mic"],
+                         "XLON")
+        self.assertFalse(report["historical_prices_certified"])
+
     def test_original_archived_sec_template_reconciles_without_vendor(self):
         from scripts.historical_identity_requests import build_requests
         from scripts.historical_foreign_isin_requests import build_requests as foreign_requests

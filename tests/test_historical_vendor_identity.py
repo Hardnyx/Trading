@@ -60,6 +60,7 @@ class VendorIdentityTests(unittest.TestCase):
         self.assertEqual(report["counts"], {
             "no-provider-evidence": 1, "retrospective-identity-candidate": 1})
         self.assertEqual(report["positions"][0]["candidate_security_key"]["namespace"], "FIGI")
+        self.assertEqual(report["positions"][0]["candidate_security_key"]["quote_currency"], "USD")
         self.assertIsNone(report["positions"][1]["candidate_security_key"])
         self.assertFalse(report["historical_public_availability_certified"])
         self.assertFalse(report["full_engine_replay_ready"])

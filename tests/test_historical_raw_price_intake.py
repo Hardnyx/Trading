@@ -27,7 +27,8 @@ def identity_report():
              "cross_source_status": "retrospective-cross-source-candidate",
              "candidate_security_key": {
                  "namespace": "FIGI", "provider_instrument_id": "BBG001",
-                 "exchange_mic": "XNAS", "security_type": "COMMON_STOCK"},
+                 "exchange_mic": "XNAS", "security_type": "COMMON_STOCK",
+                 "quote_currency": "USD"},
              "historical_price_vintage_verified": False, "full_engine_eligible": False},
             {"source_position": 1, "source_spy_weight": .35,
              "cross_source_status": "retrospective-cross-source-candidate",
@@ -203,6 +204,46 @@ class HistoricalRawPriceIntakeTests(unittest.TestCase):
             "positions"][0]["raw_bar_sha256"],
             assess_prices(identity_report(), newer, [], "a"*64)[
                 "positions"][0]["raw_bar_sha256"])
+
+
+    def test_missing_quote_currency_fails_closed_instead_of_guessing_usd(self):
+        from copy import deepcopy
+        report = identity_report()
+        del report["positions"][0]["candidate_security_key"]["quote_currency"]
+        with self.assertRaisesRegex(ValueError, "quote currency"):
+            candidate_requests(report)
+        report["positions"][0]["candidate_security_key"]["quote_currency"] = ""
+        with self.assertRaisesRegex(ValueError, "quote currency"):
+            candidate_requests(report)
+        report["positions"][0]["candidate_security_key"]["quote_currency"] = "usd"
+        with self.assertRaisesRegex(ValueError, "quote currency"):
+            candidate_requests(report)
+
+    def test_actual_cusip_and_foreign_isin_reconciliation_preserves_both_currencies(self):
+        from tests.test_historical_identity_cross_namespace_gate import (
+            fixtures, reports,
+        )
+        from scripts.historical_identity_cross_namespace_gate import combine
+        original, foreign = fixtures()
+        cross = combine(original, foreign, *reports(original, foreign))
+        queries = candidate_requests(cross)
+        self.assertEqual(len(queries), 2)
+        by_namespace = {
+            (row["id_namespace"], row["provider_instrument_id"]): row
+            for row in queries
+        }
+        self.assertEqual(by_namespace[("FIGI", "GLOBAL-ID-1")]["quote_currency"], "USD")
+        self.assertEqual(by_namespace[("FIGI", "GLOBAL-ID-2")]["quote_currency"], "GBP")
+        self.assertEqual(by_namespace[("FIGI", "GLOBAL-ID-2")]["exchange_mic"], "XLON")
+        foreign_bar = parse_bars(csv_bytes([row(
+            provider_instrument_id="GLOBAL-ID-2", exchange_mic="XLON",
+            quote_currency="GBP")]), "2024-12-31", "2024-12-31")
+        report = assess_prices(cross, foreign_bar, [], "a"*64)
+        self.assertEqual(report["raw_price_rows"], 1)
+        self.assertFalse(report["original_publication_vintages_verified"])
+        with self.assertRaisesRegex(ValueError, "currency"):
+            assess_prices(cross, [{**foreign_bar[0], "quote_currency": "USD"}],
+                          [], "a"*64)
 
     def test_public_sec_study_contract_contains_no_private_price_keys(self):
         from scripts.historical_identity_requests import build_requests

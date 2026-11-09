@@ -107,7 +107,7 @@ def candidate_requests(cross):
                 "Only unpromoted cross-source identity candidates may be priced")
         namespace, native, mic = (key["namespace"], key["provider_instrument_id"],
                                   key["exchange_mic"])
-        currency = key.get("quote_currency", "USD")
+        currency = key.get("quote_currency")
         require(all(isinstance(x, str) and x for x in (namespace, native, mic, currency)) and
                 re.fullmatch(r"[A-Z]{3}", currency) is not None and
                 re.fullmatch(r"[A-Z0-9]{4}", mic) is not None,

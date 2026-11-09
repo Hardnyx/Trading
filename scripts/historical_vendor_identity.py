@@ -241,12 +241,16 @@ def reconcile(requests, rows, provenance, manifest_hash):
             state = row_state(row, cut)
             if state != "retrospective-identity-candidate":
                 excluded[state] += 1
+        # Preserve the original vendor quotation currency in the security key.
+        # Row eligibility currently restricts this CUSIP route to USD, but
+        # downstream consumers must not invent that field when it is absent.
         keys = {(r["id_namespace"], r["provider_instrument_id"],
-                 r["exchange_mic"], r["security_type"]) for r in active}
+                 r["exchange_mic"], r["security_type"], r["currency"])
+                for r in active}
         candidates[cusip] = (keys, active)
     reverse = defaultdict(set)
     for cusip, (keys, _) in candidates.items():
-        for namespace, native, _, _ in keys:
+        for namespace, native, _, _, _ in keys:
             reverse[(namespace, native)].add(cusip)
     bindings = []
     weights = Counter()
@@ -260,7 +264,8 @@ def reconcile(requests, rows, provenance, manifest_hash):
             status = "no-temporally-admissible-identity"
         elif len(keys) > 1:
             status = "conflicting-provider-identities"
-        elif any(len(reverse[(namespace, native)]) > 1 for namespace, native, _, _ in keys):
+        elif any(len(reverse[(namespace, native)]) > 1
+                 for namespace, native, _, _, _ in keys):
             status = "provider-key-shared-by-multiple-cusips"
         else:
             status = "retrospective-identity-candidate"
@@ -269,7 +274,8 @@ def reconcile(requests, rows, provenance, manifest_hash):
         selected = next(iter(keys)) if status == "retrospective-identity-candidate" else None
         matched = [row for row in evidence if
                    (row["id_namespace"], row["provider_instrument_id"],
-                    row["exchange_mic"], row["security_type"]) == selected] if selected else []
+                    row["exchange_mic"], row["security_type"],
+                    row["currency"]) == selected] if selected else []
         bindings.append({
             "source_position": original_row["source_position"], "cusip": cusip,
             "weight": original_row["weight"],
@@ -278,6 +284,7 @@ def reconcile(requests, rows, provenance, manifest_hash):
             "candidate_security_key": {
                 "namespace": selected[0], "provider_instrument_id": selected[1],
                 "exchange_mic": selected[2], "security_type": selected[3],
+                "quote_currency": selected[4],
             } if selected else None,
             "source_hashes": sorted({r["_source_sha256"] for r in matched}),
             "historical_availability_certified": False,

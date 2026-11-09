@@ -58,3 +58,7 @@ El commit [`6052f90`](https://github.com/Hardnyx/Trading/commit/6052f9064894ccbb
 ## Integridad de los valores brutos en la conciliación
 
 Cada entrada privada de seguridad ahora contiene `raw_bar_sha256`, calculado sobre **todas las barras ordenadas por sesión**, con su cierre, fecha de registro, moneda y plaza. Es distinto del SHA256 del CSV original: el primero fija el subconjunto de observaciones por identidad y el segundo preserva el archivo fuente. Dos reportes con fechas y recuentos idénticos pero precios o fechas declaradas de conocimiento distintos **no pueden tener el mismo recibo**. El cálculo es estable ante cambios de orden de las filas de la exportación y no certifica por sí mismo la autenticidad del proveedor.
+
+## Moneda original vinculada a la identidad
+
+La solicitud privada de cierres exige `quote_currency` explícito en el identificador permanente reconciliado. El importador **rechaza el campo ausente**: no sustituye por USD aunque la ruta CUSIP actualmente solo acepte registros estadounidenses cotizados en USD. La ruta ISIN extranjero conserva la moneda original declarada por el proveedor (por ejemplo GBP), que debe coincidir con el CSV de precios y con la plaza MIC. No se convierte GBP a USD ni se infiere un tipo de cambio histórico o una ejecución estadounidense. La prueba conjunta CUSIP/ISIN utiliza filas sintéticas de proveedor para verificar ambos recorridos.

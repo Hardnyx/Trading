@@ -64,3 +64,7 @@ La conciliación produce cada posición con estado explícito, fuentes con SHA25
 El workflow de checks genera solo la plantilla pública SEC como artefacto de investigación. Las pruebas usan datos sintéticos: **no aportan observaciones nuevas del mercado ni información privada**.
 
 **Integridad del CUSIP:** el importador comprueba el noveno carácter de control (módulo 10, ANSI X9.6) además del formato del identificador, incluyendo las codificaciones `*`, `@` y `#`. Un CUSIP con dígito de control incorrecto se rechaza antes de intentar cualquier vínculo con un instrumento de mercado. La verificación del dígito no autentica al proveedor ni certifica que ese instrumento fuera negociable en la fecha.
+
+## Transmisión de la moneda al importador de precios
+
+El campo `currency` del extracto CUSIP ahora se conserva explícitamente como `candidate_security_key.quote_currency` en el reporte de identidad. Esta ruta sigue rechazando como candidatos los valores no denominados en USD; el contrato de precios **nunca inventa la moneda** cuando falta el dato. Las monedas extranjeras continúan por el importador ISIN independiente, sin certificar FX ni negociabilidad en dólares.
