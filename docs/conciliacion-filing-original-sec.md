@@ -38,3 +38,7 @@ El informe mantiene `original_filing_first_publication_independently_verified=fa
 ## Primera fuente real localizada para adquisición
 
 Se consultó el [índice original SEC de Microsoft, accession `0000950170-24-118967`](https://www.sec.gov/Archives/edgar/data/789019/000095017024118967/0000950170-24-118967-index.html), correspondiente al 10-Q presentado **30-oct-2024, 16:07:17 hora de Nueva York**, periodo de reporte finalizado 30-sep-2024. El índice referencia el `msft-20240930.htm` iXBRL, el `msft-20240930_htm.xml` XBRL derivado y el archivo completo `0000950170-24-118967.txt`. La [ficha de adquisición](../data/historical/sec-first-cut-original-source-leads-v1.json) conserva estos enlaces, el tamaño que muestra el índice y las banderas explícitas de ausencia de bytes/hashes. Una hora de aceptación anterior al corte de investigación no certifica por sí sola disponibilidad verificable del documento exacto, cifras PIT, identidad del activo ni aptitud de una cuenta histórica. No se importaron datos reales al motor ni se alteró el contador de cortes admitidos.
+
+## Adquisición automatizable sin Work
+
+La [guía de adquisición local](adquisicion-originales-sec.md) proporciona un cliente de descarga únicamente para accession previamente registrado en el índice oficial y genera un recibo SHA-256 en `out/` después de verificar el `SEC-HEADER`. **No descarga datos en GitHub CI** ni declara primera publicación histórica. Se requiere un identificador de contacto real en `SEC_USER_AGENT` al ejecutarlo localmente.
