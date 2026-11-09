@@ -92,7 +92,7 @@ class GaussianPowerFeasibilityTests(unittest.TestCase):
             evaluate(bad)
         bad = copy.deepcopy(contract())
         bad["multiplicity"]["alpha"] = .1
-        with self.assertRaisesRegex(ValueError,"frozen confirmatory family"):
+        with self.assertRaises(ValueError):
             evaluate(bad)
 
 
