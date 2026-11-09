@@ -57,7 +57,8 @@ def valid_cusip(cusip):
             ord(char) - 55 if "A" <= char <= "Z" else special[char])
         weighted = value * (2 if position % 2 else 1)
         total += weighted // 10 + weighted % 10
-    return (10 - total % 10) % 10 == int(cusip[-1])
+    # SEC may publish the all-zero placeholder; it is not a usable security ID.
+    return cusip != "000000000" and (10 - total % 10) % 10 == int(cusip[-1])
 
 
 def request_hash(requests):

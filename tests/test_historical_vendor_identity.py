@@ -97,6 +97,7 @@ class VendorIdentityTests(unittest.TestCase):
         self.assertFalse(valid_cusip("037833101"))
         self.assertFalse(valid_cusip("594918105"))
         self.assertFalse(valid_cusip("03783310O"))
+        self.assertFalse(valid_cusip("000000000"))
         with self.assertRaisesRegex(ValueError, "check digit"):
             parse_export(csv_bytes([example(cusip="037833101")]), "2024-12-31")
 

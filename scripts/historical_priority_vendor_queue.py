@@ -115,14 +115,30 @@ def build_queue(requests, membership):
             "public_available_after_day": origin["available_after_day"],
             "decision_cut": cut,
         })
+    # Invalid/missing original CUSIPs remain SEC reconciliation exceptions,
+    # not vendor IDs inferred from ticker strings or the current catalogue.
+    exceptions = [{
+        "source_position": position,
+        "cusip_as_reported": source["cusip"],
+        "reported_spy_weight": source["weight"],
+        "original_ticker_hint": source["original_ticker_observation"] or "",
+        "spy_accession": origin["spy_accession"],
+        "decision_cut": cut,
+        "review_reason": "invalid-or-missing-original-sec-cusip",
+    } for position, source in sorted(originals.items())
+        if not valid_cusip(source["cusip"])]
     excluded_invalid = overlap["source_invalid_cusip_positions_not_covered_by_pilot"]
-    require(len(seen_positions) + excluded_invalid ==
+    require(len(exceptions) == excluded_invalid and
+            seen_positions.isdisjoint(e["source_position"] for e in exceptions) and
+            len(seen_positions) + len(exceptions) ==
             overlap["source_positive_positions_not_covered_by_pilot"],
             "Historical SPY omitted position count does not reconcile")
     selected_weight = sum(r["reported_spy_weight"] for r in rows)
+    exception_weight = sum(e["reported_spy_weight"] for e in exceptions)
     omitted_total = overlap["source_spy_weight_not_covered_by_pilot"]
-    require(selected_weight <= omitted_total + 1e-10 and
-            selected_weight >= -1e-10, "Historical missing-SPY weight mismatch")
+    require(close(selected_weight + exception_weight, omitted_total) and
+            selected_weight >= -1e-10 and exception_weight >= 0,
+            "Historical missing-SPY weight mismatch")
     return {
         "protocol": PROTOCOL, "cut": cut,
         "source_market_commit": requests["source_market_commit"],
@@ -135,9 +151,10 @@ def build_queue(requests, membership):
         "source_positive_spy_weight": requests["positive_spy_weight"],
         "omitted_source_spy_weight": omitted_total,
         "omitted_valid_cusip_weight": selected_weight,
-        "omitted_invalid_or_missing_cusip_weight": omitted_total-selected_weight,
+        "omitted_invalid_or_missing_cusip_weight": exception_weight,
         "omitted_invalid_or_missing_cusip_positions": excluded_invalid,
         "priority_requests": rows,
+        "invalid_cusip_review_cases": exceptions,
         "ordering": "descending-original-SPY-position-weight-then-CUSIP",
         "vendor_identifiers_received": False,
         "historical_security_master_certified": False,
@@ -155,6 +172,21 @@ def template_csv(queue):
         writer.writerow({**item,
                          "original_ticker_hints": ";".join(item["original_ticker_hints"]),
                          "source_positions": ";".join(str(x) for x in item["source_positions"])})
+    return output.getvalue()
+
+
+EXCEPTION_COLUMNS = (
+    "source_position", "cusip_as_reported", "reported_spy_weight",
+    "original_ticker_hint", "spy_accession", "decision_cut", "review_reason",
+)
+
+
+def exception_csv(queue):
+    """A separate original-SEC correction request, never a security crosswalk."""
+    output = io.StringIO(newline="")
+    writer = csv.DictWriter(output, fieldnames=EXCEPTION_COLUMNS, lineterminator="\n")
+    writer.writeheader()
+    writer.writerows(queue["invalid_cusip_review_cases"])
     return output.getvalue()
 
 
@@ -205,16 +237,21 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--template", default="out/historical-priority-vendor-requests-v1.csv")
     parser.add_argument("--summary", default="out/historical-priority-vendor-requests-v1.json")
+    parser.add_argument("--exceptions", default="out/historical-priority-cusip-exceptions-v1.csv")
     parser.add_argument("--evidence-dir", help="Private export directory for the existing vendor contract")
     parser.add_argument("--local-report", default="out/historical-priority-vendor-reconciliation-v1.json")
     args = parser.parse_args(argv)
     requests = build_requests(ROOT)
     membership = audit_membership(ROOT)
     queue = build_queue(requests, membership)
-    for name, data in [(args.template, template_csv(queue)),
-                       (args.summary, json.dumps({k: v for k, v in queue.items()
-                                                  if k != "priority_requests"},
-                                                 indent=2) + "\n")]:
+    for name, data in [
+        (args.template, template_csv(queue)),
+        (args.exceptions, exception_csv(queue)),
+        (args.summary, json.dumps({
+            k: v for k, v in queue.items()
+            if k not in ("priority_requests", "invalid_cusip_review_cases")
+        }, indent=2) + "\n"),
+    ]:
         output = Path(name)
         output.parent.mkdir(parents=True, exist_ok=True)
         output.write_text(data, encoding="utf-8")
@@ -232,6 +269,10 @@ def main(argv=None):
         print(json.dumps({
             "priority_cusips": queue["priority_cusips"],
             "omitted_valid_cusip_weight": round(queue["omitted_valid_cusip_weight"], 8),
+            "omitted_invalid_or_missing_cusip_weight":
+                round(queue["omitted_invalid_or_missing_cusip_weight"], 8),
+            "invalid_or_missing_cusip_positions":
+                queue["omitted_invalid_or_missing_cusip_positions"],
             "vendor_identifiers_received": False,
             "full_engine_eligible_cuts": 0,
         }, sort_keys=True))

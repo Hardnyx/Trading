@@ -2,7 +2,7 @@
 
 **Hito:** H1.2, recuperación de fuentes para el corte de investigación 31-dic-2024. **Alcance:** 351 CUSIP válidos que figuran en el informe SEC público de SPY y están ausentes de la selección retrospectiva del piloto. No son recomendaciones ni un universo invertible verificado.
 
-La [auditoría de pertenencia](pertenencia-historica-spy.md) cuantificó una brecha de **0,38488811 del NAV original de SPY**. El nuevo generador `scripts/historical_priority_vendor_queue.py` vincula cada CUSIP omitido con las **posiciones originales y sus hashes documentales**, preservando la solicitud completa de 504 posiciones de `historical_vendor_identity.py`.
+La [auditoría de pertenencia](pertenencia-historica-spy.md) cuantificó una brecha de **0,38488811 del NAV original de SPY**. De esta, **0,35455637** corresponde a posiciones con CUSIP válido ausentes del piloto y **0,03033174** corresponde a posiciones con CUSIP original inválido o ausente. Esta descomposición surgió de la prueba sobre archivos SEC reales; no puede sustituirse por una equivalencia ficticia entre el total omitido y los 351 CUSIP. El nuevo generador `scripts/historical_priority_vendor_queue.py` vincula cada CUSIP omitido con las **posiciones originales y sus hashes documentales**, preservando la solicitud completa de 504 posiciones de `historical_vendor_identity.py`.
 
 ## Exportar la cola de investigación
 
@@ -12,7 +12,9 @@ python scripts/historical_priority_vendor_queue.py \
   --summary out/historical-priority-vendor-requests-v1.json
 ```
 
-El CSV presenta prioridad por peso documentado de SPY, CUSIP original, observaciones literales de ticker como **pistas no vinculantes**, posiciones originales, accession, periodo de la declaración, fecha de disponibilidad conservadora y fecha de decisión. No contiene IDs de proveedor ni precios. El JSON de resumen conserva los hashes de procedencia y el total conciliado de peso. CI genera ambos archivos públicos como artefactos, pero **jamás publica exportaciones privadas**.
+El CSV principal contiene únicamente **351 CUSIP válidos** con prioridad por peso documentado de SPY, CUSIP original, observaciones literales de ticker como **pistas no vinculantes**, posiciones originales, accession, periodo de la declaración, fecha de disponibilidad conservadora y fecha de decisión. No contiene IDs de proveedor ni precios. El JSON de resumen conserva los hashes de procedencia y el total conciliado de peso. CI genera ambos archivos públicos como artefactos, pero **jamás publica exportaciones privadas**.
+
+La salida adicional `out/historical-priority-cusip-exceptions-v1.csv` contiene las posiciones SEC con **CUSIP original inválido o ausente**, peso, accession y número de fila para corregir la documentación antes de pedir un enlace de precios. La fecha, pesos y nombres no se completan por inferencia. Este archivo es una solicitud de revisión de fuente, no una petición de mapeo al security master.
 
 El orden de prioridad **no** utiliza rendimientos realizados, sobrevida del emisor, éxito predictivo ni composición actual. No modifica el protocolo, el motor, los escenarios Monte Carlo ni la muestra confirmatoria. La pertenencia a SPY por sí sola no basta para aprobar una acción.
 
@@ -34,6 +36,6 @@ La conciliación reaprovecha los controles de SHA256, vigencia, moneda, MIC, tip
 
 ## Criterio de aceptación y límites
 
-**Entrega técnica:** reproducir una solicitud priorizada, con pesos y posiciones que cuadren exactamente con SEC, enlazar cada fila con el manifiesto congelado, ofrecer una conciliación reproducible de futuros extractos y probar rechazos de alteraciones y ambigüedades.
+**Entrega técnica:** reproducir una solicitud priorizada y otra de excepciones de CUSIP, con pesos y posiciones que cuadren exactamente con SEC, enlazar cada fila con el manifiesto congelado, ofrecer una conciliación reproducible de futuros extractos y probar rechazos de alteraciones y ambigüedades.
 
 **H1.2 sigue bloqueado:** no existen todavía respuestas originales de un proveedor que certifiquen las 351 identidades y su historia. Tampoco está demostrado que este conjunto sea todo el universo estadounidense elegible, ni que cada posición del informe continuara vigente al cierre de 2024. El primer corte completo sigue inadmisible y la capacidad predictiva no está validada.

@@ -5,7 +5,7 @@ import io
 import unittest
 
 from scripts.historical_priority_vendor_queue import (
-    build_queue, summarize_reconciliation, template_csv, PROTOCOL,
+    build_queue, summarize_reconciliation, template_csv, exception_csv, PROTOCOL,
 )
 from scripts.historical_vendor_identity import request_hash
 
@@ -87,6 +87,37 @@ class PriorityQueueTests(unittest.TestCase):
         self.assertEqual(rows[0]["source_positions"], "1;2")
         self.assertNotIn("provider_instrument_id", rows[0])
 
+    def test_invalid_original_cusip_has_separate_review_and_reconciled_weight(self):
+        requests, membership = synthetic()
+        requests["requests"].append({
+            "source_position": 3, "cusip": "000000000", "weight": .05,
+            "original_ticker_observation": None, "vendor_instrument_id": None,
+            "vendor_price_series_verified": False, "original_price_vintage_verified": False,
+        })
+        requests["positive_spy_weight"] = 1.05
+        membership["cut_summaries"][0]["positive_positions"] = 4
+        overlap = membership["first_cut_pilot_ticker_overlap"]
+        overlap["historical_positive_spy_weight"] = 1.05
+        overlap["source_spy_weight_not_covered_by_pilot"] = .45
+        overlap["source_positive_positions_not_covered_by_pilot"] = 3
+        overlap["source_invalid_cusip_positions_not_covered_by_pilot"] = 1
+        queue = build_queue(requests, membership)
+        self.assertEqual(queue["priority_cusips"], 1)
+        self.assertAlmostEqual(queue["omitted_source_spy_weight"], .45)
+        self.assertAlmostEqual(queue["omitted_valid_cusip_weight"], .4)
+        self.assertAlmostEqual(queue["omitted_invalid_or_missing_cusip_weight"], .05)
+        self.assertEqual(queue["invalid_cusip_review_cases"][0]["source_position"], 3)
+        self.assertEqual(queue["invalid_cusip_review_cases"][0]["cusip_as_reported"], "000000000")
+        exception_rows = list(csv.DictReader(io.StringIO(exception_csv(queue))))
+        self.assertEqual(len(exception_rows), 1)
+        self.assertEqual(exception_rows[0]["review_reason"], "invalid-or-missing-original-sec-cusip")
+        self.assertNotIn("provider_instrument_id", exception_rows[0])
+
+        # The audit must not paper over a false source weight by subtraction.
+        overlap["source_spy_weight_not_covered_by_pilot"] = .46
+        with self.assertRaisesRegex(ValueError, "weight mismatch"):
+            build_queue(requests, membership)
+
     def test_source_hash_and_filing_clocks_cannot_be_substituted(self):
         request, membership = synthetic()
         membership["source_provenance"]["provider_manifest_sha256"] = "e"*64
@@ -162,7 +193,14 @@ class PriorityQueueTests(unittest.TestCase):
         self.assertEqual(queue["cut"], "2024-12-31")
         self.assertEqual(queue["priority_cusips"], 351)
         self.assertAlmostEqual(queue["omitted_source_spy_weight"], .38488811, places=7)
-        self.assertAlmostEqual(queue["omitted_valid_cusip_weight"], .38488811, places=7)
+        self.assertAlmostEqual(queue["omitted_valid_cusip_weight"], .35455637, places=7)
+        self.assertAlmostEqual(queue["omitted_invalid_or_missing_cusip_weight"], .03033174, places=7)
+        self.assertGreater(queue["omitted_invalid_or_missing_cusip_positions"], 0)
+        self.assertEqual(len(queue["invalid_cusip_review_cases"]),
+                         queue["omitted_invalid_or_missing_cusip_positions"])
+        self.assertAlmostEqual(queue["omitted_valid_cusip_weight"] +
+                               queue["omitted_invalid_or_missing_cusip_weight"],
+                               queue["omitted_source_spy_weight"], places=10)
         self.assertFalse(queue["vendor_identifiers_received"])
         self.assertEqual(queue["full_engine_eligible_cuts"], 0)
 
