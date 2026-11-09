@@ -30,3 +30,9 @@ El JSON de resultado se publica como artefacto `confirmatory-calibration-gate`. 
 **Límite metodológico:** demostrar cobertura bajo una rejilla sintética nunca prueba control fuerte para todos los procesos posibles ni acredita datos point-in-time, potencia económica, ventaja predictiva o ausencia de sobreajuste. v2 permanece congelado e inactivo. Un eventual método v3 necesitaría supuestos justificables, evaluación prospectiva independiente y nuevo registro antes de observar confirmación. Esta auditoría formaliza la evaluación del método anterior, no elige su reemplazo.
 
 **Referencia de cálculo:** [NIST, exact binomial confidence limits](https://itl.nist.gov/div898/software/dataplot/refman2/auxillar/exacbici.htm).
+
+## Resultado confirmado en CI, 9-nov-2026 UTC
+
+El [commit `07b9e27`](https://github.com/Hardnyx/Trading/commit/07b9e27dcf43f0d4a7bf689a709cb2bc43ac954c) aprobó la [CI 42665501010](https://github.com/Hardnyx/Trading/actions/runs/42665501010) y [Pages 42665500605](https://github.com/Hardnyx/Trading/actions/runs/42665500605). Se ejecutaron **419 pruebas Python** correctas y se publicó el artefacto `confirmatory-calibration-gate`. El resumen JSON señala `synthetic_calibration_result=excess-rejection-detected`: **16 de 24 escenarios** tienen límites inferiores simultáneos mayores que el 5 % nominal, según el presupuesto de error y la rejilla registrados. `formal_inference_enabled=false`, `real_market_calibration_certified=false` y `candidate_method_selection_permitted=false` permanecen en el resultado.
+
+La conclusión se limita a los procesos sintéticos y sus réplicas. No corrige el bootstrap registrado ni constituye una propuesta v3 aprobada. Quedan pendientes supuestos justificables para series reales, potencia respecto de efectos mínimos económicamente relevantes y confirmación futura independiente.
