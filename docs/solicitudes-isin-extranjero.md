@@ -78,3 +78,9 @@ python scripts/historical_foreign_isin_vendor_identity.py \
 Todo extracto licenciado y el informe detallado quedan **locales** bajo `input/` y `out/` ignorados por Git. CI publica **solo el manifiesto vacío** unido al hash del origen SEC. Aun una coincidencia inequívoca lleva el estado `retrospective-foreign-identity-candidate`, sin certificación de precio, eventos societarios, moneda, vigencia probada por tercero ni elegibilidad para replay.
 
 **Aceptación técnica:** ejecutar pruebas adversariales con exportaciones sintéticas y generar el manifiesto vacío cotejando 26 ISIN del original SEC. **H1.2 sigue bloqueado** hasta recibir e investigar datos originales de proveedor, resolver identidades y disponibilidad histórica de precios y definir qué títulos extranjeros/ADR cumplen criterios de negociación en el universo objetivo.
+
+## Estado comprobado de la ingesta
+
+El commit [`832f490`](https://github.com/Hardnyx/Trading/commit/832f490560666840a60da48fc7b5b1663dee7422) pasó [GitHub Actions 42552606975](https://github.com/Hardnyx/Trading/actions/runs/42552606975) y [GitHub Pages 42552607033](https://github.com/Hardnyx/Trading/actions/runs/42552607033) el 9-nov-2026 UTC. La CI ejecutó **348 pruebas Python**, incluidas pruebas con exportaciones sintéticas, fechas incompatibles, hashes adulterados, IDs inestables y respuestas discrepantes. El generador volvió a leer las 26 solicitudes del origen SEC y produjo un **manifiesto vacío**, con **0 registros reales de proveedor**.
+
+No hay todavía ninguna identidad extranjera certificada, serie de cotizaciones verificable ni corte del motor integral admisible. **El cierre técnico del adaptador no debe interpretarse como avance medido de validación predictiva.**
