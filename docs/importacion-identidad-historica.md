@@ -80,3 +80,7 @@ El commit [`7d991f5`](https://github.com/Hardnyx/Trading/commit/7d991f51d0356020
 ## Solicitudes cerradas y segregación de proveedores
 
 La conciliación CUSIP rechaza expresamente cualquier respuesta para un CUSIP válido **no incluido** en las solicitudes congeladas originales, incluso si trae una clave nativa coincidente con una solicitud válida. Las coincidencias quedan asociadas al proveedor del extracto, y si dos proveedores generan claves candidatas para el mismo CUSIP se conserva el estado de conflicto, sin fusionarlas automáticamente. Una misma clave `(id_namespace, provider_instrument_id)` asignada a **dos CUSIP originales distintos** también se pone en cuarentena, aunque provengan de exportaciones de dos proveedores. Se mantiene el hash de los archivos originales y las marcas de disponibilidad histórica sin certificar.
+
+## Verificación sobre respuestas cerradas
+
+El commit [`b9dbd0a`](https://github.com/Hardnyx/Trading/commit/b9dbd0a061f6d27ac4ab3974b1ffa569cdf00c9f) superó la [CI 42615902722](https://github.com/Hardnyx/Trading/actions/runs/42615902722) con **394 pruebas Python**, así como el [despliegue Pages 42615902720](https://github.com/Hardnyx/Trading/actions/runs/42615902720). Las pruebas rechazan CUSIP válidos no solicitados, separan respuestas de proveedores distintos y evitan asignar la misma clave nativa a dos CUSIP diferentes. La ejecución pública reabrió 504 posiciones SEC positivas, con 0 filas de proveedor; los casos de colisión son sintéticos.

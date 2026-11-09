@@ -96,3 +96,7 @@ La [CI 42614115839](https://github.com/Hardnyx/Trading/actions/runs/42614115839)
 ## Exclusividad entre orígenes de proveedor
 
 Dos ISIN originales distintos con el mismo identificador nativo y namespace se clasifican como conflicto **incluso si cada fila declara un proveedor diferente**. La conciliación conserva además el nombre del proveedor dentro de la clave candidata, en lugar de asumir que dos respuestas de orígenes distintos se corroboran automáticamente. El control es conservador y puede requerir investigar cambios de identificador legítimos; en ningún caso habilita por sí solo la inversión ni valida el precio histórico.
+
+## Verificación cruzada de orígenes
+
+La [CI 42615902722](https://github.com/Hardnyx/Trading/actions/runs/42615902722) aprobó **394 pruebas Python** para el commit [`b9dbd0a`](https://github.com/Hardnyx/Trading/commit/b9dbd0a061f6d27ac4ab3974b1ffa569cdf00c9f). Las pruebas adversariales incluyen una clave FIGI compartida entre dos ISIN distintos desde proveedores diferentes: ambos quedan sin candidato. La plantilla SEC conserva 26 ISIN extranjeros originales dentro de las 504 posiciones positivas, sin que se haya recibido ninguna respuesta comercial. No existe todavía prueba de disponibilidad histórica autenticada ni de universo completo.
