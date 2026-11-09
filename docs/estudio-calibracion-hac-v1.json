@@ -1,0 +1,97 @@
+{
+  "schema": "confirmatory-hac-independent-stress-design-v1",
+  "registered_on_utc": "2026-11-09",
+  "design_role": "exploratory-synthetic-precommitment-not-inference-registration",
+  "source_prospective_protocol": "docs/protocolo-confirmacion-integral-v2.json",
+  "source_prospective_study_status": "registered-methodology-inactive-confirmatory-inference",
+  "registration_base_commit": "ef0899c935197315a66b9341616b7d7bce20d0d8",
+  "real_market_data_permitted": false,
+  "trading_predictive_validation": "not-established",
+  "method": {
+    "name": "one-sided Bartlett HAC studentized mean with Gaussian asymptotic tail",
+    "lag_months": 12,
+    "lag_tuning_permitted": false,
+    "sample_mean_centering": true,
+    "autocovariance_divisor": "n",
+    "bartlett_weight": "1-k/(lag+1) for k=1,...,lag",
+    "test_statistic": "sqrt(n)*mean(effect)/sqrt(gamma_0+2*sum(bartlett_weight*gamma_k))",
+    "p_value": "scipy.stats.norm.sf(test_statistic)",
+    "nonpositive_or_nonfinite_lrv_p_value": 1,
+    "null_estimand": "mean_monthly_effect<=0",
+    "status": "research-candidate-not-validated-or-selected"
+  },
+  "multiplicity": {
+    "hypotheses": [
+      "return_mse:21",
+      "return_mse:63",
+      "return_mse:252",
+      "ranking_ic:21",
+      "ranking_ic:63",
+      "ranking_ic:252",
+      "net_economic_value:21"
+    ],
+    "alpha": 0.05,
+    "procedure": "Holm step-down on marginal p-values",
+    "true_null_indices_partial": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "shifted_false_null_indices_partial": [
+      4,
+      5,
+      6
+    ],
+    "shifted_effect_in_marginal_sd_units": 0.5
+  },
+  "synthetic_data": {
+    "monthly_counts": [
+      96,
+      192
+    ],
+    "ar1_phi": [
+      0,
+      0.3,
+      0.6,
+      0.85
+    ],
+    "cross_hypothesis_factor_correlations": [
+      0,
+      0.75
+    ],
+    "innovation_families": [
+      "gaussian",
+      "standardized_student_t_df5"
+    ],
+    "null_configurations": [
+      "global",
+      "partial"
+    ],
+    "autoregression_burn_in_months": 256,
+    "repetitions_per_scenario": 512,
+    "independent_simulation_seed": 20261112,
+    "scenario_count": 64,
+    "scenario_seed_policy": "sha256(seed|n|phi|rho|innovation|null) first 8 bytes",
+    "independent_repetitions_within_scenario": true,
+    "across_scenarios_independence_not_required_for_bonferroni": true
+  },
+  "calibration_evaluation": {
+    "nominal_familywise_error": 0.05,
+    "simultaneous_confidence": 0.95,
+    "interval_method": "Clopper-Pearson bilateral with Bonferroni across 64 synthetic scenarios",
+    "per_tail_probability": 0.000390625,
+    "excess_evidence_rule": "any simultaneous lower bound >0.05",
+    "grid_upper_bound_rule": "all simultaneous upper bounds <=0.05",
+    "interpretation": "simulation-specific exploratory diagnosis; never proof for unknown market DGP",
+    "candidate_approval_permitted": false,
+    "method_or_bandwidth_selection_by_inspected_results_permitted": false
+  },
+  "activation": {
+    "registered_v2_modified": false,
+    "confirmatory_collection_open": false,
+    "formal_inference_enabled": false,
+    "no_market_outcomes_read": true,
+    "new_version_and_independent_origin_cohort_required_for_any_future_change": true
+  }
+}
