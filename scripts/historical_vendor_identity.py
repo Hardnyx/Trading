@@ -207,6 +207,24 @@ def read_evidence(directory, requests, *, schema=SCHEMA, request_sha256=None,
     return records, provenance, sha256((root / "manifest.json").read_bytes())
 
 
+def effective_interval_state(row, cut):
+    """Check if a vendor identity was effective at both snapshot and decision cut.
+
+    Forward-effective identifiers in a declared earlier snapshot are not
+    eligible as retrospective matches, even when active at the decision cut.
+    No claimed snapshot proves independent historical publication.
+    """
+    if not row["valid_from"] or not row["valid_to"]:
+        return "incomplete-effective-interval"
+    if not row.get("record_as_of") or row["record_as_of"] > cut:
+        return "missing-or-future-record-as-of"
+    if not row["valid_from"] <= cut < row["valid_to"]:
+        return "not-effective-at-cut"
+    if row["valid_from"] > row["record_as_of"]:
+        return "identity-begins-after-declared-snapshot"
+    return None
+
+
 def row_state(row, cut):
     if not row["provider_instrument_id"]:
         return "missing-permanent-id"
@@ -216,10 +234,11 @@ def row_state(row, cut):
         return "ineligible-security-type"
     if not row["exchange_mic"]:
         return "missing-exchange"
-    if not row["valid_from"] or not row["valid_to"]:
+    interval = effective_interval_state(row, cut)
+    if interval == "incomplete-effective-interval":
         return "incomplete-identity-interval"
-    if not row["valid_from"] <= cut < row["valid_to"]:
-        return "not-effective-at-cut"
+    if interval is not None:
+        return interval
     return "retrospective-identity-candidate"
 
 

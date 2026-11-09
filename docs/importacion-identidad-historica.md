@@ -68,3 +68,7 @@ El workflow de checks genera solo la plantilla pública SEC como artefacto de in
 ## Transmisión de la moneda al importador de precios
 
 El campo `currency` del extracto CUSIP ahora se conserva explícitamente como `candidate_security_key.quote_currency` en el reporte de identidad. Esta ruta sigue rechazando como candidatos los valores no denominados en USD; el contrato de precios **nunca inventa la moneda** cuando falta el dato. Las monedas extranjeras continúan por el importador ISIN independiente, sin certificar FX ni negociabilidad en dólares.
+
+## Vigencia efectiva en la instantánea del proveedor
+
+El control temporal es común a CUSIP e ISIN: además de exigir `valid_from <= cut < valid_to`, requiere `valid_from <= record_as_of <= cut`. Una respuesta cuyo identificador aún **no era efectivo** en la fecha de la instantánea declarada queda identificada como `identity-begins-after-declared-snapshot`, aunque el instrumento ya estuviera vigente en el corte posterior. Una instantánea sin `record_as_of` o posterior al corte no produce candidato. Esta validación impide una forma concreta de anticipación de identificadores, sin demostrar autenticidad ni publicación contemporánea de la propia fuente.

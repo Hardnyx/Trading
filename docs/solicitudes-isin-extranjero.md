@@ -84,3 +84,7 @@ Todo extracto licenciado y el informe detallado quedan **locales** bajo `input/`
 El commit [`832f490`](https://github.com/Hardnyx/Trading/commit/832f490560666840a60da48fc7b5b1663dee7422) pasó [GitHub Actions 42552606975](https://github.com/Hardnyx/Trading/actions/runs/42552606975) y [GitHub Pages 42552607033](https://github.com/Hardnyx/Trading/actions/runs/42552607033) el 9-nov-2026 UTC. La CI ejecutó **348 pruebas Python**, incluidas pruebas con exportaciones sintéticas, fechas incompatibles, hashes adulterados, IDs inestables y respuestas discrepantes. El generador volvió a leer las 26 solicitudes del origen SEC y produjo un **manifiesto vacío**, con **0 registros reales de proveedor**.
 
 No hay todavía ninguna identidad extranjera certificada, serie de cotizaciones verificable ni corte del motor integral admisible. **El cierre técnico del adaptador no debe interpretarse como avance medido de validación predictiva.**
+
+## Contrato temporal común CUSIP/ISIN
+
+El importador de ISIN extranjero y el de CUSIP usan ahora la misma validación de intervalo efectivo y fecha declarada del proveedor. Una identidad que empieza después del `record_as_of` queda en cuarentena, aunque esté vigente al corte. Las pruebas incluyen **dos ISIN con dígito de control válido** y comprueban que una clave permanente reutilizada para dos ISIN originales no genera candidatos independientes. Las pruebas usan datos sintéticos y no sustituyen verificaciones de pertenencia histórica, proveedor, precios o FX.

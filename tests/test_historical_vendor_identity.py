@@ -90,6 +90,35 @@ class VendorIdentityTests(unittest.TestCase):
         self.assertEqual(report["excluded_row_reasons"]["not-effective-at-cut"], 2)
         self.assertEqual(report["counts"]["no-temporally-admissible-identity"], 1)
 
+
+    def test_forward_effective_vendor_snapshot_is_not_backfilled_at_cut(self):
+        source = example(valid_from="2024-12-01", record_as_of="2024-11-30")
+        parsed = parse_export(csv_bytes([source]), "2024-11-30")
+        self.assertEqual(row_state(parsed[0], "2024-12-31"),
+                         "identity-begins-after-declared-snapshot")
+        report = reconcile(request_bundle(), with_source(parsed), [], "b"*64)
+        self.assertEqual(report["counts"]["no-temporally-admissible-identity"], 1)
+        self.assertEqual(report["excluded_row_reasons"][
+            "identity-begins-after-declared-snapshot"], 1)
+        self.assertIsNone(report["positions"][0]["candidate_security_key"])
+        self.assertFalse(report["historical_public_availability_certified"])
+
+    def test_cusip_identity_temporal_boundaries_and_missing_record_date(self):
+        self.assertEqual(row_state(example(valid_from="2024-11-01",
+                                           record_as_of="2024-11-30"),
+                                   "2024-12-31"),
+                         "retrospective-identity-candidate")
+        self.assertEqual(row_state(example(valid_from="2024-12-01",
+                                           record_as_of="2024-12-01"),
+                                   "2024-12-31"),
+                         "retrospective-identity-candidate")
+        self.assertEqual(row_state(example(record_as_of="2025-01-01"),
+                                   "2024-12-31"),
+                         "missing-or-future-record-as-of")
+        self.assertEqual(row_state(example(record_as_of=""),
+                                   "2024-12-31"),
+                         "missing-or-future-record-as-of")
+
     def test_check_digit_rejects_well_formed_wrong_cusips(self):
         self.assertTrue(valid_cusip("037833100"))
         self.assertTrue(valid_cusip("594918104"))

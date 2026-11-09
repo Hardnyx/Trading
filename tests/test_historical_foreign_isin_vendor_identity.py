@@ -22,7 +22,7 @@ def request_bundle():
         "requests": [
             {"original_isin": "GB0002634946", "source_positions": [2, 5],
              "reported_spy_weight": .07},
-            {"original_isin": "US0378331005".replace("US", "GB"), "source_positions": [8],
+            {"original_isin": "GB0005405286", "source_positions": [8],
              "reported_spy_weight": .03},
         ],
         "foreign_isin_request_positions": 3,
@@ -80,6 +80,46 @@ class ForeignVendorIdentityTests(unittest.TestCase):
         self.assertEqual(report["positions"][0]["candidate_security_key"]["quote_currency"], "GBP")
         self.assertFalse(report["positions"][0]["historical_quote_currency_and_fx_verified"])
         self.assertFalse(report["production_eligible"])
+
+
+    def test_two_valid_distinct_isins_and_shared_native_key_are_separated(self):
+        from scripts.historical_sec_alternate_identity import isin_valid
+        first, second = "GB0002634946", "GB0005405286"
+        self.assertTrue(isin_valid(first))
+        self.assertTrue(isin_valid(second))
+        queue = request_bundle()
+        distinct = parse_foreign_export(raw_csv([
+            row(original_isin=first, native="VENDOR-001"),
+            row(original_isin=second, native="VENDOR-002"),
+        ]), "2024-12-31")
+        report = reconcile(queue, with_provenance(distinct), [], "b"*64)
+        self.assertEqual(report["counts_by_distinct_isin"],
+                         {"retrospective-foreign-identity-candidate": 2})
+        self.assertEqual(report["requested_source_positions"], 3)
+        self.assertEqual(len(report["positions"]), 2)
+        self.assertFalse(report["historical_security_master_certified"])
+
+        shared = parse_foreign_export(raw_csv([
+            row(original_isin=first, native="VENDOR-001"),
+            row(original_isin=second, native="VENDOR-001"),
+        ]), "2024-12-31")
+        collision = reconcile(queue, with_provenance(shared), [], "b"*64)
+        self.assertEqual(collision["counts_by_distinct_isin"],
+                         {"provider-key-shared-by-multiple-isins": 2})
+        self.assertTrue(all(p["candidate_security_key"] is None
+                            for p in collision["positions"]))
+
+    def test_forward_effective_isin_snapshot_is_rejected_on_same_rule_as_cusip(self):
+        queue = request_bundle()
+        parsed = parse_foreign_export(raw_csv([row(valid_from="2024-12-01",
+            record_as_of="2024-11-30")]), "2024-11-30")
+        self.assertEqual(foreign_state(parsed[0], "2024-12-31"),
+                         "identity-begins-after-declared-snapshot")
+        report = reconcile(queue, with_provenance(parsed), [], "b"*64)
+        self.assertEqual(report["excluded_row_reasons"][
+            "identity-begins-after-declared-snapshot"], 1)
+        self.assertIsNone(report["positions"][0]["candidate_security_key"])
+        self.assertEqual(report["full_engine_eligible_cuts"], 0)
 
     def test_original_isin_check_digit_rejects_bad_source(self):
         with self.assertRaisesRegex(ValueError, "check digit"):

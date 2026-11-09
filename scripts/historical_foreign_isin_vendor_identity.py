@@ -19,12 +19,16 @@ if __package__:
         audit as audit_alternates, isin_valid,
     )
     from .historical_vendor_identity import (
-        ALLOWED_TYPES, COLUMNS, parse_export, read_evidence,
+        ALLOWED_TYPES, COLUMNS, effective_interval_state, parse_export,
+        read_evidence,
     )
 else:
     from historical_foreign_isin_requests import ROOT, build_requests, request_hash
     from historical_sec_alternate_identity import audit as audit_alternates, isin_valid
-    from historical_vendor_identity import ALLOWED_TYPES, COLUMNS, parse_export, read_evidence
+    from historical_vendor_identity import (
+        ALLOWED_TYPES, COLUMNS, effective_interval_state, parse_export,
+        read_evidence,
+    )
 
 SCHEMA = "historical-foreign-isin-vendor-sources-v1"
 OUTPUT = "out/historical-foreign-isin-vendor-reconciliation-v1.json"
@@ -54,12 +58,9 @@ def foreign_state(row, cut):
         return "missing-quote-currency"
     if not row["exchange_mic"]:
         return "missing-exchange-mic"
-    if not row["valid_from"] or not row["valid_to"]:
-        return "incomplete-effective-interval"
-    if not row["valid_from"] <= cut < row["valid_to"]:
-        return "not-effective-at-cut"
-    if row["valid_from"] > row["record_as_of"]:
-        return "identity-begins-after-declared-snapshot"
+    interval = effective_interval_state(row, cut)
+    if interval is not None:
+        return interval
     return "retrospective-foreign-identity-candidate"
 
 
