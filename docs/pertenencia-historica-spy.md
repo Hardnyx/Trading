@@ -21,6 +21,18 @@ Para el primer corte candidato se compara además la lista de acciones elegidas 
 
 **Cobertura inversa:** comprobar que todos los 127 símbolos del piloto coincidan con cadenas de ticker públicas es insuficiente, porque aun así podrían faltar cientos de posiciones históricamente declaradas. El informe calcula la diferencia en ambos sentidos, incluyendo el peso declarado no cubierto por las acciones del piloto. Produce una cola priorizada por **peso original** de CUSIP que estuvieron en la declaración pública de SPY pero no figuran en la selección retrospectiva. No se consultan retornos futuros ni se usa esa cola para optimizar, modificar el motor o completar artificialmente el histórico. La cola solo solicita evidencia externa de identidad y precios; no declara que esos emisores fueran necesariamente invertibles a la fecha del corte.
 
+## Resultado observado sobre archivos congelados
+
+La ejecución de CI del 9-nov-2026 UTC con el commit [`03d2f0b`](https://github.com/Hardnyx/Trading/commit/03d2f0b1ec7cd0876f51f566bc661a6ad27cc5f6) concluyó sin errores: [run 42542612093](https://github.com/Hardnyx/Trading/actions/runs/42542612093). Los resultados se verificaron releyendo y reconciliando las declaraciones SEC archivadas.
+
+- Calendario registrado: **48 cortes**; **26** con información original de SPY pública y suficientemente reciente; **22** bloqueados o sin fuente fresca.
+- Cambios entre declaraciones distintas: **15 transiciones**. Son diferencias de CUSIP divulgados, **no** verificaciones de altas/bajas de cotización.
+- Piloto retrospectivo de 31-dic-2024: **127 acciones**; **127** tienen coincidencia literal con tickers SEC disponibles antes del corte. No es una unión histórica certificada de valores.
+- Declaración SPY originalmente fechada el 30-sep-2024 y disponible conservadoramente después del 29-nov-2024: peso positivo total **0,99989845** de NAV; peso no cubierto por la selección del piloto **0,38488811** de NAV, equivalente a **38,488811 puntos porcentuales del fondo**; **351 CUSIP distintos válidos** de esa fuente no están cubiertos por la selección retrospectiva.
+- La cola de `priority_vendor_identity_requests` identifica esos CUSIP y los ordena según su peso originalmente divulgado, sin atribuirles un precio, rendimiento, nueva identidad, disponibilidad bursátil o estado de desliste.
+
+**Interpretación:** demostrar que todos los símbolos sobrevivientes del piloto aparecían en fuentes históricas no elimina el riesgo de selección. La declaración pública deja fuera de la muestra piloto una parte material del peso original de SPY. Esta evidencia no implica que los 351 instrumentos debieran comprarse ni que todos siguieran vigentes al 31-dic-2024. Es necesario recuperar identidades históricas continuas y precios/elegibilidad originales antes de construir el universo completo.
+
 ## Condiciones de rechazo
 
 - Hash o interpretación original que ya no coincida con el archivo derivado.
