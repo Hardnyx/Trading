@@ -167,6 +167,43 @@ class HistoricalRawPriceIntakeTests(unittest.TestCase):
         self.assertEqual(report["count_by_status"]["missing-exact-cut-session-close"], 1)
         self.assertEqual(report["full_engine_eligible_cuts"], 0)
 
+
+    def test_price_receipt_changes_when_close_changes_at_unchanged_dates(self):
+        raw = parse_bars(csv_bytes([row()]), "2024-12-31", "2024-12-31")
+        original = assess_prices(identity_report(), raw, [], "a"*64)
+        changed = [dict(raw[0], raw_close=901.5)]
+        modified = assess_prices(identity_report(), changed, [], "a"*64)
+        self.assertNotEqual(original["positions"][0]["raw_bar_sha256"],
+                            modified["positions"][0]["raw_bar_sha256"])
+        self.assertEqual(original["positions"][0]["raw_bar_count"],
+                         modified["positions"][0]["raw_bar_count"])
+        self.assertEqual(original["positions"][0]["first_session"],
+                         modified["positions"][0]["first_session"])
+        self.assertEqual(original["positions"][0]["last_session"],
+                         modified["positions"][0]["last_session"])
+        self.assertEqual(len(original["positions"][0]["raw_bar_sha256"]), 64)
+        self.assertEqual(original["full_engine_eligible_cuts"], 0)
+
+    def test_price_receipt_digest_is_order_independent_and_captures_asof(self):
+        rows = parse_bars(csv_bytes([row(day="2024-12-30"),
+                                     row(day="2024-12-31")]),
+                          "2024-12-31", "2024-12-31")
+        report = assess_prices(identity_report(), rows, [], "a"*64)
+        reversed_report = assess_prices(identity_report(), list(reversed(rows)),
+                                        [], "a"*64)
+        self.assertEqual(report["positions"][0]["raw_bar_sha256"],
+                         reversed_report["positions"][0]["raw_bar_sha256"])
+        older = [{**r, "record_as_of": "2024-12-30"}
+                 if r["session_date"] == "2024-12-30" else r for r in rows]
+        # The same close with different source publication evidence must not
+        # reuse an identical receipt.
+        newer = [{**r, "record_as_of": "2024-12-31"}
+                 if r["session_date"] == "2024-12-30" else r for r in rows]
+        self.assertNotEqual(assess_prices(identity_report(), older, [], "a"*64)[
+            "positions"][0]["raw_bar_sha256"],
+            assess_prices(identity_report(), newer, [], "a"*64)[
+                "positions"][0]["raw_bar_sha256"])
+
     def test_public_sec_study_contract_contains_no_private_price_keys(self):
         from scripts.historical_identity_requests import build_requests
         from scripts.historical_foreign_isin_requests import build_requests as build_foreign

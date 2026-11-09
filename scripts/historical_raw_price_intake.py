@@ -276,6 +276,9 @@ def assess_prices(cross, rows, sources, manifest_sha):
         statuses[status] += 1
         result.append({
             **r, "raw_bar_count": length,
+            # Bind exact per-session prices and their date-specific vendor records
+            # to the private receipt; counts and first/last dates are insufficient.
+            "raw_bar_sha256": sha(canonical(bars)),
             "first_session": bars[0]["session_date"] if bars else None,
             "last_session": bars[-1]["session_date"] if bars else None,
             "status": status,
