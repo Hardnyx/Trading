@@ -27,6 +27,7 @@ jobs:
       - run: python scripts/prospective_study_registry.py --verify
       - run: python scripts/overfit_policy_guard.py --verify
       - run: python scripts/confirmatory_bootstrap_diagnostic.py --verify --output out/confirmatory-bootstrap-sensitivity-v1.json
+      - run: python scripts/confirmatory_familywise_bootstrap.py --verify --output out/confirmatory-familywise-bootstrap-v1.json
       - run: node scripts/daily_archive_readiness.mjs
       - run: node scripts/forward_account_bridge.mjs
       - run: python scripts/historical_identity_requests.py --output out/historical-identity-requests-v1.json.gz
@@ -45,6 +46,11 @@ jobs:
       - run: python scripts/historical_risk_fit_intake.py --template out/historical-risk-fit-manifest-template.json
       - run: git fetch --no-tags --depth=1 origin b2d15329e2484ce103d7d729b90c65e4367b218d
       - run: node scripts/benchmark_expanding_mean.mjs out/retrospective-expanding-mean-benchmark-v1.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: confirmatory-familywise-bootstrap
+          path: out/confirmatory-familywise-bootstrap-v1.json
+          retention-days: 30
       - uses: actions/upload-artifact@v4
         with:
           name: confirmatory-bootstrap-sensitivity
