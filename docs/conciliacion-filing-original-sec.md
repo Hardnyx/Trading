@@ -42,3 +42,7 @@ Se consultó el [índice original SEC de Microsoft, accession `0000950170-24-118
 ## Adquisición automatizable sin Work
 
 La [guía de adquisición local](adquisicion-originales-sec.md) proporciona un cliente de descarga únicamente para accession previamente registrado en el índice oficial y genera un recibo SHA-256 en `out/` después de verificar el `SEC-HEADER`. **No descarga datos en GitHub CI** ni declara primera publicación histórica. Se requiere un identificador de contacto real en `SEC_USER_AGENT` al ejecutarlo localmente.
+
+## Cotejo de importes
+
+La [comparación de hechos contables](conciliacion-numerica-sec.md) aplica una segunda barrera independiente sobre cifras originales: exige presentación completa, extrae el primario iXBRL, y compara un subconjunto explícito de importes US-GAAP con los valores FSD por contexto, periodos y `Decimal`. No extrapola coincidencias parciales a disponibilidad histórica ni a exactitud de todas las notas y hechos XBRL.
