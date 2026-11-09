@@ -92,6 +92,10 @@ class SecFsdIntakeTests(unittest.TestCase):
                              {"123.50", "125.25"})
             self.assertTrue(report["segments_column_present_in_num"])
             self.assertTrue(any(v["segments"] for v in report["facts"]))
+            self.assertFalse(all(v["consolidated_unsegmented_candidate"]
+                                 for v in report["facts"]))
+            self.assertTrue(any(v["consolidated_unsegmented_candidate"]
+                                for v in report["facts"]))
             self.assertTrue(any(v["amendment"] for v in report["facts"]))
             self.assertTrue(report["duplicate_periods_from_multiple_submissions_not_auto_resolved"])
             self.assertFalse(report["fundamentals_and_quality_component_certified"])
@@ -105,6 +109,8 @@ class SecFsdIntakeTests(unittest.TestCase):
                         tag_filters=["NetIncomeLoss"])
             self.assertFalse(r["segments_column_present_in_num"])
             self.assertTrue(all(f["segments"] is None for f in r["facts"]))
+            self.assertTrue(all(f["consolidated_unsegmented_candidate"] is False
+                                for f in r["facts"]))
             self.assertTrue(all(f["ready_for_historical_valuation"] is False
                                 for f in r["facts"]))
 
