@@ -46,6 +46,7 @@ jobs:
       - run: python scripts/historical_identity_cross_namespace_gate.py --template out/historical-cross-namespace-identity-template-v1.json
       - run: python scripts/historical_raw_price_intake.py --template out/historical-raw-price-source-request-v1.json
       - run: python scripts/historical_sec_fsd_intake.py --template out/historical-sec-fsd-source-request-v1.json --verify
+      - run: python scripts/historical_sec_original_filing.py --template out/historical-sec-original-source-request-v1.json --verify
       - run: python scripts/historical_corporate_action_intake.py --template out/historical-corporate-action-request-v1.json
       - run: python scripts/historical_vendor_identity.py --template out/historical-vendor-identity-template.csv
       - run: python scripts/historical_parameter_audit.py
@@ -122,6 +123,11 @@ jobs:
         with:
           name: historical-corporate-action-request
           path: out/historical-corporate-action-request-v1.json
+          retention-days: 30
+      - uses: actions/upload-artifact@v4
+        with:
+          name: historical-sec-original-source-request
+          path: out/historical-sec-original-source-request-v1.json
           retention-days: 30
       - uses: actions/upload-artifact@v4
         with:
