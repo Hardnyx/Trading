@@ -92,3 +92,7 @@ El importador de ISIN extranjero y el de CUSIP usan ahora la misma validación d
 ## Verificación de exclusividad y fecha efectiva
 
 La [CI 42614115839](https://github.com/Hardnyx/Trading/actions/runs/42614115839) aprobó 387 pruebas Python para el commit [`7d991f5`](https://github.com/Hardnyx/Trading/commit/7d991f51d03560200f778245b05b476ff6e5ba63), incluido un caso de colisión de ID nativo entre dos ISIN de dígito correcto y una instantánea anterior a la vigencia efectiva. El resumen SEC público mantiene **26 posiciones ISIN extranjeras y 478 con CUSIP válido** de 504 positivas, con **0 filas reales de proveedor**. Estas son condiciones técnicas necesarias, no datos nuevos sobre rentabilidad ni una prueba independiente de disponibilidad point-in-time.
+
+## Exclusividad entre orígenes de proveedor
+
+Dos ISIN originales distintos con el mismo identificador nativo y namespace se clasifican como conflicto **incluso si cada fila declara un proveedor diferente**. La conciliación conserva además el nombre del proveedor dentro de la clave candidata, en lugar de asumir que dos respuestas de orígenes distintos se corroboran automáticamente. El control es conservador y puede requerir investigar cambios de identificador legítimos; en ningún caso habilita por sí solo la inversión ni valida el precio histórico.

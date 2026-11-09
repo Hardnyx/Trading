@@ -248,8 +248,16 @@ def reconcile(requests, rows, provenance, manifest_hash):
     original = requests["requests"]
     require(len({r["source_position"] for r in original}) == len(original),
             "Repeated SEC source position")
+    requested = {r["cusip"] for r in original if valid_cusip(r["cusip"])}
     mapping = defaultdict(list)
     for row in rows:
+        # Reject unsolicited valid IDs before building the native-key reverse
+        # index; extra provider records must not poison SEC-requested matches.
+        require(row["cusip"] in requested,
+                "Unrequested CUSIP in vendor export")
+        require(isinstance(row.get("_provider"), str) and
+                bool(row["_provider"].strip()),
+                "Vendor row lacks source provider")
         mapping[row["cusip"]].append(row)
     candidates = {}
     excluded = Counter()
@@ -263,13 +271,17 @@ def reconcile(requests, rows, provenance, manifest_hash):
         # Preserve the original vendor quotation currency in the security key.
         # Row eligibility currently restricts this CUSIP route to USD, but
         # downstream consumers must not invent that field when it is absent.
-        keys = {(r["id_namespace"], r["provider_instrument_id"],
-                 r["exchange_mic"], r["security_type"], r["currency"])
-                for r in active}
+        # A vendor-specific native ID cannot silently merge evidence from
+        # another provider. Preserve source ownership even for global IDs.
+        keys = {(r["_provider"], r["id_namespace"],
+                 r["provider_instrument_id"], r["exchange_mic"],
+                 r["security_type"], r["currency"]) for r in active}
         candidates[cusip] = (keys, active)
     reverse = defaultdict(set)
     for cusip, (keys, _) in candidates.items():
-        for namespace, native, _, _, _ in keys:
+        for _, namespace, native, _, _, _ in keys:
+            # Native identifier collisions must quarantine different original
+            # CUSIPs even when the two reports came from different providers.
             reverse[(namespace, native)].add(cusip)
     bindings = []
     weights = Counter()
@@ -284,7 +296,7 @@ def reconcile(requests, rows, provenance, manifest_hash):
         elif len(keys) > 1:
             status = "conflicting-provider-identities"
         elif any(len(reverse[(namespace, native)]) > 1
-                 for namespace, native, _, _, _ in keys):
+                 for _, namespace, native, _, _, _ in keys):
             status = "provider-key-shared-by-multiple-cusips"
         else:
             status = "retrospective-identity-candidate"
@@ -292,18 +304,20 @@ def reconcile(requests, rows, provenance, manifest_hash):
         weights[status] += original_row["weight"]
         selected = next(iter(keys)) if status == "retrospective-identity-candidate" else None
         matched = [row for row in evidence if
-                   (row["id_namespace"], row["provider_instrument_id"],
-                    row["exchange_mic"], row["security_type"],
-                    row["currency"]) == selected] if selected else []
+                   (row["_provider"], row["id_namespace"],
+                    row["provider_instrument_id"], row["exchange_mic"],
+                    row["security_type"], row["currency"]) == selected
+                   ] if selected else []
         bindings.append({
             "source_position": original_row["source_position"], "cusip": cusip,
             "weight": original_row["weight"],
             "original_ticker_observation": original_row["original_ticker_observation"],
             "status": status,
             "candidate_security_key": {
-                "namespace": selected[0], "provider_instrument_id": selected[1],
-                "exchange_mic": selected[2], "security_type": selected[3],
-                "quote_currency": selected[4],
+                "provider": selected[0], "namespace": selected[1],
+                "provider_instrument_id": selected[2],
+                "exchange_mic": selected[3], "security_type": selected[4],
+                "quote_currency": selected[5],
             } if selected else None,
             "source_hashes": sorted({r["_source_sha256"] for r in matched}),
             "historical_availability_certified": False,

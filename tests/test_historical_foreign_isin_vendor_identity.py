@@ -121,6 +121,23 @@ class ForeignVendorIdentityTests(unittest.TestCase):
         self.assertIsNone(report["positions"][0]["candidate_security_key"])
         self.assertEqual(report["full_engine_eligible_cuts"], 0)
 
+
+    def test_global_native_id_collision_cannot_hide_behind_second_provider(self):
+        queue = request_bundle()
+        parsed = parse_foreign_export(raw_csv([
+            row(original_isin="GB0002634946", native="SHARED-ID"),
+            row(original_isin="GB0005405286", native="SHARED-ID"),
+        ]), "2024-12-31")
+        first = with_provenance(parsed[:1], provider="first-vendor")
+        second = with_provenance(parsed[1:], provider="second-vendor",
+                                 source_hash="d"*64)
+        result = reconcile(queue, first + second, [], "e"*64)
+        self.assertEqual(result["counts_by_distinct_isin"],
+                         {"provider-key-shared-by-multiple-isins": 2})
+        self.assertTrue(all(p["candidate_security_key"] is None
+                            for p in result["positions"]))
+        self.assertEqual(result["full_engine_eligible_cuts"], 0)
+
     def test_original_isin_check_digit_rejects_bad_source(self):
         with self.assertRaisesRegex(ValueError, "check digit"):
             parse_foreign_export(raw_csv([row(original_isin="GB0002634947")]),

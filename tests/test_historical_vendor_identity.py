@@ -78,6 +78,43 @@ class VendorIdentityTests(unittest.TestCase):
         self.assertEqual(report["counts"], {"provider-key-shared-by-multiple-cusips": 2})
         self.assertTrue(all(p["candidate_security_key"] is None for p in report["positions"]))
 
+
+    def test_unrequested_valid_cusip_cannot_poison_requested_native_key(self):
+        unknown = example(cusip="02079K305")
+        self.assertTrue(valid_cusip(unknown["cusip"]))
+        with self.assertRaisesRegex(ValueError, "Unrequested CUSIP"):
+            reconcile(request_bundle(), with_source([example(), unknown]), [],
+                      "c"*64)
+        with self.assertRaisesRegex(ValueError, "Unrequested CUSIP"):
+            reconcile(request_bundle(), with_source([unknown]), [], "c"*64)
+
+    def test_different_vendor_sources_cannot_silently_merge_one_cusip(self):
+        first = with_source([example()])[0]
+        second = {**first, "_provider": "second-vendor", "_source_sha256": "b"*64}
+        report = reconcile(request_bundle(), [first, second], [], "d"*64)
+        self.assertEqual(report["positions"][0]["status"],
+                         "conflicting-provider-identities")
+        self.assertIsNone(report["positions"][0]["candidate_security_key"])
+        self.assertFalse(report["historical_public_availability_certified"])
+
+    def test_single_vendor_source_is_retained_with_permanent_key(self):
+        report = reconcile(request_bundle(), with_source([example()]), [],
+                           "c"*64)
+        identity = report["positions"][0]["candidate_security_key"]
+        self.assertEqual(identity["provider"], "fixture")
+        self.assertEqual(identity["quote_currency"], "USD")
+        self.assertEqual(report["positions"][0]["source_hashes"], ["a"*64])
+
+    def test_native_key_shared_across_provider_exports_quarantines_two_cusips(self):
+        one = with_source([example()])[0]
+        two = {**one, "cusip": "594918104",
+               "_provider": "second-vendor", "_source_sha256": "b"*64}
+        report = reconcile(request_bundle(), [one, two], [], "c"*64)
+        self.assertEqual(report["counts"],
+                         {"provider-key-shared-by-multiple-cusips": 2})
+        self.assertTrue(all(x["candidate_security_key"] is None
+                            for x in report["positions"]))
+
     def test_incomplete_dates_cannot_be_promoted(self):
         row = example(valid_from="")
         report = reconcile(request_bundle(), with_source([row]), [], "c" * 64)

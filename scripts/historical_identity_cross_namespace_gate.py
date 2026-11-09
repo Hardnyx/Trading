@@ -223,8 +223,9 @@ def combine(original, foreign, cusip_report, isin_report):
             source_hashes = vendor["source_hashes"]
         reference = (domain, source_id) if source_id is not None else None
         if key is not None:
-            require(all(key.get(k) for k in ("namespace", "provider_instrument_id",
-                                             "exchange_mic", "security_type")),
+            require(all(key.get(k) for k in (
+                    "provider", "namespace", "provider_instrument_id",
+                    "exchange_mic", "security_type", "quote_currency")),
                     "Incomplete permanent provider identity key")
             provider_key = (key["namespace"], key["provider_instrument_id"])
             key_owners[provider_key].add(reference)

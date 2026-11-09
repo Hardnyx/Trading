@@ -135,7 +135,9 @@ def reconcile(queue, rows, provenance, manifest_sha256):
                 row["currency"], row["security_type"],
             )
             identities.setdefault(key, set()).add(row["_source_sha256"])
-            reverse[(key[0], key[1], key[2])].add(isin)
+            # Distinct ISINs cannot reuse the same namespace/native ID merely
+            # because the exports were collected from different providers.
+            reverse[(key[1], key[2])].add(isin)
         choices[isin] = identities
 
     counts = Counter()
@@ -150,7 +152,7 @@ def reconcile(queue, rows, provenance, manifest_sha256):
             status = "no-temporally-admissible-identity"
         elif len(candidates) > 1:
             status = "conflicting-provider-identities"
-        elif any(len(reverse[key[:3]]) > 1 for key in candidates):
+        elif any(len(reverse[key[1:3]]) > 1 for key in candidates):
             status = "provider-key-shared-by-multiple-isins"
         else:
             status = "retrospective-foreign-identity-candidate"

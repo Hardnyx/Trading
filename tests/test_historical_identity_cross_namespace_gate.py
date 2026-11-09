@@ -169,6 +169,27 @@ class CrossNamespaceTests(unittest.TestCase):
                          "XLON")
         self.assertFalse(report["historical_prices_certified"])
 
+
+    def test_cross_namespace_candidates_retain_source_provider(self):
+        original, foreign = fixtures()
+        outcome = combine(original, foreign, *reports(original, foreign))
+        self.assertEqual(outcome["positions"][0][
+            "candidate_security_key"]["provider"], "fixture")
+        self.assertEqual(outcome["positions"][2][
+            "candidate_security_key"]["provider"], "fixture")
+        self.assertFalse(outcome["cross_namespace_identity_certified"])
+
+    def test_cross_namespace_rejects_missing_provider_on_either_route(self):
+        original, foreign = fixtures()
+        c, f = reports(original, foreign)
+        del c["positions"][0]["candidate_security_key"]["provider"]
+        with self.assertRaisesRegex(ValueError, "Incomplete permanent"):
+            combine(original, foreign, c, f)
+        c, f = reports(original, foreign)
+        del f["positions"][0]["candidate_security_key"]["provider"]
+        with self.assertRaisesRegex(ValueError, "Incomplete permanent"):
+            combine(original, foreign, c, f)
+
     def test_original_archived_sec_template_reconciles_without_vendor(self):
         from scripts.historical_identity_requests import build_requests
         from scripts.historical_foreign_isin_requests import build_requests as foreign_requests

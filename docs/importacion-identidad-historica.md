@@ -76,3 +76,7 @@ El control temporal es común a CUSIP e ISIN: además de exigir `valid_from <= c
 ## Verificación de paridad temporal
 
 El commit [`7d991f5`](https://github.com/Hardnyx/Trading/commit/7d991f51d03560200f778245b05b476ff6e5ba63) superó la [CI 42614115839](https://github.com/Hardnyx/Trading/actions/runs/42614115839), con 387 pruebas Python correctas, y [Pages 42614115888](https://github.com/Hardnyx/Trading/actions/runs/42614115888). La validación de intervalo es compartida por CUSIP e ISIN. No se obtuvieron extractos nuevos de proveedor ni se confirmó un universo invertible para el primer corte.
+
+## Solicitudes cerradas y segregación de proveedores
+
+La conciliación CUSIP rechaza expresamente cualquier respuesta para un CUSIP válido **no incluido** en las solicitudes congeladas originales, incluso si trae una clave nativa coincidente con una solicitud válida. Las coincidencias quedan asociadas al proveedor del extracto, y si dos proveedores generan claves candidatas para el mismo CUSIP se conserva el estado de conflicto, sin fusionarlas automáticamente. Una misma clave `(id_namespace, provider_instrument_id)` asignada a **dos CUSIP originales distintos** también se pone en cuarentena, aunque provengan de exportaciones de dos proveedores. Se mantiene el hash de los archivos originales y las marcas de disponibilidad histórica sin certificar.
