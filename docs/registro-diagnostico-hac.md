@@ -36,3 +36,11 @@ python scripts/confirmatory_hac_stress.py --verify --output out/confirmatory-hac
 ```
 
 CI publica la salida como artefacto `confirmatory-hac-independent-stress`, pero un resultado favorable en esta rejilla **no** permite aprobar inferencia financiera. No cambian las reglas de captura prospectiva ni los siete efectos económicos pendientes.
+
+## Resultado observado y corte de evidencia: 9-nov-2026 UTC
+
+El [commit `8eadbfb`](https://github.com/Hardnyx/Trading/commit/8eadbfb30d83499c2c9fdc1c7b287920653bfe71) superó [CI 42690190654](https://github.com/Hardnyx/Trading/actions/runs/42690190654) y [Pages 42690190610](https://github.com/Hardnyx/Trading/actions/runs/42690190610): **436 pruebas Python**, 62 pasos de CI correctos y artefacto `confirmatory-hac-independent-stress` con los 64 escenarios y sus intervalos exactos simultáneos. Se ejecutaron **512 réplicas por escenario** sin leer outcomes de Trading.
+
+**Conclusión del experimento: evidencia de exceso de error familiar bajo los generadores sintéticos registrados.** **43/64** escenarios tienen una **cota inferior simultánea al 95 % superior al 5 % nominal**, tras Bonferroni sobre 64 intervalos. Las tasas puntuales por escenario oscilan entre **4,88 % y 41,21 %**. En el escenario más adverso previamente definido, **96 meses, AR(1) 0,85, correlación transversal 0, innovaciones Student-t5 y siete nulos verdaderos**, se obtuvieron **211/512 = 41,21 %** de falsos rechazos familiares (intervalo simultáneo **33,99 %–48,71 %**). Con los 192 meses previstos en la segunda longitud, tampoco se garantiza calibración: permanece evidencia de exceso en varios escenarios. El artefacto completo contiene el desglose, incluidos los nulos parcialmente verdaderos.
+
+Pasar CI significa que el diagnóstico y sus invariantes se ejecutaron correctamente, **no** que la inferencia HAC haya aprobado. La evidencia sintética desfavorable impide proponer el HAC de rezago 12 como reparación de v2. No se prueba automáticamente otro rezago ni se elige un método según las frecuencias inspeccionadas: para nuevas propuestas será necesario explicitar la búsqueda, registrarla y evaluar en una cohorte de simulaciones no examinada. Los requisitos de datos reales, justificación económica, potencia y confirmación prospectiva permanecen inalterados.
