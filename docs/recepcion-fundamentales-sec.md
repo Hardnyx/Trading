@@ -35,3 +35,7 @@ El CIK indicado es solamente un ejemplo de sintaxis y **no** corresponde a un va
 El informe conserva `fundamentals_and_quality_component_certified=false`, `eligible_full_engine_cuts_added=0`, `confirmatory_origins_added=0` y `predictive_validation=not-established`. CI ejecuta tests con **ZIP sintéticos** y publica únicamente una plantilla de solicitud, no archivos de proveedores ni fundamentales supuestamente certificados.
 
 El adaptador no automatiza descargas SEC para preservar la separación entre adquisición, auditoría original y cálculo; cualquier adquisición automatizada futura debe respetar la [política de acceso](https://www.sec.gov/about/privacy-information).
+
+## Verificación de software (9-nov-2026 UTC)
+
+Commits [`c4ff551`](https://github.com/Hardnyx/Trading/commit/c4ff551fb69472f973d63a6cb9734205a24092db) y [`47b2e35`](https://github.com/Hardnyx/Trading/commit/47b2e35e65ffe4d73cb1f1af4d08960cb5d503c9); [CI 42695964168](https://github.com/Hardnyx/Trading/actions/runs/42695964168) y [Pages 42695964207](https://github.com/Hardnyx/Trading/actions/runs/42695964207) aprobadas. **447 pruebas Python y 66 pasos correctos**, más el artefacto `historical-sec-fsd-source-request`. Los seis tests del nuevo módulo utilizan ZIP sintéticos; no se verificó contra un ZIP oficial descargado ni se certificó una presentación original de un emisor. El informe es un contrato reproducible de investigación y mantiene H1.2 bloqueado hasta la recepción y auditoría real de fuentes.
