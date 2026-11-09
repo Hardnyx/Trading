@@ -118,9 +118,9 @@ def friction_sensitivity(v1, turnover=TURNOVER_EXAMPLES):
             v1["costs"]["stress"].startswith("triple spread and slippage"),
             "Cost scenarios differ from original protocol")
     require(isinstance(turnover, (tuple, list)) and bool(turnover) and
-            len(set(map(str, turnover))) == len(turnover) and
             all(type(t) in (int, float) and isfinite(t) and
-                0 <= t <= 1 for t in turnover),
+                0 <= t <= 1 for t in turnover) and
+            len(set(turnover)) == len(turnover),
             "Turnover examples must be distinct hypothetical NAV fractions")
     base = EXPECTED_COSTS["spreadBps"]+EXPECTED_COSTS["slippageBps"]
     stressed = 3*base
