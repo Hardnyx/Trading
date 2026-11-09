@@ -48,3 +48,9 @@ python scripts/historical_raw_price_intake.py \
 Se rechazan precios futuros, filas de claves fuera del security master candidato, moneda/MIC discordantes, cierres no positivos o no finitos, columnas de precios ajustados, filas duplicadas del mismo instrumento y sesión, hashes modificados y rutas que escapan al directorio privado. Se contabiliza la cobertura **sin retirar del denominador** las posiciones que carecen de identidad o historial.
 
 El reporte no certifica la validez de sesiones, la proveniencia original frente a un archivo reconstruido, splits, dividendos, delistings, FX ni precios ejecutables; no genera retornos ajustados ni activa `composeMultiStart`. Incluso 252 intervalos de precios **no** habilitan un corte integral. El primer paso siguiente es obtener los CSV históricos autorizados y comprobar las acciones corporativas y fechas de captura.
+
+## Resultado comprobado
+
+El commit [`6052f90`](https://github.com/Hardnyx/Trading/commit/6052f9064894ccbb9b967fc9fb2cf0f194ea23a8) superó la [CI 42566051139](https://github.com/Hardnyx/Trading/actions/runs/42566051139) y el [despliegue 42566051088](https://github.com/Hardnyx/Trading/actions/runs/42566051088), con **363 pruebas Python aprobadas**. La ejecución pública recuperó el contrato de **504 posiciones SEC positivas** y registró **0 filas de precios originales licenciados**. Las pruebas de importación usan archivos sintéticos, no datos de inversión recuperados.
+
+**Aceptación técnica alcanzada:** la recepción de exportaciones CSV puede comprobar integridad, fechas declaradas, identidad, moneda y unicidad, sin provocar cambios en las carteras. **H1.2 no está cerrado**: no hay precios de proveedor suficientes para un solo replay integral ni prueba de que esas cotizaciones, su denominador o la ley de retornos fueran conocidos en el corte histórico.
