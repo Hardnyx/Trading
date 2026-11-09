@@ -29,6 +29,7 @@ jobs:
       - run: node scripts/daily_archive_readiness.mjs
       - run: node scripts/forward_account_bridge.mjs
       - run: python scripts/historical_identity_requests.py --output out/historical-identity-requests-v1.json.gz
+      - run: python scripts/historical_spy_membership_audit.py --output out/historical-spy-membership-audit-v1.json
       - run: python scripts/historical_vendor_identity.py --template out/historical-vendor-identity-template.csv
       - run: python scripts/historical_parameter_audit.py
       - run: python scripts/archived_ewma_independent_replay.py --output out/archived-ewma-independent-replay-v1.json
@@ -59,6 +60,11 @@ jobs:
         with:
           name: historical-vendor-identity-template
           path: out/historical-vendor-identity-template.csv
+          retention-days: 30
+      - uses: actions/upload-artifact@v4
+        with:
+          name: historical-spy-membership-audit
+          path: out/historical-spy-membership-audit-v1.json
           retention-days: 30
       - uses: actions/upload-artifact@v4
         with:
