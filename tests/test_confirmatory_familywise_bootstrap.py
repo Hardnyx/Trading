@@ -7,7 +7,8 @@ import unittest
 
 from scripts.confirmatory_familywise_bootstrap import (
     SCHEMA, stable_seed, joint_null_series, holm_any_reject,
-    joint_bootstrap_pvalues, joint_first_holm_reject, verify_protocol,
+    gaussian_ar1_oracle_pvalues, joint_bootstrap_pvalues,
+    joint_first_holm_reject, verify_protocol,
     simulate, wilson,
 )
 
@@ -40,6 +41,36 @@ class JointHolmBootstrapTests(unittest.TestCase):
         self.assertEqual(len(a), 7)
         self.assertTrue(all(len(column) == 96 for column in a))
         self.assertNotEqual(a, joint_null_series(random.Random(3), 96, .6, 0))
+
+    def test_gaussian_oracle_known_phi_and_mean(self):
+        zero = [[0.]*96 for _ in range(7)]
+        self.assertEqual(gaussian_ar1_oracle_pvalues(zero, 0.),
+                         [0.5]*7)
+        positive = [[1.]*96 for _ in range(7)]
+        negative = [[-1.]*96 for _ in range(7)]
+        self.assertTrue(holm_any_reject(
+            gaussian_ar1_oracle_pvalues(positive, 0.)))
+        self.assertFalse(holm_any_reject(
+            gaussian_ar1_oracle_pvalues(negative, 0.)))
+        self.assertGreater(
+            gaussian_ar1_oracle_pvalues(positive, .6)[0],
+            gaussian_ar1_oracle_pvalues(positive, 0.)[0])
+        with self.assertRaises(ValueError):
+            gaussian_ar1_oracle_pvalues(positive, 1.)
+        with self.assertRaises(ValueError):
+            gaussian_ar1_oracle_pvalues(positive[:6], .6)
+        with self.assertRaises(ValueError):
+            gaussian_ar1_oracle_pvalues(positive[:6] + [[1.]*95], .6)
+
+    def test_oracle_bonferroni_under_any_cross_test_dependence(self):
+        # Exact marginal normal tails need no independent-test assumption.
+        for phi in (0., .6):
+            columns = [[0.]*96 for _ in range(6)] + [[1.]*96]
+            self.assertTrue(holm_any_reject(
+                gaussian_ar1_oracle_pvalues(columns, phi)))
+            columns[-1] = [0.]*96
+            self.assertFalse(holm_any_reject(
+                gaussian_ar1_oracle_pvalues(columns, phi)))
 
     def test_optimized_rejection_matches_full_joint_pvalues(self):
         for phi in (0., .6):
@@ -86,8 +117,14 @@ class JointHolmBootstrapTests(unittest.TestCase):
         self.assertEqual(len(first["rows"]), 2)
         self.assertFalse(first["formal_inference_enabled"])
         self.assertTrue(first["strong_fwer_control_not_established"])
+        self.assertFalse(first["oracle_valid_for_real_market_effects"])
         self.assertTrue(all(row["null_repetitions"] == 3
                             for row in first["rows"]))
+        for row in first["rows"]:
+            self.assertEqual(
+                row["familywise_any_rejections"] - row["oracle_any_rejections"],
+                row["bootstrap_only_rejections"] - row["oracle_only_rejections"])
+            self.assertLessEqual(row["oracle_any_rejections"], 3)
         self.assertEqual(wilson(0, 100)[0], 0.0)
         self.assertEqual(wilson(100, 100)[1], 1.0)
 

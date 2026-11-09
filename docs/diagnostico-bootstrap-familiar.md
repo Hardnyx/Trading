@@ -52,3 +52,31 @@ El [commit `8f08908`](https://github.com/Hardnyx/Trading/commit/8f0890875b64610d
 **Comparación:** el error familiar nominal registrado es **5 %**; en 15 de 16 escenarios sintéticos la frecuencia de rechazo estimada lo superó. Para 96 meses, AR(1) 0,6, correlación entre pruebas cero y bloque 24, el resultado fue **77/256 = 30,08 %**, con intervalo Wilson Monte Carlo al 95 % de aproximadamente **24,79 %–35,96 %**. Con 192 meses, AR(1) 0,6, correlación cero y bloque 24 persistió una frecuencia de 57/256 = 22,27 %. La precisión limitada por 256 repeticiones exige interpretar diferencias pequeñas respecto al 5 % con cautela.
 
 **Conclusión técnica:** el bootstrap centrado y Holm registrados no han demostrado calibración suficiente en muestra finita en esta clase de procesos generadores conjuntos. Esta prueba bajo nulo global **no** establece control fuerte de error familiar ante nulos parcialmente falsos, ni los siete verdaderos objetivos estadísticos y sus horizontes. Por tanto, **no activa** v2. Resolver esta brecha requiere análisis independiente de distribución conjunta, dependencia, métodos de bootstrap y efectos mínimos económicamente justificables. Si la solución altera el procedimiento, documentar **un protocolo v3 prospectivo** con nueva cohorte, sin reinterpretar resultados de desarrollo ni alterar v1/v2.
+
+## Control positivo con distribución nula conocida
+
+Para comprobar si los rechazos excesivos se explican por Holm o por el remuestreo, el mismo generador agrega una referencia **analítica exacta para sus propios datos sintéticos**. Cada serie marginal AR(1) es gaussiana, estacionaria, de varianza unitaria y con `phi` conocido. Por tanto:
+
+```text
+Var(S_n) = n + 2 * sum((n - k) * phi**k, k=1..n-1)
+p_oracle = 1 - Phi(S_n / sqrt(Var(S_n)))
+```
+
+Se calculan siete valores p marginales exactos y se aplica la **misma regla de entrada Holm** (`min(p) <= 0.05/7`). El factor común entre pruebas no invalida los valores p marginales ni exige independencia transversal para el control de Holm. La referencia usa **parámetros verdaderos del generador, que no están disponibles en el mercado**: es un control positivo de la simulación y nunca una alternativa inferencial lista para utilizar.
+
+Con las mismas 256 matrices de siete series de cada combinación (semilla 20261109), el control analítico produce:
+
+| Meses | AR(1) | Correlación entre pruebas | Rechazos del control / 256 |
+|---|---:|---:|---:|
+| 96 | 0.0 | 0.00 | 12 (4,69 %) |
+| 96 | 0.0 | 0.75 | 6 (2,34 %) |
+| 96 | 0.6 | 0.00 | 10 (3,91 %) |
+| 96 | 0.6 | 0.75 | 5 (1,95 %) |
+| 192 | 0.0 | 0.00 | 9 (3,52 %) |
+| 192 | 0.0 | 0.75 | 6 (2,34 %) |
+| 192 | 0.6 | 0.00 | 14 (5,47 %) |
+| 192 | 0.6 | 0.75 | 13 (5,08 %) |
+
+Cada control es idéntico para bloques 12 y 24, porque el control analítico no utiliza bloques. El artefacto conserva, por bloque, los rechazos del bootstrap, los del control y las discrepancias **solo bootstrap / solo control** sobre las **mismas réplicas**, sin reejecutar ni seleccionar un nuevo nulo. Las frecuencias de 5,08 % y 5,47 % son estimaciones Monte Carlo, no violaciones demostradas del control nominal.
+
+**Lectura:** el control exacto se aproxima al tamaño esperado en esta rejilla, mientras que el bootstrap centrado registra hasta 30,08 % de rechazos familiares. Esto localiza el defecto metodológico probable en la calibración del bootstrap bajo estos generadores, no demuestra un error de Holm. Tampoco acredita control fuerte para hipótesis parcialmente nulas ni autoriza suponer que AR(1) gaussiano describe las medidas bursátiles. **No se modifica ni activa v2; H0.3 sigue abierto.**

@@ -8,7 +8,7 @@ No observed market outcomes are loaded and the protocol is never modified.
 import argparse
 import hashlib
 import json
-from math import floor, sqrt
+from math import erfc, floor, sqrt
 from pathlib import Path
 import random
 
@@ -83,6 +83,23 @@ def holm_any_reject(pvalues, alpha=0.05):
             all(0 <= p <= 1 for p in pvalues),
             "Invalid Holm family p-values")
     return min(pvalues) <= alpha / len(pvalues)
+
+
+def gaussian_ar1_oracle_pvalues(columns, phi):
+    """Exact synthetic-null tails with the generator's known AR(1) parameters.
+
+    Each marginal has stationary unit variance. The known-phi variance of
+    its sum is exact even when the seven series share a common factor.
+    This oracle cannot be used on returns whose DGP is not known.
+    """
+    require(len(columns) == 7 and
+            all(isinstance(col, list) and col for col in columns) and
+            all(len(col) == len(columns[0]) for col in columns) and
+            0 <= phi < 1, "Oracle requires seven aligned Gaussian AR1 series")
+    n = len(columns[0])
+    variance = n + 2*sum((n-lag)*phi**lag for lag in range(1, n))
+    scale = sqrt(2*variance)
+    return [0.5*erfc(sum(col)/scale) for col in columns]
 
 
 def _block_sums(columns, block):
@@ -188,11 +205,20 @@ def simulate(protocol, repetitions=REPETITIONS, seed=SEED, months=MONTHS,
                     for b in lengths
                 }
                 rejected = {b: 0 for b in lengths}
+                oracle_rejected = 0
+                bootstrap_only = {b: 0 for b in lengths}
+                oracle_only = {b: 0 for b in lengths}
                 for _ in range(repetitions):
                     columns = joint_null_series(series_rng, n, phi, rho, count)
+                    oracle_any = holm_any_reject(
+                        gaussian_ar1_oracle_pvalues(columns, phi), alpha)
+                    oracle_rejected += int(oracle_any)
                     for b in lengths:
-                        rejected[b] += joint_first_holm_reject(
+                        bootstrap_any = joint_first_holm_reject(
                             columns, b, draws, block_rngs[b], alpha)
+                        rejected[b] += int(bootstrap_any)
+                        bootstrap_only[b] += int(bootstrap_any and not oracle_any)
+                        oracle_only[b] += int(oracle_any and not bootstrap_any)
                 for b in lengths:
                     k = rejected[b]
                     rows.append({
@@ -206,6 +232,13 @@ def simulate(protocol, repetitions=REPETITIONS, seed=SEED, months=MONTHS,
                         "familywise_null_rejection_rate": round(
                             k/repetitions, 6),
                         "monte_carlo_wilson95": wilson(k, repetitions),
+                        "oracle_any_rejections": oracle_rejected,
+                        "oracle_null_rejection_rate": round(
+                            oracle_rejected/repetitions, 6),
+                        "oracle_monte_carlo_wilson95": wilson(
+                            oracle_rejected, repetitions),
+                        "bootstrap_only_rejections": bootstrap_only[b],
+                        "oracle_only_rejections": oracle_only[b],
                     })
     return {
         "schema": SCHEMA,
@@ -215,6 +248,9 @@ def simulate(protocol, repetitions=REPETITIONS, seed=SEED, months=MONTHS,
         "confirmatory_collection_open": False,
         "formal_inference_enabled": False,
         "strong_fwer_control_not_established": True,
+        "oracle_reference": "known-phi unit-variance stationary Gaussian AR1 normal tails; Holm",
+        "oracle_uses_true_synthetic_parameters": True,
+        "oracle_valid_for_real_market_effects": False,
         "family_test_names": [t["id"] for t in protocol["primary_tests"]],
         "assumed_dgp": "stationary equicorrelated Gaussian common-factor AR1 effects",
         "not_economic_power_or_actual_seven_hypothesis_scores": True,
@@ -240,7 +276,11 @@ def main(argv=None):
                 all(r["null_repetitions"] == REPETITIONS
                     for r in result["rows"]) and
                 result["trading_outcomes_read"] is False and
-                result["formal_inference_enabled"] is False,
+                result["formal_inference_enabled"] is False and
+                result["oracle_valid_for_real_market_effects"] is False and
+                all(r["familywise_any_rejections"] - r["oracle_any_rejections"] ==
+                    r["bootstrap_only_rejections"] - r["oracle_only_rejections"]
+                    for r in result["rows"]),
                 "Joint global-null calibration did not reproduce")
     if args.output:
         target = Path(args.output)
