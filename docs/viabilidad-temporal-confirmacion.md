@@ -28,11 +28,11 @@ No se puede retroceder a 2022 y denominar holdout al historial ya inspeccionado.
 
 ## Reproducción
 
-\`\`\`bash
+```bash
 python -m unittest tests.test_confirmatory_calendar_floor
 python scripts/confirmatory_calendar_floor.py --verify --output out/confirmatory-calendar-floor-v1.json
-\`\`\`
+```
 
-El programa valida las reglas congeladas y archiva los **96 meses hipotéticos** sin descargar datos de bolsa, inferir feriados futuros ni calcular retornos. CI publica el archivo bajo \`confirmatory-calendar-floor\`.
+El programa valida las reglas congeladas y archiva los **96 meses hipotéticos** sin descargar datos de bolsa, inferir feriados futuros ni calcular retornos. CI publica el archivo bajo `confirmatory-calendar-floor`.
 
 **Estado:** v2 inactivo; 0/7 efectos materiales justificados; inferencia y utilidad predictiva no acreditadas.
