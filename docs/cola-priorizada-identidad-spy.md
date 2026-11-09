@@ -34,6 +34,22 @@ El manifiesto privado mantiene `request_sha256` calculado sobre las **504 posici
 
 La conciliación reaprovecha los controles de SHA256, vigencia, moneda, MIC, tipo de valor y exclusividad CUSIP/ID del adaptador preexistente. La salida privada compara los estados por **CUSIP distinto**, sin contar como duplicados los diferentes lotes/posiciones de un mismo CUSIP, y conserva los pesos originales por estado. Incluso una coincidencia inequívoca se etiqueta `retrospective-identity-candidate`: no certifica disponibilidad real en 2024, desliste, precios de ejecución ni eventos corporativos.
 
+## Resultados comprobados con los originales SEC
+
+La ejecución [42544204365](https://github.com/Hardnyx/Trading/actions/runs/42544204365) del commit [`b856614`](https://github.com/Hardnyx/Trading/commit/b856614263d74dc29cf24532c88f68153a6ef714) completó las pruebas de aplicación, las pruebas Python y la generación del CSV y el JSON sobre el archivo congelado de SEC. El despliegue web [42544204368](https://github.com/Hardnyx/Trading/actions/runs/42544204368) también se completó.
+
+| Resultado sobre el corte del 31-dic-2024 | Valor |
+|---|---:|
+| CUSIP válidos sin representación en el piloto | 351 |
+| Peso original SPY de los CUSIP válidos omitidos | 0,35455637 del NAV |
+| Posiciones originales con CUSIP inválido o ausente | 26 |
+| Peso de posiciones con identificador defectuoso | 0,03033174 del NAV |
+| Peso total no cubierto por el piloto | 0,38488811 del NAV |
+| Identidades permanentes del proveedor certificadas | 0 |
+| Cortes admisibles del motor integral | 0 de 48 |
+
+La discrepancia del primer intento quedó registrada por la [CI fallida 42543721270](https://github.com/Hardnyx/Trading/actions/runs/42543721270): los 351 CUSIP válidos **no** representaban por sí solos el peso completo de 0,38488811. El arreglo evita un test con un total incorrecto y genera dos colas diferenciadas. Ningún porcentaje anterior se redistribuye para ocultar las 26 excepciones.
+
 ## Criterio de aceptación y límites
 
 **Entrega técnica:** reproducir una solicitud priorizada y otra de excepciones de CUSIP, con pesos y posiciones que cuadren exactamente con SEC, enlazar cada fila con el manifiesto congelado, ofrecer una conciliación reproducible de futuros extractos y probar rechazos de alteraciones y ambigüedades.
