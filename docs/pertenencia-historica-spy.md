@@ -19,6 +19,8 @@ Los cambios entre dos declaraciones **distintas** se registran como `newly_discl
 
 Para el primer corte candidato se compara además la lista de acciones elegidas por el piloto retrospectivo con los **tickers literales** que figuraban en fuentes SEC públicas. Este control documenta la dependencia del catálogo posterior y localiza símbolos que no tienen respaldo en ese extracto de SPY. **Un ticker coincidente no acredita identidad histórica, precio válido, listado, elegibilidad ni que la acción fuera negociable al corte.** Una acción ausente de SPY podría ser una inversión legítima: el objetivo es documentar cobertura, no forzar el universo a las posiciones del ETF.
 
+**Cobertura inversa:** comprobar que todos los 127 símbolos del piloto coincidan con cadenas de ticker públicas es insuficiente, porque aun así podrían faltar cientos de posiciones históricamente declaradas. El informe calcula la diferencia en ambos sentidos, incluyendo el peso declarado no cubierto por las acciones del piloto. Produce una cola priorizada por **peso original** de CUSIP que estuvieron en la declaración pública de SPY pero no figuran en la selección retrospectiva. No se consultan retornos futuros ni se usa esa cola para optimizar, modificar el motor o completar artificialmente el histórico. La cola solo solicita evidencia externa de identidad y precios; no declara que esos emisores fueran necesariamente invertibles a la fecha del corte.
+
 ## Condiciones de rechazo
 
 - Hash o interpretación original que ya no coincida con el archivo derivado.

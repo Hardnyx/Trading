@@ -178,6 +178,39 @@ def pilot_overlap(row, pilot_symbols):
     matched = sorted(s for s in pilot_symbols if s in unambiguous)
     ambiguous = sorted(s for s in pilot_symbols if len(by_ticker.get(s, set())) > 1)
     missing = sorted(set(pilot_symbols)-set(matched)-set(ambiguous))
+
+    # Reverse comparison is the missing part of a survivor-only pilot audit:
+    # all pilot tickers may match while most historical fund positions are absent.
+    covered_cusips = {unambiguous[s] for s in matched}
+    historical_positive = [p for p in row["positions"] if p["weight"] > 0]
+    historical_total = sum(p["weight"] for p in historical_positive)
+    covered = sum(p["weight"] for p in historical_positive
+                  if cusip_valid(p["cusip"]) and p["cusip"] in covered_cusips)
+    omitted = [p for p in historical_positive
+               if not cusip_valid(p["cusip"]) or p["cusip"] not in covered_cusips]
+    missing_valid = defaultdict(lambda: {"weight": 0.0, "tickers": set(), "positions": []})
+    for index, p in enumerate(row["positions"]):
+        if p["weight"] <= 0 or not cusip_valid(p["cusip"]) or p["cusip"] in covered_cusips:
+            continue
+        record = missing_valid[p["cusip"]]
+        record["weight"] += p["weight"]
+        record["positions"].append(index)
+        ticker = p.get("ticker_observation")
+        if ticker:
+            record["tickers"].add(ticker["source_ticker"])
+    request_queue = [{
+        "cusip": cusip,
+        "original_source_tickers": sorted(info["tickers"]),
+        "reported_positive_weight": info["weight"],
+        "source_positions": info["positions"],
+        "price_identifier_verified": False,
+        "reason": "source-disclosed-spy-position-not-in-retrospective-pilot",
+    } for cusip, info in sorted(missing_valid.items(),
+                              key=lambda item: (-item[1]["weight"], item[0]))]
+    require(math.isclose(historical_total - covered,
+                         sum(p["weight"] for p in omitted),
+                         rel_tol=0, abs_tol=1e-10),
+            "Historical omitted SPY weight does not reconcile")
     return {
         "sample": "retrospective-current-catalogue-scoped-pilot",
         "cut": FIRST_CUT, "pilot_stock_symbols": len(pilot_symbols),
@@ -185,6 +218,15 @@ def pilot_overlap(row, pilot_symbols):
         "ambiguous_ticker_string_matches": len(ambiguous),
         "no_exact_public_spy_ticker_observation": len(missing),
         "candidate_matched_spy_weight": sum(by_weight[(s, unambiguous[s])] for s in matched),
+        "historical_positive_spy_weight": historical_total,
+        "source_cusip_weight_covered_by_pilot_ticker_strings": covered,
+        "source_spy_weight_not_covered_by_pilot": historical_total - covered,
+        "source_positive_positions_not_covered_by_pilot": len(omitted),
+        "distinct_valid_cusips_not_covered_by_pilot": len(request_queue),
+        "source_invalid_cusip_positions_not_covered_by_pilot":
+            sum(not cusip_valid(p["cusip"]) for p in omitted),
+        "priority_vendor_identity_requests": request_queue,
+        "requests_are_research_only": True,
         "pilot_unmatched_symbols": missing,
         "pilot_ambiguous_symbols": ambiguous,
         "ticker_string_match_is_not_verified_security_identity": True,
@@ -284,6 +326,12 @@ def main(argv=None):
         "distinct_filing_transitions": result["distinct_filing_transitions"],
         "pilot_stock_symbols": result["first_cut_pilot_ticker_overlap"]["pilot_stock_symbols"],
         "exact_public_ticker_string_matches": result["first_cut_pilot_ticker_overlap"]["exact_public_ticker_string_matches"],
+        "source_positive_spy_weight":
+            round(result["first_cut_pilot_ticker_overlap"]["historical_positive_spy_weight"], 8),
+        "source_spy_weight_not_covered_by_pilot":
+            round(result["first_cut_pilot_ticker_overlap"]["source_spy_weight_not_covered_by_pilot"], 8),
+        "distinct_valid_cusips_not_covered_by_pilot":
+            result["first_cut_pilot_ticker_overlap"]["distinct_valid_cusips_not_covered_by_pilot"],
         "full_engine_eligible_cuts": 0,
     }, sort_keys=True))
 

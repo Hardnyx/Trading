@@ -41,6 +41,34 @@ class HistoricalMembershipAuditTests(unittest.TestCase):
         self.assertFalse(report["price_vendor_identity_certified"])
         self.assertEqual(report["full_engine_eligible_cuts"], 0)
 
+    def test_reverse_spy_coverage_detects_missing_positions_despite_pilot_matches(self):
+        row = source(FIRST_CUT, "accession-a", "2024-09-30", [
+            position("037833100", .6, "AAA"),
+            position("594918104", .4, "BBB"),
+        ])
+        overlap = pilot_overlap(row, ["AAA"])
+        self.assertEqual(overlap["pilot_stock_symbols"], 1)
+        self.assertEqual(overlap["exact_public_ticker_string_matches"], 1)
+        self.assertAlmostEqual(overlap["historical_positive_spy_weight"], 1)
+        self.assertAlmostEqual(overlap["source_cusip_weight_covered_by_pilot_ticker_strings"], .6)
+        self.assertAlmostEqual(overlap["source_spy_weight_not_covered_by_pilot"], .4)
+        self.assertEqual(overlap["distinct_valid_cusips_not_covered_by_pilot"], 1)
+        self.assertEqual(overlap["priority_vendor_identity_requests"][0]["cusip"], "594918104")
+        self.assertFalse(overlap["priority_vendor_identity_requests"][0]["price_identifier_verified"])
+
+    def test_omission_queue_groups_duplicated_cusips_without_inventing_ids(self):
+        row = source(FIRST_CUT, "accession-a", "2024-09-30", [
+            position("037833100", .4, "AAA"),
+            position("594918104", .3, "BBB"),
+            position("594918104", .3, "BBB"),
+        ])
+        overlap = pilot_overlap(row, ["AAA"])
+        self.assertEqual(overlap["source_positive_positions_not_covered_by_pilot"], 2)
+        self.assertEqual(overlap["distinct_valid_cusips_not_covered_by_pilot"], 1)
+        self.assertAlmostEqual(overlap["priority_vendor_identity_requests"][0]["reported_positive_weight"], .6)
+        self.assertEqual(overlap["priority_vendor_identity_requests"][0]["source_positions"], [1, 2])
+        self.assertTrue(overlap["requests_are_research_only"])
+
     def test_stale_filing_cannot_retain_an_investable_membership(self):
         row = source(FIRST_CUT, "old", "2024-08-01",
                      [position()], "stale-or-invalid-source")
@@ -102,6 +130,11 @@ class HistoricalMembershipAuditTests(unittest.TestCase):
         self.assertTrue(report["source_provenance"]["archive_matches_independent_derivation"])
         self.assertFalse(report["issuer_delisting_events_verified"])
         self.assertEqual(report["full_engine_eligible_cuts"], 0)
+        overlap = report["first_cut_pilot_ticker_overlap"]
+        self.assertEqual(overlap["pilot_stock_symbols"], 127)
+        self.assertEqual(overlap["exact_public_ticker_string_matches"], 127)
+        self.assertGreater(overlap["source_spy_weight_not_covered_by_pilot"], 0)
+        self.assertGreater(overlap["distinct_valid_cusips_not_covered_by_pilot"], 0)
 
 
 if __name__ == "__main__":
