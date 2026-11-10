@@ -9,6 +9,7 @@ on:
       - 'data/historical/sec-first-cut-edgar-replay-trigger-v1.txt'
       - 'data/historical/sec-first-cut-edgar-prolog-trigger-v1.txt'
       - 'data/historical/sec-first-cut-edgar-wrapper-trigger-v1.txt'
+      - 'data/historical/sec-first-cut-edgar-wrapper-newline-trigger-v1.txt'
 
 permissions:
   contents: read

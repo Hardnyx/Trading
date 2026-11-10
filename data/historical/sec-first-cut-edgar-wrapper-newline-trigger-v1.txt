@@ -1,0 +1,3 @@
+# One-time EDGAR source replay after allowing a single SEC TEXT line terminator.
+# Trigger restricted to this exact marker, without a scheduled retry.
+# No changes to cashflows, model forecasts, historical investibility or PIT.

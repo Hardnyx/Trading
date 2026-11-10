@@ -189,6 +189,8 @@ H1 puede reutilizar datos y código existentes, pero no hereda su certificación
 
 **H1.2 · Envoltura de transporte SGML de la presentación SEC (10-nov-2026 UTC):** [workflow 42880825854](https://github.com/Hardnyx/Trading/actions/runs/42880825854) verificó exactamente los bytes originales y localizó el prólogo XML detrás de `<XBRL>` en el primario y `<XML>` en la instancia extraída. Las diferencias observadas de tamaño son 15 y 13 bytes, compatibles con marcadores emparejados. Se implementa desensamblado **solo para parsear**, exigiendo la pareja exacta y conservando SHA-256 original; el resultado del cotejo numérico real se decidirá por una nueva ejecución con el archivo original. No hay cambios de modelo, PIT o cohortes. [Metodología](conciliacion-numerica-sec.md).
 
+**H1.2 · Compatibilidad exacta con terminación de `<TEXT>` SEC (10-nov-2026 UTC):** la [primera CI de la envoltura 42881455925](https://github.com/Hardnyx/Trading/actions/runs/42881455925) falló en dos tests sintéticos porque el fixture retenía un LF adicional tras el cierre SGML. Se amplía el contrato exclusivamente a un LF/CRLF opcional, con pruebas de rechazo a texto extra y líneas duplicadas. Se exige reejecución de CI y cotejo real antes de declarar resultado. Ningún error de parser se interpreta como falsedad de las cifras; PIT/validación permanecen inactivos.
+
 ## Próximo trabajo y control de avance
 
 | Orden | Trabajo concreto | Qué debe cambiar al terminar | Bloqueo actual |

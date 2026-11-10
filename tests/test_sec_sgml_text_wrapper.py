@@ -13,6 +13,8 @@ class SecSgmlTextWrapperTests(unittest.TestCase):
                 wrapped = b"<" + kind.encode() + b">\n" + content + (
                     b"\n</" + kind.encode() + b">")
                 self.assertEqual(unwrap_sec_xml_payload(wrapped,kind), content)
+                self.assertEqual(unwrap_sec_xml_payload(wrapped+b"\n",kind), content)
+                self.assertEqual(unwrap_sec_xml_payload(wrapped+b"\r\n",kind), content)
                 self.assertEqual(len(wrapped)-len(content),
                                  15 if kind=="XBRL" else 13)
                 self.assertEqual(unwrap_sec_xml_payload(content,kind), content)
@@ -22,6 +24,8 @@ class SecSgmlTextWrapperTests(unittest.TestCase):
         for raw, kind in (
             (b"<XML>\n"+content+b"\n</XBRL>", "XML"),
             (b"<XML>\n"+content, "XML"),
+            (b"<XML>\n"+content+b"\n</XML>extra", "XML"),
+            (b"<XML>\n"+content+b"\n</XML>\n\n", "XML"),
             (b"<XBRL>\n"+content+b"\n</XBRL>", "XML"),
             (b"<XBRL> "+content+b"\n</XBRL>", "XBRL"),
             (b"<XML>\n<XML>\n"+content+b"\n</XML>", "XML"),
