@@ -3,6 +3,11 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
+    paths:
+      - 'dist/**'
+      - 'package.json'
+      - 'scripts/stamp-release.mjs'
+      - '.github/workflows/pages.yml'
   workflow_dispatch:
   workflow_call:
     inputs:

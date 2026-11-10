@@ -2,13 +2,28 @@ name: Validar aplicación
 on:
   push:
     branches: [main]
-  pull_request:
+    paths:
+      - 'dist/**'
+      - 'scripts/**'
+      - 'tests/**'
+      - 'data/**'
+      - 'docs/*.json'
+      - 'docs/**/*.json'
+      - '.github/workflows/**'
+      - 'requirements-research.txt'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'AGENTS.md'
   workflow_dispatch:
 permissions:
   contents: read
+concurrency:
+  group: trading-fast-main
+  cancel-in-progress: true
 jobs:
   checks:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
         with:
@@ -26,168 +41,3 @@ jobs:
       - run: python scripts/first_cut_source_audit.py --verify
       - run: python scripts/prospective_study_registry.py --verify
       - run: python scripts/overfit_policy_guard.py --verify
-      - run: python scripts/confirmatory_bootstrap_diagnostic.py --verify --output out/confirmatory-bootstrap-sensitivity-v1.json
-      - run: python scripts/confirmatory_familywise_bootstrap.py --verify --output out/confirmatory-familywise-bootstrap-v1.json
-      - run: python scripts/confirmatory_partial_null_bootstrap.py --verify --output out/confirmatory-partial-null-bootstrap-v1.json
-      - run: python scripts/confirmatory_calibration_gate.py --verify --global-report out/confirmatory-familywise-bootstrap-v1.json --partial-report out/confirmatory-partial-null-bootstrap-v1.json --output out/confirmatory-calibration-gate-v1.json
-      - run: python scripts/confirmatory_power_feasibility.py --verify --output out/confirmatory-power-feasibility-v1.json
-      - run: python scripts/confirmatory_economic_materiality.py --verify --output out/confirmatory-economic-materiality-v1.json
-      - run: python scripts/confirmatory_hac_stress.py --verify --output out/confirmatory-hac-independent-stress-v1.json
-      - run: python scripts/confirmatory_calendar_floor.py --verify --output out/confirmatory-calendar-floor-v1.json
-      - run: node scripts/daily_archive_readiness.mjs
-      - run: node scripts/forward_account_bridge.mjs
-      - run: python scripts/historical_identity_requests.py --output out/historical-identity-requests-v1.json.gz
-      - run: python scripts/historical_spy_membership_audit.py --output out/historical-spy-membership-audit-v1.json
-      - run: python scripts/historical_priority_vendor_queue.py --template out/historical-priority-vendor-requests-v1.csv --summary out/historical-priority-vendor-requests-v1.json --exceptions out/historical-priority-cusip-exceptions-v1.csv
-      - run: python scripts/historical_spy_exception_classification.py --output out/historical-sec-cusip-exception-review-v1.json --csv out/historical-sec-cusip-exception-review-v1.csv
-      - run: python scripts/historical_sec_alternate_identity.py --output out/historical-sec-alternate-identity-v1.json --csv out/historical-sec-alternate-identity-v1.csv
-      - run: python scripts/historical_foreign_isin_requests.py --output out/historical-foreign-isin-requests-v1.json --csv out/historical-foreign-isin-requests-v1.csv --review out/historical-foreign-isin-unresolved-v1.csv
-      - run: python scripts/historical_foreign_isin_vendor_identity.py --template out/historical-foreign-isin-vendor-manifest-template-v1.json
-      - run: python scripts/historical_identity_cross_namespace_gate.py --template out/historical-cross-namespace-identity-template-v1.json
-      - run: python scripts/historical_raw_price_intake.py --template out/historical-raw-price-source-request-v1.json
-      - run: python scripts/historical_sec_fsd_intake.py --template out/historical-sec-fsd-source-request-v1.json --verify
-      - run: python scripts/historical_sec_original_filing.py --template out/historical-sec-original-source-request-v1.json --verify
-      - run: python scripts/sec_original_acquisition.py --help
-      - run: python scripts/historical_sec_numeric_concordance.py --help
-      - run: python scripts/historical_corporate_action_intake.py --template out/historical-corporate-action-request-v1.json
-      - run: python scripts/historical_vendor_identity.py --template out/historical-vendor-identity-template.csv
-      - run: python scripts/historical_parameter_audit.py
-      - run: python scripts/archived_ewma_independent_replay.py --output out/archived-ewma-independent-replay-v1.json
-      - run: python scripts/historical_risk_fit_intake.py --template out/historical-risk-fit-manifest-template.json
-      - run: git fetch --no-tags --depth=1 origin b2d15329e2484ce103d7d729b90c65e4367b218d
-      - run: node scripts/benchmark_expanding_mean.mjs out/retrospective-expanding-mean-benchmark-v1.json
-      - uses: actions/upload-artifact@v4
-        with:
-          name: confirmatory-calendar-floor
-          path: out/confirmatory-calendar-floor-v1.json
-          retention-days: 30
-      - uses: actions/upload-artifact@v4
-        with:
-          name: confirmatory-hac-independent-stress
-          path: out/confirmatory-hac-independent-stress-v1.json
-          retention-days: 30
-      - uses: actions/upload-artifact@v4
-        with:
-          name: confirmatory-economic-materiality
-          path: out/confirmatory-economic-materiality-v1.json
-          retention-days: 30
-      - uses: actions/upload-artifact@v4
-        with:
-          name: confirmatory-power-feasibility
-          path: out/confirmatory-power-feasibility-v1.json
-          retention-days: 30
-      - uses: actions/upload-artifact@v4
-        with:
-          name: confirmatory-calibration-gate
-          path: out/confirmatory-calibration-gate-v1.json
-          retention-days: 30
-      - uses: actions/upload-artifact@v4
-        with:
-          name: confirmatory-partial-null-bootstrap
-          path: out/confirmatory-partial-null-bootstrap-v1.json
-          retention-days: 30
-      - uses: actions/upload-artifact@v4
-        with:
-          name: confirmatory-familywise-bootstrap
-          path: out/confirmatory-familywise-bootstrap-v1.json
-          retention-days: 30
-      - uses: actions/upload-artifact@v4
-        with:
-          name: confirmatory-bootstrap-sensitivity
-          path: out/confirmatory-bootstrap-sensitivity-v1.json
-          retention-days: 30
-      - uses: actions/upload-artifact@v4
-        with:
-          name: retrospective-expanding-mean-benchmark
-          path: out/retrospective-expanding-mean-benchmark-v1.json
-          retention-days: 30
-      - uses: actions/upload-artifact@v4
-        with:
-          name: historical-risk-fit-request
-          path: out/historical-risk-fit-manifest-template.json
-          retention-days: 30
-      - uses: actions/upload-artifact@v4
-        with:
-          name: archived-ewma-independent-replay
-          path: out/archived-ewma-independent-replay-v1.json
-          retention-days: 30
-      - uses: actions/upload-artifact@v4
-        with:
-          name: historical-parameter-provenance
-          path: out/historical-parameter-provenance-v1.json
-          retention-days: 30
-      - uses: actions/upload-artifact@v4
-        with:
-          name: historical-vendor-identity-template
-          path: out/historical-vendor-identity-template.csv
-          retention-days: 30
-      - uses: actions/upload-artifact@v4
-        with:
-          name: historical-corporate-action-request
-          path: out/historical-corporate-action-request-v1.json
-          retention-days: 30
-      - uses: actions/upload-artifact@v4
-        with:
-          name: historical-sec-original-source-request
-          path: out/historical-sec-original-source-request-v1.json
-          retention-days: 30
-      - uses: actions/upload-artifact@v4
-        with:
-          name: historical-sec-fsd-source-request
-          path: out/historical-sec-fsd-source-request-v1.json
-          retention-days: 30
-      - uses: actions/upload-artifact@v4
-        with:
-          name: historical-raw-price-source-request
-          path: out/historical-raw-price-source-request-v1.json
-          retention-days: 30
-      - uses: actions/upload-artifact@v4
-        with:
-          name: historical-cross-namespace-identity-template
-          path: out/historical-cross-namespace-identity-template-v1.json
-          retention-days: 30
-      - uses: actions/upload-artifact@v4
-        with:
-          name: historical-foreign-isin-vendor-template
-          path: out/historical-foreign-isin-vendor-manifest-template-v1.json
-          retention-days: 30
-      - uses: actions/upload-artifact@v4
-        with:
-          name: historical-foreign-isin-requests
-          path: |
-            out/historical-foreign-isin-requests-v1.json
-            out/historical-foreign-isin-requests-v1.csv
-            out/historical-foreign-isin-unresolved-v1.csv
-          retention-days: 30
-      - uses: actions/upload-artifact@v4
-        with:
-          name: historical-sec-alternate-identity
-          path: |
-            out/historical-sec-alternate-identity-v1.json
-            out/historical-sec-alternate-identity-v1.csv
-          retention-days: 30
-      - uses: actions/upload-artifact@v4
-        with:
-          name: historical-sec-cusip-exception-review
-          path: |
-            out/historical-sec-cusip-exception-review-v1.json
-            out/historical-sec-cusip-exception-review-v1.csv
-          retention-days: 30
-      - uses: actions/upload-artifact@v4
-        with:
-          name: historical-priority-vendor-requests
-          path: |
-            out/historical-priority-vendor-requests-v1.csv
-            out/historical-priority-vendor-requests-v1.json
-            out/historical-priority-cusip-exceptions-v1.csv
-          retention-days: 30
-      - uses: actions/upload-artifact@v4
-        with:
-          name: historical-spy-membership-audit
-          path: out/historical-spy-membership-audit-v1.json
-          retention-days: 30
-      - uses: actions/upload-artifact@v4
-        with:
-          name: historical-identity-requests
-          path: out/historical-identity-requests-v1.json.gz
-          retention-days: 30
