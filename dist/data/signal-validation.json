@@ -1,7 +1,7 @@
 {
  "schema_version": 1,
  "protocol": "monthly-complete-stock-signal-v1",
- "updated_at": "2026-11-10T05:55:41.133Z",
+ "updated_at": "2026-11-10T06:02:53.186Z",
  "current_cohort": "c467d5840cf3d4ca39d6acf36605983e4b6b1f830d183ac43ffcfba7530c0946",
  "sealed": 2,
  "cohorts": {
