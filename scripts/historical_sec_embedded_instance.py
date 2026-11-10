@@ -19,6 +19,7 @@ try:
     from scripts.filing_facts import TAGS
     from scripts.historical_sec_fsd_intake import extract, require
     from scripts.historical_sec_original_filing import reconcile, MAX_BYTES
+    from scripts.sec_sgml_text_wrapper import unwrap_sec_xml_payload
     from scripts.historical_sec_numeric_concordance import (
         XBRLI, ISO, XSI_NIL, xml_contexts_and_units,
     )
@@ -26,6 +27,7 @@ except ModuleNotFoundError:
     from filing_facts import TAGS
     from historical_sec_fsd_intake import extract, require
     from historical_sec_original_filing import reconcile, MAX_BYTES
+    from sec_sgml_text_wrapper import unwrap_sec_xml_payload
     from historical_sec_numeric_concordance import (
         XBRLI, ISO, XSI_NIL, xml_contexts_and_units,
     )
@@ -78,7 +80,7 @@ def instance_facts(raw, cik):
             "Missing or oversized SEC XML instance")
     require(b"<!DOCTYPE" not in raw.upper() and b"<!ENTITY" not in raw.upper(),
             "External entities and DTD are forbidden in SEC instance")
-    doc = raw.lstrip(b" \t\r\n")
+    doc = unwrap_sec_xml_payload(raw, "XML").lstrip(b" \t\r\n")
     require(doc.startswith(b"<"), "Unrecognized XML preamble")
     namespaces = {}
     try:

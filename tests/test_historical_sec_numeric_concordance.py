@@ -107,6 +107,22 @@ class SecNumericConcordanceTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 compare(report, original, ORIGINAL)
 
+
+    def test_original_sec_xbrl_text_wrapper_is_parse_only(self):
+        with tempfile.TemporaryDirectory() as directory:
+            xml = b"<?xml version='1.0' encoding='UTF-8'?>\n" + xhtml()
+            transport = b"<XBRL>\n" + xml + b"\n</XBRL>"
+            original_zip, report, file = self.fixture(directory,transport)
+            result = compare(report,file,ORIGINAL,archive_path=original_zip)
+            self.assertEqual(result["comparison_counts"]["exact_match"],1)
+            self.assertFalse(result["full_xbrl_document_numeric_fact_set_reconciled"])
+            self.assertFalse(result["original_filing_publication_independently_verified"])
+            self.assertEqual(result["eligible_full_engine_cuts_added"],0)
+            file.write_bytes(complete_filing_with_primary(
+                b"<XBRL>\n" + xml + b"\n</XML>"))
+            with self.assertRaises(ValueError):
+                compare(report,file,ORIGINAL)
+
     def test_minute_only_original_header_is_not_reported_as_exact_match(self):
         with tempfile.TemporaryDirectory() as directory:
             _, report, original = self.fixture(directory)

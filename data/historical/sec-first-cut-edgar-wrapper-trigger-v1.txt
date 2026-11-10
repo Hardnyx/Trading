@@ -1,0 +1,4 @@
+# One-time real SEC replay after identifying the original SGML wrappers.
+# Source evidence: workflow 42880825854, original SHA-256 matches unchanged.
+# Strict parsing only removes matched <XBRL> and <XML> transport envelopes.
+# No historical PIT or predictive eligibility.

@@ -187,6 +187,8 @@ H1 puede reutilizar datos y código existentes, pero no hereda su certificación
 
 **H1.2 · Diagnóstico de prolog XML con originales revalidos (10-nov-2026 UTC):** [workflow 42880197562](https://github.com/Hardnyx/Trading/actions/runs/42880197562) verificó por segunda vez los 20.482.578 bytes originales MSFT con hash idéntico y el FSD de 4.163 bytes preservado; la instancia y el documento primario fallaron al parsear la declaración XML en la segunda línea. Se prepara diagnóstico de máximo 160 bytes y posiciones de declaración con archivo exacto, sin editar fuentes ni seleccionar datos según su coincidencia. Pruebas de sintaxis y disponibilidad temporal pendientes en la nueva ejecución; **no se cuenta como discrepancia numérica ni se declara PIT**.
 
+**H1.2 · Envoltura de transporte SGML de la presentación SEC (10-nov-2026 UTC):** [workflow 42880825854](https://github.com/Hardnyx/Trading/actions/runs/42880825854) verificó exactamente los bytes originales y localizó el prólogo XML detrás de `<XBRL>` en el primario y `<XML>` en la instancia extraída. Las diferencias observadas de tamaño son 15 y 13 bytes, compatibles con marcadores emparejados. Se implementa desensamblado **solo para parsear**, exigiendo la pareja exacta y conservando SHA-256 original; el resultado del cotejo numérico real se decidirá por una nueva ejecución con el archivo original. No hay cambios de modelo, PIT o cohortes. [Metodología](conciliacion-numerica-sec.md).
+
 ## Próximo trabajo y control de avance
 
 | Orden | Trabajo concreto | Qué debe cambiar al terminar | Bloqueo actual |

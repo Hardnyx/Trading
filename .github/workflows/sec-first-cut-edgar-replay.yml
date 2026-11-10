@@ -8,6 +8,7 @@ on:
       # Trigger only the initial one-off source check; no periodic retries.
       - 'data/historical/sec-first-cut-edgar-replay-trigger-v1.txt'
       - 'data/historical/sec-first-cut-edgar-prolog-trigger-v1.txt'
+      - 'data/historical/sec-first-cut-edgar-wrapper-trigger-v1.txt'
 
 permissions:
   contents: read
@@ -27,7 +28,7 @@ jobs:
           python-version: '3.12'
       - name: Verify exact archived FSD extract and offline XBRL guards
         run: |
-          python -m unittest tests.test_sec_first_cut_fsd_extract tests.test_historical_sec_embedded_instance tests.test_sec_xbrl_prolog_probe
+          python -m unittest tests.test_sec_first_cut_fsd_extract tests.test_historical_sec_embedded_instance tests.test_sec_xbrl_prolog_probe tests.test_sec_sgml_text_wrapper tests.test_historical_sec_numeric_concordance
           python scripts/sec_first_cut_fsd_extract.py --verify
       - name: Require approved SEC contact
         env:

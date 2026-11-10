@@ -22,10 +22,12 @@ try:
     from scripts.filing_facts import TAGS
     from scripts.historical_sec_fsd_intake import SCHEMA as FSD_SCHEMA, require, extract
     from scripts.historical_sec_original_filing import reconcile
+    from scripts.sec_sgml_text_wrapper import unwrap_sec_xml_payload
 except ModuleNotFoundError:
     from filing_facts import TAGS
     from historical_sec_fsd_intake import SCHEMA as FSD_SCHEMA, require, extract
     from historical_sec_original_filing import reconcile
+    from sec_sgml_text_wrapper import unwrap_sec_xml_payload
 
 SCHEMA = "historical-sec-primary-inline-numeric-crosscheck-v1"
 XBRLI = "http://www.xbrl.org/2003/instance"
@@ -138,10 +140,10 @@ def exact_primary_facts(raw, cik):
             "Missing or oversized primary iXBRL bytes")
     require(b"<!DOCTYPE" not in raw.upper() and b"<!ENTITY" not in raw.upper(),
             "DTD or entities are prohibited in primary filing")
-    # SEC-DOCUMENT SGML envelopes can insert ASCII whitespace before a
-    # primary XHTML XML declaration. Normalize only parser input, never the
-    # original byte hash or historical evidence used for publication.
-    parse_bytes = raw.lstrip(b" \t\r\n")
+    # Exact <XBRL> transport wrappers were observed around the original
+    # EDGAR XML. Remove only the paired markers for parsing; the original
+    # document hash and full submission bytes remain untouched.
+    parse_bytes = unwrap_sec_xml_payload(raw, "XBRL").lstrip(b" \t\r\n")
     require(parse_bytes.startswith(b"<"),
             "Unsupported leading primary document content")
     namespaces = {}

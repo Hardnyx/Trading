@@ -75,6 +75,21 @@ class EmbeddedInstanceTests(unittest.TestCase):
             self.assertEqual(result["eligible_full_engine_cuts_added"], 0)
             self.assertEqual(result["confirmatory_origins_added"], 0)
 
+
+    def test_original_sec_xml_text_wrapper_is_parse_only(self):
+        with tempfile.TemporaryDirectory() as directory:
+            xml = xbrl()
+            source, report, file = self.fixture(
+                directory, b"<XML>\n" + xml + b"\n</XML>")
+            result = compare(report,file,ORIGINAL,archive_path=source)
+            self.assertEqual(result["comparison_counts"]["exact_literal_match"],1)
+            self.assertFalse(result["original_primary_inline_document_numeric_facts_reconciled"])
+            self.assertEqual(result["eligible_full_engine_cuts_added"],0)
+            file.write_bytes(filing_with_instance(
+                b"<XML>\n" + xml + b"\n</XBRL>"))
+            with self.assertRaises(ValueError):
+                compare(report,file,ORIGINAL)
+
     def test_different_numeric_values_and_duplicate_contexts_never_cherry_picked(self):
         with tempfile.TemporaryDirectory() as directory:
             _, report, path = self.fixture(directory, xbrl(amount="125"))
