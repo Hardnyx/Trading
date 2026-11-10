@@ -93,6 +93,20 @@ class SecNumericConcordanceTests(unittest.TestCase):
             self.assertFalse(
                 without_source["derived_fsd_rows_reproduced_from_original_zip"])
 
+    def test_sgml_whitespace_before_xml_declaration_is_parse_only(self):
+        with tempfile.TemporaryDirectory() as directory:
+            xml_header = b" \n<?xml version='1.0' encoding='UTF-8'?>\n"
+            raw = xml_header + xhtml()
+            zip_path, report, original = self.fixture(directory, raw)
+            result = compare(report, original, ORIGINAL, archive_path=zip_path)
+            self.assertEqual(result["comparison_counts"]["exact_match"], 1)
+            self.assertTrue(result["derived_fsd_rows_reproduced_from_original_zip"])
+            self.assertFalse(result["original_filing_publication_independently_verified"])
+            original.write_bytes(complete_filing_with_primary(
+                b"junk\n" + raw))
+            with self.assertRaises(ValueError):
+                compare(report, original, ORIGINAL)
+
     def test_minute_only_original_header_is_not_reported_as_exact_match(self):
         with tempfile.TemporaryDirectory() as directory:
             _, report, original = self.fixture(directory)

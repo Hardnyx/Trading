@@ -138,13 +138,19 @@ def exact_primary_facts(raw, cik):
             "Missing or oversized primary iXBRL bytes")
     require(b"<!DOCTYPE" not in raw.upper() and b"<!ENTITY" not in raw.upper(),
             "DTD or entities are prohibited in primary filing")
+    # SEC-DOCUMENT SGML envelopes can insert ASCII whitespace before a
+    # primary XHTML XML declaration. Normalize only parser input, never the
+    # original byte hash or historical evidence used for publication.
+    parse_bytes = raw.lstrip(b" \t\r\n")
+    require(parse_bytes.startswith(b"<"),
+            "Unsupported leading primary document content")
     namespaces = {}
     try:
-        for _, (prefix, uri) in ET.iterparse(io.BytesIO(raw), events=("start-ns",)):
+        for _, (prefix, uri) in ET.iterparse(io.BytesIO(parse_bytes), events=("start-ns",)):
             require(prefix not in namespaces or namespaces[prefix] == uri,
                     "Ambiguous rebound XML namespace")
             namespaces[prefix] = uri
-        root = ET.fromstring(raw)
+        root = ET.fromstring(parse_bytes)
     except ET.ParseError as exc:
         raise ValueError(
             "Primary inline document is not well-formed XHTML; no numeric certification"

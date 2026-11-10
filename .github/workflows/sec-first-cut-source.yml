@@ -5,7 +5,7 @@ on:
   push:
     branches: [main]
     paths:
-      # One-off, manual reruns and source format audits; never scheduled.
+      # One-off, manual reruns and original XML format audits; never scheduled.
       - '.github/workflows/sec-first-cut-source.yml'
 
 permissions:
