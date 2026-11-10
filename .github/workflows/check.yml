@@ -41,3 +41,4 @@ jobs:
       - run: python scripts/first_cut_source_audit.py --verify
       - run: python scripts/prospective_study_registry.py --verify
       - run: python scripts/overfit_policy_guard.py --verify
+      - run: python scripts/ci_workflow_policy.py --verify
