@@ -1,0 +1,4 @@
+# One-time dependency check and research acquisition after 42887651493.
+# The earlier job did not install existing research dependencies before tests.
+# Do not re-use this trigger or schedule future data transfers.
+# H1.2 eligibility remains blocked.

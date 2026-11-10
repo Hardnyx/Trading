@@ -11,6 +11,7 @@ on:
       - 'data/historical/sec-first-cut-edgar-wrapper-trigger-v1.txt'
       - 'data/historical/sec-first-cut-edgar-wrapper-newline-trigger-v1.txt'
       - 'data/historical/sec-first-cut-msft-equity-bridge-trigger-v1.txt'
+      - 'data/historical/sec-first-cut-msft-equity-bridge-deps-trigger-v1.txt'
 
 permissions:
   contents: read
@@ -28,6 +29,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Install the pinned historical-source test dependencies
+        run: python -m pip install -r requirements-research.txt
       - name: Verify exact archived FSD extract and offline XBRL guards
         run: |
           python -m unittest tests.test_sec_first_cut_fsd_extract tests.test_historical_sec_embedded_instance tests.test_sec_xbrl_prolog_probe tests.test_sec_sgml_text_wrapper tests.test_historical_sec_numeric_concordance tests.test_sec_first_cut_equity_bridge
