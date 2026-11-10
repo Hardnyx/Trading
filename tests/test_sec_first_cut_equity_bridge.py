@@ -23,6 +23,7 @@ def filing(primary):
     return complete_filing_with_primary(primary).replace(
         b"0000000123-24-000001", b"0000950170-24-118967"
     ).replace(b"<TYPE>10-K", b"<TYPE>10-Q"
+    ).replace(b"CONFORMED SUBMISSION TYPE:\t10-K", b"CONFORMED SUBMISSION TYPE:\t10-Q"
     ).replace(b"<FILENAME>annual.htm", b"<FILENAME>msft-20240930.htm"
     ).replace(b"CENTRAL INDEX KEY:\t123", b"CENTRAL INDEX KEY:\t789019"
     ).replace(b"<ACCEPTANCE-DATETIME>20241110130000",

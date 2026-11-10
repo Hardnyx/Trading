@@ -18,3 +18,7 @@ python scripts/sec_first_cut_equity_bridge.py --original out/sec-originals/00009
 El resultado es **una candidatura de correspondencia entre dos declaraciones originales fechadas**. Ni el 10-Q ni un ticker de N-PORT acreditan por sí solos que el CUSIP corresponde jurídicamente a ese CIK en todo el periodo; para ello se requiere evidencia histórica independiente de clases, cambios de identificador, fuente de proveedor permanente y precios con eventos corporativos. La fuente no promueve posiciones a universo invertible, no modifica H0.3 ni suma cortes u orígenes confirmatorios.
 
 **Aceptación técnica:** ejecución con ambos originales, clasificación correcta de todas las filas de la tabla 12(b), comprobación de los recibos N-PORT del símbolo, CUSIP documentado y pruebas adversariales. **Aceptación de H1.2:** sigue pendiente de cadena completa CUSIP–instrumento–serie de precios y disponibilidad temporal de la totalidad del universo.
+
+## Primera confrontación real de clases de valores
+
+El trabajo se publicará primero con pruebas sintéticas y un control de las declaraciones originales N-PORT del corte. La ejecución del workflow EDGAR-only con el mismo hash original recogerá el símbolo y su **clase de valor** del 10-Q, y contrastará ese símbolo con los recibos N-PORT. El archivo JSON se conservará en `out/` hasta auditar su contenido; un fallo de extracción no se interpreta como una incongruencia de identidad ni autoriza un reemplazo por información actual.

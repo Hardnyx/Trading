@@ -10,6 +10,7 @@ on:
       - 'data/historical/sec-first-cut-edgar-prolog-trigger-v1.txt'
       - 'data/historical/sec-first-cut-edgar-wrapper-trigger-v1.txt'
       - 'data/historical/sec-first-cut-edgar-wrapper-newline-trigger-v1.txt'
+      - 'data/historical/sec-first-cut-msft-equity-bridge-trigger-v1.txt'
 
 permissions:
   contents: read
@@ -29,7 +30,7 @@ jobs:
           python-version: '3.12'
       - name: Verify exact archived FSD extract and offline XBRL guards
         run: |
-          python -m unittest tests.test_sec_first_cut_fsd_extract tests.test_historical_sec_embedded_instance tests.test_sec_xbrl_prolog_probe tests.test_sec_sgml_text_wrapper tests.test_historical_sec_numeric_concordance
+          python -m unittest tests.test_sec_first_cut_fsd_extract tests.test_historical_sec_embedded_instance tests.test_sec_xbrl_prolog_probe tests.test_sec_sgml_text_wrapper tests.test_historical_sec_numeric_concordance tests.test_sec_first_cut_equity_bridge
           python scripts/sec_first_cut_fsd_extract.py --verify
       - name: Require approved SEC contact
         env:
@@ -47,6 +48,9 @@ jobs:
         id: original_bytes
         run: |
           echo "869604009236bade7152e0275bc940cd6f625af066d8d296ae27a9cf6477fed8  out/sec-originals/0000950170-24-118967.txt" | sha256sum --check --status
+      - name: Crosscheck MSFT equity registration against dated SPY N-PORT tickers
+        run: |
+          python scripts/sec_first_cut_equity_bridge.py --original out/sec-originals/0000950170-24-118967.txt --output out/sec-msft-equity-bridge-research.json
       - name: Inspect the original primary and extracted XML prologs without parsing
         run: |
           python scripts/sec_xbrl_prolog_probe.py --output out/sec-xml-prolog-diagnostic.json
@@ -69,6 +73,7 @@ jobs:
             out/sec-primary-inline-review.json
             out/sec-embedded-instance-review.json
             out/sec-xml-prolog-diagnostic.json
+            out/sec-msft-equity-bridge-research.json
           if-no-files-found: warn
           retention-days: 14
       - name: Report unresolved primary iXBRL reconciliation accurately

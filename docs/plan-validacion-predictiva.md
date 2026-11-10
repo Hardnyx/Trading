@@ -197,6 +197,8 @@ H1 puede reutilizar datos y código existentes, pero no hereda su certificación
 
 **H1.2 · Inicio de identidad histórica por clase de valor SEC (10-nov-2026 UTC; verificación en CI pendiente):** se implementa un cruce conservador entre la declaración 10-Q original de MSFT (símbolo/bolsa de la **acción ordinaria** en el registro 12(b), separada de dos notas que comparten símbolo) y los N-PORT originales fechados de SPY y comparables, reconstruyendo un candidato CUSIP/ticker desde recibos anteriores al corte. Se rechaza que una coincidencia de ticker equivalga a CIK–CUSIP jurídico, identificador permanente o precio causal. La ejecución real con archivo EDGAR está pendiente; el código mantiene cero cortes admitidos y no altera el modelo ni el protocolo confirmatorio. [Método](identidad-sec-clase-accion-primer-corte.md).
 
+**H1.2 · Reejecución focalizada del enlace por clase SEC (10-nov-2026 UTC, resultado pendiente):** se añadió la comprobación de registros accionarios `12(b)` al workflow EDGAR-only, con pruebas de que los N-PORT originales contengan una observación fechada y única `MSFT`. La ejecución pública solo transferirá el original EDGAR fijado por SHA-256 y conservará un informe candidato por clase, manteniendo en cuarentena los dos bonos con símbolo compartido; no será prueba de identidad permanente ni cotización histórica. [Procedimiento](identidad-sec-clase-accion-primer-corte.md).
+
 ## Próximo trabajo y control de avance
 
 | Orden | Trabajo concreto | Qué debe cambiar al terminar | Bloqueo actual |
