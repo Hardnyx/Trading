@@ -1,0 +1,4 @@
+# One-time SEC common-stock bridge replay after correcting the test
+# fixture's duplicated XML-transport closing newline.
+# The original EDGAR source and its SHA-256 are unchanged.
+# This does not confer permanent security identity or PIT prices.

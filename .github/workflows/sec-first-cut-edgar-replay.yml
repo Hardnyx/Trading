@@ -12,6 +12,7 @@ on:
       - 'data/historical/sec-first-cut-edgar-wrapper-newline-trigger-v1.txt'
       - 'data/historical/sec-first-cut-msft-equity-bridge-trigger-v1.txt'
       - 'data/historical/sec-first-cut-msft-equity-bridge-deps-trigger-v1.txt'
+      - 'data/historical/sec-first-cut-msft-equity-bridge-fixture-trigger-v1.txt'
 
 permissions:
   contents: read

@@ -64,7 +64,7 @@ class EquityBridgeTests(unittest.TestCase):
     def test_original_security_table_is_class_aware(self):
         registrations = registered_securities(
             b"<XBRL>\n" + b"<?xml version='1.0'?>\n" +
-            xml() + b"\n</XBRL>\n")
+            xml() + b"\n</XBRL>")
         self.assertEqual(len(registrations),3)
         self.assertEqual(registrations[0]["security_class"],"common-stock")
         self.assertEqual(sum(x["trading_symbol_as_filed"]=="MSFT"
@@ -72,7 +72,7 @@ class EquityBridgeTests(unittest.TestCase):
 
     def test_one_original_source_candidate_does_not_promote_price_identity(self):
         raw=filing(b"<XBRL>\n"+b"<?xml version='1.0'?>\n"+
-                   xml()+b"\n</XBRL>\n")
+                   xml()+b"\n</XBRL>")
         req,obs=evidence(raw)
         result=bridge(raw,req,obs)
         self.assertEqual(result["issuer_cik_as_filed"],"789019")
@@ -103,7 +103,7 @@ class EquityBridgeTests(unittest.TestCase):
 
     def test_ambiguous_stale_or_tampered_evidence_is_rejected(self):
         original=filing(b"<XBRL>\n"+b"<?xml version='1.0'?>\n"+
-                        xml()+b"\n</XBRL>\n")
+                        xml()+b"\n</XBRL>")
         for mode in ("multiple_equity", "missing_headers", "wrong_hash",
                      "future_ticker", "future_cut", "two_positions", "vendor_id",
                      "missing_receipt", "wrong_cusip"):
@@ -112,7 +112,7 @@ class EquityBridgeTests(unittest.TestCase):
                 req,obs=evidence(raw)
                 if mode == "multiple_equity":
                     raw=filing(b"<XBRL>\n<?xml version='1.0'?>\n"+
-                               xml(extra_equity=True)+b"\n</XBRL>\n")
+                               xml(extra_equity=True)+b"\n</XBRL>")
                     req,obs=evidence(raw)
                 elif mode == "missing_headers":
                     raw=filing(xml(header=False))
