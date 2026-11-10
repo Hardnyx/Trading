@@ -35,6 +35,38 @@ class HistoricalParameterAuditTests(unittest.TestCase):
             self.assertEqual(cut["registered_request_seed"], self.protocol["seed"])
             self.assertEqual(len(cut["registered_request_sha256"]), 64)
 
+    def test_compact_review_cannot_substitute_request_receipt(self):
+        summary = copy.deepcopy(self.summary)
+        summary["results"][0]["request_sha256"] = "0" * 64
+        with self.assertRaisesRegex(ValueError, "receipt mismatch: request_sha256"):
+            build_report(self.protocol, summary, self.bundle, self.full)
+
+    def test_compact_review_cannot_substitute_engine_snapshot_receipt(self):
+        summary = copy.deepcopy(self.summary)
+        summary["results"][0]["engine_snapshot_json_sha256"] = "0" * 64
+        with self.assertRaisesRegex(
+                ValueError, "receipt mismatch: engine_snapshot_json_sha256"):
+            build_report(self.protocol, summary, self.bundle, self.full)
+
+    def test_compact_review_cannot_substitute_stored_snapshot_receipt(self):
+        summary = copy.deepcopy(self.summary)
+        summary["results"][0]["stored_snapshot_sha256"] = "0" * 64
+        with self.assertRaisesRegex(
+                ValueError, "receipt mismatch: stored_snapshot_sha256"):
+            build_report(self.protocol, summary, self.bundle, self.full)
+
+    def test_full_results_cannot_substitute_request_receipt(self):
+        full = copy.deepcopy(self.full)
+        full["results"][0]["request_sha256"] = "0" * 64
+        with self.assertRaisesRegex(ValueError, "receipt mismatch: request_sha256"):
+            build_report(self.protocol, self.summary, self.bundle, full)
+
+    def test_effective_simulation_seed_must_match_registered_request(self):
+        full = copy.deepcopy(self.full)
+        full["results"][0]["proposal"]["settings"]["seed"] = self.protocol["seed"] + 1
+        with self.assertRaisesRegex(ValueError, "seed differs from registered"):
+            build_report(self.protocol, self.summary, self.bundle, full)
+
     def test_future_training_price_fails_before_replay(self):
         origin = copy.deepcopy(self.bundle["origins"][0])
         origin["snapshot"]["assets"][0]["history"][-1]["date"] = "2025-01-02"

@@ -137,3 +137,20 @@ python scripts/historical_parameter_audit.py --output out/historical-parameter-p
 ```
 
 **Limitación:** este control es deliberadamente un test de **invariancia de una política retrospectiva de 2026**, no un prerregistro anterior a las decisiones de 2024/2025. La igualdad de parámetros no certifica sus fuentes originales, las opciones consideradas durante el desarrollo, identidad y precios históricos, primera publicación de datos ni capacidad predictiva. El esquema del protocolo original y los dos pilotos permanecen congelados, sin nuevos outcomes.
+
+## Conciliación de recibos entre archivos del piloto (10-nov-2026)
+
+La auditoría Python ahora exige que los archivos de resultados completos y
+resumen conserven exactamente las mismas huellas SHA-256 de snapshot original,
+snapshot serializado por JavaScript y solicitud previa a la búsqueda. Además,
+el valor efectivo de `seed` debe coincidir con la semilla del protocolo
+congelado. Los tests alteran cada recibo por separado y fuerzan un cambio
+de semilla para comprobar el rechazo.
+
+La comprobación cruzada de los recibos **no recalcula** sus bytes desde Python:
+`tests/historical-parameter-request.test.mjs` sigue reconstruyendo la
+solicitud y su hash con la serialización JavaScript original. Los hashes
+originales del archivo comprimido se cotejan por separado durante la carga.
+Ningún parámetro, pronóstico, resultado ni protocolo histórico ha cambiado;
+el mecanismo continúa siendo un control de integridad retrospectivo,
+sin certificar precios vintage ni capacidad predictiva.

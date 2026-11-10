@@ -70,6 +70,16 @@ def validate_origin(origin, record, risk, protocol):
             "Pilot snapshot cut mismatch")
     require(snapshot["generated_at"][:10] > cut,
             "Retrospective compilation not identified")
+    # The JS runner seals the request and snapshot separately. Here the full
+    # result and the compact review must quote the same receipts; the separate
+    # JS regression replays their content-derived hashes without a simulation.
+    for field in ("stored_snapshot_sha256", "engine_snapshot_json_sha256",
+                  "request_sha256"):
+        observed = record.get(field)
+        require(isinstance(observed, str) and len(observed) == 64 and
+                all(char in "0123456789abcdef" for char in observed) and
+                observed == risk.get(field),
+                "Archived pilot input/request receipt mismatch: " + field)
     require(record["stored_snapshot_sha256"] == origin["snapshot_sha256"],
             "Archived pilot snapshot hash mismatch")
     require(not snapshot.get("volatility") and not snapshot.get("positions") and
@@ -104,6 +114,8 @@ def validate_origin(origin, record, risk, protocol):
             type(settings.get("lambda")) in (float, int) and
             0 < settings["lambda"] < 1,
             "Invalid effective engine policy; request seed is independently audited")
+    require(settings["seed"] == protocol["seed"],
+            "Effective pilot seed differs from registered request")
     require(not record["proposal"].get("historical_model_validated", False),
             "Unreviewed historical model certification appeared")
     require(record["proposal"]["as_of"] == cut and
