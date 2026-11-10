@@ -118,12 +118,11 @@ def audit(primary=PRIMARY, embedded=EMBEDDED, fsd=EXTRACT, observed=OBSERVED,
                     "Segmented derived facts must remain excluded")
     require(compared == ["2023-09-30","2024-09-30"],
             "Two observed quarters, not four independent facts, were compared")
-    for field in (
-        "original_filing_publication_independently_verified",
-        "historical_security_identity_certified",
-    ):
-        require(p[field] is False and e[field] is False,
-                "Original numeric equality cannot certify source vintage or security")
+    require(p.get("original_filing_publication_independently_verified") is False
+            and e.get("original_first_publication_independently_verified") is False
+            and p.get("historical_security_identity_certified") is False
+            and e.get("historical_security_identity_certified") is False,
+            "Original numeric equality cannot certify source vintage or security")
     require(p["source_fsd_zip_hash_reverified"] is False
             and p["derived_fsd_rows_reproduced_from_original_zip"] is False
             and e["source_fsd_archive_bytes_reverified"] is False
