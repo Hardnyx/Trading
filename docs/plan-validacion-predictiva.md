@@ -185,6 +185,8 @@ H1 puede reutilizar datos y código existentes, pero no hereda su certificación
 
 **H1.2 · Conservación íntegra del FSD de primera fuente y replay EDGAR reducido (10-nov-2026 UTC; validación ejecutable pendiente):** Se guarda el JSON completo de 4.163 bytes procedente del artefacto real 42862554153, con hash fijo `464019f`, y se prueba su estructura, importes, segmentos, fecha de aceptación y restricciones de no certificación. El flujo EDGAR-only fija la adquisición original a un accession y SHA-256 ya observados, reduce la transferencia prevista del ZIP FSD de 123 MB a la presentación original de ~20 MB y publica contrastes del primario y del XML secundario sin mezclar sus estados. El primer `push` del marcador dispara una única ejecución de investigación; un resultado de error no implica rechazo de la fuente. **No se acepta ningún nuevo corte histórico sin certificación PIT.** [Guía](adquisicion-sec-fsd-primer-corte.md).
 
+**H1.2 · Diagnóstico de prolog XML con originales revalidos (10-nov-2026 UTC):** [workflow 42880197562](https://github.com/Hardnyx/Trading/actions/runs/42880197562) verificó por segunda vez los 20.482.578 bytes originales MSFT con hash idéntico y el FSD de 4.163 bytes preservado; la instancia y el documento primario fallaron al parsear la declaración XML en la segunda línea. Se prepara diagnóstico de máximo 160 bytes y posiciones de declaración con archivo exacto, sin editar fuentes ni seleccionar datos según su coincidencia. Pruebas de sintaxis y disponibilidad temporal pendientes en la nueva ejecución; **no se cuenta como discrepancia numérica ni se declara PIT**.
+
 ## Próximo trabajo y control de avance
 
 | Orden | Trabajo concreto | Qué debe cambiar al terminar | Bloqueo actual |

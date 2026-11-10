@@ -1,0 +1,5 @@
+# One-time diagnostic replay of the exact original MSFT SEC XML prefix.
+# Earlier run 42880197562: confirmed original SHA-256 but both XML parsers
+# failed on a declaration at line 2. No original byte or model value changes.
+# Date: 2026-11-10 UTC.
+# Historical causal eligibility: none.
