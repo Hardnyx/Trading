@@ -43,3 +43,9 @@ python scripts/historical_sec_embedded_instance.py --fsd-report out/sec-fsd-rese
 ```
 
 Este cotejo es **secundario**: ni una coincidencia literal en una instancia extraída permite afirmar que el primario iXBRL fue conciliado ni que los bytes estuvieron disponibles al corte histórico. Tampoco constituye validación completa de hechos, EPS TTM, títulos negociables o pronósticos. El nuevo workflow de investigación es exclusivamente manual y conserva ambos resultados por separado, aun cuando el primario falle.
+
+## Confrontación observable del estado financiero original
+
+El 10-nov-2026 se comprobó la tabla pública del [10-Q original de MSFT](https://www.sec.gov/Archives/edgar/data/789019/000095017024118967/msft-20240930.htm), apartado **Income Statements**, tres meses terminados el 30-sep. El estado financiero expresa cifras en millones de USD: utilidad neta de **24.667** (2024) y **22.291** (2023). Las dos filas FSD `NetIncomeLoss` consolidadas, sin dimensiones, reproducen esos importes al multiplicar por un millón. Los otros dos registros FSD están segmentados, por lo que se excluyen de esta confrontación.
+
+La evidencia puntual y el enlace al documento están registrados por separado en [la observación SEC](../data/historical/sec-first-cut-original-source-observation-v1.json) y protegidos por un test que exige igualdad decimal con las cifras originales de la extracción FSD. La lectura de la tabla **no equivale al cotejo de etiquetas iXBRL ni de sus contextos temporales**, no autentica el primer instante de publicación y no permite calcular EPS TTM, certificar el universo invertible o contar el corte como válido.

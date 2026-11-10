@@ -77,5 +77,27 @@
   },
   "eligible_full_engine_cuts_added": 0,
   "confirmatory_origins_added": 0,
-  "predictive_validation": "not-established"
+  "predictive_validation": "not-established",
+  "primary_statement_readout": {
+    "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000095017024118967/msft-20240930.htm",
+    "review_date_utc": "2026-11-10",
+    "source_kind": "public-EDGAR-rendered-original-primary-10-Q-statement-not-raw-inline-tag-reconciliation",
+    "reported_unit": "USD millions",
+    "period_description": "Three months ended September 30 (unaudited)",
+    "consolidated_net_income": [
+      {
+        "period_end": "2023-09-30",
+        "million_usd": "22291"
+      },
+      {
+        "period_end": "2024-09-30",
+        "million_usd": "24667"
+      }
+    ],
+    "table_matches_two_unsegmented_fsd_values": true,
+    "inline_xbrl_fact_contexts_reconciled": false,
+    "source_first_publication_independently_verified": false,
+    "complete_numeric_coverage_certified": false,
+    "scope": "two visible consolidated net-income figures only; dimensional facts excluded"
+  }
 }

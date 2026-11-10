@@ -74,6 +74,31 @@ def audit(observation, lead):
             and facts["matched_against_original_inline_document"] is False
             and facts["full_numeric_coverage_verified"] is False,
             "Research-derived SEC facts are missing, ambiguous or falsely certified")
+    visible = observation.get("primary_statement_readout")
+    require(isinstance(visible, dict)
+            and visible.get("source_url") == selected["primary_document_url"]
+            and visible.get("source_kind") ==
+                "public-EDGAR-rendered-original-primary-10-Q-statement-not-raw-inline-tag-reconciliation"
+            and visible.get("reported_unit") == "USD millions"
+            and visible.get("period_description") ==
+                "Three months ended September 30 (unaudited)"
+            and visible.get("scope") ==
+                "two visible consolidated net-income figures only; dimensional facts excluded"
+            and visible.get("table_matches_two_unsegmented_fsd_values") is True
+            and visible.get("inline_xbrl_fact_contexts_reconciled") is False
+            and visible.get("source_first_publication_independently_verified") is False
+            and visible.get("complete_numeric_coverage_certified") is False,
+            "Readable primary statement cannot be treated as full iXBRL evidence")
+    reported = visible.get("consolidated_net_income")
+    require(isinstance(reported, list) and len(reported) == 2 and
+            {r["period_end"] for r in reported} ==
+                {"2023-09-30", "2024-09-30"} and
+            {r["period_end"]: Decimal(r["million_usd"]) * 1_000_000
+             for r in reported} ==
+            {r["period_end"]: Decimal(r["value_decimal"])
+             for r in rows if r["segment"] == ""},
+            "Public primary statement net income differs from consolidated FSD rows")
+
     require(all(v is False for k, v in observation["source_review"].items()
                 if k != "fsd_is_derived_not_a_vintage_of_original_filing")
             and observation["source_review"]["fsd_is_derived_not_a_vintage_of_original_filing"]
@@ -94,7 +119,7 @@ class SecFirstCutObservationTests(unittest.TestCase):
         self.assertTrue(audit(self.obs, self.lead))
 
     def test_changing_metadata_does_not_fabricate_exact_or_pit_evidence(self):
-        for mutate in ("time", "hash", "acceptance", "segment", "amount", "eligibility"):
+        for mutate in ("time", "hash", "acceptance", "segment", "amount", "primary_amount", "primary_proof", "eligibility"):
             changed = copy.deepcopy(self.obs)
             if mutate == "time":
                 changed["accepted_eastern"]["original_edgar_header"] = "2024-10-30 16:08:00"
@@ -106,6 +131,10 @@ class SecFirstCutObservationTests(unittest.TestCase):
                 changed["selected_numeric_facts"]["rows"][1]["segment"] = ""
             elif mutate == "amount":
                 changed["selected_numeric_facts"]["rows"][0]["value_decimal"] = "1.0000"
+            elif mutate == "primary_amount":
+                changed["primary_statement_readout"]["consolidated_net_income"][0]["million_usd"] = "1"
+            elif mutate == "primary_proof":
+                changed["primary_statement_readout"]["inline_xbrl_fact_contexts_reconciled"] = True
             else:
                 changed["eligible_full_engine_cuts_added"] = 1
             with self.subTest(mutate=mutate), self.assertRaises(ValueError):
