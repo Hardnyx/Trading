@@ -1,6 +1,8 @@
 """Check that expensive workflows cannot silently return to every push."""
 import unittest
-from scripts.ci_workflow_policy import FAST, FULL, PAGES, validate
+from scripts.ci_workflow_policy import (
+    FAST, FULL, PAGES, WORKFLOW_DIR, validate, validate_actions_budget,
+)
 
 
 class SelectiveCiPolicyTests(unittest.TestCase):
@@ -48,6 +50,58 @@ class SelectiveCiPolicyTests(unittest.TestCase):
             validate(self.fast, self.full,
                      self.pages.replace("  workflow_call:\n",
                                         "  renamed_call:\n", 1))
+
+    def test_standard_runner_and_schedule_inventory(self):
+        workflows = {
+            path.name: path.read_text(encoding="utf-8")
+            for path in WORKFLOW_DIR.glob("*.yml")
+        }
+        self.assertTrue(all(validate_actions_budget(workflows).values()))
+
+    def test_unreviewed_paid_runner_is_rejected(self):
+        workflows = {
+            path.name: path.read_text(encoding="utf-8")
+            for path in WORKFLOW_DIR.glob("*.yml")
+        }
+        target = "pool-opportunity.yml"
+        self.assertIn("runs-on: ubuntu-latest", workflows[target])
+        workflows[target] = workflows[target].replace(
+            "runs-on: ubuntu-latest", "runs-on: ubuntu-16-cores", 1)
+        with self.assertRaisesRegex(ValueError, "Nonstandard"):
+            validate_actions_budget(workflows)
+
+    def test_excessive_job_timeout_is_rejected(self):
+        workflows = {
+            path.name: path.read_text(encoding="utf-8")
+            for path in WORKFLOW_DIR.glob("*.yml")
+        }
+        target = "pool-opportunity.yml"
+        self.assertIn("timeout-minutes: 15", workflows[target])
+        workflows[target] = workflows[target].replace(
+            "timeout-minutes: 15", "timeout-minutes: 240", 1)
+        with self.assertRaisesRegex(ValueError, "timeout"):
+            validate_actions_budget(workflows)
+
+    def test_unreviewed_automatic_schedule_is_rejected(self):
+        workflows = {
+            path.name: path.read_text(encoding="utf-8")
+            for path in WORKFLOW_DIR.glob("*.yml")
+        }
+        target = "portfolio-robustness.yml"
+        self.assertIn("  workflow_dispatch:\n", workflows[target])
+        workflows[target] = workflows[target].replace(
+            "  workflow_dispatch:\n",
+            "  workflow_dispatch:\n  schedule:\n    - cron: '0 * * * *'\n", 1)
+        with self.assertRaisesRegex(ValueError, "Scheduled"):
+            validate_actions_budget(workflows)
+        target = "pool-opportunity.yml"
+        workflows[target] = {
+            path.name: path.read_text(encoding="utf-8")
+            for path in WORKFLOW_DIR.glob("*.yml")
+        }[target].replace(
+            "- cron: '37 2 * * 0'", "- cron: '37 2 * * *'", 1)
+        with self.assertRaisesRegex(ValueError, "Scheduled"):
+            validate_actions_budget(workflows)
 
 
 if __name__ == "__main__":

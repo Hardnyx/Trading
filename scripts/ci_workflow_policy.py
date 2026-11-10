@@ -1,5 +1,6 @@
 """Guard mandatory checks and explicit manual research workflows using stdlib."""
 import argparse
+import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -181,6 +182,48 @@ def validate_page_reuse(pages, signal):
     return {"safe_pages_test_reuse": True}
 
 
+
+# Guard repository-wide runner costs and expected automatic scheduling. This
+# is a static policy; GitHub billing and completed-run costs are not inferred.
+WORKFLOW_DIR = ROOT / ".github/workflows"
+STANDARD_RUNNERS = frozenset(("ubuntu-latest", "ubuntu-24.04"))
+EXPECTED_SCHEDULES = {
+    "refresh-data.yml": ("30 23 * * *",),
+    "history-archive.yml": ("17 13 * * 6",),
+    "pool-opportunity.yml": ("37 2 * * 0",),
+}
+
+
+def validate_actions_budget(workflows):
+    """Reject nonstandard runners, excessive timeouts and new automatic cron."""
+    require(bool(workflows), "No workflows supplied for the budget audit")
+    scheduled = {}
+    for filename, source in sorted(workflows.items()):
+        triggers = events(source)
+        runners = re.findall(r"(?m)^\s+runs-on:\s*(\S[^\r\n]*)$", source)
+        require(
+            runners and all(value.strip() in STANDARD_RUNNERS for value in runners),
+            f"Nonstandard or unreviewed runner in {filename}",
+        )
+        timeouts = re.findall(r"(?m)^\s+timeout-minutes:\s*(\d+)\s*$", source)
+        require(
+            timeouts and all(0 < int(value) <= 60 for value in timeouts),
+            f"Missing or excessive timeout in {filename}",
+        )
+        crons = tuple(re.findall(r"(?m)^    - cron: '([^']+)'$", triggers))
+        if "  schedule:\n" in triggers or crons:
+            scheduled[filename] = crons
+    require(
+        scheduled == EXPECTED_SCHEDULES,
+        "Scheduled workflow inventory or cadence changed without review",
+    )
+    return {
+        "standard_runners_only": True,
+        "bounded_workflow_timeouts": True,
+        "scheduled_cadence_reviewed": True,
+    }
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--verify", action="store_true")
@@ -194,6 +237,10 @@ def main():
     result.update(validate_page_reuse(
         PAGES.read_text(encoding="utf-8"),
         SIGNAL.read_text(encoding="utf-8")))
+    result.update(validate_actions_budget({
+        path.name: path.read_text(encoding="utf-8")
+        for path in sorted(WORKFLOW_DIR.glob("*.yml"))
+    }))
     if options.verify:
         require(all(result.values()), "Selective Actions policy failed")
     print(result)
