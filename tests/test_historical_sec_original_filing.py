@@ -59,6 +59,20 @@ class OriginalFilingIntakeTests(unittest.TestCase):
             self.assertEqual(check["eligible_full_engine_cuts_added"], 0)
             self.assertEqual(check["confirmatory_origins_added"], 0)
 
+    def test_zero_fraction_sec_fsd_matches_original_second_exactly(self):
+        with tempfile.TemporaryDirectory() as d:
+            _, report, original = self.fixture(d)
+            record = next(r for r in report["submissions"]
+                          if r["adsh"] == ORIGINAL)
+            record["accepted_eastern_as_filed"] += ".0"
+            reconciled = reconcile(report, original, ORIGINAL)
+            self.assertTrue(reconciled["header_form_filed_accepted_cik_accession_match"])
+            self.assertFalse(reconciled["original_filing_first_publication_independently_verified"])
+            record["accepted_eastern_as_filed"] = record[
+                "accepted_eastern_as_filed"].replace(".0", ".1")
+            with self.assertRaises(ValueError):
+                reconcile(report, original, ORIGINAL)
+
     def test_mismatched_original_headers_and_truncated_files_rejected(self):
         mutations = {
             "form": complete_filing(form="10-Q"),

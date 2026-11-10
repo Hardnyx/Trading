@@ -56,11 +56,23 @@ def cutoff_timestamp(value):
 
 
 def as_filed_acceptance(value):
+    """Parse the SEC SUB timestamp without rounding a nonzero subsecond.
+
+    Official quarterly FSD SUB rows can end in .0 (numeric export formatting).
+    The original SEC-HEADER carries second precision, so a nonzero fractional
+    part cannot be reconciled as an exact documented acceptance time.
+    """
     require(isinstance(value, str), "SEC acceptance timestamp missing")
+    matched = re.fullmatch(
+        r"([0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2})(?:\.0{1,6})?",
+        value,
+    )
+    require(matched is not None,
+            "SEC accepted timestamp requires exact seconds or zero-only fraction")
     try:
-        local = datetime.strptime(value, "%Y-%m-%d %H:%M:%S")
+        local = datetime.strptime(matched.group(1), "%Y-%m-%d %H:%M:%S")
     except ValueError as exc:
-        raise ValueError("SEC accepted timestamp is not YYYY-MM-DD HH:MM:SS") from exc
+        raise ValueError("Invalid SEC accepted calendar timestamp") from exc
     eastern = local.replace(tzinfo=SEC_EASTERN, fold=0)
     require(eastern.utcoffset() ==
             local.replace(tzinfo=SEC_EASTERN, fold=1).utcoffset(),

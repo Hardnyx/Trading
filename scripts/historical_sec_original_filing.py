@@ -116,7 +116,8 @@ def reconcile(report, original_path, accession, *, archive_path=None,
     filing = parse_original(raw, accession)
     require(filing["cik"] == cik and filing["form"] == fsd["form"] and
             filing["filed"] == fsd["filed_day_reported"].replace("-", "") and
-            filing["accepted_eastern"] == fsd["accepted_eastern_as_filed"] and
+            as_filed_acceptance(filing["accepted_eastern"]) ==
+                as_filed_acceptance(fsd["accepted_eastern_as_filed"]) and
             filing["accepted_utc"] == fsd["accepted_utc"] and
             cutoff_timestamp(filing["accepted_utc"]) <= cutoff,
             "Original SEC-HEADER disagrees with FSD metadata or information cut")

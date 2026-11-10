@@ -80,6 +80,18 @@ class SecFsdIntakeTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 cutoff_timestamp(bad)
 
+    def test_official_zero_fraction_does_not_shift_original_acceptance(self):
+        expected = as_filed_acceptance("2024-10-30 16:07:17")
+        for raw in ("2024-10-30 16:07:17.0",
+                    "2024-10-30 16:07:17.000000"):
+            with self.subTest(raw=raw):
+                self.assertEqual(as_filed_acceptance(raw), expected)
+        for bad in ("2024-10-30 16:07:17.1", "2024-10-30 16:07:17.000001",
+                    "2024-10-30 16:07:17.0000000",
+                    "2024-10-30 16:07:17.0Z", "2024-10-30 16:07:17. "):
+            with self.subTest(bad=bad), self.assertRaises(ValueError):
+                as_filed_acceptance(bad)
+
     def test_preserves_original_and_precut_amendment_without_folding(self):
         with tempfile.TemporaryDirectory() as td:
             path = archive(Path(td)/"2024q4.zip")
