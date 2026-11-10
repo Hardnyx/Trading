@@ -94,14 +94,35 @@ class SelectiveCiPolicyTests(unittest.TestCase):
             "  workflow_dispatch:\n  schedule:\n    - cron: '0 * * * *'\n", 1)
         with self.assertRaisesRegex(ValueError, "Scheduled"):
             validate_actions_budget(workflows)
-        target = "pool-opportunity.yml"
-        workflows[target] = {
+        workflows = {
             path.name: path.read_text(encoding="utf-8")
             for path in WORKFLOW_DIR.glob("*.yml")
-        }[target].replace(
+        }
+        target = "pool-opportunity.yml"
+        self.assertIn("- cron: '37 2 * * 0'", workflows[target])
+        workflows[target] = workflows[target].replace(
             "- cron: '37 2 * * 0'", "- cron: '37 2 * * *'", 1)
         with self.assertRaisesRegex(ValueError, "Scheduled"):
             validate_actions_budget(workflows)
+
+    def test_multiline_runner_or_timeout_cannot_hide_below_valid_job(self):
+        workflows = {
+            path.name: path.read_text(encoding="utf-8")
+            for path in WORKFLOW_DIR.glob("*.yml")
+        }
+        target = "pool-opportunity.yml"
+        extra = workflows[target] + (
+            "\n  unreviewed:\n    runs-on:\n      group: premium\n"
+            "    timeout-minutes: 10\n"
+        )
+        with self.assertRaisesRegex(ValueError, "Nonstandard"):
+            validate_actions_budget({**workflows, target: extra})
+        extra = workflows[target] + (
+            "\n  unreviewed:\n    runs-on: ubuntu-latest\n"
+            "    timeout-minutes: \n"
+        )
+        with self.assertRaisesRegex(ValueError, "timeout"):
+            validate_actions_budget({**workflows, target: extra})
 
 
 if __name__ == "__main__":

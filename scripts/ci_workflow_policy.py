@@ -200,14 +200,15 @@ def validate_actions_budget(workflows):
     scheduled = {}
     for filename, source in sorted(workflows.items()):
         triggers = events(source)
-        runners = re.findall(r"(?m)^\s+runs-on:\s*(\S[^\r\n]*)$", source)
+        runners = re.findall(r"(?m)^[ \t]+runs-on:[ \t]*([^\r\n]*)$", source)
         require(
             runners and all(value.strip() in STANDARD_RUNNERS for value in runners),
             f"Nonstandard or unreviewed runner in {filename}",
         )
-        timeouts = re.findall(r"(?m)^\s+timeout-minutes:\s*(\d+)\s*$", source)
+        timeouts = re.findall(r"(?m)^[ \t]+timeout-minutes:[ \t]*([^\r\n]*)$", source)
         require(
-            timeouts and all(0 < int(value) <= 60 for value in timeouts),
+            timeouts and all(value.strip().isdigit() and 0 < int(value.strip()) <= 60
+                             for value in timeouts),
             f"Missing or excessive timeout in {filename}",
         )
         crons = tuple(re.findall(r"(?m)^    - cron: '([^']+)'$", triggers))
