@@ -1,9 +1,9 @@
 name: Finite-pool opportunity uncertainty (shadow)
 on:
   workflow_dispatch:
-  workflow_run:
-    workflows: [Refresh market data]
-    types: [completed]
+  schedule:
+    # Weekly shadow research after the Friday market close and refresh.
+    - cron: '37 2 * * 0'
   push:
     branches: [main]
     paths:
@@ -28,7 +28,6 @@ concurrency:
   cancel-in-progress: true
 jobs:
   audit:
-    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:

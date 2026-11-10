@@ -28,6 +28,7 @@ jobs:
       DATA_REFRESH_RESULT: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.conclusion || 'not-requested' }}
     outputs:
       published_ref: ${{ steps.published.outputs.ref }}
+      published_changes: ${{ steps.published.outputs.changed }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -62,6 +63,7 @@ jobs:
           esac
           python scripts/validation_watch.py --upstream-status "$DATA_REFRESH_RESULT"
       - name: Preserve the immutable evidence on main
+        id: persist
         run: |
           git add data/signal-validation dist/data/signal-validation.json
           git add data/validation-reviews dist/data/validation-review.json
@@ -69,6 +71,7 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git commit -m 'chore(validation): record prospective stock signal evidence'
+          echo 'changed=true' >> "$GITHUB_OUTPUT"
           for attempt in 1 2 3; do
             git fetch origin main
             # Conflicts are reviewed, never auto-resolved over a sealed file.
@@ -77,6 +80,7 @@ jobs:
             if [ "$attempt" -eq 3 ]; then exit 1; fi
           done
       - name: Verify the actual first publication without changing the forecast
+        id: verify
         if: steps.seal.outputs.new_seal == 'true'
         run: |
           export SIGNAL_SOURCE_COMMIT="$(git rev-parse HEAD)"
@@ -85,6 +89,7 @@ jobs:
           git add dist/data/signal-validation.json dist/data/validation-review.json
           if git diff --cached --quiet; then exit 0; fi
           git commit -m 'chore(validation): verify first stock-signal publication'
+          echo 'changed=true' >> "$GITHUB_OUTPUT"
           for attempt in 1 2 3; do
             git fetch origin main
             git rebase origin/main
@@ -93,9 +98,16 @@ jobs:
           done
       - name: Record the exact evidence commit for deployment
         id: published
-        run: echo "ref=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+        run: |
+          echo "ref=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          if [ "${{ steps.persist.outputs.changed }}" = "true" ] || [ "${{ steps.verify.outputs.changed }}" = "true" ]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          fi
   deploy:
     needs: ledger
+    if: needs.ledger.outputs.published_changes == 'true'
     permissions:
       contents: read
       pages: write
