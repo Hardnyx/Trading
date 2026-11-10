@@ -4,7 +4,7 @@
 
 La fuente pública de Financial Statement Data Sets de la SEC enumera el ZIP 2024 Q4 (https://www.sec.gov/dera/data/financial-statement-data-sets.html). El nuevo colector scripts/sec_fsd_acquisition.py limita la descarga a ese trimestre, verifica HTTP 200 en la URL oficial, longitud, SHA-256, estructura ZIP, seguridad de nombres y presencia de SUB/NUM. No sobrescribe archivos y elimina copias parciales tras un error. El archivo permanece bajo out/sec-fsd/, ignorado por Git.
 
-El flujo de GitHub Actions «Acquire first-cut SEC sources (research)» ejecuta una revisión sintética sin red y, mediante SEC_USER_AGENT previamente configurado, intenta descargar además el expediente completo de MSFT 0000950170-24-118967. Después aplica los colectores existentes de FSD y el cotejo conservador iXBRL de NetIncomeLoss para el candidato retrospectivo de 31-dic-2024. Se almacenan únicamente informes JSON como artefactos efímeros, no el ZIP ni la presentación original. Se puede ejecutar manualmente; una modificación del propio workflow dispara una ejecución de comprobación. No se aplica a otros emisores ni implica aprobación de un corte.
+El flujo de GitHub Actions «Acquire first-cut SEC sources (research)» ejecuta una revisión sintética sin red y, mediante SEC_USER_AGENT previamente configurado, intenta descargar además el expediente completo de MSFT 0000950170-24-118967. Después aplica los colectores existentes de FSD y el cotejo conservador iXBRL de NetIncomeLoss para el candidato retrospectivo de 31-dic-2024. Se almacenan únicamente informes JSON como artefactos efímeros, no el ZIP ni la presentación original. Se ejecuta únicamente de forma manual; no se repiten automáticamente descargas SEC tras cambios de código. No se aplica a otros emisores ni implica aprobación de un corte.
 
 Para ejecutarlo localmente desde la raíz de Trading, primero configurar SEC_USER_AGENT con un contacto real autorizado. En Windows CMD, usar estos comandos:
 
@@ -29,3 +29,11 @@ En la [ejecución 42862554153](https://github.com/Hardnyx/Trading/actions/runs/4
 ## SGML y documento primario iXBRL
 
 La [ejecución 42863438590](https://github.com/Hardnyx/Trading/actions/runs/42863438590) superó recepción, validación de bytes y reconstrucción FSD; el parser del primario real rechazó una declaración XML situada en la segunda línea por espacio ASCII inicial del cuerpo SGML. La siguiente revisión elimina solo espacios ASCII iniciales **para el análisis XML**, conserva el SHA-256 de los bytes originales intactos y sigue rechazando cualquier contenido anterior no blanco, DTD, entidades externas o XHTML no bien formado. Esto no cambia ningún dato del emisor ni autoriza una inferencia de PIT.
+
+## Observación recuperada y límites de acceso
+
+Los recibos verificados en el workflow 42862554153 y las cuatro filas FSD reales se conservan en el informe data/historical/sec-first-cut-original-source-observation-v1.json. Los dos importes consolidados de NetIncomeLoss corresponden a periodos terminados el 30-sep-2023 y el 30-sep-2024, por 22.291 y 24.667 millones de USD; los otros dos registros tienen una dimensión RetainedEarnings y no se suman como observaciones independientes. Las unidades y la segmentación permanecen trazables, sin convertir esos importes en crecimiento TTM o alfa.
+
+La ejecución 42863895340 recibió HTTP 404 al intentar recuperar nuevamente el ZIP, después de dos descargas satisfactorias. Es una limitación de acceso observada, no un cambio confirmado de contenido. El workflow pasa a manual para evitar transferencias reiteradas; los archivos originales no se publican en Git y los hashes se mantienen para cotejos futuros. El FSD 2024q4.zip reporta un Last-Modified HTTP de enero de 2025, posterior al corte retrospectivo de diciembre de 2024. No se declara disponibilidad anterior del archivo derivado ni procedencia PIT por ese dato.
+
+La comparación numérica original sigue pendiente: se detectó una envoltura XML con espacio inicial y se corrigió el parser mediante pruebas sintéticas, pero no se ha repetido el cotejo completo sobre una nueva recuperación válida. Ninguno de los catorce componentes del primer corte se promueve.

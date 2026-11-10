@@ -1,0 +1,81 @@
+{
+  "schema": "sec-first-cut-original-source-observation-v1",
+  "observed_on_utc": "2026-11-10",
+  "cut": "2024-12-31T21:00:00Z",
+  "sample_role": "previously-inspected-retrospective-development",
+  "source_provenance": {
+    "workflow_run": 42862554153,
+    "original_fsd_zip": {
+      "url": "https://www.sec.gov/files/dera/data/financial-statement-data-sets/2024q4.zip",
+      "sha256": "9a2cbbaf39c94aa642b33d512f4def92b198d3bfd12d2267bcd27abe55b9902d",
+      "bytes": 122932548,
+      "retrieved_utc": "2026-11-10T17:13:08.802609+00:00",
+      "last_modified_http_reported": "2025-01-16T16:58:33Z",
+      "original_file_bytes_committed": false
+    },
+    "original_edgar_filing": {
+      "accession": "0000950170-24-118967",
+      "cik": "789019",
+      "url": "https://www.sec.gov/Archives/edgar/data/789019/000095017024118967/0000950170-24-118967.txt",
+      "sha256": "869604009236bade7152e0275bc940cd6f625af066d8d296ae27a9cf6477fed8",
+      "bytes": 20482578,
+      "retrieved_utc": "2026-11-10T17:13:11.809249+00:00",
+      "last_modified_http_reported": "2024-10-30T20:08:17Z",
+      "original_file_bytes_committed": false
+    },
+    "extracted_fsd_json": {
+      "artifact_sha256": "464019f23f683c8e65d7b85554ef9d121c12f3882a0d8d27f59ba4c49838f6c5",
+      "workflow_artifact": "sec-first-cut-source-receipts",
+      "original_sec_zip_rows_reextracted": false
+    }
+  },
+  "accepted_eastern": {
+    "fsd_as_reported": "2024-10-30 16:07:00.0",
+    "original_edgar_header": "2024-10-30 16:07:17",
+    "precision_relation": "same-minute-only-not-exact",
+    "original_exact_acceptance_checked_against_research_cut": true,
+    "originally_public_at_cut_independently_verified": false
+  },
+  "selected_numeric_facts": {
+    "tag": "NetIncomeLoss",
+    "taxonomy": "us-gaap/2024",
+    "uom": "USD",
+    "quarters": 1,
+    "rows": [
+      {
+        "period_end": "2023-09-30",
+        "segment": "",
+        "value_decimal": "22291000000.0000"
+      },
+      {
+        "period_end": "2023-09-30",
+        "segment": "EquityComponents=RetainedEarnings;",
+        "value_decimal": "22291000000.0000"
+      },
+      {
+        "period_end": "2024-09-30",
+        "segment": "",
+        "value_decimal": "24667000000.0000"
+      },
+      {
+        "period_end": "2024-09-30",
+        "segment": "EquityComponents=RetainedEarnings;",
+        "value_decimal": "24667000000.0000"
+      }
+    ],
+    "selected_fsd_rows": 4,
+    "unsegmented_rows": 2,
+    "matched_against_original_inline_document": false,
+    "full_numeric_coverage_verified": false
+  },
+  "source_review": {
+    "fsd_is_derived_not_a_vintage_of_original_filing": true,
+    "actual_original_published_before_cut_certified": false,
+    "complete_original_xbrl_facts_reconciled": false,
+    "security_master_at_cut_certified": false,
+    "price_vintages_certified": false
+  },
+  "eligible_full_engine_cuts_added": 0,
+  "confirmatory_origins_added": 0,
+  "predictive_validation": "not-established"
+}

@@ -1,12 +1,8 @@
 name: Acquire first-cut SEC sources (research)
 
 on:
+  # Manual only: avoid repeat 123 MB quarterly ZIP downloads on source edits.
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      # One-off, manual reruns and original XML format audits; never scheduled.
-      - '.github/workflows/sec-first-cut-source.yml'
 
 permissions:
   contents: read
@@ -26,7 +22,7 @@ jobs:
           python-version: '3.12'
       - name: Verify offline acquisition and numeric-source contracts
         run: |
-          python -m unittest tests.test_sec_fsd_acquisition tests.test_sec_original_acquisition tests.test_historical_sec_fsd_intake tests.test_historical_sec_original_filing tests.test_historical_sec_numeric_concordance
+          python -m unittest tests.test_sec_fsd_acquisition tests.test_sec_original_acquisition tests.test_historical_sec_fsd_intake tests.test_historical_sec_original_filing tests.test_historical_sec_numeric_concordance tests.test_sec_first_cut_observation
       - name: Require identified SEC contact
         env:
           SEC_USER_AGENT: ${{ secrets.SEC_USER_AGENT || vars.SEC_USER_AGENT }}
