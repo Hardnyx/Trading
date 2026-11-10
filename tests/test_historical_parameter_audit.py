@@ -91,7 +91,7 @@ class HistoricalParameterAuditTests(unittest.TestCase):
         summary["results"][0]["risk"]["factor_covariance"]["observations"] = (
             summary["results"][0]["risk"]["observations"] - 1
         )
-        with self.assertRaisesRegex(ValueError, "Risk fit method or observation"):
+        with self.assertRaisesRegex(ValueError, "risk fit method or observation"):
             build_report(self.protocol, summary, self.bundle, self.full)
 
     def test_policy_audit_refuses_2026_policy_reclassified_as_pre_cut(self):
