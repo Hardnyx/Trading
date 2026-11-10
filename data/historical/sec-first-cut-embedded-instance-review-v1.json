@@ -1,0 +1,86 @@
+{
+  "schema": "historical-sec-embedded-extracted-instance-crosscheck-v1",
+  "scope": "limited-secondary-embedded-instance-research-only",
+  "accession": "0000950170-24-118967",
+  "original_complete_submission_sha256": "869604009236bade7152e0275bc940cd6f625af066d8d296ae27a9cf6477fed8",
+  "embedded_instance_filename": "msft-20240930_htm.xml",
+  "embedded_instance_sha256": "75523942f79ac5cfd31c86045b4d3accf036982f8db0ffb3235606ccda7c442d",
+  "embedded_instance_found_in_same_original_submission": true,
+  "source_fsd_archive_bytes_reverified": false,
+  "header_acceptance_exact_match": false,
+  "header_acceptance_minute_only_consistent": true,
+  "original_acceptance_utc": "2024-10-30T20:07:17+00:00",
+  "source_instance_is_extracted_not_primary_inline": true,
+  "original_primary_inline_document_numeric_facts_reconciled": false,
+  "original_first_publication_independently_verified": false,
+  "complete_original_numeric_fact_set_reconciled": false,
+  "historical_security_identity_certified": false,
+  "eligible_full_engine_cuts_added": 0,
+  "confirmatory_origins_added": 0,
+  "predictive_validation": "not-established",
+  "selected_rows": 4,
+  "comparison_counts": {
+    "exact_literal_match": 2,
+    "decimal_mismatch": 0,
+    "missing_in_embedded_instance": 0,
+    "ambiguous_instance": 0,
+    "ineligible_derived_dimension": 2,
+    "unsupported_derived_tag_or_unit": 0,
+    "missing_derived_numeric_value": 0
+  },
+  "instance_scan": {
+    "unsegmented_supported_literals_examined": 76,
+    "excluded_unsupported_context_or_literal": 48,
+    "unique_context_keys": 14
+  },
+  "rows": [
+    {
+      "tag": "NetIncomeLoss",
+      "version": "us-gaap/2024",
+      "ddate": "2023-09-30",
+      "qtrs": 1,
+      "uom": "USD",
+      "segments": "",
+      "coreg": "",
+      "comparison_status": "exact_literal_match",
+      "derived_value_as_reported": "22291000000.0000",
+      "embedded_value_if_unique": "22291000000"
+    },
+    {
+      "tag": "NetIncomeLoss",
+      "version": "us-gaap/2024",
+      "ddate": "2023-09-30",
+      "qtrs": 1,
+      "uom": "USD",
+      "segments": "EquityComponents=RetainedEarnings;",
+      "coreg": "",
+      "comparison_status": "ineligible_derived_dimension",
+      "derived_value_as_reported": "22291000000.0000",
+      "embedded_value_if_unique": null
+    },
+    {
+      "tag": "NetIncomeLoss",
+      "version": "us-gaap/2024",
+      "ddate": "2024-09-30",
+      "qtrs": 1,
+      "uom": "USD",
+      "segments": "",
+      "coreg": "",
+      "comparison_status": "exact_literal_match",
+      "derived_value_as_reported": "24667000000.0000",
+      "embedded_value_if_unique": "24667000000"
+    },
+    {
+      "tag": "NetIncomeLoss",
+      "version": "us-gaap/2024",
+      "ddate": "2024-09-30",
+      "qtrs": 1,
+      "uom": "USD",
+      "segments": "EquityComponents=RetainedEarnings;",
+      "coreg": "",
+      "comparison_status": "ineligible_derived_dimension",
+      "derived_value_as_reported": "24667000000.0000",
+      "embedded_value_if_unique": null
+    }
+  ]
+}

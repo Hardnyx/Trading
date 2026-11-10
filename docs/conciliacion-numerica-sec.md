@@ -65,3 +65,22 @@ En la [ejecución 42880825854](https://github.com/Hardnyx/Trading/actions/runs/4
 ## Terminador de línea del contenedor SEC
 
 Las pruebas sintéticas del primer desensamblado detectaron que la extracción de `<TEXT>` puede conservar exactamente un salto de línea adicional después de `</XBRL>` o `</XML>`. Se admite **solo** un terminador LF o CRLF, sin aceptar dos líneas vacías, texto residual ni cambios en el nombre de la etiqueta de cierre. La normalización se aplica exclusivamente al parser y jamás a la huella SHA-256 del documento SEC completo.
+
+## Resultado real reproducible del primer subconjunto (10-nov-2026)
+
+La [ejecución EDGAR 42881818024](https://github.com/Hardnyx/Trading/actions/runs/42881818024) descargó de nuevo el archivo completo 10-Q de Microsoft (20.482.578 bytes, SHA-256 `869604009236bade7152e0275bc940cd6f625af066d8d296ae27a9cf6477fed8`). Ambos parsers procesaron correctamente las envolturas originales sin modificar los archivos y emitieron los resultados que quedaron archivados **byte por byte** en [primario iXBRL](../data/historical/sec-first-cut-primary-inline-review-v1.json) y [secundario XML extraído](../data/historical/sec-first-cut-embedded-instance-review-v1.json).
+
+| Comparación de hechos `NetIncomeLoss` | Primario iXBRL | XML extraído |
+|---|---:|---:|
+| Filas SEC FSD incluidas en la revisión | 4 | 4 |
+| Importes consolidados exactos | **2** | **2** |
+| Filas segmentadas excluidas | 2 | 2 |
+| Diferencias decimales | 0 | 0 |
+| Originales ambiguos | 0 | 0 |
+| Contextos originales soportados únicos | 16 | 14 |
+
+Las **dos coincidencias de cada comparador son las mismas dos observaciones**, de los trimestres terminados el 30-sep-2023 (USD 22.291 millones) y 30-sep-2024 (USD 24.667 millones); no representan cuatro pruebas independientes. Las dos filas FSD con `EquityComponents=RetainedEarnings;` permanecen fuera del cotejo consolidado. Los reportes conservan SHA-256 independientes de los bytes `<TEXT>` originales, exactitud de los imports y fecha de aceptación original **20:07:17 UTC**, distinta de la hora redondeada del FSD **20:07:00 UTC**.
+
+La función `scripts/sec_first_cut_real_numeric_subset.py --verify` exige que los dos reportes almacenados coincidan **byte a byte** con los artefactos de GitHub (SHA-256 primario `a7ae0a28581650df14fe3e8e6c74597834fb50a1afc82f900392897430339f71` y secundario `cd74033caa229009c3dacfc6ee84f947a2359eaca7e4c82892d9b657c415a631`). Pruebas adversariales rechazan cifras, unidades, segmentos y estados de certificación adulterados.
+
+**Límite metodológico:** esta ejecución reutiliza la extracción FSD previamente congelada; **no** volvió a leer el ZIP de 123 MB. Los dos comparadores validan un subconjunto del concepto `NetIncomeLoss`, no todas las partidas ni períodos del emisor. La igualdad de cifras no certifica el primer momento de difusión, el archivo trimestral disponible en 2024, el valor negociable CIK/ticker, su precio, ni ningún pronóstico. **H1.2 no se cierra** y se conservan cero cortes integrales admisibles.
