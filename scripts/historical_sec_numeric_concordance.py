@@ -309,6 +309,12 @@ def compare(report, original_path, accession, *, archive_path=None,
             source_rows_reconstructed,
         "original_header_matches_derived_fsd":
             verified_header["header_form_filed_accepted_cik_accession_match"],
+        "original_header_fsd_minute_only_consistent":
+            verified_header["fsd_acceptance_minute_bucket_consistent_not_exact"],
+        "original_header_accepted_utc":
+            verified_header["original_accepted_utc_from_sec_header"],
+        "fsd_reported_accepted_utc":
+            verified_header["fsd_accepted_utc_as_reported"],
         "source_original_first_dissemination_verified": False,
         "historical_security_identity_certified": False,
         "selected_derived_rows": len(selected),

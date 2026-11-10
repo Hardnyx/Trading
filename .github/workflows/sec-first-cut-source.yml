@@ -5,7 +5,7 @@ on:
   push:
     branches: [main]
     paths:
-      # One-off verification of this workflow's changes; avoid daily downloads.
+      # One-off, manual reruns and source format audits; never scheduled.
       - '.github/workflows/sec-first-cut-source.yml'
 
 permissions:

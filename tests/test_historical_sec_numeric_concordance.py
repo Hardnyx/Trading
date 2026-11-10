@@ -93,6 +93,24 @@ class SecNumericConcordanceTests(unittest.TestCase):
             self.assertFalse(
                 without_source["derived_fsd_rows_reproduced_from_original_zip"])
 
+    def test_minute_only_original_header_is_not_reported_as_exact_match(self):
+        with tempfile.TemporaryDirectory() as directory:
+            _, report, original = self.fixture(directory)
+            from tests.test_historical_sec_original_filing import complete_filing
+            # Keep the original numeric primary and original document identity;
+            # only mutate the acceptance second in its SEC-HEADER.
+            raw = original.read_bytes().replace(
+                b"<ACCEPTANCE-DATETIME>20241110130000",
+                b"<ACCEPTANCE-DATETIME>20241110130017")
+            original.write_bytes(raw)
+            target = next(x for x in report["submissions"] if x["adsh"] == ORIGINAL)
+            target["accepted_eastern_as_filed"] += ".0"
+            result = compare(report, original, ORIGINAL)
+            self.assertFalse(result["original_header_matches_derived_fsd"])
+            self.assertTrue(result["original_header_fsd_minute_only_consistent"])
+            self.assertEqual(result["comparison_counts"]["exact_match"], 1)
+            self.assertEqual(result["eligible_full_engine_cuts_added"], 0)
+
     def test_decimal_mismatch_and_no_float_tolerance(self):
         with tempfile.TemporaryDirectory() as directory:
             _, report, original = self.fixture(directory, xhtml(amount="123.50001"))

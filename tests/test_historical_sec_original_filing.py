@@ -73,6 +73,29 @@ class OriginalFilingIntakeTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 reconcile(report, original, ORIGINAL)
 
+    def test_fsd_zero_second_minute_bucket_never_promotes_exact_acceptance(self):
+        with tempfile.TemporaryDirectory() as d:
+            _, report, original_path = self.fixture(d)
+            original_path.write_bytes(complete_filing(accepted="20241110130017"))
+            record = next(r for r in report["submissions"] if r["adsh"] == ORIGINAL)
+            record["accepted_eastern_as_filed"] += ".0"
+            result = reconcile(report, original_path, ORIGINAL)
+            self.assertFalse(result["header_form_filed_accepted_cik_accession_match"])
+            self.assertTrue(result["fsd_acceptance_minute_bucket_consistent_not_exact"])
+            self.assertNotEqual(result["original_accepted_utc_from_sec_header"],
+                                result["fsd_accepted_utc_as_reported"])
+            self.assertFalse(result["original_filing_first_publication_independently_verified"])
+            self.assertEqual(result["eligible_full_engine_cuts_added"], 0)
+            # The derived lead is at :00 but the original is at :17:
+            # a decision at :10 cannot use the later original.
+            report["cutoff_utc"] = "2024-11-10T18:00:10Z"
+            with self.assertRaisesRegex(ValueError, "decision cutoff"):
+                reconcile(report, original_path, ORIGINAL)
+            report["cutoff_utc"] = "2024-12-31T21:00:00Z"
+            original_path.write_bytes(complete_filing(accepted="20241110130100"))
+            with self.assertRaisesRegex(ValueError, "reported minute"):
+                reconcile(report, original_path, ORIGINAL)
+
     def test_mismatched_original_headers_and_truncated_files_rejected(self):
         mutations = {
             "form": complete_filing(form="10-Q"),

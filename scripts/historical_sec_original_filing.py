@@ -114,13 +114,26 @@ def reconcile(report, original_path, accession, *, archive_path=None,
             "Original input must be the complete accession .txt")
     raw = path.read_bytes()
     filing = parse_original(raw, accession)
+    # Keep the two official timestamps distinct. The observed quarterly
+    # FSD row reports 16:07:00.0 while the original SEC-HEADER says 16:07:17.
+    # A zero-second FSD value is at most a minute-resolution lead, not proof
+    # that the original was accepted at the beginning of that minute.
+    reported = as_filed_acceptance(fsd["accepted_eastern_as_filed"])
+    original = as_filed_acceptance(filing["accepted_eastern"])
+    exact_acceptance = reported == original
+    minute_bucket = (
+        not exact_acceptance
+        and "." in fsd["accepted_eastern_as_filed"]
+        and reported.second == 0 and reported.microsecond == 0
+        and original.replace(second=0, microsecond=0) == reported
+        and 0 < (original - reported).total_seconds() < 60
+    )
     require(filing["cik"] == cik and filing["form"] == fsd["form"] and
             filing["filed"] == fsd["filed_day_reported"].replace("-", "") and
-            as_filed_acceptance(filing["accepted_eastern"]) ==
-                as_filed_acceptance(fsd["accepted_eastern_as_filed"]) and
-            filing["accepted_utc"] == fsd["accepted_utc"] and
-            cutoff_timestamp(filing["accepted_utc"]) <= cutoff,
-            "Original SEC-HEADER disagrees with FSD metadata or information cut")
+            fsd["accepted_utc"] == reported.isoformat() and
+            filing["accepted_utc"] == original.isoformat() and
+            (exact_acceptance or minute_bucket) and original <= cutoff,
+            "Original SEC-HEADER disagrees with FSD identity, reported minute or decision cutoff")
     if expected_original_sha256 is not None:
         require(isinstance(expected_original_sha256, str) and
                 HASH.fullmatch(expected_original_sha256) is not None and
@@ -147,7 +160,11 @@ def reconcile(report, original_path, accession, *, archive_path=None,
         "fsd_archive_sha256": report.get("archive_sha256"),
         "fsd_original_zip_bytes_reverified": source_archive_reverified,
         "external_filing_sha256_supplied": expected_original_sha256 is not None,
-        "header_form_filed_accepted_cik_accession_match": True,
+        "header_form_filed_accepted_cik_accession_match": exact_acceptance,
+        "header_identity_and_filed_day_match": True,
+        "fsd_acceptance_minute_bucket_consistent_not_exact": minute_bucket,
+        "fsd_accepted_utc_as_reported": fsd["accepted_utc"],
+        "original_accepted_utc_from_sec_header": filing["accepted_utc"],
         "accepted_utc": filing["accepted_utc"],
         "information_cutoff_utc": cutoff.isoformat(),
         "original_filing_bytes_present_and_hashed": True,
