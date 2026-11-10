@@ -22,8 +22,19 @@ jobs:
           python-version: '3.12'
       - name: Verify offline acquisition and numeric-source contracts
         run: |
-          python -m unittest tests.test_sec_fsd_acquisition tests.test_sec_original_acquisition tests.test_historical_sec_fsd_intake tests.test_historical_sec_original_filing tests.test_historical_sec_numeric_concordance tests.test_historical_sec_embedded_instance tests.test_sec_first_cut_observation
+          python -m unittest tests.test_sec_fsd_acquisition tests.test_sec_original_acquisition tests.test_historical_sec_fsd_intake tests.test_historical_sec_original_filing tests.test_historical_sec_numeric_concordance tests.test_historical_sec_embedded_instance tests.test_sec_first_cut_observation tests.test_sec_first_cut_source_replay
+      - name: Restore cached source bytes tied to the observed original hashes
+        id: original_cache
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            out/sec-fsd/2024q4.zip
+            out/sec-fsd/2024q4.receipt.json
+            out/sec-originals/0000950170-24-118967.txt
+            out/sec-originals/0000950170-24-118967.receipt.json
+          key: sec-first-cut-originals-v1-9a2cbbaf39c94aa642b33d512f4def92b198d3bfd12d2267bcd27abe55b9902d-869604009236bade7152e0275bc940cd6f625af066d8d296ae27a9cf6477fed8
       - name: Require identified SEC contact
+        if: steps.original_cache.outputs.cache-hit != 'true'
         env:
           SEC_USER_AGENT: ${{ secrets.SEC_USER_AGENT || vars.SEC_USER_AGENT }}
         run: |
@@ -33,11 +44,26 @@ jobs:
           fi
       - name: Acquire official 2024q4 FSD and original Microsoft filing
         id: source_acquisition
+        if: steps.original_cache.outputs.cache-hit != 'true'
         env:
           SEC_USER_AGENT: ${{ secrets.SEC_USER_AGENT || vars.SEC_USER_AGENT }}
         run: |
           python scripts/sec_fsd_acquisition.py --quarter 2024q4
           python scripts/sec_original_acquisition.py --accession 0000950170-24-118967
+      - name: Reverify original file hashes and headers after cache restore
+        id: source_integrity
+        run: |
+          python scripts/sec_first_cut_source_replay.py --output out/sec-first-cut-source-replay-check.json --verify
+      - name: Retain only digest-matched original bytes in the manual-run cache
+        if: steps.original_cache.outputs.cache-hit != 'true' && steps.source_integrity.outcome == 'success'
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            out/sec-fsd/2024q4.zip
+            out/sec-fsd/2024q4.receipt.json
+            out/sec-originals/0000950170-24-118967.txt
+            out/sec-originals/0000950170-24-118967.receipt.json
+          key: sec-first-cut-originals-v1-9a2cbbaf39c94aa642b33d512f4def92b198d3bfd12d2267bcd27abe55b9902d-869604009236bade7152e0275bc940cd6f625af066d8d296ae27a9cf6477fed8
       - name: Reconstruct original quarterly numeric rows at the frozen cut
         id: fsd_extraction
         run: |
@@ -46,7 +72,7 @@ jobs:
         run: |
           python scripts/historical_sec_numeric_concordance.py --fsd-report out/sec-fsd-research.json --original out/sec-originals/0000950170-24-118967.txt --accession 0000950170-24-118967 --archive out/sec-fsd/2024q4.zip --output out/sec-numeric-crosscheck.json --verify
       - name: Crosscheck an embedded extracted XBRL instance separately
-        if: ${{ always() && steps.source_acquisition.outcome == 'success' && steps.fsd_extraction.outcome == 'success' }}
+        if: ${{ always() && steps.source_integrity.outcome == 'success' && steps.fsd_extraction.outcome == 'success' }}
         run: |
           python scripts/historical_sec_embedded_instance.py --fsd-report out/sec-fsd-research.json --original out/sec-originals/0000950170-24-118967.txt --accession 0000950170-24-118967 --archive out/sec-fsd/2024q4.zip --output out/sec-embedded-instance-review.json --verify
       - name: Preserve research receipts without raw original archives
@@ -60,5 +86,6 @@ jobs:
             out/sec-fsd-research.json
             out/sec-numeric-crosscheck.json
             out/sec-embedded-instance-review.json
+            out/sec-first-cut-source-replay-check.json
           if-no-files-found: warn
           retention-days: 14

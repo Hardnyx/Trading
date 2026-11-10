@@ -37,3 +37,11 @@ Los recibos verificados en el workflow 42862554153 y las cuatro filas FSD reales
 La ejecución 42863895340 recibió HTTP 404 al intentar recuperar nuevamente el ZIP, después de dos descargas satisfactorias. Es una limitación de acceso observada, no un cambio confirmado de contenido. El workflow pasa a manual para evitar transferencias reiteradas; los archivos originales no se publican en Git y los hashes se mantienen para cotejos futuros. El FSD 2024q4.zip reporta un Last-Modified HTTP de enero de 2025, posterior al corte retrospectivo de diciembre de 2024. No se declara disponibilidad anterior del archivo derivado ni procedencia PIT por ese dato.
 
 La comparación numérica original sigue pendiente: se detectó una envoltura XML con espacio inicial y se corrigió el parser mediante pruebas sintéticas, pero no se ha repetido el cotejo completo sobre una nueva recuperación válida. Ninguno de los catorce componentes del primer corte se promueve.
+
+## Reejecución sin nuevas descargas SEC
+
+El workflow manual restaura únicamente los dos originales y sus recibos mediante una clave de caché que incorpora **ambos hashes observados**. El paso `scripts/sec_first_cut_source_replay.py --verify` **recalcula** SHA-256 de los bytes FSD y EDGAR, vuelve a comprobar el encabezado, las fechas y la estructura del ZIP, y exige que los recibos coincidan con [la observación congelada](../data/historical/sec-first-cut-original-source-observation-v1.json). Una coincidencia de clave de caché por sí sola no permite continuar.
+
+Si no existe caché, los descargadores oficiales se ejecutan con el contacto SEC configurado. El caché solo se guarda **después** de verificar las huellas originales; de este modo una nueva descarga coincidente permite repetir los análisis sin depender de una futura respuesta HTTP 200. La caché es temporal y puede ser expulsada: si ocurre, se vuelve a exigir descarga y la misma comprobación. Los originales no se publican como adjuntos descargables del workflow ni se incorporan a `main`.
+
+Un archivo distinto, una recepción truncada, un recibo manipulado o un cambio de encabezado provoca un fallo explícito. El resultado se limita a integridad de los bytes recuperados: ni el caché ni la hora de descarga en 2026 acreditan disponibilidad histórica en 2024, identidad bursátil o habilidad predictiva.

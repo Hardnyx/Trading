@@ -177,6 +177,8 @@ H1 puede reutilizar datos y código existentes, pero no hereda su certificación
 
 **H1.2 · Verificación de instancia XBRL embebida (10-nov-2026 UTC, verificación pendiente):** Se incorpora `scripts/historical_sec_embedded_instance.py`, con pruebas sintéticas de original SGML, selección del XML por nombre registrado, CIK y fechas por contexto, importes decimales exactos, rechazo de duplicados/conflictos y reextracción opcional del ZIP oficial. La vía es independiente del parser iXBRL primario y no altera su resultado. La primera comparación real de este adaptador requiere una presentación original accesible; no se afirman coincidencias de MSFT ni se acredita disponibilidad PIT. **H1.2 abierto; 0/48 cortes integrales admitidos.** [Metodología](conciliacion-numerica-sec.md).
 
+**H1.2 · Repetibilidad de fuentes originales SEC (10-nov-2026 UTC, pruebas por verificar):** el workflow manual restaura originales solo con caché identificada por ambos hashes SHA-256, vuelve a calcular digests y comprobar EDGAR/ZIP antes de utilizar datos, y guarda la caché únicamente tras validación íntegra. Se evita repetir transferencias de ~143 MB ante cambios del parser si una caché válida existe; nunca se admite una copia diferente ni se convierte el timestamp de descarga en disponibilidad PIT. Tests adversariales para bytes, recibos, identidad y promoción indebida. [Procedimiento](adquisicion-sec-fsd-primer-corte.md). **No cambia el estado de H1.2 ni la muestra confirmatoria.**
+
 ## Próximo trabajo y control de avance
 
 | Orden | Trabajo concreto | Qué debe cambiar al terminar | Bloqueo actual |
