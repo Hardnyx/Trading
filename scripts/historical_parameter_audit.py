@@ -21,6 +21,9 @@ FIXED_FIELDS = (
     "model", "horizon", "seed", "lambda", "jumpIntensity", "jumpMean", "jumpVol",
     "driftMode", "volatilityMode", "uncertainFundamentals",
 )
+# Effective random seeds may be deterministically derived per origin. The
+# selection of policy and return law must not silently differ between cuts.
+INVARIANT_POLICY_FIELDS = tuple(key for key in FIXED_FIELDS if key != "seed")
 
 
 def require(condition, reason):
@@ -78,6 +81,12 @@ def validate_origin(origin, record, risk, protocol):
     require(risk["risk"]["observations"] == record["prepared"]["observations"] and
             risk["risk"]["observations"] > 0,
             "Risk training count mismatch")
+    covariance = risk["risk"]["factor_covariance"]
+    require(covariance["available"] is True and
+            covariance["method"] == "joint-EWMA-SPY-Schur" and
+            covariance["conditionalResidualGarch"] is False and
+            covariance["observations"] == risk["risk"]["observations"],
+            "Published risk fit method or observation count differs from origin")
     conditional = record["prepared"]["conditional_risk"]
     require(conditional["asOf"] == cut and
             risk["risk"]["conditional_risk"]["asOf"] == cut,
@@ -163,6 +172,47 @@ def validate_origin(origin, record, risk, protocol):
     }
 
 
+def invariant_policy_fingerprint(audits, protocol):
+    """Audit frozen *2026* development settings, never claim ex-ante 2024 policy."""
+    require(isinstance(audits, list) and audits and
+            protocol["registered_on"] > max(r["cut"] for r in audits),
+            "Retrospective policy registration must postdate every pilot cut")
+    base = None
+    version = None
+    for entry in audits:
+        policy = entry["risk_policy"]
+        require(set(policy) == set(FIXED_FIELDS) and
+                policy["seed"] == entry["effective_proposal_seed"] and
+                policy["horizon"] == protocol["horizon_years"] and
+                policy["volatilityMode"] == protocol["risk_mode"] and
+                entry["engine_calibration_end"] == entry["cut"] and
+                entry["engine_observations"] > 0 and
+                entry["risk_parameter_policy_predefined_at_cut"] is False and
+                entry["historical_model_parameters_certified"] is False and
+                entry["training_history_source_is_historical_vendor_vintage"] is False,
+                "Historical pilot policy or source was silently promoted")
+        constant = {key: policy[key] for key in INVARIANT_POLICY_FIELDS}
+        if base is None:
+            base, version = constant, entry["model_version"]
+        require(constant == base and entry["model_version"] == version,
+                "Effective 2026 pilot model policy changed between historical cuts")
+    # The digest is of the effective model policy, not of a reconstructed
+    # 2024 vintage. It excludes the origin-specific simulation seed.
+    payload = json.dumps(base, sort_keys=True, separators=(",", ":"),
+                         allow_nan=False).encode("utf-8")
+    return {
+        "policy_fingerprint_sha256": digest(payload),
+        "effective_policy_fields": list(INVARIANT_POLICY_FIELDS),
+        "policy_equal_across_development_cuts": True,
+        "engine_version_equal_across_development_cuts": True,
+        "origin_seed_excluded_from_policy_fingerprint": True,
+        "retrospective_policy_registered_on": protocol["registered_on"],
+        "historically_pre_registered_policy": False,
+        "historical_training_source_independently_certified": False,
+        "full_engine_eligible_cuts_added": 0,
+    }
+
+
 def build_report(protocol, summary, bundle, full):
     require(protocol["id"] == "scoped-production-engine-pilot-v1" and
             protocol["sample_role"] == "previously-inspected-development-history" and
@@ -202,8 +252,10 @@ def build_report(protocol, summary, bundle, full):
         require(origin["cut"] < protocol["registered_on"],
                 "Archived cut is not a retrospective fixed-policy experiment")
         audits.append(validate_origin(origin, record, risk, protocol))
+    fixed_policy = invariant_policy_fingerprint(audits, protocol)
     return {
         "schema": "historical-parameter-clock-audit-v1",
+        "retrospective_fixed_policy_audit": fixed_policy,
         "pilot_protocol": protocol["id"],
         "pilot_policy_registered_on": protocol["registered_on"],
         "cut_count": len(audits),

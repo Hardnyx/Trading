@@ -2,7 +2,9 @@
 import copy
 import unittest
 
-from scripts.historical_parameter_audit import audit, build_report, load, validate_origin
+from scripts.historical_parameter_audit import (
+    audit, build_report, load, validate_origin, invariant_policy_fingerprint,
+)
 
 
 class HistoricalParameterAuditTests(unittest.TestCase):
@@ -17,6 +19,13 @@ class HistoricalParameterAuditTests(unittest.TestCase):
                          ["2024-12-31", "2025-04-30"])
         self.assertFalse(report["production_eligible"])
         self.assertEqual(report["historical_model_parameters_verified"], 0)
+        policy = report["retrospective_fixed_policy_audit"]
+        self.assertTrue(policy["policy_equal_across_development_cuts"])
+        self.assertTrue(policy["engine_version_equal_across_development_cuts"])
+        self.assertFalse(policy["historically_pre_registered_policy"])
+        self.assertFalse(policy["historical_training_source_independently_certified"])
+        self.assertEqual(policy["full_engine_eligible_cuts_added"], 0)
+        self.assertEqual(len(policy["policy_fingerprint_sha256"]), 64)
         for cut in report["cuts"]:
             self.assertFalse(cut["risk_parameter_policy_predefined_at_cut"])
             self.assertFalse(cut["training_history_source_is_historical_vendor_vintage"])
@@ -57,6 +66,40 @@ class HistoricalParameterAuditTests(unittest.TestCase):
         bundle["schedule"][0]["selected"] = True
         with self.assertRaisesRegex(ValueError, "Pilot selection schedule"):
             build_report(self.protocol, self.summary, bundle, self.full)
+
+    def test_distinct_cut_policy_changes_are_not_presented_as_one_fixed_policy(self):
+        full = copy.deepcopy(self.full)
+        first = full["results"][0]["proposal"]["settings"]["lambda"]
+        full["results"][1]["proposal"]["settings"]["lambda"] = (
+            first + 0.05 if first < 0.9 else first - 0.05
+        )
+        with self.assertRaisesRegex(
+                ValueError, "policy changed between historical cuts"):
+            build_report(self.protocol, self.summary, self.bundle, full)
+
+    def test_model_version_cannot_drift_across_development_cuts(self):
+        full = copy.deepcopy(self.full)
+        full["results"][1]["proposal"]["model_version"] = "99.0.0"
+        summary = copy.deepcopy(self.summary)
+        summary["results"][1]["decision"]["model_version"] = "99.0.0"
+        with self.assertRaisesRegex(
+                ValueError, "policy changed between historical cuts"):
+            build_report(self.protocol, summary, self.bundle, full)
+
+    def test_risk_factor_estimator_observation_count_must_match(self):
+        summary = copy.deepcopy(self.summary)
+        summary["results"][0]["risk"]["factor_covariance"]["observations"] = (
+            summary["results"][0]["risk"]["observations"] - 1
+        )
+        with self.assertRaisesRegex(ValueError, "Risk fit method or observation"):
+            build_report(self.protocol, summary, self.bundle, self.full)
+
+    def test_policy_audit_refuses_2026_policy_reclassified_as_pre_cut(self):
+        audits = audit()["cuts"]
+        protocol = copy.deepcopy(self.protocol)
+        protocol["registered_on"] = "2024-01-01"
+        with self.assertRaisesRegex(ValueError, "registration must postdate"):
+            invariant_policy_fingerprint(audits, protocol)
 
     def test_current_volatility_file_cannot_enter_historical_settings(self):
         full = copy.deepcopy(self.full)

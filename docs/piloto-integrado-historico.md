@@ -124,3 +124,16 @@ completar los fundamentales y perfiles históricos y verificar los flujos
 para puntuar pronósticos y carteras conforme al protocolo estadístico.
 Las nuevas versiones necesitan datos no utilizados y seguimiento prospectivo.
 El estado predictivo y económico continúa **no concluyente**.
+
+## Control de invariancia de parámetros de la política retrospectiva (noviembre de 2026)
+
+`scripts/historical_parameter_audit.py` vuelve a abrir las entradas y salidas completas, comprimidas y selladas por SHA-256, de **ambos** orígenes 2024-12-31 y 2025-04-30. Comprueba también que `factor_covariance.observations` coincida con el número de observaciones reportadas por el ajuste de riesgo, que el método siga siendo `joint-EWMA-SPY-Schur` y que ningún archivo de volatilidad corriente reemplace al entrenamiento histórico.
+
+Se registra ahora una huella SHA-256 reproducible del **conjunto efectivo de parámetros de política** en las dos propuestas: modelo, horizonte, lambda, parámetros de salto, modo de drift, modo de volatilidad e incertidumbre fundamental. Se exige igualdad entre cortes de desarrollo y la misma versión del compositor. La semilla de simulación se audita por corte, pero se excluye de esa huella porque puede derivarse de cada origen sin cambiar la política. Un cambio silencioso de parámetros entre fechas o una inconsistencia en las observaciones de riesgo hace fallar el auditor.
+
+```sh
+python -m unittest tests.test_historical_parameter_audit
+python scripts/historical_parameter_audit.py --output out/historical-parameter-provenance-v1.json
+```
+
+**Limitación:** este control es deliberadamente un test de **invariancia de una política retrospectiva de 2026**, no un prerregistro anterior a las decisiones de 2024/2025. La igualdad de parámetros no certifica sus fuentes originales, las opciones consideradas durante el desarrollo, identidad y precios históricos, primera publicación de datos ni capacidad predictiva. El esquema del protocolo original y los dos pilotos permanecen congelados, sin nuevos outcomes.
