@@ -143,9 +143,10 @@ python scripts/historical_parameter_audit.py --output out/historical-parameter-p
 La auditoría Python ahora exige que los archivos de resultados completos y
 resumen conserven exactamente las mismas huellas SHA-256 de snapshot original,
 snapshot serializado por JavaScript y solicitud previa a la búsqueda. Además,
-el valor efectivo de `seed` debe coincidir con la semilla del protocolo
-congelado. Los tests alteran cada recibo por separado y fuerzan un cambio
-de semilla para comprobar el rechazo.
+la semilla efectiva conserva su comprobación de tipo y rango, sin
+equipararla a la semilla inicial del protocolo: el compositor puede derivar
+semillas por origen. Los tests alteran cada recibo por separado y fuerzan
+una semilla efectiva inválida para comprobar el rechazo.
 
 La comprobación cruzada de los recibos **no recalcula** sus bytes desde Python:
 `tests/historical-parameter-request.test.mjs` sigue reconstruyendo la

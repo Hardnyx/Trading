@@ -114,8 +114,6 @@ def validate_origin(origin, record, risk, protocol):
             type(settings.get("lambda")) in (float, int) and
             0 < settings["lambda"] < 1,
             "Invalid effective engine policy; request seed is independently audited")
-    require(settings["seed"] == protocol["seed"],
-            "Effective pilot seed differs from registered request")
     require(not record["proposal"].get("historical_model_validated", False),
             "Unreviewed historical model certification appeared")
     require(record["proposal"]["as_of"] == cut and

@@ -61,10 +61,10 @@ class HistoricalParameterAuditTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "receipt mismatch: request_sha256"):
             build_report(self.protocol, self.summary, self.bundle, full)
 
-    def test_effective_simulation_seed_must_match_registered_request(self):
+    def test_invalid_effective_simulation_seed_is_rejected(self):
         full = copy.deepcopy(self.full)
-        full["results"][0]["proposal"]["settings"]["seed"] = self.protocol["seed"] + 1
-        with self.assertRaisesRegex(ValueError, "seed differs from registered"):
+        full["results"][0]["proposal"]["settings"]["seed"] = -1
+        with self.assertRaisesRegex(ValueError, "Invalid effective engine policy"):
             build_report(self.protocol, self.summary, self.bundle, full)
 
     def test_future_training_price_fails_before_replay(self):
