@@ -225,6 +225,28 @@ def validate_actions_budget(workflows):
     }
 
 
+
+REFRESH = ROOT / ".github/workflows/refresh-data.yml"
+
+
+def validate_prospective_refresh_persistence(refresh):
+    """A failed first capture must be committed before the refresh fails."""
+    steps = (
+        "      - name: Seal one prospective proposal per original market close\n"
+        "        id: prospective_seal\n"
+        "        continue-on-error: true\n",
+        "      - name: Commit the updated snapshot\n",
+        "      - name: Fail refresh after preserving an unsuccessful prospective seal\n"
+        "        if: steps.prospective_seal.outcome == 'failure'\n",
+    )
+    require(all(step in refresh for step in steps) and
+            refresh.index(steps[0]) < refresh.index(steps[1]) < refresh.index(steps[2])
+            and "git add data/confirmatory/full-engine-v2" in refresh
+            and 'exit 1' in refresh.split(steps[2], 1)[1].split("\n  deploy:", 1)[0],
+            "Prospective seal failures must persist before the refresh reports failure")
+    return {"failed_prospective_capture_preserved": True}
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--verify", action="store_true")
@@ -238,6 +260,8 @@ def main():
     result.update(validate_page_reuse(
         PAGES.read_text(encoding="utf-8"),
         SIGNAL.read_text(encoding="utf-8")))
+    result.update(validate_prospective_refresh_persistence(
+        REFRESH.read_text(encoding="utf-8")))
     result.update(validate_actions_budget({
         path.name: path.read_text(encoding="utf-8")
         for path in sorted(WORKFLOW_DIR.glob("*.yml"))

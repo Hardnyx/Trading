@@ -191,6 +191,60 @@ export function preserveFullEngineCapture(root,bundle) {
     origin:relative(root,record).replaceAll('\\','/'),
     cut,month:bundle.candidate.month};
 }
+
+/** Preserve a failed original month-end attempt without claiming a forecast.
+ * A later run may create a genuine origin, but must not replace this first
+ * failure record. All timestamps and input hashes refer to original bytes.
+ */
+export function recordBlockedMonthlyCapture({root=ROOT,market,volatility,
+  marketBytes,volatilityBytes,issuedAt,stage,reason}) {
+  const cut=market?.price_as_of;
+  if(typeof cut!=='string'||cut<'2026-11-09'||!lastWeekdayCandidate(cut))
+    return {status:'not-month-end'};
+  check(['daily-origin-seal','monthly-full-engine-capture'].includes(stage),
+    'Unknown prospective failure stage');
+  check(typeof reason==='string'&&reason.length>0&&reason.length<=500&&
+    !/[\r\n]/.test(reason),'Failure reason must be bounded and single-line');
+  const issued=parseTime(issuedAt,'attempt issuance'),
+    observed=parseTime(market.generated_at,'original market capture');
+  const issueNY=nyParts(issuedAt),captureNY=nyParts(market.generated_at);
+  check(issueNY.year+'-'+issueNY.month+'-'+issueNY.day===cut&&
+    captureNY.year+'-'+captureNY.month+'-'+captureNY.day===cut&&
+    Number(issueNY.hour)>=16&&Number(captureNY.hour)>=16&&observed<=issued,
+    'Failed attempt is not an original same-session post-close capture');
+  check(Buffer.isBuffer(marketBytes)&&Buffer.isBuffer(volatilityBytes)&&
+    json(JSON.parse(marketBytes.toString('utf8')))===json(market)&&
+    json(JSON.parse(volatilityBytes.toString('utf8')))===json(volatility),
+    'Failed attempt bytes do not match original inputs');
+  const base=resolve(root,BASE);
+  check(!existsSync(resolve(base,'origins',cut+'.json.gz')),
+    'A full-engine origin already exists for this cut');
+  const attempt={
+    schema:'full-engine-first-capture-blocked-attempt-v1',
+    cut,month:cut.slice(0,7),issued_at:issuedAt,
+    market_collected_at:market.generated_at,
+    stage,reason,
+    market_sha256:sha(marketBytes),volatility_sha256:sha(volatilityBytes),
+    original_full_engine_forecast_created:false,
+    full_engine_confirmatory_eligible:false,
+    eligible_full_engine_cuts_added:0,
+    future_outcomes:null,predictive_validation:'not-established',
+  };
+  const file=resolve(base,'attempts',cut+'.json');
+  mkdirSync(dirname(file),{recursive:true});
+  if(existsSync(file)){
+    const first=JSON.parse(readFileSync(file,'utf8'));
+    check(first.schema===attempt.schema&&first.cut===cut&&
+      first.full_engine_confirmatory_eligible===false&&
+      first.eligible_full_engine_cuts_added===0&&
+      first.original_full_engine_forecast_created===false,
+      'Previously recorded blocked attempt was altered');
+    return {status:'already-recorded',cut,path:relative(root,file).replaceAll('\\','/')};
+  }
+  writeFileSync(file,JSON.stringify(attempt,null,2)+'\n',{flag:'wx'});
+  return {status:'blocked-attempt-recorded',cut,path:relative(root,file).replaceAll('\\','/')};
+}
+
 export function captureMonthlyProposal({market,volatility,marketBytes,volatilityBytes,
   proposal,request,issuedAt,root=ROOT}) {
   const cut=market.price_as_of;

@@ -1,6 +1,9 @@
 """Protect prospective signal capture and selective shadow audit timing."""
 import unittest
-from scripts.ci_workflow_policy import POOL, SIGNAL, PAGES, validate_refresh_dependents, validate_page_reuse
+from scripts.ci_workflow_policy import (
+    POOL, SIGNAL, PAGES, REFRESH, validate_refresh_dependents,
+    validate_page_reuse, validate_prospective_refresh_persistence,
+)
 
 
 class RefreshDependentWorkflowTests(unittest.TestCase):
@@ -72,6 +75,20 @@ class RefreshDependentWorkflowTests(unittest.TestCase):
         bad = self.pages.replace("          npm test\n", "", 1)
         with self.assertRaisesRegex(ValueError, "full Python"):
             validate_page_reuse(bad, self.signal)
+
+
+    def test_failed_monthly_seal_is_committed_before_failure(self):
+        source = REFRESH.read_text(encoding="utf-8")
+        self.assertTrue(all(validate_prospective_refresh_persistence(source).values()))
+        for before, after in (
+            ("        continue-on-error: true", "        continue-on-error: false"),
+            ("if: steps.prospective_seal.outcome == 'failure'",
+             "if: steps.prospective_seal.conclusion == 'success'"),
+            ("git add data/confirmatory/full-engine-v2", "echo untracked-attempts"),
+        ):
+            with self.subTest(before=before), self.assertRaisesRegex(
+                    ValueError, "Prospective seal failures"):
+                validate_prospective_refresh_persistence(source.replace(before,after,1))
 
 
 if __name__ == "__main__":

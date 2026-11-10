@@ -8,10 +8,20 @@ The receipt saves the original market and volatility byte streams to immutable g
 
 **Exchange-calendar limitation:** A last weekday is a conservative candidate, not an independently certified last NYSE trading session. A month whose last weekday is an exchange holiday may be missed; missing months are not filled after the fact. The original market must contain SPY's exact cut, data collected after 16:00 New York time, and reference and calibration dates no later than the cut. Future-observed source metadata causes a refusal.
 
-A rejected candidate creates an immutable research attempt under `data/confirmatory/full-engine-v2/attempts/` with its reason and input hashes. Genuine candidate receipts live under `data/confirmatory/full-engine-v2/origins/` and inputs under `data/confirmatory/full-engine-v2/inputs/`. The audit checks the true first Git commit, original bytes, policy, proposal and source graph rather than trusting a claimed timestamp. Any code/source changes that prevent a compatible cohort from being formed remain visible.
+An infeasible optimizer or a rejected candidate now creates an immutable research attempt under `data/confirmatory/full-engine-v2/attempts/` with its reason and input hashes. Genuine candidate receipts live under `data/confirmatory/full-engine-v2/origins/` and inputs under `data/confirmatory/full-engine-v2/inputs/`. The audit checks the true first Git commit, original bytes, policy, proposal and source graph rather than trusting a claimed timestamp. Any code/source changes that prevent a compatible cohort from being formed remain visible.
 
 **No forecast skill is certified by capturing a proposal.** The snapshot is a hypothetical account without a live broker ledger. The full-instrument forecasts, PIT vendor chain, cash-flow reconciliation, and independent materiality/power preregistration remain blockers. Recording a `hold` or CASH decision cannot be counted as an independently demonstrated economic advantage.
 
 Reproduce the unit tests with `node --test tests/full-engine-first-capture.test.mjs` and run the read-only gate using `python scripts/prospective_study_registry.py --verify`.
 
 The registry now also decompresses and verifies both original archives, rehashes the exact serialized request/proposal/source manifest, compares policy and proposal cut clocks, and checks every module against the first-publication Git commit. Source metadata and hashes still cannot establish vendor timestamp authenticity or economic eligibility.
+
+If the original daily seal or month-end full-engine capture fails, the refresh
+workflow preserves its first blocked-attempt receipt and original input hashes in
+the data commit **before** reporting a failed refresh. The dependent signal
+ledger therefore receives a failed upstream status rather than a false successful
+capture. A blocked attempt has no forecast or account outcome and never becomes
+an admissible confirmation origin. Later retries cannot overwrite the first
+failure receipt, even if a real future seal for the same cut is subsequently
+archived; no retrospective issuance is permitted. Non-month-end failures do
+not fabricate a monthly attempt.

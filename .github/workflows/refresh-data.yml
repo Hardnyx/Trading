@@ -87,6 +87,8 @@ jobs:
       - name: Summarize the prospective risk ledger
         run: python scripts/risk_ledger.py summary
       - name: Seal one prospective proposal per original market close
+        id: prospective_seal
+        continue-on-error: true
         run: node scripts/seal_forecast.mjs --skip-ineligible
       - name: Score previously sealed forecasts only after maturity
         run: node scripts/seal_forecast.mjs --score
@@ -134,6 +136,11 @@ jobs:
           done
           echo 'changed=true' >> "$GITHUB_OUTPUT"
           echo "commit_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+      - name: Fail refresh after preserving an unsuccessful prospective seal
+        if: steps.prospective_seal.outcome == 'failure'
+        run: |
+          echo "::error::Prospective seal failed; original attempted inputs were committed when available"
+          exit 1
   deploy:
     needs: refresh
     if: needs.refresh.outputs.changed == 'true'

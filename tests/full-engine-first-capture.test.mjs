@@ -6,6 +6,7 @@ import {join,resolve} from 'node:path';
 import {gunzipSync} from 'node:zlib';
 import {
   lastWeekdayCandidate,buildFullEngineCapture,preserveFullEngineCapture,
+  recordBlockedMonthlyCapture,
 } from '../scripts/capture_full_engine_origin.mjs';
 
 const reg=JSON.parse(readFileSync(new URL('../docs/protocolo-confirmacion-integral-v2.json',import.meta.url)));
@@ -73,5 +74,42 @@ test('first capture bytes are immutable and a second origin in same month is rej
     const duplicate=bundle();
     duplicate.candidate.cut='2026-11-27';
     assert.throws(()=>preserveFullEngineCapture(root,duplicate),/already exists/);
+  }finally{rmSync(root,{recursive:true,force:true});}
+});
+
+test('failed month-end proposals leave an immutable non-confirmatory attempt',()=>{
+  const root=mkdtempSync(join(tmpdir(),'trading-blocked-origin-'));
+  try{
+    const args={root,market,volatility,marketBytes:Buffer.from(JSON.stringify(market)),
+      volatilityBytes:Buffer.from(JSON.stringify(volatility)),issuedAt:issued,
+      stage:'daily-origin-seal',reason:'Cannot seal a probability forecast without feasible model'};
+    const first=recordBlockedMonthlyCapture(args);
+    assert.equal(first.status,'blocked-attempt-recorded');
+    const archived=JSON.parse(readFileSync(resolve(root,first.path),'utf8'));
+    assert.equal(archived.original_full_engine_forecast_created,false);
+    assert.equal(archived.full_engine_confirmatory_eligible,false);
+    assert.equal(archived.future_outcomes,null);
+    assert.equal(archived.market_sha256.length,64);
+    const second=recordBlockedMonthlyCapture({...args,reason:'A later diagnostic failure'});
+    assert.equal(second.status,'already-recorded');
+    assert.deepEqual(JSON.parse(readFileSync(resolve(root,first.path),'utf8')),archived);
+    const genuine=preserveFullEngineCapture(root,bundle());
+    assert.equal(genuine.created,true);
+    assert.throws(()=>recordBlockedMonthlyCapture(args),/already exists/);
+  }finally{rmSync(root,{recursive:true,force:true});}
+});
+
+test('blocked attempts reject future or unregistered capture inputs',()=>{
+  const root=mkdtempSync(join(tmpdir(),'trading-blocked-invalid-'));
+  try{
+    const args={root,market,volatility,marketBytes:Buffer.from(JSON.stringify(market)),
+      volatilityBytes:Buffer.from(JSON.stringify(volatility)),issuedAt:issued,
+      stage:'monthly-full-engine-capture',reason:'Missing eligible order'};
+    assert.equal(recordBlockedMonthlyCapture({...args,market:{...market,price_as_of:'2026-11-27'}}).status,'not-month-end');
+    assert.throws(()=>recordBlockedMonthlyCapture({...args,issuedAt:'2026-12-01T23:00:00Z'}),/same-session/);
+    assert.throws(()=>recordBlockedMonthlyCapture({...args,issuedAt:'2026-11-30T19:00:00Z'}),/same-session/);
+    assert.throws(()=>recordBlockedMonthlyCapture({...args,marketBytes:Buffer.from('{}')}),/do not match/);
+    assert.throws(()=>recordBlockedMonthlyCapture({...args,stage:'fake-success'}),/Unknown/);
+    assert.deepEqual(existsSync(resolve(root,'data/confirmatory/full-engine-v2/attempts')),false);
   }finally{rmSync(root,{recursive:true,force:true});}
 });
