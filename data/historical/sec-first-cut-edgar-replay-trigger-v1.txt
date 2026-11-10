@@ -1,0 +1,6 @@
+# One-time initial EDGAR-only research run.
+# This path is the sole push trigger; no new SEC transfer runs on code changes.
+# Date: 2026-11-10 UTC.
+# Historical input selection: fixed accession 0000950170-24-118967.
+# FSD source extract hash: 464019f23f683c8e65d7b85554ef9d121c12f3882a0d8d27f59ba4c49838f6c5.
+# Origin eligibility: zero.

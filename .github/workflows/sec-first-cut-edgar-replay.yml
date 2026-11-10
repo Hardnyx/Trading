@@ -1,0 +1,71 @@
+name: Verify original MSFT EDGAR against frozen FSD extract (research)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      # Trigger only the initial one-off source check; no periodic retries.
+      - 'data/historical/sec-first-cut-edgar-replay-trigger-v1.txt'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sec-first-cut-edgar-replay
+  cancel-in-progress: false
+
+jobs:
+  reconcile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify exact archived FSD extract and offline XBRL guards
+        run: |
+          python -m unittest tests.test_sec_first_cut_fsd_extract tests.test_historical_sec_embedded_instance
+          python scripts/sec_first_cut_fsd_extract.py --verify
+      - name: Require approved SEC contact
+        env:
+          SEC_USER_AGENT: ${{ secrets.SEC_USER_AGENT || vars.SEC_USER_AGENT }}
+        run: |
+          if [ -z "$SEC_USER_AGENT" ]; then
+            echo "::error::SEC_USER_AGENT is not set"
+            exit 1
+          fi
+      - name: Download only the registered full EDGAR original
+        env:
+          SEC_USER_AGENT: ${{ secrets.SEC_USER_AGENT || vars.SEC_USER_AGENT }}
+        run: python scripts/sec_original_acquisition.py --accession 0000950170-24-118967
+      - name: Verify original EDGAR bytes match the previously reviewed source
+        id: original_bytes
+        run: |
+          echo "869604009236bade7152e0275bc940cd6f625af066d8d296ae27a9cf6477fed8  out/sec-originals/0000950170-24-118967.txt" | sha256sum --check --status
+      - name: Attempt strict original primary iXBRL comparison
+        id: primary
+        continue-on-error: true
+        run: |
+          python scripts/historical_sec_numeric_concordance.py --fsd-report data/historical/sec-first-cut-fsd-extract-v1.json --original out/sec-originals/0000950170-24-118967.txt --accession 0000950170-24-118967 --output out/sec-primary-inline-review.json --verify
+      - name: Compare original embedded extracted instance separately
+        if: ${{ always() && steps.original_bytes.outcome == 'success' }}
+        run: |
+          python scripts/historical_sec_embedded_instance.py --fsd-report data/historical/sec-first-cut-fsd-extract-v1.json --original out/sec-originals/0000950170-24-118967.txt --accession 0000950170-24-118967 --output out/sec-embedded-instance-review.json --verify
+      - name: Preserve source and comparison reports without the original filing
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sec-first-cut-edgar-only-research
+          path: |
+            out/sec-originals/*.receipt.json
+            out/sec-primary-inline-review.json
+            out/sec-embedded-instance-review.json
+          if-no-files-found: warn
+          retention-days: 14
+      - name: Report unresolved primary iXBRL reconciliation accurately
+        if: ${{ always() && steps.primary.outcome == 'failure' }}
+        run: |
+          echo "::error::Primary inline reconciliation remains blocked; secondary data cannot replace it"
+          exit 1
