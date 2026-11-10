@@ -96,6 +96,68 @@ def validate(fast, full, pages):
     }
 
 
+POOL = ROOT / ".github/workflows/pool-opportunity.yml"
+SIGNAL = ROOT / ".github/workflows/signal-validation.yml"
+
+
+def validate_refresh_dependents(pool, signal):
+    """Check daily evidence capture and weekly exploratory research scheduling."""
+    pool_on, signal_on = events(pool), events(signal)
+    require(
+        "  workflow_dispatch:" in pool_on
+        and "  schedule:" in pool_on
+        and "- cron: '37 2 * * 0'" in pool_on
+        and "  push:\n    branches: [main]\n    paths:\n" in pool_on
+        and "  workflow_run:" not in pool_on,
+        "Exploratory pool audit must be weekly rather than after each refresh",
+    )
+    require(
+        all(command in pool for command in (
+            "node scripts/pool_opportunity_audit.mjs",
+            "node scripts/antithetic_selection_research.mjs",
+            "node scripts/antithetic_matrix_research.mjs --quick",
+            "node scripts/economic_sensitivity_research.mjs --quick",
+            "name: finite-pool-opportunity",
+        )),
+        "Exploratory pool workflow lost preserved research and artifacts",
+    )
+    require(
+        "  workflow_run:\n    workflows: [Refresh market data]\n    types: [completed]\n"
+        in signal_on
+        and "  workflow_dispatch:" in signal_on
+        and "  push:\n    branches: [main]\n    paths:\n" in signal_on,
+        "Prospective evidence must follow each completed refresh",
+    )
+    require(
+        "DATA_REFRESH_RESULT:" in signal
+        and "github.event.workflow_run.conclusion" in signal
+        and 'python scripts/validation_watch.py --upstream-status "$DATA_REFRESH_RESULT"'
+        in signal
+        and "node scripts/signal_ledger.mjs" in signal,
+        "Prospective ledger lost failed refresh recording",
+    )
+    require(
+        all(value in signal for value in (
+            "published_changes:",
+            "steps.published.outputs.changed",
+            "id: persist",
+            "id: verify",
+            "steps.persist.outputs.changed",
+            "steps.verify.outputs.changed",
+            "if: needs.ledger.outputs.published_changes == 'true'",
+            "needs.ledger.outputs.published_ref",
+        ))
+        and signal.count('echo \'changed=true\' >> "$GITHUB_OUTPUT"') >= 2,
+        "Signal Pages deployment must require newly committed evidence",
+    )
+    return {
+        "weekly_exploratory_audit": True,
+        "daily_prospective_ledger": True,
+        "failed_refresh_evidence": True,
+        "conditional_signal_pages": True,
+    }
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--verify", action="store_true")
@@ -103,6 +165,9 @@ def main():
     result = validate(FAST.read_text(encoding="utf-8"),
                       FULL.read_text(encoding="utf-8"),
                       PAGES.read_text(encoding="utf-8"))
+    result.update(validate_refresh_dependents(
+        POOL.read_text(encoding="utf-8"),
+        SIGNAL.read_text(encoding="utf-8")))
     if options.verify:
         require(all(result.values()), "Selective Actions policy failed")
     print(result)
