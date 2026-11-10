@@ -129,8 +129,9 @@ def validate_refresh_dependents(pool, signal):
         "Prospective evidence must follow each completed refresh",
     )
     require(
-        "DATA_REFRESH_RESULT:" in signal
-        and "github.event.workflow_run.conclusion" in signal
+        ("DATA_REFRESH_RESULT: " + "$" +
+         "{{ github.event_name == 'workflow_run' &&"
+         " github.event.workflow_run.conclusion || 'not-requested' }}") in signal
         and 'python scripts/validation_watch.py --upstream-status "$DATA_REFRESH_RESULT"'
         in signal
         and "node scripts/signal_ledger.mjs" in signal,
