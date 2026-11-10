@@ -10,7 +10,8 @@ import tempfile
 import unittest
 from scripts.prospective_study_registry import (
     read_contract, check_contract, inspect, candidate_preflight, utc,
-    validate_capture_archives, assert_published_before_next_open
+    validate_capture_archives, assert_published_before_next_open,
+    inspect_blocked_attempt_archives,
 )
 
 
@@ -196,6 +197,47 @@ class ProspectiveStudyRegistryTests(unittest.TestCase):
     def test_naive_timestamp_is_not_accepted(self):
         with self.assertRaisesRegex(ValueError,"Timezone required"):
             utc("2026-11-30T18:00:00","capture")
+
+
+    def test_blocked_attempt_original_archives_are_reproducible(self):
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory) / "data/confirmatory/full-engine-v2/attempts"
+            (base / "inputs").mkdir(parents=True)
+            cut = "2026-11-30"
+            market = {"price_as_of":cut, "generated_at":"2026-11-30T22:00:00Z"}
+            vol = {"as_of":cut, "source_market_generated_at":market["generated_at"]}
+            raw = {key:json.dumps(value).encode() for key,value in
+                   (("market", market),("volatility",vol))}
+            for key, data in raw.items():
+                (base / "inputs" / f"{cut}.{key}.json.gz").write_bytes(gzip.compress(data))
+            record = {"schema":"full-engine-first-capture-blocked-attempt-v1",
+                      "cut":cut,"month":"2026-11",
+                      "issued_at":"2026-11-30T23:00:00Z",
+                      "market_collected_at":market["generated_at"],
+                      "stage":"daily-origin-seal","reason":"No feasible proposal",
+                      "market_sha256":hashlib.sha256(raw["market"]).hexdigest(),
+                      "volatility_sha256":hashlib.sha256(raw["volatility"]).hexdigest(),
+                      "market_archive":f"attempts/inputs/{cut}.market.json.gz",
+                      "volatility_archive":f"attempts/inputs/{cut}.volatility.json.gz",
+                      "original_full_engine_forecast_created":False,
+                      "full_engine_confirmatory_eligible":False,
+                      "eligible_full_engine_cuts_added":0,
+                      "future_outcomes":None,
+                      "predictive_validation":"not-established"}
+            path = base / f"{cut}.json"
+            path.write_text(json.dumps(record))
+            entries = inspect_blocked_attempt_archives(Path(directory))
+            self.assertEqual(len(entries),1)
+            self.assertFalse(entries[0]["first_capture_forecast"])
+            (base / "inputs" / f"{cut}.market.json.gz").write_bytes(gzip.compress(b'{}'))
+            with self.assertRaisesRegex(ValueError,"original archive hash"):
+                inspect_blocked_attempt_archives(Path(directory))
+            (base / "inputs" / f"{cut}.market.json.gz").write_bytes(
+                gzip.compress(raw["market"]))
+            record["full_engine_confirmatory_eligible"] = True
+            path.write_text(json.dumps(record))
+            with self.assertRaisesRegex(ValueError,"not be classified"):
+                inspect_blocked_attempt_archives(Path(directory))
 
 
 if __name__=="__main__":

@@ -25,3 +25,12 @@ an admissible confirmation origin. Later retries cannot overwrite the first
 failure receipt, even if a real future seal for the same cut is subsequently
 archived; no retrospective issuance is permitted. Non-month-end failures do
 not fabricate a monthly attempt.
+
+The original market and volatility JSON bytes of a blocked candidate are now
+retained in immutable gzip archives under `attempts/inputs/`, alongside the
+receipt. `prospective_study_registry.py --verify` checks that each byte stream
+reproduces its hash, that the cut and New York capture time precede issuance,
+that no successful forecast is claimed, and that the first Git publication
+precedes the next estimated exchange opening. It cannot authenticate an
+external data vendor's original timestamp and never increases the number of
+eligible full-engine origins.

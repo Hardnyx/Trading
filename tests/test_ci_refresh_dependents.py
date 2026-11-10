@@ -81,7 +81,8 @@ class RefreshDependentWorkflowTests(unittest.TestCase):
         source = REFRESH.read_text(encoding="utf-8")
         self.assertTrue(all(validate_prospective_refresh_persistence(source).values()))
         for before, after in (
-            ("        continue-on-error: true", "        continue-on-error: false"),
+            ("        id: prospective_seal\n        continue-on-error: true",
+             "        id: prospective_seal\n        continue-on-error: false"),
             ("if: steps.prospective_seal.outcome == 'failure'",
              "if: steps.prospective_seal.conclusion == 'success'"),
             ("git add data/confirmatory/full-engine-v2", "echo untracked-attempts"),

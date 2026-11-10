@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {mkdtempSync,readFileSync,rmSync,existsSync} from 'node:fs';
+import {mkdtempSync,readFileSync,writeFileSync,rmSync,existsSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import {join,resolve} from 'node:path';
 import {gunzipSync} from 'node:zlib';
@@ -90,9 +90,23 @@ test('failed month-end proposals leave an immutable non-confirmatory attempt',()
     assert.equal(archived.full_engine_confirmatory_eligible,false);
     assert.equal(archived.future_outcomes,null);
     assert.equal(archived.market_sha256.length,64);
+    assert.equal(gunzipSync(readFileSync(resolve(root,
+      'data/confirmatory/full-engine-v2',archived.market_archive))).toString('utf8'),
+      JSON.stringify(market));
+    assert.equal(gunzipSync(readFileSync(resolve(root,
+      'data/confirmatory/full-engine-v2',archived.volatility_archive))).toString('utf8'),
+      JSON.stringify(volatility));
     const second=recordBlockedMonthlyCapture({...args,reason:'A later diagnostic failure'});
     assert.equal(second.status,'already-recorded');
     assert.deepEqual(JSON.parse(readFileSync(resolve(root,first.path),'utf8')),archived);
+    const originalArchive=resolve(root,'data/confirmatory/full-engine-v2',
+      archived.market_archive);
+    const originalBytes=readFileSync(originalArchive);
+    const changedBytes=Buffer.from(originalBytes);
+    changedBytes[changedBytes.length-1]^=1;
+    writeFileSync(originalArchive,changedBytes);
+    assert.throws(()=>recordBlockedMonthlyCapture(args));
+    writeFileSync(originalArchive,originalBytes);
     const genuine=preserveFullEngineCapture(root,bundle());
     assert.equal(genuine.created,true);
     assert.throws(()=>recordBlockedMonthlyCapture(args),/already exists/);

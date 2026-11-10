@@ -225,22 +225,34 @@ export function recordBlockedMonthlyCapture({root=ROOT,market,volatility,
     market_collected_at:market.generated_at,
     stage,reason,
     market_sha256:sha(marketBytes),volatility_sha256:sha(volatilityBytes),
+    market_archive:'attempts/inputs/'+cut+'.market.json.gz',
+    volatility_archive:'attempts/inputs/'+cut+'.volatility.json.gz',
     original_full_engine_forecast_created:false,
     full_engine_confirmatory_eligible:false,
     eligible_full_engine_cuts_added:0,
     future_outcomes:null,predictive_validation:'not-established',
   };
-  const file=resolve(base,'attempts',cut+'.json');
+  const file=resolve(base,'attempts',cut+'.json'),
+    marketArchive=resolve(base,attempt.market_archive),
+    volatilityArchive=resolve(base,attempt.volatility_archive);
   mkdirSync(dirname(file),{recursive:true});
   if(existsSync(file)){
     const first=JSON.parse(readFileSync(file,'utf8'));
     check(first.schema===attempt.schema&&first.cut===cut&&
+      first.market_archive===attempt.market_archive&&
+      first.volatility_archive===attempt.volatility_archive&&
       first.full_engine_confirmatory_eligible===false&&
       first.eligible_full_engine_cuts_added===0&&
-      first.original_full_engine_forecast_created===false,
-      'Previously recorded blocked attempt was altered');
+      first.original_full_engine_forecast_created===false&&
+      sha(gunzipSync(readFileSync(marketArchive)))===first.market_sha256&&
+      sha(gunzipSync(readFileSync(volatilityArchive)))===first.volatility_sha256,
+      'Previously recorded blocked attempt or input archive was altered');
     return {status:'already-recorded',cut,path:relative(root,file).replaceAll('\\','/')};
   }
+  // Original bytes are required to audit the hashes after the daily snapshot
+  // changes. Archive them before writing the receipt; never replace either.
+  writeOnce(marketArchive,gzipSync(marketBytes));
+  writeOnce(volatilityArchive,gzipSync(volatilityBytes));
   writeFileSync(file,JSON.stringify(attempt,null,2)+'\n',{flag:'wx'});
   return {status:'blocked-attempt-recorded',cut,path:relative(root,file).replaceAll('\\','/')};
 }

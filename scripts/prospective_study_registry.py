@@ -325,6 +325,72 @@ def first_publication(root, path, raw):
         raise ValueError("Missing verifiable forecast publication") from error
 
 
+
+BLOCKED_ATTEMPTS = "data/confirmatory/full-engine-v2/attempts"
+
+
+def inspect_blocked_attempt_archives(root=ROOT):
+    """Inspect missed monthly first captures without creating eligible origins."""
+    base = Path(root) / BLOCKED_ATTEMPTS
+    records = []
+    for path in sorted(base.glob("*.json")):
+        record = json.loads(path.read_bytes())
+        cut = record.get("cut")
+        day = iso_day(cut, "blocked attempt cut")
+        require(day >= date(2026, 11, 9) and
+                day.weekday() < 5 and
+                (lambda next_day: next_day.strftime("%Y-%m") !=
+                    day.strftime("%Y-%m"))(
+                    next(d for i in range(1, 5)
+                         if (d := day + timedelta(days=i)).weekday() < 5)),
+                "Blocked attempt is outside the original prospective month-end")
+        require(path.name == cut + ".json" and
+                record.get("schema") ==
+                "full-engine-first-capture-blocked-attempt-v1" and
+                record.get("month") == cut[:7] and
+                record.get("stage") in
+                ("daily-origin-seal", "monthly-full-engine-capture") and
+                isinstance(record.get("reason"), str) and
+                0 < len(record["reason"]) <= 500 and
+                not any(ord(char) in (10, 13) for char in record["reason"]),
+                "Blocked capture metadata is malformed")
+        require(record.get("original_full_engine_forecast_created") is False and
+                record.get("full_engine_confirmatory_eligible") is False and
+                record.get("eligible_full_engine_cuts_added") == 0 and
+                record.get("future_outcomes") is None and
+                record.get("predictive_validation") == "not-established",
+                "Blocked attempt must not be classified as valid evidence")
+        issued, captured = (utc(record[key], key) for key in
+                            ("issued_at", "market_collected_at"))
+        for instant in (issued, captured):
+            ny = instant.astimezone(ZoneInfo("America/New_York"))
+            require(ny.date() == day and ny.hour >= 16,
+                    "Blocked attempt is not an original NY post-close observation")
+        require(captured <= issued, "Blocked attempt precedes market capture")
+        raw = {}
+        for kind, expected_path in (
+            ("market", f"attempts/inputs/{cut}.market.json.gz"),
+            ("volatility", f"attempts/inputs/{cut}.volatility.json.gz"),
+        ):
+            name = record.get(f"{kind}_archive")
+            require(name == expected_path, "Blocked attempt archive path changed")
+            archive = base.parent / name
+            with gzip.open(archive, "rb") as source:
+                original = source.read(64 * 1024 * 1024 + 1)
+            require(len(original) <= 64 * 1024 * 1024 and
+                    sha(original) == record.get(f"{kind}_sha256"),
+                    "Blocked attempt original archive hash mismatch")
+            raw[kind] = json.loads(original)
+        require(raw["market"].get("price_as_of") == cut and
+                raw["market"].get("generated_at") ==
+                record["market_collected_at"],
+                "Blocked attempt market bytes do not match the original cut")
+        records.append({"cut": cut, "path": path,
+                        "source_hashes_verified": True,
+                        "first_capture_forecast": False})
+    return records
+
+
 def inspect(root=ROOT):
     root = Path(root)
     reg, old = read_contract(root)
@@ -351,6 +417,13 @@ def inspect(root=ROOT):
                 iso_day(reg["sampling"]["first_possible_cut"], "first possible cut"),
                 "Original forecast was not first published within study")
         rows.append({**current, "first_publication": published})
+    blocked_attempts = inspect_blocked_attempt_archives(root)
+    for attempt in blocked_attempts:
+        raw = attempt["path"].read_bytes()
+        published = first_publication(root, attempt["path"], raw)
+        assert_published_before_next_open(
+            attempt["cut"],
+            json.loads(raw)["issued_at"], published["at"])
     signals = json.loads((root / SIGNALS).read_bytes())
     require(signals["protocol"] == reg["other_evidence"]["existing_signal_protocol"] and
             signals["predictive_validation"] == "not-established" and
@@ -364,6 +437,8 @@ def inspect(root=ROOT):
         "separate_signal_cohorts": len(signals["cohorts"]),
         "new_full_engine_files_inspected": len(rows),
         "new_file_evidence": rows,
+        "blocked_month_end_capture_attempts": len(blocked_attempts),
+        "blocked_attempts_never_counted_as_origins": True,
         "causally_certified_full_engine_origins": 0,
         "eligible_mature_months": 0,
         "minimum_eligible_mature_months": reg["sampling"]["minimum_mature_eligible_months"],
