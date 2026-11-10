@@ -56,6 +56,10 @@ def audit(observation, lead):
             "FSD minute timestamp must not be promoted to exact first publication")
     facts = observation["selected_numeric_facts"]
     rows = facts["rows"]
+    observed_amounts = {
+        "2023-09-30": "22291000000.0000",
+        "2024-09-30": "24667000000.0000",
+    }
     require(facts["tag"] == "NetIncomeLoss"
             and facts["taxonomy"] == "us-gaap/2024"
             and facts["uom"] == "USD" and facts["quarters"] == 1
@@ -64,7 +68,9 @@ def audit(observation, lead):
             and {(row["period_end"], row["segment"]) for row in rows} ==
             {(period, segment) for period in ("2023-09-30", "2024-09-30")
              for segment in ("", "EquityComponents=RetainedEarnings;")}
-            and all(Decimal(row["value_decimal"]).is_finite() for row in rows)
+            and all(Decimal(row["value_decimal"]).is_finite() and
+                    row["value_decimal"] == observed_amounts.get(row["period_end"])
+                    for row in rows)
             and facts["matched_against_original_inline_document"] is False
             and facts["full_numeric_coverage_verified"] is False,
             "Research-derived SEC facts are missing, ambiguous or falsely certified")
@@ -88,7 +94,7 @@ class SecFirstCutObservationTests(unittest.TestCase):
         self.assertTrue(audit(self.obs, self.lead))
 
     def test_changing_metadata_does_not_fabricate_exact_or_pit_evidence(self):
-        for mutate in ("time", "hash", "acceptance", "segment", "eligibility"):
+        for mutate in ("time", "hash", "acceptance", "segment", "amount", "eligibility"):
             changed = copy.deepcopy(self.obs)
             if mutate == "time":
                 changed["accepted_eastern"]["original_edgar_header"] = "2024-10-30 16:08:00"
@@ -98,6 +104,8 @@ class SecFirstCutObservationTests(unittest.TestCase):
                 changed["accepted_eastern"]["originally_public_at_cut_independently_verified"] = True
             elif mutate == "segment":
                 changed["selected_numeric_facts"]["rows"][1]["segment"] = ""
+            elif mutate == "amount":
+                changed["selected_numeric_facts"]["rows"][0]["value_decimal"] = "1.0000"
             else:
                 changed["eligible_full_engine_cuts_added"] = 1
             with self.subTest(mutate=mutate), self.assertRaises(ValueError):
