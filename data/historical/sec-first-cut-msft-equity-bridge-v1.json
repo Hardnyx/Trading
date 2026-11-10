@@ -1,0 +1,57 @@
+{
+  "schema": "sec-first-cut-issuer-equity-cross-source-candidate-v1",
+  "cut": "2024-12-31",
+  "original_msft_10q_accession": "0000950170-24-118967",
+  "original_msft_10q_sha256": "869604009236bade7152e0275bc940cd6f625af066d8d296ae27a9cf6477fed8",
+  "original_msft_primary_filename": "msft-20240930.htm",
+  "original_msft_primary_sha256": "68ec2a74cd86fa97f190465c649867cf603ce7759692454c527449f2d69aab5f",
+  "issuer_cik_as_filed": "789019",
+  "issuer_original_acceptance_utc": "2024-10-30T20:07:17+00:00",
+  "issuer_common_stock_registration": {
+    "class_title_as_filed": "Common stock, $0.00000625 par value per share",
+    "trading_symbol_as_filed": "MSFT",
+    "exchange_as_filed": "Nasdaq",
+    "security_class": "common-stock"
+  },
+  "other_registration_classes_with_same_symbol": [
+    {
+      "class_title_as_filed": "3.125% Notes due 2028",
+      "trading_symbol_as_filed": "MSFT",
+      "exchange_as_filed": "Nasdaq",
+      "security_class": "debt-note"
+    },
+    {
+      "class_title_as_filed": "2.625% Notes due 2033",
+      "trading_symbol_as_filed": "MSFT",
+      "exchange_as_filed": "Nasdaq",
+      "security_class": "debt-note"
+    }
+  ],
+  "ticker_not_a_unique_security_identifier": true,
+  "spy_original_accession": "0001752724-24-264697",
+  "spy_original_sha256": "abdf627787ebf4d536b9166be4416a1d434a30ed38d630dba7f57c39f58bcbd5",
+  "spy_historical_request_sha256": "de913a4b91984572d3380c2c63c05a4d07b1464a2c677314e7b9639a8bfb7f4e",
+  "spy_source_position": 181,
+  "spy_cusip_as_filed": "594918104",
+  "spy_weight_as_filed": 0.06566774536397,
+  "spy_issuer_name_as_filed": "Microsoft Corp",
+  "spy_ticker_evidence": [
+    {
+      "fund": "ILCB",
+      "accession": "0001752724-24-295861",
+      "as_of": "2024-10-31",
+      "available_after_day": "2024-12-30",
+      "original_sha256": "7f5ecc21bbec25448de1ea0606d5b99cf6928ba98ad3fe398fd3d29088187cbc"
+    }
+  ],
+  "source_symbol_intersection": "MSFT",
+  "source_link_status": "retrospective-original-source-equity-candidate",
+  "independent_historical_cik_to_cusip_permanent_mapping_verified": false,
+  "vendor_instrument_id": null,
+  "historical_quote_series_verified": false,
+  "delisting_and_corporate_actions_verified": false,
+  "universe_or_portfolio_replay_eligible": false,
+  "eligible_full_engine_cuts_added": 0,
+  "confirmatory_origins_added": 0,
+  "predictive_validation": "not-established"
+}
