@@ -115,3 +115,4 @@ jobs:
     uses: ./.github/workflows/pages.yml
     with:
       ref: ${{ needs.ledger.outputs.published_ref }}
+      skip_python_revalidation: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success' }}

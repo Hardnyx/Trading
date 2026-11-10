@@ -1,6 +1,6 @@
 """Protect prospective signal capture and selective shadow audit timing."""
 import unittest
-from scripts.ci_workflow_policy import POOL, SIGNAL, validate_refresh_dependents
+from scripts.ci_workflow_policy import POOL, SIGNAL, PAGES, validate_refresh_dependents, validate_page_reuse
 
 
 class RefreshDependentWorkflowTests(unittest.TestCase):
@@ -8,6 +8,7 @@ class RefreshDependentWorkflowTests(unittest.TestCase):
     def setUpClass(cls):
         cls.pool = POOL.read_text(encoding="utf-8")
         cls.signal = SIGNAL.read_text(encoding="utf-8")
+        cls.pages = PAGES.read_text(encoding="utf-8")
 
     def test_current_workflow_schedule(self):
         self.assertTrue(all(validate_refresh_dependents(
@@ -52,6 +53,25 @@ class RefreshDependentWorkflowTests(unittest.TestCase):
         changed = self.pool.replace("  workflow_dispatch:\n", "", 1)
         with self.assertRaisesRegex(ValueError, "weekly"):
             validate_refresh_dependents(changed, self.signal)
+
+
+    def test_pages_does_not_duplicate_python_after_successful_refresh(self):
+        self.assertTrue(all(validate_page_reuse(
+            self.pages, self.signal).values()))
+        bad = self.signal.replace(
+            "github.event.workflow_run.conclusion == 'success'",
+            "true", 1)
+        with self.assertRaisesRegex(ValueError, "only reuse"):
+            validate_page_reuse(self.pages, bad)
+
+    def test_pages_always_checks_js_and_preserves_full_python_path(self):
+        bad = self.pages.replace(
+            "        default: false", "        default: true", 1)
+        with self.assertRaisesRegex(ValueError, "full Python"):
+            validate_page_reuse(bad, self.signal)
+        bad = self.pages.replace("          npm test\n", "", 1)
+        with self.assertRaisesRegex(ValueError, "full Python"):
+            validate_page_reuse(bad, self.signal)
 
 
 if __name__ == "__main__":

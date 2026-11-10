@@ -158,6 +158,28 @@ def validate_refresh_dependents(pool, signal):
     }
 
 
+
+def validate_page_reuse(pages, signal):
+    """Only verified successful refresh events may skip duplicate Python suite."""
+    require(
+        "skip_python_revalidation:" in pages
+        and "type: boolean" in pages
+        and "default: false" in pages
+        and pages.count("if: " + "$" + "{{ !inputs.skip_python_revalidation }}") == 3
+        and "npm run check" in pages
+        and "npm test" in pages
+        and "python -m unittest discover -s tests -p 'test_*.py'" in pages,
+        "Pages must run full Python except on explicitly verified upstream reuse",
+    )
+    require(
+        "skip_python_revalidation:" in signal
+        and "github.event_name == 'workflow_run'" in signal
+        and "github.event.workflow_run.conclusion == 'success'" in signal,
+        "Signal may only reuse Python checks after a successful market refresh",
+    )
+    return {"safe_pages_test_reuse": True}
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--verify", action="store_true")
@@ -167,6 +189,9 @@ def main():
                       PAGES.read_text(encoding="utf-8"))
     result.update(validate_refresh_dependents(
         POOL.read_text(encoding="utf-8"),
+        SIGNAL.read_text(encoding="utf-8")))
+    result.update(validate_page_reuse(
+        PAGES.read_text(encoding="utf-8"),
         SIGNAL.read_text(encoding="utf-8")))
     if options.verify:
         require(all(result.values()), "Selective Actions policy failed")
