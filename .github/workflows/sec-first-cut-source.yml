@@ -22,7 +22,7 @@ jobs:
           python-version: '3.12'
       - name: Verify offline acquisition and numeric-source contracts
         run: |
-          python -m unittest tests.test_sec_fsd_acquisition tests.test_sec_original_acquisition tests.test_historical_sec_fsd_intake tests.test_historical_sec_original_filing tests.test_historical_sec_numeric_concordance tests.test_sec_first_cut_observation
+          python -m unittest tests.test_sec_fsd_acquisition tests.test_sec_original_acquisition tests.test_historical_sec_fsd_intake tests.test_historical_sec_original_filing tests.test_historical_sec_numeric_concordance tests.test_historical_sec_embedded_instance tests.test_sec_first_cut_observation
       - name: Require identified SEC contact
         env:
           SEC_USER_AGENT: ${{ secrets.SEC_USER_AGENT || vars.SEC_USER_AGENT }}
@@ -32,17 +32,23 @@ jobs:
             exit 1
           fi
       - name: Acquire official 2024q4 FSD and original Microsoft filing
+        id: source_acquisition
         env:
           SEC_USER_AGENT: ${{ secrets.SEC_USER_AGENT || vars.SEC_USER_AGENT }}
         run: |
           python scripts/sec_fsd_acquisition.py --quarter 2024q4
           python scripts/sec_original_acquisition.py --accession 0000950170-24-118967
       - name: Reconstruct original quarterly numeric rows at the frozen cut
+        id: fsd_extraction
         run: |
           python scripts/historical_sec_fsd_intake.py --archive out/sec-fsd/2024q4.zip --cutoff 2024-12-31T21:00:00Z --cik 789019 --tag NetIncomeLoss --output out/sec-fsd-research.json --verify
       - name: Crosscheck source facts against the complete filing
         run: |
           python scripts/historical_sec_numeric_concordance.py --fsd-report out/sec-fsd-research.json --original out/sec-originals/0000950170-24-118967.txt --accession 0000950170-24-118967 --archive out/sec-fsd/2024q4.zip --output out/sec-numeric-crosscheck.json --verify
+      - name: Crosscheck an embedded extracted XBRL instance separately
+        if: ${{ always() && steps.source_acquisition.outcome == 'success' && steps.fsd_extraction.outcome == 'success' }}
+        run: |
+          python scripts/historical_sec_embedded_instance.py --fsd-report out/sec-fsd-research.json --original out/sec-originals/0000950170-24-118967.txt --accession 0000950170-24-118967 --archive out/sec-fsd/2024q4.zip --output out/sec-embedded-instance-review.json --verify
       - name: Preserve research receipts without raw original archives
         if: always()
         uses: actions/upload-artifact@v4
@@ -53,5 +59,6 @@ jobs:
             out/sec-originals/*.receipt.json
             out/sec-fsd-research.json
             out/sec-numeric-crosscheck.json
+            out/sec-embedded-instance-review.json
           if-no-files-found: warn
           retention-days: 14

@@ -30,3 +30,16 @@ Las rutas anteriores son una **instrucción de ejecución**, no una afirmación 
 **Un hecho numérico coincidente no equivale a una fuente point-in-time admitida.** El comparador no demuestra cuándo se publicó por primera vez el documento, si un extracto trimestral estaba disponible en la fecha histórica, cuál era el valor invertible correspondiente al CIK, ni si la cobertura XBRL es exhaustiva. Los archivos FSD pueden redondear los límites temporales o la precisión numérica; los no coincidentes requieren revisión, no imputación automática.
 
 Las banderas `full_xbrl_document_numeric_fact_set_reconciled=false`, `original_filing_publication_independently_verified=false`, `fundamentals_and_quality_component_certified=false`, `eligible_full_engine_cuts_added=0` y `predictive_validation=not-established` permanecen inmutables. Para admitir un corte histórico se necesitan fuentes originales independientes, identidad y cadena de precios verificadas y reconstrucción causal del modelo; este módulo no modifica las 48 fechas ya examinadas ni el protocolo confirmatorio.
+
+## Cotejo secundario de instancia XBRL incrustada
+
+Cuando un documento primario iXBRL de la presentación completa no supera el parser estricto de XHTML, se mantiene su bloqueo. Como investigación complementaria, `scripts/historical_sec_embedded_instance.py` busca **exactamente** el nombre de instancia incluido en el reporte FSD dentro de los bloques `<DOCUMENT>` del mismo archivo `.txt` original EDGAR. Nunca se consulta un documento de otro accession, ni se acepta un XML arbitrario sin enlace con el original. Si la instancia está ausente, duplicada o mal formada, el procedimiento falla expresamente.
+
+La instancia debe ser XBRL XML bien formado; se excluyen contextos con segmento o dimensiones, identificadores CIK distintos, unidades ajenas y hechos que no correspondan a la taxonomía US-GAAP registrada. Las cifras se comparan como literales decimales exactos, sin tolerancia ajustada tras examinar diferencias. Las claves contables con importes originales distintos se clasifican como ambiguas en vez de elegir el valor favorable. Si se facilita el ZIP original FSD, todas las filas seleccionadas se vuelven a extraer y confrontar antes de la comparación.
+
+```bash
+python -m unittest tests.test_historical_sec_embedded_instance
+python scripts/historical_sec_embedded_instance.py --fsd-report out/sec-fsd-research.json --original out/sec-originals/0000950170-24-118967.txt --accession 0000950170-24-118967 --archive out/sec-fsd/2024q4.zip --output out/sec-embedded-instance-review.json --verify
+```
+
+Este cotejo es **secundario**: ni una coincidencia literal en una instancia extraída permite afirmar que el primario iXBRL fue conciliado ni que los bytes estuvieron disponibles al corte histórico. Tampoco constituye validación completa de hechos, EPS TTM, títulos negociables o pronósticos. El nuevo workflow de investigación es exclusivamente manual y conserva ambos resultados por separado, aun cuando el primario falle.

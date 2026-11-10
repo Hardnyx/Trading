@@ -175,6 +175,8 @@ H1 puede reutilizar datos y código existentes, pero no hereda su certificación
 - **H6.2:** al madurar la muestra suficiente, repetir el análisis registrado con corrección de revisiones sucesivas y sin mezclar cohortes incompatibles. Los umbrales de revisión diagnóstica de [criterios de confianza](criterios-confianza.md) no autorizan promoción automática ni sustituyen requisitos confirmatorios.
 - **H6.3:** emitir `docs/conclusion-validacion-predictiva.md` con dictamen por afirmación, evidencia histórica/prospectiva separada, validez de datos, potencia, limitaciones y uso permitido. Cierre: decisión explícita y reproducible. H6 no se marca terminado por acumular sellos inmaduros; si no hay evidencia suficiente, permanece abierto o se cierra el alcance del proyecto dejando expresamente la validación inconclusa.
 
+**H1.2 · Verificación de instancia XBRL embebida (10-nov-2026 UTC, verificación pendiente):** Se incorpora `scripts/historical_sec_embedded_instance.py`, con pruebas sintéticas de original SGML, selección del XML por nombre registrado, CIK y fechas por contexto, importes decimales exactos, rechazo de duplicados/conflictos y reextracción opcional del ZIP oficial. La vía es independiente del parser iXBRL primario y no altera su resultado. La primera comparación real de este adaptador requiere una presentación original accesible; no se afirman coincidencias de MSFT ni se acredita disponibilidad PIT. **H1.2 abierto; 0/48 cortes integrales admitidos.** [Metodología](conciliacion-numerica-sec.md).
+
 ## Próximo trabajo y control de avance
 
 | Orden | Trabajo concreto | Qué debe cambiar al terminar | Bloqueo actual |
