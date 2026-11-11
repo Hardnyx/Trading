@@ -120,6 +120,25 @@ class WarehouseReceiptTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "SHA256 mismatch"):
             verify_stage(self.stage, self.root)
 
+    def test_corrupt_unselected_original_blocks_stage_verification(self):
+        unrelated = self.archive({"excluded": "retrospective"})
+        (self.root / "raw" / (unrelated + ".json")).write_bytes(b"tampered")
+        with self.assertRaisesRegex(ValueError, "Unselected warehouse source SHA256 mismatch"):
+            verify_stage(self.stage, self.root)
+
+    def test_missing_unselected_original_blocks_stage_verification(self):
+        unrelated = self.archive({"excluded": "retrospective"})
+        (self.root / "raw" / (unrelated + ".json")).unlink()
+        with self.assertRaisesRegex(ValueError, "Unselected warehouse source path differs"):
+            verify_stage(self.stage, self.root)
+
+    def test_clean_unselected_original_is_checked_not_selected(self):
+        self.archive({"excluded": "retrospective"})
+        receipt = verify_stage(self.stage, self.root)
+        self.assertEqual(receipt["warehouse_all_raw_source_files_verified"], 3)
+        self.assertEqual(receipt["warehouse_original_documents_reopened"], 1)
+        self.assertTrue(receipt["all_archived_source_digests_checked"])
+
     def test_original_provider_bytes_must_match_sha256(self):
         (self.root / "raw" / (self.original_hash + ".json")).write_bytes(b"tampered")
         with self.assertRaisesRegex(ValueError, "SHA256 mismatch"):

@@ -96,6 +96,31 @@ def verify_stage(stage, warehouse_root):
     observed = Counter()
     try:
         connection.execute("BEGIN")
+        # Mirror v4 Warehouse.as_of(): the collector rejects any corrupt
+        # archived source, including one whose records were not selected.
+        # Hash directly from the content-addressed archive, not from
+        # potentially substituted paths in SQLite.
+        warehouse_raw_sources_verified = 0
+        for archived in connection.execute(
+                "SELECT raw_hash, path FROM raw_sources ORDER BY raw_hash"):
+            digest = archived["raw_hash"]
+            require(isinstance(digest, str) and HASH.fullmatch(digest) is not None,
+                    "Malformed unselected warehouse source digest")
+            archived_path = root / "raw" / (digest + ".json")
+            require(archived_path.is_file() and
+                    archived_path.resolve() == Path(archived["path"]).resolve(),
+                    "Unselected warehouse source path differs from immutable archive")
+            require(archived_path.stat().st_size <= MAX_RAW_BYTES,
+                    "Unselected warehouse source exceeds verification limit")
+            digest_read = hashlib.sha256()
+            with archived_path.open("rb") as original_stream:
+                for chunk in iter(lambda: original_stream.read(1024 * 1024), b""):
+                    digest_read.update(chunk)
+            require(digest_read.hexdigest() == digest,
+                    "Unselected warehouse source SHA256 mismatch")
+            warehouse_raw_sources_verified += 1
+            require(warehouse_raw_sources_verified <= 5_000_000,
+                    "Excessive archived Bloomberg source count")
 
         def reopen(raw_hash):
             require(isinstance(raw_hash, str) and HASH.fullmatch(raw_hash) is not None,
@@ -184,6 +209,8 @@ def verify_stage(stage, warehouse_root):
         "warehouse_stage_records_verified": len(rows),
         "warehouse_source_files_reopened": len(sources),
         "warehouse_original_documents_reopened": len(originals),
+        "warehouse_all_raw_source_files_verified": warehouse_raw_sources_verified,
+        "all_archived_source_digests_checked": True,
         "unchanged_stage_records_bound_to_local_warehouse": True,
         "original_value_and_timestamp_pointers_rechecked": True,
         **asof_receipt,

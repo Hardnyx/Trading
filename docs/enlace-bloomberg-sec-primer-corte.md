@@ -96,3 +96,23 @@ El comprobador de originales ahora realiza una **segunda conciliación del conju
 La reproducción controla expresamente las 8 dimensiones que forman la clave lógica de observación y la precedencia por `first_available_at`, `vintage_id` y `revision_id`; rechaza valores contradictorios bajo un mismo orden de versión. El informe **privado** registra `warehouse_asof_rows_independently_reselected`, `warehouse_records_examined_for_asof` y `stage_asof_selection_independently_recomputed=true`. La comprobación del contenido SHA-256 de los archivos originales continúa siendo obligatoria. La selección temporal reproducida es una **verificación de consistencia interna** del algoritmo y del archivo, no una autenticación independiente de la disponibilidad real de Bloomberg, ni un calendario de sesiones, ni un sello de modelo históricamente preregistrado. La ruta de evidencia histórica del motor y sus 0/48 cortes completos no cambian.
 
 Las pruebas de casos positivos y adversariales son sintéticas. Además de 13 pruebas unitarias locales se contrastó la selección con `Warehouse.as_of` del colector v4.0 real, incluida una revisión más reciente que reemplaza el valor anterior. Esa comprobación no constituye un dato de proveedor.
+
+## Integridad global del archivo y frontera exacta de decisión (11-nov-2026)
+
+El contrato del colector v4 rechaza una ejecución `Warehouse.as_of()` si
+**cualquier** fuente archivada tiene un SHA-256 incorrecto, incluso si esa fuente
+no aparece en las filas seleccionadas. La verificación privada de Trading
+reproduce ahora esa condición: recorre el inventario completo de `raw_sources`
+bajo la transacción SQLite de solo lectura y vuelve a calcular cada huella
+sobre los bytes de `raw/<sha256>.json`, por bloques. Una fuente omitida,
+alterada o sustituida fuera de la carpeta archivada impide generar el recibo.
+El conteo `warehouse_all_raw_source_files_verified` cubre tanto fuentes
+incluidas como excluidas por `as_of`. La selección histórica de filas y la
+reapertura de sus originales continúan como comprobaciones independientes.
+
+La frontera del corte quedó cerrada **exactamente** a las
+16:00:00.000000 de Nueva York: un sello de 16:00:00.000001 no es admisible.
+Esto impide que un segundo fraccionario posterior amplíe inadvertidamente
+el conjunto de datos; no prueba la ejecución de operaciones a ese precio
+ni verifica una publicación histórica de Bloomberg. No se alteran la
+clasificación de investigación, las cohortes ni los parámetros.

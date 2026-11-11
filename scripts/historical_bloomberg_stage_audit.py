@@ -84,7 +84,8 @@ def stage_cutoff(stage, requested_cut):
     require(cutoff.astimezone(NY).date() == cut and
             cutoff.astimezone(NY).hour == 16 and
             cutoff.astimezone(NY).minute == 0 and
-            cutoff.astimezone(NY).second == 0,
+            cutoff.astimezone(NY).second == 0 and
+            cutoff.astimezone(NY).microsecond == 0,
             "First-cut Bloomberg stage must use the NY 16:00 decision clock")
     snapshot = stage.get("snapshot")
     require(isinstance(snapshot, dict) and

@@ -163,6 +163,12 @@ class HistoricalBloombergStageAuditTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "NY 16:00 decision clock"):
             audit(source, requests())
 
+    def test_no_fractional_second_after_frozen_close(self):
+        source = stage(rows())
+        source["cutoff"] = "2024-12-31T16:00:00.000001-05:00"
+        with self.assertRaisesRegex(ValueError, "NY 16:00 decision clock"):
+            audit(source, requests())
+
     def test_no_promoted_synthetic_stage(self):
         source = stage(rows())
         source["snapshot"]["synthetic"] = True
