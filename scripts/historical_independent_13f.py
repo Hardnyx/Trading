@@ -124,12 +124,19 @@ def validate_complete_original(raw):
             h["accepted_utc"] == FIRST_PUBLISHED and
             h["accepted_utc"] < CUT and len(raw) <= MAX_DOCUMENT_BYTES,
             "Original SEC Vanguard 13F header or timestamp mismatch")
+    header = raw.split(b"<SEC-HEADER>", 1)[1].split(b"</SEC-HEADER>", 1)[0]
+    declared_periods = re.findall(
+        rb"(?m)^[ \\t]*CONFORMED PERIOD OF REPORT:[ \\t]*([0-9]{8})[ \\t]*\\r?$",
+        header)
+    require(declared_periods == [PERIOD.replace("-", "").encode("ascii")],
+            "Original SEC 13F holdings period differs from the frozen quarter")
     rows = parse_table(source_payload(raw))
     return h, rows
 
 
 def compare(rows, spy, original):
-    require(spy.get("total_positive_sec_positions") == 504 and
+    require(spy.get("cut") == "2024-12-31" and
+            spy.get("total_positive_sec_positions") == 504 and
             spy.get("valid_original_cusip_positions") == 478 and
             spy.get("permanent_security_identity_certified") is False and
             spy.get("full_engine_eligible_cuts_added") == 0,
@@ -201,6 +208,9 @@ def validate_archive(raw, receipt):
             receipt.get("original_13f_accession") == ACCESSION and
             receipt.get("original_sha256") == hashlib.sha256(raw).hexdigest() and
             receipt.get("original_byte_count") == len(raw) and
+            receipt.get("original_13f_accepted_utc") == FIRST_PUBLISHED and
+            receipt.get("first_publication_independently_authenticated") is False and
+            receipt.get("predictive_validation") == "not-established" and
             receipt.get("full_engine_eligible_cuts_added") == 0,
             "Archived original 13F receipt differs from original bytes")
     return validate_complete_original(raw)
@@ -240,6 +250,13 @@ def write_report(report, path, csv_path=None):
 
 
 def acquire(*, user_agent):
+    # The pinned filing is immutable; re-running collection must not fetch
+    # or redate the same historical source after it has been archived.
+    if ORIGINAL.is_file() and RECEIPT.is_file():
+        original, rows = archived()
+        return compare(rows, spy_review(), original)
+    require(not ORIGINAL.exists() and not RECEIPT.exists(),
+            "Incomplete original 13F archive cannot be refreshed")
     validate_agent(user_agent)
     raw, http = get_original(URL, user_agent=user_agent, maximum=MAX_DOCUMENT_BYTES)
     original, rows = validate_complete_original(raw)

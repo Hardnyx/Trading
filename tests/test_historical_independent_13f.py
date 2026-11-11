@@ -10,7 +10,8 @@ from unittest.mock import patch
 
 from scripts.historical_independent_13f import (
     ACCESSION, CIK, FIRST_PUBLISHED, SCHEMA, URL, archived,
-    compare, parse_table, source_payload, validate_archive,
+    acquire, compare, parse_table, source_payload, validate_archive,
+    validate_complete_original,
 )
 
 
@@ -51,6 +52,46 @@ class Original13fTests(unittest.TestCase):
         self.assertEqual(result["full_engine_eligible_cuts_added"],0)
         self.assertFalse(result["vendor_historical_security_master_certified"])
 
+    def test_reject_13f_evidence_for_an_earlier_spy_cut(self):
+        changed = spy()
+        changed["cut"] = "2024-10-31"
+        with self.assertRaisesRegex(ValueError, "denominator/eligibility"):
+            compare(parse_table(table(row("594918104"))), changed, original())
+
+    def test_original_holdings_period_must_match_frozen_quarter(self):
+        filing = {**original(), "cik": CIK, "form": "13F-HR",
+                  "filed": "20241113"}
+        def document(period):
+            return (b"<SEC-DOCUMENT>\\n<SEC-HEADER>\\n"
+                    + b"CONFORMED PERIOD OF REPORT: " + period
+                    + b"\\n</SEC-HEADER>\\n")
+        with patch("scripts.historical_independent_13f.parse_original",
+                   return_value=filing), \\
+             patch("scripts.historical_independent_13f.source_payload",
+                   return_value=table(row("594918104"))):
+            _, parsed = validate_complete_original(document(b"20240930"))
+            self.assertEqual(len(parsed), 1)
+            for period in (b"20241231", b"", b"20240930\\nCONFORMED PERIOD OF REPORT: 20240930"):
+                with self.subTest(period=period), self.assertRaisesRegex(
+                        ValueError, "holdings period"):
+                    validate_complete_original(document(period))
+
+    def test_recollection_uses_pinned_original_without_network(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            saved = Path(tmp) / "original.gz"
+            receipt = Path(tmp) / "receipt.json"
+            saved.write_bytes(b"already archived")
+            receipt.write_text("{}")
+            with patch("scripts.historical_independent_13f.ORIGINAL", saved), \\
+                 patch("scripts.historical_independent_13f.RECEIPT", receipt), \\
+                 patch("scripts.historical_independent_13f.archived",
+                       return_value=(original(), [])), \\
+                 patch("scripts.historical_independent_13f.spy_review", return_value=spy()), \\
+                 patch("scripts.historical_independent_13f.get_original",
+                       side_effect=AssertionError("Unexpected redownload")):
+                report = acquire(user_agent=None)
+            self.assertEqual(report["full_engine_eligible_cuts_added"], 0)
+
     def test_conflicting_class_is_not_selected(self):
         source=parse_table(table(row("594918104",title="COM"),row("594918104",title="CL A")))
         result=compare(source,spy(),original())
@@ -77,11 +118,25 @@ class Original13fTests(unittest.TestCase):
             (base/"receipt.json").write_text(json.dumps({"archive_sha256":hashlib.sha256(gz).hexdigest(),
                 "schema":SCHEMA,"source_url":URL,"original_13f_accession":ACCESSION,
                 "original_sha256":hashlib.sha256(raw).hexdigest(),
-                "original_byte_count":len(raw),"full_engine_eligible_cuts_added":0}))
+                "original_byte_count":len(raw),
+                "original_13f_accepted_utc":FIRST_PUBLISHED,
+                "first_publication_independently_authenticated":False,
+                "predictive_validation":"not-established",
+                "full_engine_eligible_cuts_added":0}))
             with patch('scripts.historical_independent_13f.validate_complete_original',return_value=(original(),[{}])):
                 x,y=archived(tmp)
                 self.assertEqual(x["accession"],ACCESSION)
                 self.assertEqual(len(y),1)
+            intact = json.loads((base/"receipt.json").read_text())
+            for key, altered in (("original_13f_accepted_utc", "2024-12-31T21:00:00+00:00"),
+                                 ("first_publication_independently_authenticated", True),
+                                 ("predictive_validation", "validated")):
+                changed = dict(intact)
+                changed[key] = altered
+                (base/"receipt.json").write_text(json.dumps(changed))
+                with self.subTest(field=key), self.assertRaisesRegex(
+                        ValueError, "receipt differs"):
+                    archived(tmp)
             (base/"receipt.json").write_text('{"archive_sha256":"bad"}')
             with self.assertRaisesRegex(ValueError,"compressed archive changed"):
                 archived(tmp)

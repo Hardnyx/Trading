@@ -1,12 +1,6 @@
 name: Independent SEC 13F source (research)
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - 'scripts/historical_independent_13f.py'
-      - 'tests/test_historical_independent_13f.py'
-      - '.github/workflows/independent-sec-13f.yml'
 permissions:
   contents: read
 jobs:
