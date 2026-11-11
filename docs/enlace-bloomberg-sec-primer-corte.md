@@ -196,3 +196,16 @@ página de GitHub Actions. Son solicitudes de investigación basadas en
 datos públicos de la SEC, **no respuestas de proveedor**.
 
 **Entrega comprobada.** [Workflow de fuente SEC `43068978317`](https://github.com/Hardnyx/Trading/actions/runs/43068978317) aprobado y artefacto `sec-original-issuer-lei-requests` publicado (ID GitHub `13876763494`, expiración 25-nov-2026 UTC). [CI general `43068978256`](https://github.com/Hardnyx/Trading/actions/runs/43068978256) aprobada: 597 Python, 382 JavaScript y guardias metodológicos. La publicación usa un flujo de investigación **separado**; la CI rápida conserva su prohibición de `actions/upload-artifact`.
+
+## Contraste con otros N-PORT originales de fondos iShares (11-nov-2026)
+
+La cola CUSIP/LEI del SPY se complementa mediante [`historical_crossfund_issuer_lei.py`](../scripts/historical_crossfund_issuer_lei.py). Se reabren los originales SEC de los **cinco fondos iShares** con últimas tenencias disponibles antes del corte: IVV e ITOT al 30-sep-2024 (disponibilidad conservadora desde 29-nov-2024), e IYY, ISCB e ILCB al 31-oct-2024 (desde 30-dic-2024). La antigüedad de las tenencias no excede **120 días**. No se consultan N-PORT publicados después de la fecha de decisión ni se reemplazan documentos con series actuales.
+
+Para cada documento se vuelve a comprobar la fuente archivada, accession, hash SHA-256, fecha, identidad de la serie de fondos y digest de las observaciones originales de `historical_identifiers.parse_observations`. A continuación se extraen literalmente CUSIP y LEI de las inversiones de renta variable largas en USD, **incluyendo los fondos que no publicaron tickers**, y se contrastan con los 478 CUSIP válidos del SPY. Solo se registra un **acuerdo entre fuentes** si el LEI de emisor original del SPY pasa su dígito de control y es idéntico al único LEI válido observado por los otros fondos. Cualquier diferencia entre LEI válidos de fondos o entre estos y SPY queda en cuarentena; nunca se elige una correspondencia por parecido de nombre, por popularidad o por comportamiento posterior.
+
+```bat
+python scripts\historical_crossfund_issuer_lei.py --verify
+python scripts\historical_crossfund_issuer_lei.py --csv out\sec-crossfund-issuer-lei-2024-12-31.csv --report out\sec-crossfund-issuer-lei-summary-2024-12-31.json
+```
+
+El workflow selectivo [`issuer-lei-requests.yml`](../.github/workflows/issuer-lei-requests.yml) añade ambos archivos al artefacto de investigación `sec-original-issuer-lei-requests`. **Importante:** la coincidencia en dos N-PORT prueba únicamente que dos fondos reportaron los mismos caracteres de CUSIP y LEI; no confirma de manera independiente la razón social, clase de acciones, CIK, vigencia jurídica, identificador Bloomberg, primera publicación real del proveedor o precio ejecutable. El emparejamiento sigue siendo una pista documental retrospectiva, sin promoción a un corte del motor completo. Los resultados de la CI y el número de acuerdos/contradicciones deben registrarse antes de cualquier interpretación de cobertura.

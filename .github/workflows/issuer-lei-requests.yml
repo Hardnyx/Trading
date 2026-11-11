@@ -6,6 +6,8 @@ on:
     paths:
       - 'scripts/historical_spy_issuer_lei.py'
       - 'tests/test_historical_spy_issuer_lei.py'
+      - 'scripts/historical_crossfund_issuer_lei.py'
+      - 'tests/test_historical_crossfund_issuer_lei.py'
       - '.github/workflows/issuer-lei-requests.yml'
 permissions:
   contents: read
@@ -22,6 +24,10 @@ jobs:
         run: python -m pip install -r requirements-research.txt
       - name: Verify exact archived SEC positions and LEI check digits
         run: python -m unittest tests.test_historical_spy_issuer_lei
+      - name: Compare original issuer LEIs against dated other-fund filings
+        run: python -m unittest tests.test_historical_crossfund_issuer_lei
+      - name: Build cross-fund original-source research queue
+        run: python scripts/historical_crossfund_issuer_lei.py --csv out/sec-crossfund-issuer-lei-2024-12-31.csv --report out/sec-crossfund-issuer-lei-summary-2024-12-31.json
       - name: Build public SEC issuer LEI request queue
         run: python scripts/historical_spy_issuer_lei.py --csv out/sec-issuer-lei-cusip-2024-12-31.csv --report out/sec-issuer-lei-source-summary-2024-12-31.json
       - name: Preserve research-only SEC issuer LEI requests
@@ -31,5 +37,7 @@ jobs:
           path: |
             out/sec-issuer-lei-cusip-2024-12-31.csv
             out/sec-issuer-lei-source-summary-2024-12-31.json
+            out/sec-crossfund-issuer-lei-2024-12-31.csv
+            out/sec-crossfund-issuer-lei-summary-2024-12-31.json
           retention-days: 14
           if-no-files-found: error
