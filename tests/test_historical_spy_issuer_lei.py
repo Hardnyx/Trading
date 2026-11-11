@@ -33,6 +33,12 @@ class HistoricalSpyIssuerLeiTests(unittest.TestCase):
         self.assertEqual(report["invalid_original_cusip_positions"], 26)
         self.assertEqual(sum(report["original_lei_status_counts"].values()), 504)
         self.assertEqual(len(report["position_rows"]), 504)
+        self.assertEqual(report["valid_cusip_positions_with_issuer_lei_hint"], 463)
+        self.assertEqual(report["distinct_issuer_leis_in_valid_cusip_positions"], 460)
+        self.assertEqual(report["original_lei_status_counts"], {
+            "issuer-lei-not-available-as-filed": 18,
+            "valid-original-issuer-lei-hint": 486,
+        })
         self.assertTrue(all(r["original_spy_sha256"] == report["spy_original_sha256"]
                             for r in report["position_rows"]))
         self.assertFalse(report["permanent_security_identity_certified"])

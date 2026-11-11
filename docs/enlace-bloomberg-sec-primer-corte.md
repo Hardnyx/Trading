@@ -176,3 +176,21 @@ python scripts\historical_spy_issuer_lei.py --csv out\bloomberg-cusip-lei-sec-20
 El CSV preserva `source_position`, CUSIP, nombre y ticker observados, peso, corte, `original_issuer_lei_as_filed`, `issuer_lei_hint`, estado de validación, accession original, SHA-256 y fecha de reporte/disponibilidad conservadora. Solo se ofrece `issuer_lei_hint` cuando pasa la validación. Las 26 posiciones de CUSIP inválido siguen fuera de esta cola y **permanecen íntegramente** en la ruta ISIN existente. Los datos son públicos de la SEC; no se envía documentación Bloomberg a GitHub.
 
 **Limitación temporal:** el N-PORT refleja una fecha de tenencias histórica y su divulgación posterior. Que el LEI figure en el N-PORT no prueba la vigencia de un valor negociable, la correspondencia CIK/LEI, la disponibilidad de un identificador Bloomberg a las 16:00 del 31-dic-2024, la existencia de una cotización de ejecución ni la composición exacta del índice ese día. Esta evidencia complementa solicitudes manuales al proveedor, pero **no añade cortes admisibles**, calibra parámetros ni valida habilidad predictiva.
+
+### Resultado real y artefacto reproducible
+
+La primera ejecución verificada de [CI `43067002537`](https://github.com/Hardnyx/Trading/actions/runs/43067002537)
+produjo desde el archivo SEC original los siguientes conteos:
+**504 posiciones positivas, 478 CUSIP válidos, 26 excepciones**;
+**486 LEI válidos de emisor** y **18 LEI declarados no disponibles**.
+En la cola CUSIP son **463 de 478 posiciones con LEI válido**,
+correspondientes a **460 LEI distintos** (otras 15 posiciones CUSIP
+no tienen LEI). La prueba ahora congela estos conteos junto con la huella
+y el accession del archivo original; ninguna identidad Bloomberg se deduce.
+
+El workflow `Validar aplicación` genera y conserva durante 14 días un
+artefacto denominado **`sec-original-issuer-lei-requests`**, formado por
+`sec-issuer-lei-cusip-2024-12-31.csv` y
+`sec-issuer-lei-source-summary-2024-12-31.json`, descargable desde su
+página de GitHub Actions. Son solicitudes de investigación basadas en
+datos públicos de la SEC, **no respuestas de proveedor**.
