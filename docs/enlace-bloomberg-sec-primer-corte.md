@@ -215,3 +215,20 @@ El workflow selectivo [`issuer-lei-requests.yml`](../.github/workflows/issuer-le
 El [workflow selectivo `43071557392`](https://github.com/Hardnyx/Trading/actions/runs/43071557392) reabrió los **cinco N-PORT** y seleccionó **6.033 posiciones** de renta variable larga en USD con CUSIP válido, aplicando los filtros de fuente indicados. De los **478 CUSIP válidos de SPY** resultaron **463 acuerdos de LEI de emisor**, **dos registros con LEI válido solamente en otro fondo**, **13 CUSIP observados en otros fondos sin LEI válido**, y **cero conflictos de LEI válidos**. El acuerdo representa una coincidencia de datos de tenencia en distintos reportes (los cinco de la misma familia iShares), no una constatación independiente del identificador jurídico ni del instrumento.
 
 El CSV complementario conserva además `other_fund_valid_lei_values` para **revisión manual**. En los dos casos donde falta LEI en SPY y existe uno en otra fuente, este campo no pasa a `crossfund_corroborated_issuer_lei`; ante conflictos conserva los valores originales pero no elige uno. Los resultados se congelan mediante pruebas contra los originales SEC archivados. El artefacto actualizado sigue siendo `sec-original-issuer-lei-requests`, con dos CSV y dos resúmenes de procedencia, sin respuestas Bloomberg. Ninguna de estas coincidencias constituye una aprobación H1.2.
+
+## Fuente SEC 13F de una gestora independiente (primer corte)
+
+**Objetivo:** corroborar los CUSIP y la denominación de clase de las 478 posiciones SPY del 31-dic-2024 mediante un documento de un gestor ajeno a iShares/State Street. Se selecciona de antemano la [13F-HR original de Vanguard Group](https://www.sec.gov/Archives/edgar/data/102909/0001752724-24-248565-index.htm), accession `0001752724-24-248565`, de tenencias al **30-sep-2024**, presentada ante la SEC el **13-nov-2024 a las 11:58:36 ET**. La información estaba fechada antes del corte de investigación, pero **no** se certifica su primer instante histórico de divulgación mediante un proveedor independiente.
+
+El [módulo `historical_independent_13f.py`](../scripts/historical_independent_13f.py) obtiene exclusivamente el **archivo completo original** `.txt` de esa presentación con un `SEC_USER_AGENT` real, valida el `SEC-HEADER` (CIK `102909`, accession, 13F-HR y aceptación exacta) y extrae la tabla XML `13F_0000102909_20240930.xml` que pertenece **al mismo archivo**. El XML se coteja literalmente: se consideran exclusivamente cantidades denominadas en `SH` sin opciones PUT/CALL; se preservan nombre y clase `nameOfIssuer/titleOfClass` declarados. Se prohíbe usar la cantidad o valoración declarada en 13F como cotización histórica, o equiparar su nombre con un CIK/LEI/FIGI. Si para un CUSIP figuran varias combinaciones de nombre/clase, se registra ambigüedad en lugar de escoger una.
+
+Para reproducirlo en un ambiente autorizado, con el identificador y contacto real de la SEC configurado en `SEC_USER_AGENT`:
+
+```bat
+python scripts\historical_independent_13f.py --collect
+python scripts\historical_independent_13f.py --verify
+```
+
+La primera orden conserva el archivo SEC original comprimido de modo reproducible y un recibo SHA-256 bajo `data/historical/independent-13f-v1/`, y produce un JSON y CSV de investigación bajo `out/`. El [workflow `independent-sec-13f.yml`](../.github/workflows/independent-sec-13f.yml) es selectivo (primera publicación o cambios del auditor, además de ejecución manual), conserva originales públicos como evidencia versionada y retiene temporalmente el CSV para consulta. No altera la CI rápida ni opera sobre fuentes Bloomberg con licencia.
+
+La evidencia refuerza la lectura **CUSIP → título de clase declarado por otra gestora**, no la identidad legal de un instrumento permanente, su vigencia a cada fecha, dividendos/splits, precios originales ejecutables, naturaleza de acciones estadounidenses o completitud histórica del universo de inversión. **H1.2 y la validación predictiva continúan bloqueados** hasta verificar estos requisitos y demás entradas del motor; cero cortes de replay promovidos.
