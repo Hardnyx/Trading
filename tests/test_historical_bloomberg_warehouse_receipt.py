@@ -122,18 +122,21 @@ class WarehouseReceiptTests(unittest.TestCase):
 
     def test_corrupt_unselected_original_blocks_stage_verification(self):
         unrelated = self.archive({"excluded": "retrospective"})
+        self.db.commit()
         (self.root / "raw" / (unrelated + ".json")).write_bytes(b"tampered")
         with self.assertRaisesRegex(ValueError, "Unselected warehouse source SHA256 mismatch"):
             verify_stage(self.stage, self.root)
 
     def test_missing_unselected_original_blocks_stage_verification(self):
         unrelated = self.archive({"excluded": "retrospective"})
+        self.db.commit()
         (self.root / "raw" / (unrelated + ".json")).unlink()
         with self.assertRaisesRegex(ValueError, "Unselected warehouse source path differs"):
             verify_stage(self.stage, self.root)
 
     def test_clean_unselected_original_is_checked_not_selected(self):
         self.archive({"excluded": "retrospective"})
+        self.db.commit()
         receipt = verify_stage(self.stage, self.root)
         self.assertEqual(receipt["warehouse_all_raw_source_files_verified"], 3)
         self.assertEqual(receipt["warehouse_original_documents_reopened"], 1)
