@@ -116,3 +116,46 @@ Esto impide que un segundo fraccionario posterior amplíe inadvertidamente
 el conjunto de datos; no prueba la ejecución de operaciones a ese precio
 ni verifica una publicación histórica de Bloomberg. No se alteran la
 clasificación de investigación, las cohortes ni los parámetros.
+
+## Solicitudes operativas segregadas y estado real del catálogo v4
+
+Para preparar una solicitud Bloomberg **sin proveedor consultado todavía**,
+se conservan dos artefactos independientes derivados de la misma evidencia
+N-PORT original. Desde Trading, generar la lista CUSIP válida:
+
+```bat
+python scripts\historical_vendor_identity.py --valid-cusip-template out\bloomberg-cusip-validos-2024-12-31.csv
+```
+
+El CSV prioriza por peso SPY descendente las **478 posiciones** con CUSIP
+original verificable y conserva `source_position`, nombre y ticker observado
+en SEC como pistas, **no** como identificaciones del proveedor. No modifica la
+plantilla de auditoría `--template`, que sigue incluyendo las 504 posiciones
+positivas originales, con las 26 excepciones conservadas en el denominador.
+
+La ruta extranjera independiente se genera con:
+
+```bat
+python scripts\historical_foreign_isin_requests.py --csv out\bloomberg-isin-extranjero-2024-12-31.csv
+```
+
+La segunda lista incluye los **26 ISIN extranjeros explícitos del SEC**; no se
+reinterpreta ninguno como CUSIP estadounidense ni se presume moneda USD.
+Las dos listas son solicitudes de investigación, no exportaciones Bloomberg
+ni autorizaciones para completar el motor.
+
+El `field_registry.json` revisado del
+`BloombergExcelCollector_v4.0` suministrado clasifica
+`BDP ID_BB_GLOBAL` y `BDP CRNCY` como
+`CURRENT_SNAPSHOT_ONLY`, `BDH PX_LAST` como `UNVERIFIED` y
+`identifier_history/historical_FIGI_CUSIP_ISIN_ticker_intervals` como
+`BLOCKED_NO_NATIVE_PIT_QUERY_VALIDATED`. Una consulta ejecutada hoy
+puede aportar **candidatos retrospectivos** pero no demuestra que el
+identificador, el precio o la revisión fueran conocidos al corte de 2024.
+La incorporación a `pit-import` exige el documento original fechado,
+huellas y punteros de valor/publicación/disponibilidad. La revisión
+independiente de la primera publicación y los derechos de uso siguen pendientes.
+
+En Windows, ejecutar el auditor con el mismo entorno Python que haya instalado
+la dependencia `tzdata` del colector v4.0, especialmente cuando la
+instalación de Python no dispone de zonas IANA del sistema.

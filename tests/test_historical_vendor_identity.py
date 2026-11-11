@@ -10,7 +10,7 @@ import unittest
 
 from scripts.historical_vendor_identity import (
     COLUMNS, SCHEMA, local_file, parse_export, read_evidence, reconcile, valid_cusip,
-    request_hash, row_state, template_csv,
+    request_hash, row_state, template_csv, valid_cusip_collection_csv,
 )
 
 
@@ -54,6 +54,47 @@ class VendorIdentityTests(unittest.TestCase):
         self.assertEqual(len(rows), 2)
         self.assertEqual(rows[0]["cusip"], "037833100")
         self.assertNotIn("provider_instrument_id", rows[0])
+
+    def test_operational_cusip_queue_excludes_invalid_placeholder(self):
+        source = request_bundle()
+        source["requests"].append({
+            "source_position": 2, "cusip": "000000000",
+            "original_spy_name": "Foreign original ISIN route",
+            "original_ticker_observation": None, "weight": 0.25,
+        })
+        complete = list(csv.DictReader(io.StringIO(template_csv(source))))
+        usable = list(csv.DictReader(io.StringIO(valid_cusip_collection_csv(source))))
+        self.assertEqual(len(complete), 3)
+        self.assertEqual(len(usable), 2)
+        self.assertEqual([row["source_position"] for row in usable], ["0", "1"])
+        self.assertTrue(all(valid_cusip(row["cusip"]) for row in usable))
+        self.assertEqual(source["requests"][2]["cusip"], "000000000")
+
+    def test_operational_queue_preserves_weighted_priority_and_original_positions(self):
+        source = request_bundle()
+        source["requests"][0]["weight"] = 0.2
+        source["requests"][1]["weight"] = 0.8
+        rows = list(csv.DictReader(io.StringIO(valid_cusip_collection_csv(source))))
+        self.assertEqual([row["source_position"] for row in rows], ["1", "0"])
+        self.assertEqual([float(row["weight"]) for row in rows], [0.8, 0.2])
+        self.assertEqual(rows[0]["cut"], "2024-12-31")
+        self.assertNotIn("provider_instrument_id", rows[0])
+
+    def test_real_sec_first_cut_vendor_queue_is_exactly_478_eligible_cusips(self):
+        from scripts.historical_identity_requests import build_requests
+        original = build_requests()
+        complete = list(csv.DictReader(io.StringIO(template_csv(original))))
+        usable = list(csv.DictReader(io.StringIO(valid_cusip_collection_csv(original))))
+        self.assertEqual(len(complete), 504)
+        self.assertEqual(len(usable), 478)
+        self.assertEqual(sum(not valid_cusip(r["cusip"]) for r in complete), 26)
+        self.assertEqual(
+            {int(r["source_position"]) for r in usable},
+            {r["source_position"] for r in original["requests"]
+             if valid_cusip(r["cusip"])},
+        )
+        self.assertTrue(all(float(usable[i]["weight"]) >= float(usable[i+1]["weight"])
+                            for i in range(len(usable)-1)))
 
     def test_single_retrospective_binding_remains_noncausal(self):
         report = reconcile(request_bundle(), with_source([example()]), [], "b" * 64)

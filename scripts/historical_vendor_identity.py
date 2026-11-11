@@ -80,6 +80,17 @@ def template_csv(requests):
     return buffer.getvalue()
 
 
+def valid_cusip_collection_csv(requests):
+    """Operator queue: 478 original valid CUSIP positions, sorted by SPY weight.
+
+    The original 504-position source contract and the foreign-ISIN route remain
+    unchanged; this file requests a lookup and never asserts a vendor match.
+    """
+    selected = [row for row in requests["requests"] if valid_cusip(row["cusip"])]
+    selected.sort(key=lambda row: (-row["weight"], row["source_position"]))
+    return template_csv({"cut": requests["cut"], "requests": selected})
+
+
 def parse_export(raw, snapshot_as_of, *, identifier_column="cusip", validator=valid_cusip):
     """Validate the unchanged dated vendor metadata for CUSIP or original ISIN."""
     require(identifier_column in ("cusip", "original_isin"), "Unsupported identifier column")
@@ -342,17 +353,22 @@ def reconcile(requests, rows, provenance, manifest_hash):
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--template", help="Write SEC-derived collection request CSV")
+    parser.add_argument("--template", help="Write complete original SEC request CSV, including invalid CUSIPs")
+    parser.add_argument("--valid-cusip-template", help="Write valid original CUSIP positions only, weighted priority")
     parser.add_argument("--evidence-dir", help="Local vendor manifest and hashed CSV exports")
     parser.add_argument("--report", default="out/historical-vendor-identity-reconciliation-v1.json")
     args = parser.parse_args(argv)
-    if not args.template and not args.evidence_dir:
+    if not args.template and not args.valid_cusip_template and not args.evidence_dir:
         parser.error("Supply --template and/or --evidence-dir")
     requests = build_requests()
     if args.template:
         target = Path(args.template)
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_text(template_csv(requests), encoding="utf-8")
+    if args.valid_cusip_template:
+        target = Path(args.valid_cusip_template)
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(valid_cusip_collection_csv(requests), encoding="utf-8")
     if args.evidence_dir:
         rows, provenance, manifest_hash = read_evidence(args.evidence_dir, requests)
         report = reconcile(requests, rows, provenance, manifest_hash)
@@ -363,6 +379,10 @@ def main(argv=None):
                           "full_engine_replay_ready": False}, sort_keys=True))
     else:
         print(json.dumps({"cut": requests["cut"], "requests": len(requests["requests"]),
+                          "valid_cusip_collection_positions": sum(
+                              valid_cusip(row["cusip"]) for row in requests["requests"]),
+                          "foreign_route_positions": sum(
+                              not valid_cusip(row["cusip"]) for row in requests["requests"]),
                           "vendor_sources_read": 0, "full_engine_replay_ready": False}))
     return 0
 
