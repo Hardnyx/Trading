@@ -55,6 +55,7 @@ class WarehouseReceiptTests(unittest.TestCase):
         self.interchange_hash = self.archive(interchange)
         self.row["raw_hash"] = self.interchange_hash
         self.stage = {"schema": "bloomberg-trading-stage-v1",
+                      "cutoff": "2024-12-31T16:00:00-05:00",
                       "source_hashes": [self.interchange_hash],
                       "normalized_asof_records": [copy.deepcopy(self.row)]}
         self.db.execute("INSERT INTO pit_records VALUES(?,?,?,?,?,?)",
@@ -82,8 +83,17 @@ class WarehouseReceiptTests(unittest.TestCase):
         self.assertEqual(result["warehouse_original_documents_reopened"], 1)
         self.assertTrue(result["original_value_and_timestamp_pointers_rechecked"])
         self.assertFalse(result["original_vendor_publication_independently_authenticated"])
-        self.assertFalse(result["stage_asof_selection_independently_recomputed"])
+        self.assertTrue(result["stage_asof_selection_independently_recomputed"])
+        self.assertEqual(result["warehouse_asof_rows_independently_reselected"], 1)
+        self.assertEqual(result["warehouse_records_examined_for_asof"], 1)
         self.assertEqual(result["full_engine_eligible_cuts_added"], 0)
+
+    def test_omitted_stage_row_fails_even_with_clean_archive(self):
+        # A stage with no rows used to pass when it also cited no sources.
+        self.stage["source_hashes"] = []
+        self.stage["normalized_asof_records"] = []
+        with self.assertRaisesRegex(ValueError, "selection differs"):
+            verify_stage(self.stage, self.root)
 
     def test_does_not_mutate_original_db(self):
         before = self.db.execute("SELECT count(*) FROM pit_records").fetchone()[0]

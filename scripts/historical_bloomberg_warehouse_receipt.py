@@ -12,6 +12,11 @@ from pathlib import Path
 import re
 import sqlite3
 
+if __package__:
+    from .historical_bloomberg_asof_replay import verify_asof_selection
+else:
+    from historical_bloomberg_asof_replay import verify_asof_selection
+
 MAX_RAW_BYTES = 50_000_000
 HASH = re.compile(r"[0-9a-f]{64}\Z")
 LOCATOR = re.compile(r"/records/(0|[1-9][0-9]*)/value\Z")
@@ -170,6 +175,7 @@ def verify_stage(stage, warehouse_root):
             originals.add(original_hash)
         require(set(cited).issubset({item["raw_hash"] for item in rows}),
                 "Stage source citations are not supported by its selected records")
+        asof_receipt = verify_asof_selection(connection, stage)
     except (sqlite3.Error, OSError, UnicodeError, json.JSONDecodeError) as error:
         raise ValueError("Invalid or unreadable Bloomberg v4 warehouse evidence") from error
     finally:
@@ -180,7 +186,7 @@ def verify_stage(stage, warehouse_root):
         "warehouse_original_documents_reopened": len(originals),
         "unchanged_stage_records_bound_to_local_warehouse": True,
         "original_value_and_timestamp_pointers_rechecked": True,
-        "stage_asof_selection_independently_recomputed": False,
+        **asof_receipt,
         "original_vendor_publication_independently_authenticated": False,
         "live_vendor_entitlement_or_execution_verified": False,
         "full_engine_eligible_cuts_added": 0,
