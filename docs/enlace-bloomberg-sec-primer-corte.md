@@ -194,3 +194,5 @@ artefacto denominado **`sec-original-issuer-lei-requests`**, formado por
 `sec-issuer-lei-source-summary-2024-12-31.json`, descargable desde su
 página de GitHub Actions. Son solicitudes de investigación basadas en
 datos públicos de la SEC, **no respuestas de proveedor**.
+
+**Entrega comprobada.** [Workflow de fuente SEC `43068978317`](https://github.com/Hardnyx/Trading/actions/runs/43068978317) aprobado y artefacto `sec-original-issuer-lei-requests` publicado (ID GitHub `13876763494`, expiración 25-nov-2026 UTC). [CI general `43068978256`](https://github.com/Hardnyx/Trading/actions/runs/43068978256) aprobada: 597 Python, 382 JavaScript y guardias metodológicos. La publicación usa un flujo de investigación **separado**; la CI rápida conserva su prohibición de `actions/upload-artifact`.
