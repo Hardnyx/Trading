@@ -1,0 +1,15 @@
+{
+  "schema": "historical-independent-manager-13f-class-review-v1",
+  "source_url": "https://www.sec.gov/Archives/edgar/data/102909/000175272424248565/0001752724-24-248565.txt",
+  "index_url": "https://www.sec.gov/Archives/edgar/data/102909/0001752724-24-248565-index.htm",
+  "original_13f_accession": "0001752724-24-248565",
+  "original_sha256": "9ad4a1d7fa286d96273cc57e95188a5392d7aae2f2358d0250fa8c3f3a2a0527",
+  "original_byte_count": 7166174,
+  "archive_sha256": "ef9aa8a061e6ffef084e38ef427e2e6008a4be8b24f3422897157c9b85f3ae3c",
+  "original_13f_accepted_utc": "2024-11-13T16:58:36+00:00",
+  "retrieved_utc": "2026-11-11T18:14:07.979714+00:00",
+  "http_last_modified_as_reported": "Wed, 13 Nov 2024 16:59:15 GMT",
+  "first_publication_independently_authenticated": false,
+  "full_engine_eligible_cuts_added": 0,
+  "predictive_validation": "not-established"
+}
