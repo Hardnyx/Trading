@@ -159,3 +159,20 @@ independiente de la primera publicación y los derechos de uso siguen pendientes
 En Windows, ejecutar el auditor con el mismo entorno Python que haya instalado
 la dependencia `tzdata` del colector v4.0, especialmente cuando la
 instalación de Python no dispone de zonas IANA del sistema.
+
+## LEI original del emisor: evidencia SEC que sí está archivada
+
+La SEC distingue en el [Form N-PORT](https://www.sec.gov/about/forms/formn-port.pdf) el **LEI de la entidad emisora** de los identificadores del valor (CUSIP, ISIN, ticker). El repositorio ya conserva, bajo SHA-256, los bytes originales del N-PORT SPY anterior al corte 31-dic-2024. El módulo [`historical_spy_issuer_lei.py`](../scripts/historical_spy_issuer_lei.py) **reabre ese original**, verifica el mismo accession y huella utilizados para las 504 posiciones positivas, compara sus posiciones originales y extrae solamente el campo `lei` directo de cada inversión.
+
+Se distingue LEI vacío, LEI indicado expresamente como no disponible, identificador inválido y LEI de 20 caracteres con dígitos de control **ISO 17442, módulo 97**. Se conserva el valor original sin corregirlo. Si el mismo CUSIP válido aparece con LEI válidos contradictorios en la fuente, esas pistas se ponen en cuarentena, sin elegir una entidad a partir del nombre o ticker. Ningún LEI se convierte en FIGI, CUSIP o prueba de titularidad de una acción.
+
+Generar la nueva cola operativa **solo de CUSIP válidos**, con pista de LEI y procedencia del original:
+
+```bat
+python scripts\historical_spy_issuer_lei.py --verify
+python scripts\historical_spy_issuer_lei.py --csv out\bloomberg-cusip-lei-sec-2024-12-31.csv --report out\sec-original-issuer-lei-review-v1.json
+```
+
+El CSV preserva `source_position`, CUSIP, nombre y ticker observados, peso, corte, `original_issuer_lei_as_filed`, `issuer_lei_hint`, estado de validación, accession original, SHA-256 y fecha de reporte/disponibilidad conservadora. Solo se ofrece `issuer_lei_hint` cuando pasa la validación. Las 26 posiciones de CUSIP inválido siguen fuera de esta cola y **permanecen íntegramente** en la ruta ISIN existente. Los datos son públicos de la SEC; no se envía documentación Bloomberg a GitHub.
+
+**Limitación temporal:** el N-PORT refleja una fecha de tenencias histórica y su divulgación posterior. Que el LEI figure en el N-PORT no prueba la vigencia de un valor negociable, la correspondencia CIK/LEI, la disponibilidad de un identificador Bloomberg a las 16:00 del 31-dic-2024, la existencia de una cotización de ejecución ni la composición exacta del índice ese día. Esta evidencia complementa solicitudes manuales al proveedor, pero **no añade cortes admisibles**, calibra parámetros ni valida habilidad predictiva.
