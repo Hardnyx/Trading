@@ -123,6 +123,16 @@ def usable(record, cutoff, cut):
         for field in ("observation_date", "period_end"):
             if record.get(field) and day(record[field]) > cut:
                 return False
+        # A closing price cannot be disseminated before its market session.
+        # The 31-Dec-2024 first-cut close itself requires the registered
+        # 16:00 New York decision clock; prior sessions still require an
+        # independently verified exchange calendar for execution claims.
+        if record.get("dataset_id") == "daily_prices" and record.get("field") == "close":
+            observed = day(record.get("observation_date"))
+            if published.astimezone(NY).date() < observed:
+                return False
+            if observed == cut and published < cutoff:
+                return False
         if record.get("effective_at") and instant(record["effective_at"]) > cutoff:
             return False
         if record.get("dataset_id") == "identifier_history" and (

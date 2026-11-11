@@ -74,3 +74,9 @@ el cotejo original conserva el estado `invalid-original-cusip-requires-isin-sour
 
 Las cuentas de 478 y 26 son **fuentes identificadoras**, no identidades
 permanentes verificadas ni cierres de precio; ninguna se incorpora al replay.
+
+## Control de cronología de los cierres originales
+
+La confrontación con el código de `bbg.pit.Record` y `bbg.adapter.stage` del colector v4.0 mostró que el puente inicialmente aceptaba, en su fixture sintético, un cierre de **31-dic-2024** declarado como publicado el **1-oct-2024**. Es una secuencia imposible y no constituye un dato Bloomberg real. La auditoría ahora descarta cierres cuya publicación antecede a la propia fecha observada y, para el cierre de la sesión de decisión **31-dic-2024**, exige publicación no anterior a las **16:00 de Nueva York**, sin permitir una disponibilidad posterior a esa decisión. Las pruebas adversariales cubren publicación adelantada varios meses, un segundo antes de las 16:00, y difusión posterior al corte.
+
+Este control no demuestra que un cierre pudiera **ejecutarse** exactamente a las 16:00 ni verifica un calendario bursátil completo, la latencia del proveedor, la publicación independiente de la fuente o precios de sesiones previas. Los datos de cierre difundidos después de las 16:00 no están disponibles para la decisión registrada exactamente a esa hora y permanecen excluidos; cualquier política de decisión poscierre requiere fijar otra hora antes de iniciar una cohorte, no desplazarla retrospectivamente. El dataset no se usa para entrenar o optimizar rendimientos confirmatorios.

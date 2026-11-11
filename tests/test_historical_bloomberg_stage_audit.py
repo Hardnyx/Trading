@@ -59,6 +59,7 @@ def rows():
         record("VENDOR-ID-1", "security_master", "exchange_mic", "XNAS"),
         record("VENDOR-ID-1", "daily_prices", "close", 421.2,
                observation_date=CUT, unit="USD/share", currency="USD",
+               published_at=DECISION, first_available_at=DECISION,
                adjusted_basis="unadjusted-causal"),
     ]
 
@@ -230,6 +231,38 @@ class HistoricalBloombergStageAuditTests(unittest.TestCase):
         result = audit(stage(sample), requests())
         self.assertEqual(result["counts"]["missing-usd-stock-and-exchange-mic-original-metadata"], 1)
 
+    def test_future_session_close_cannot_have_been_published_in_october(self):
+        sample = rows()
+        sample[-1]["published_at"] = "2024-10-01T14:00:00Z"
+        sample[-1]["first_available_at"] = "2024-10-01T14:01:00Z"
+        result = audit(stage(sample), requests())
+        self.assertEqual(result["matched_versioned_raw_close_at_cut"], 0)
+        self.assertEqual(result["counts"]["no-original-raw-close-at-decision-cut"], 1)
+
+    def test_decision_day_preclose_or_later_publication_is_not_admissible(self):
+        sample = rows()
+        sample[-1]["published_at"] = "2024-12-31T20:59:59Z"
+        sample[-1]["first_available_at"] = "2024-12-31T20:59:59Z"
+        self.assertEqual(audit(stage(sample), requests())["matched_versioned_raw_close_at_cut"], 0)
+        sample = rows()
+        sample[-1]["published_at"] = "2024-12-31T21:00:01Z"
+        sample[-1]["first_available_at"] = "2024-12-31T21:00:01Z"
+        # Correct chronology alone does not make a quote available at the
+        # earlier, immutable 16:00 New York research decision clock.
+        self.assertEqual(audit(stage(sample), requests())["matched_versioned_raw_close_at_cut"], 0)
+
+    def test_prior_session_cannot_be_published_before_its_observation(self):
+        sample = rows()
+        sample.insert(-1, record(
+            "VENDOR-ID-1", "daily_prices", "close", 419.0,
+            observation_date="2024-12-30", unit="USD/share", currency="USD",
+            published_at="2024-12-29T21:00:00Z",
+            first_available_at="2024-12-29T21:00:00Z",
+            adjusted_basis="unadjusted-causal"))
+        result = audit(stage(sample), requests())
+        self.assertEqual(result["matched_versioned_raw_close_at_cut"], 1)
+        self.assertEqual(result["positions"][0]["versioned_raw_close_sessions"], 1)
+
     def test_adjusted_prices_are_not_raw_close_evidence(self):
         sample = rows()
         sample[-1]["adjusted_basis"] = "split-adjusted"
@@ -240,6 +273,7 @@ class HistoricalBloombergStageAuditTests(unittest.TestCase):
         sample = rows()
         sample.append(record("VENDOR-ID-1", "daily_prices", "close", 430.1,
                              observation_date=CUT, unit="USD/share", currency="USD",
+                             published_at=DECISION, first_available_at=DECISION,
                              adjusted_basis="unadjusted-causal"))
         result = audit(stage(sample), requests())
         self.assertEqual(result["counts"]["conflicting-raw-close-at-identical-session"], 1)
