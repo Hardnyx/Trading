@@ -137,6 +137,11 @@ class HistoricalBloombergStageAuditTests(unittest.TestCase):
                       "US5949181045", "ABCD00000", "12@BC0000"):
             self.assertEqual(valid_original_cusip(value), valid_cusip(value))
 
+    def test_private_stage_cli_requires_original_warehouse(self):
+        from scripts.historical_bloomberg_stage_audit import main
+        with self.assertRaisesRegex(ValueError, "--warehouse-root is required"):
+            main(["--stage", "does-not-exist.json"])
+
     def test_schema_only_template_is_not_evidence(self):
         self.assertEqual(template()["required_v4_fields"]["identifier_history"],
                          ["cusip", "ticker"])

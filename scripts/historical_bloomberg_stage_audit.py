@@ -16,8 +16,10 @@ from zoneinfo import ZoneInfo
 
 if __package__:
     from .historical_sec_alternate_identity import isin_valid
+    from .historical_bloomberg_warehouse_receipt import verify_stage
 else:
     from historical_sec_alternate_identity import isin_valid
+    from historical_bloomberg_warehouse_receipt import verify_stage
 
 SCHEMA = "bloomberg-first-cut-source-reconciliation-v1"
 STAGE_SCHEMA = "bloomberg-trading-stage-v1"
@@ -342,6 +344,7 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--template", help="Write an unlicensed schema-only source request")
     parser.add_argument("--stage", help="Local Bloomberg v4 stage JSON with source references")
+    parser.add_argument("--warehouse-root", help="Local v4 warehouse directory containing warehouse.sqlite3 and raw/")
     parser.add_argument("--report", default="out/historical-bloomberg-first-cut-receipt-v1.json")
     options = parser.parse_args(argv)
     require(options.template or options.stage, "Supply --template or --stage")
@@ -350,6 +353,8 @@ def main(argv=None):
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(json.dumps(template(), indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     if options.stage:
+        require(bool(options.warehouse_root),
+                "--warehouse-root is required for stage original-byte verification")
         if __package__:
             from .historical_identity_requests import build_requests
             from .historical_sec_alternate_identity import audit as audit_alternates
@@ -361,8 +366,11 @@ def main(argv=None):
                 "Missing or oversized private Bloomberg stage")
         raw = source.read_bytes()
         stage = json.loads(raw)
+        receipt = verify_stage(stage, options.warehouse_root)
         request = build_requests()
         report = audit(stage, request, audit_alternates())
+        report.update(receipt)
+        report["licensed_source_bytes_independently_reopened"] = True
         report["stage_export_sha256"] = sha256(raw)
         destination = Path(options.report)
         destination.parent.mkdir(parents=True, exist_ok=True)
