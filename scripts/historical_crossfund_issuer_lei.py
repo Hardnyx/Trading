@@ -36,7 +36,8 @@ MAX_HOLDINGS_AGE_DAYS = 120
 COLUMNS = (
     "source_position", "cusip", "original_spy_name", "weight", "cut",
     "spy_issuer_lei_as_filed", "spy_issuer_lei_hint", "crossfund_status",
-    "crossfund_corroborated_issuer_lei", "other_original_funds_observed",
+    "crossfund_corroborated_issuer_lei", "other_fund_valid_lei_values",
+    "other_original_funds_observed",
     "other_funds_with_valid_lei", "other_fund_accessions",
     "other_fund_original_sha256", "spy_original_sha256",
     "permanent_security_identity_certified", "historical_prices_verified",
@@ -192,6 +193,9 @@ def compare(spy, other_positions, documents):
             "spy_issuer_lei_hint": position["issuer_lei_hint"],
             "crossfund_status": status,
             "crossfund_corroborated_issuer_lei": corroborated,
+            # Preserve original alternative values for manual review only.
+            # Multiple values are evidence of conflict, never a chosen key.
+            "other_fund_valid_lei_values": ";".join(valid),
             "other_original_funds_observed": ";".join(fund_names),
             "other_funds_with_valid_lei": ";".join(sorted({v["fund"] for v in evidence
                                                    if v["valid_original_issuer_lei"]})),

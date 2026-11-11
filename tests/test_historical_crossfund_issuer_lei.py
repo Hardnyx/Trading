@@ -85,6 +85,8 @@ class CrossFundOriginalLeiTests(unittest.TestCase):
         self.assertEqual(report["position_rows"][0]["crossfund_status"],
                          "conflicting-original-fund-issuer-leis")
         self.assertEqual(report["position_rows"][0]["crossfund_corroborated_issuer_lei"], "")
+        self.assertEqual(report["position_rows"][0]["other_fund_valid_lei_values"],
+                         ";".join(sorted((LEI_A, LEI_B))))
 
     def test_other_fund_cusip_without_valid_lei_is_not_corrob(self):
         report = compare(spy_fixture(), [observation(lei="N/A")], [document()])
@@ -99,6 +101,7 @@ class CrossFundOriginalLeiTests(unittest.TestCase):
         self.assertEqual(report["position_rows"][0]["crossfund_status"],
                          "other-fund-lei-without-spy-issuer-lei")
         self.assertEqual(report["position_rows"][0]["crossfund_corroborated_issuer_lei"], "")
+        self.assertEqual(report["position_rows"][0]["other_fund_valid_lei_values"], LEI_A)
 
     def test_source_hash_or_availability_mutation_fails_closed(self):
         doc = document()
@@ -136,6 +139,13 @@ class CrossFundOriginalLeiTests(unittest.TestCase):
         self.assertEqual(report["schema"], SCHEMA)
         self.assertEqual(report["cut"], "2024-12-31")
         self.assertEqual(report["original_fund_documents_reparsed"], 5)
+        self.assertEqual(report["original_fund_positions_read"], 6033)
+        self.assertEqual(report["crossfund_status_counts"], {
+            "original-fund-issuer-lei-agrees": 463,
+            "other-fund-lei-without-spy-issuer-lei": 2,
+            "other-original-fund-lei-unavailable": 13,
+        })
+        self.assertEqual(report["crossfund_conflict_positions"], 0)
         self.assertEqual(report["valid_original_cusip_positions"], 478)
         self.assertEqual(report["invalid_original_cusip_positions"], 26)
         self.assertEqual(sum(report["crossfund_status_counts"].values()), 478)
