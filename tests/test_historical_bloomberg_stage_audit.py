@@ -2,7 +2,7 @@
 import copy
 import unittest
 
-from scripts.historical_bloomberg_stage_audit import audit, canonical, sha256, template
+from scripts.historical_bloomberg_stage_audit import audit, canonical, sha256, template, valid_original_cusip
 
 CUT = "2024-12-31"
 DECISION = "2024-12-31T16:00:00-05:00"
@@ -80,6 +80,62 @@ class HistoricalBloombergStageAuditTests(unittest.TestCase):
         result = audit(stage(sample), requests())
         self.assertEqual(result["matched_versioned_raw_close_at_cut"], 1)
 
+    def test_invalid_sec_cusip_stays_on_separate_foreign_isin_route(self):
+        req = requests()
+        req["requests"].append({"cusip": "000000000", "source_position": 500,
+                                "weight": 0.001, "original_ticker_observation": None})
+        sample = rows()
+        sample.append(record("VENDOR-FOREIGN", "identifier_history", "cusip", "000000000",
+                             valid_from="2020-01-01", valid_until="2030-01-01"))
+        result = audit(stage(sample), req)
+        self.assertEqual(result["counts"]["invalid-original-cusip-requires-isin-source-review"], 1)
+        self.assertEqual(result["matched_versioned_raw_close_at_cut"], 1)
+        self.assertTrue(valid_original_cusip("594918104"))
+        self.assertFalse(valid_original_cusip("594918105"))
+        self.assertFalse(valid_original_cusip("000000000"))
+
+    def test_original_foreign_isin_crosscheck_is_not_vendor_identity(self):
+        from scripts.historical_identity_requests import build_requests
+        from scripts.historical_sec_alternate_identity import audit as audit_alternates
+        original, alternate = build_requests(), audit_alternates()
+        result = audit(stage([]), original, alternate)
+        self.assertEqual(result["total_original_sec_positions"], 504)
+        self.assertEqual(result["valid_original_cusip_positions"], 478)
+        self.assertEqual(result["invalid_original_cusip_positions"], 26)
+        self.assertEqual(result["foreign_isin_positions_reconciled_to_original"], 26)
+        self.assertEqual(result["counts"]["original-foreign-isin-separate-vendor-route"], 26)
+        self.assertEqual(result["matched_versioned_raw_close_at_cut"], 0)
+        self.assertTrue(result["original_sec_foreign_isin_route_reverified"])
+        self.assertFalse(result["permanent_identity_certified"])
+
+    def test_foreign_isin_route_rejects_mutated_original_receipts(self):
+        from scripts.historical_identity_requests import build_requests
+        from scripts.historical_sec_alternate_identity import audit as audit_alternates
+        original, alternate = build_requests(), audit_alternates()
+        altered = copy.deepcopy(alternate)
+        altered["positions"][0]["cusip_as_reported"] = "594918104"
+        with self.assertRaisesRegex(ValueError, "SEC foreign-ISIN route was changed"):
+            audit(stage([]), original, altered)
+        altered = copy.deepcopy(alternate)
+        altered["positions"][0]["explicit_isins"] = ["US5949181045"]
+        with self.assertRaisesRegex(ValueError, "SEC foreign-ISIN route was changed"):
+            audit(stage([]), original, altered)
+        altered = copy.deepcopy(alternate)
+        altered["positions"].append(copy.deepcopy(altered["positions"][0]))
+        with self.assertRaisesRegex(ValueError, "positions do not match"):
+            audit(stage([]), original, altered)
+        altered = copy.deepcopy(alternate)
+        altered["source_original_sha256"] = "0" * 64
+        with self.assertRaisesRegex(ValueError, "provenance differs"):
+            audit(stage([]), original, altered)
+
+    def test_validator_agrees_with_existing_security_master_cusip_check(self):
+        # Retain parity with the first-cut provider identity importer.
+        from scripts.historical_vendor_identity import valid_cusip
+        for value in ("594918104", "037833100", "594918105", "000000000",
+                      "US5949181045", "ABCD00000", "12@BC0000"):
+            self.assertEqual(valid_original_cusip(value), valid_cusip(value))
+
     def test_schema_only_template_is_not_evidence(self):
         self.assertEqual(template()["required_v4_fields"]["identifier_history"],
                          ["cusip", "ticker"])
@@ -141,6 +197,13 @@ class HistoricalBloombergStageAuditTests(unittest.TestCase):
         sample[0]["evidence"]["value_locator"] = None
         result = audit(stage(sample), requests())
         self.assertEqual(result["matched_versioned_raw_close_at_cut"], 0)
+
+    def test_missing_original_sec_ticker_stays_unlinked(self):
+        req = requests()
+        req["requests"][0]["original_ticker_observation"] = None
+        report = audit(stage(rows()), req)
+        self.assertEqual(report["matched_versioned_raw_close_at_cut"], 0)
+        self.assertEqual(report["counts"]["missing-original-sec-ticker-observation"], 1)
 
     def test_mismatched_sec_original_ticker_is_blocked(self):
         sample = rows()

@@ -14,6 +14,11 @@ from pathlib import Path
 import re
 from zoneinfo import ZoneInfo
 
+if __package__:
+    from .historical_sec_alternate_identity import isin_valid
+else:
+    from historical_sec_alternate_identity import isin_valid
+
 SCHEMA = "bloomberg-first-cut-source-reconciliation-v1"
 STAGE_SCHEMA = "bloomberg-trading-stage-v1"
 HASH = re.compile(r"[0-9a-f]{64}\Z")
@@ -52,6 +57,21 @@ def day(value):
         raise ValueError("Malformed source date") from error
     require(parsed.isoformat() == value, "Noncanonical source date")
     return parsed
+
+
+def valid_original_cusip(value):
+    """Mirror the original SEC CUSIP check; foreign ISINs follow another route."""
+    if not isinstance(value, str) or not re.fullmatch(r"[A-Z0-9*@#]{8}[0-9]", value):
+        return False
+    if value == "000000000":
+        return False
+    special = {"*": 36, "@": 37, "#": 38}
+    total = 0
+    for i, char in enumerate(value[:8]):
+        number = int(char) if char.isdigit() else (ord(char) - 55 if "A" <= char <= "Z" else special[char])
+        weighted = number * (2 if i % 2 else 1)
+        total += weighted // 10 + weighted % 10
+    return (10 - total % 10) % 10 == int(value[8])
 
 
 def stage_cutoff(stage, requested_cut):
@@ -124,7 +144,55 @@ def usable(record, cutoff, cut):
             HASH.fullmatch(record["raw_hash"]) is not None)
 
 
-def audit(stage, requests):
+
+def confirm_original_isin_route(requests, positions, alternate):
+    """Reconcile the original SEC exceptions, never infer an ISIN from CUSIP.
+
+    The independent path rereads the same N-PORT original, not a vendor master.
+    Without that review an invalid CUSIP stays unresolved, not 'foreign'.
+    """
+    missing = {row["source_position"]: row for row in positions
+               if not valid_original_cusip(row["cusip"])}
+    if alternate is None:
+        return set()
+    require(alternate.get("schema") == "historical-sec-alternate-identity-review-v1" and
+            alternate.get("cut") == requests["cut"] and
+            alternate.get("source_accession") == requests.get("spy_original_accession") and
+            alternate.get("source_original_sha256") == requests.get("spy_original_sha256") and
+            alternate.get("source_public_available_after_day", "9999") < requests["cut"] and
+            alternate.get("original_cusip_rewritten") is False and
+            alternate.get("us_isin_candidates_corroborated_by_independent_source") == 0 and
+            alternate.get("vendor_identifiers_certified") == 0,
+            "SEC foreign-ISIN audit provenance differs from original CUSIP requests")
+    rows = alternate.get("positions")
+    require(isinstance(rows, list) and
+            alternate.get("original_invalid_or_missing_cusip_positions") == len(missing) and
+            len(rows) == len(missing) and
+            all(isinstance(row, dict) and type(row.get("source_position")) is int
+                for row in rows) and
+            len({row["source_position"] for row in rows}) == len(rows),
+            "SEC alternate-identifier positions do not match invalid original CUSIPs")
+    for row in rows:
+        require(isinstance(row, dict) and row.get("source_position") in missing,
+                "Unrequested SEC foreign-ISIN source position")
+        source = missing[row["source_position"]]
+        isins = row.get("explicit_isins")
+        require(row.get("cusip_as_reported") == source["cusip"] and
+                type(row.get("reported_spy_weight")) in (int, float) and
+                math.isclose(row["reported_spy_weight"], source["weight"],
+                             rel_tol=0, abs_tol=1e-14) and
+                row.get("source_original_sha256") == requests["spy_original_sha256"] and
+                row.get("source_accession") == requests["spy_original_accession"] and
+                row.get("public_available_after_day") == alternate["source_public_available_after_day"] and
+                row.get("decision_cut") == requests["cut"] and
+                row.get("review_status") == "original-non-us-isin-only" and
+                isinstance(isins, list) and len(isins) == 1 and
+                isin_valid(isins[0]) and not isins[0].startswith("US") and
+                row.get("structural_us_isin_cusip_candidate") is None,
+                "Original SEC foreign-ISIN route was changed or misclassified")
+    return set(missing)
+
+def audit(stage, requests, alternates=None):
     """Return a private local report; never treat the result as a Trading input."""
     cut = requests.get("cut")
     require(cut == "2024-12-31", "Only frozen first-cut SEC requests supported")
@@ -136,6 +204,7 @@ def audit(stage, requests):
             all(isinstance(r.get("cusip"), str) and isinstance(r.get("weight"), (int, float))
                 and math.isfinite(r["weight"]) and r["weight"] >= 0 for r in positions),
             "Invalid original SEC position contract")
+    reviewed_isin_positions = confirm_original_isin_route(requests, positions, alternates)
     cutoff, records, cited_hashes = stage_cutoff(stage, cut)
     decision_day = day(cut)
     index = defaultdict(lambda: defaultdict(list))
@@ -149,7 +218,9 @@ def audit(stage, requests):
         for record in fields.get(("identifier_history", "cusip"), []):
             if isinstance(record.get("value"), str):
                 by_cusip[record["value"]].add(security)
-    requested_ids = {r["cusip"] for r in positions}
+    # The 26 foreign-ISIN positions in this SPY filing do not become CUSIP
+    # matches merely because a vendor happens to emit their placeholder text.
+    requested_ids = {r["cusip"] for r in positions if valid_original_cusip(r["cusip"])}
     reverse = defaultdict(set)
     for cusip in requested_ids:
         for security in by_cusip[cusip]:
@@ -164,7 +235,11 @@ def audit(stage, requests):
         reason = None
         sec = None
         closes = 0
-        if not securities:
+        if not valid_original_cusip(cusip):
+            reason = ("original-foreign-isin-separate-vendor-route"
+                      if original["source_position"] in reviewed_isin_positions else
+                      "invalid-original-cusip-requires-isin-source-review")
+        elif not securities:
             reason = "no-versioned-v4-cusip-record"
         elif len(securities) != 1:
             reason = "ambiguous-v4-security-identity"
@@ -177,9 +252,11 @@ def audit(stage, requests):
                 ticker_rows = fields.get(("identifier_history", "ticker"), [])
                 tickers = {r["value"] for r in ticker_rows if isinstance(r.get("value"), str)}
                 observed_ticker = original.get("original_ticker_observation")
-                if len(tickers) != 1:
+                if not isinstance(observed_ticker, str) or not observed_ticker:
+                    reason = "missing-original-sec-ticker-observation"
+                elif len(tickers) != 1:
                     reason = "missing-or-ambiguous-original-v4-ticker"
-                elif observed_ticker and tickers != {observed_ticker}:
+                elif tickers != {observed_ticker}:
                     reason = "sec-v4-ticker-conflict"
                 else:
                     metadata = fields.get(("security_master", "currency"), [])
@@ -218,6 +295,10 @@ def audit(stage, requests):
             "sec_request_sha256": sha256(canonical({"cut": cut, "requests": positions})),
             "stage_snapshot_sha256": stage["snapshot_sha256"],
             "total_original_sec_positions": len(positions),
+            "valid_original_cusip_positions": sum(valid_original_cusip(p["cusip"]) for p in positions),
+            "invalid_original_cusip_positions": sum(not valid_original_cusip(p["cusip"]) for p in positions),
+            "foreign_isin_positions_reconciled_to_original": len(reviewed_isin_positions),
+            "original_sec_foreign_isin_route_reverified": alternates is not None,
             "total_v4_stage_records": len(records),
             "source_hashes_in_stage": len(cited_hashes),
             "counts": dict(sorted(counts.items())),
@@ -259,13 +340,19 @@ def main(argv=None):
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(json.dumps(template(), indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     if options.stage:
-        from scripts.historical_identity_requests import build_requests
+        if __package__:
+            from .historical_identity_requests import build_requests
+            from .historical_sec_alternate_identity import audit as audit_alternates
+        else:
+            from historical_identity_requests import build_requests
+            from historical_sec_alternate_identity import audit as audit_alternates
         source = Path(options.stage)
         require(source.is_file() and source.stat().st_size <= 100_000_000,
                 "Missing or oversized private Bloomberg stage")
         raw = source.read_bytes()
         stage = json.loads(raw)
-        report = audit(stage, build_requests())
+        request = build_requests()
+        report = audit(stage, request, audit_alternates())
         report["stage_export_sha256"] = sha256(raw)
         destination = Path(options.report)
         destination.parent.mkdir(parents=True, exist_ok=True)

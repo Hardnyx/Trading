@@ -16,7 +16,11 @@ Por cada posible enlace, deben existir en el almacén v4 registros de **fuente v
 | `security_master` | `currency=USD`, `type=stock` y `exchange_mic` de cuatro caracteres, provenientes de registros versionados |
 | `daily_prices` | `close` positivo sin ajuste (`unadjusted-causal`), divisa USD y sesión del 31-dic-2024; sin anticipar su primera disponibilidad |
 
-`stage` debe preservar el límite de las 16:00 de Nueva York, su huella de snapshot y los indicadores de inelegibilidad. El auditor no se limita a una coincidencia de ticker: detecta CUSIP con múltiples claves, claves del almacén reutilizadas por varios CUSIP, conflictos de ticker, datos sin intervalo histórico, precios ajustados, cierres discrepantes y valores cuya disponibilidad declarada excede el corte.
+Las posiciones cuyo CUSIP original es inválido —26 posiciones extranjeras identificadas previamente por ISIN— se conservan como `invalid-original-cusip-requires-foreign-isin-route`, **sin imputar una correspondencia estadounidense**. Para estas posiciones corresponde el importador ISIN separado, sujeto a su propia prueba de identidad y mercado.
+
+`stage` debe preservar el límite de las 16:00 de Nueva York, su huella de snapshot y los indicadores de inelegibilidad. Es indispensable una observación explícita del ticker en los N-PORT de comparación
+anteriores al corte; si falta, no se acepta como cruce ni siquiera de
+investigación. El auditor no se limita a una coincidencia de ticker: detecta CUSIP con múltiples claves, claves del almacén reutilizadas por varios CUSIP, conflictos de ticker, datos sin intervalo histórico, precios ajustados, cierres discrepantes y valores cuya disponibilidad declarada excede el corte.
 
 `source_hashes` del colector enumera los originales utilizados **en los activos construidos en el stage**, no todos los originales de `normalized_asof_records`. Por ello se comprueba el formato de la huella individual y el recibo de cada registro, pero no se presume que la ausencia en `source_hashes` invalide una identidad aún no incorporada al snapshot. La autenticación contra bytes originales y credenciales de Bloomberg **no se repite aquí**: continúa siendo responsabilidad verificable de la custodia local y una auditoría independiente posterior. Los sellos autodeclarados tampoco prueban publicación efectiva en la fecha histórica.
 
@@ -49,3 +53,24 @@ La aceptación técnica consiste en reproducir la matriz de posiciones desde N-P
 La promoción a H1 requiere además identificación jurídica continua y deslistados, fuentes independientes de primeras disponibilidades, sesiones y operaciones corporativas completas, precios ejecutables, perfiles y fundamentos del resto del universo, y procedencia causal de parámetros. El resultado de la auditoría mantiene `full_engine_eligible_cuts_added=0`, `production_eligible=false` y `predictive_validation=not-established`; no se altera H0.3 ni se emite ningún pronóstico u orden.
 
 La batería `python -m unittest tests.test_historical_bloomberg_stage_audit` prueba el contrato con registros **sintéticos**. No hay prueba de ejecución real contra Bloomberg Terminal en esta entrega.
+
+## Segregación de identificadores no estadounidenses y prueba con originales SEC
+
+El N-PORT completo conserva **504 posiciones positivas**, de las cuales **478
+incluyen un CUSIP que pasa el dígito de control** y **26 tienen el CUSIP original
+inválido o no utilizable**. La ruta Bloomberg/CUSIP descarta estas últimas
+incluso si un extracto del proveedor repite su identificador placeholder:
+la coincidencia literal no crea un instrumento estadounidense.
+
+Para distinguir una excepción sin resolver de una posición extranjera realmente
+identificada, la ejecución local vuelve a abrir el N-PORT original mediante
+`historical_sec_alternate_identity.audit()`, comprueba el SHA-256 del mismo
+original, las 26 posiciones y sus pesos, y exige exactamente un ISIN extranjero
+válido **expreso en el SEC** por excepción. Solo tras ese contraste las etiqueta
+`original-foreign-isin-separate-vendor-route`. La ruta de consulta del
+proveedor por ISIN ya existe separadamente; este puente no realiza esa
+consulta ni transforma un ISIN en CUSIP. Un informe invocado en pruebas sin
+el cotejo original conserva el estado `invalid-original-cusip-requires-isin-source-review`.
+
+Las cuentas de 478 y 26 son **fuentes identificadoras**, no identidades
+permanentes verificadas ni cierres de precio; ninguna se incorpora al replay.
