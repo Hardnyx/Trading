@@ -188,7 +188,7 @@ correspondientes a **460 LEI distintos** (otras 15 posiciones CUSIP
 no tienen LEI). La prueba ahora congela estos conteos junto con la huella
 y el accession del archivo original; ninguna identidad Bloomberg se deduce.
 
-El workflow `Validar aplicación` genera y conserva durante 14 días un
+El workflow independiente [`SEC issuer LEI requests (research)`](https://github.com/Hardnyx/Trading/actions/workflows/issuer-lei-requests.yml), de ejecución selectiva y manual, genera y conserva durante 14 días un
 artefacto denominado **`sec-original-issuer-lei-requests`**, formado por
 `sec-issuer-lei-cusip-2024-12-31.csv` y
 `sec-issuer-lei-source-summary-2024-12-31.json`, descargable desde su

@@ -1,0 +1,35 @@
+name: SEC issuer LEI requests (research)
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/historical_spy_issuer_lei.py'
+      - 'tests/test_historical_spy_issuer_lei.py'
+      - '.github/workflows/issuer-lei-requests.yml'
+permissions:
+  contents: read
+jobs:
+  requests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install source-audit dependencies
+        run: python -m pip install -r requirements-research.txt
+      - name: Verify exact archived SEC positions and LEI check digits
+        run: python -m unittest tests.test_historical_spy_issuer_lei
+      - name: Build public SEC issuer LEI request queue
+        run: python scripts/historical_spy_issuer_lei.py --csv out/sec-issuer-lei-cusip-2024-12-31.csv --report out/sec-issuer-lei-source-summary-2024-12-31.json
+      - name: Preserve research-only SEC issuer LEI requests
+        uses: actions/upload-artifact@v4
+        with:
+          name: sec-original-issuer-lei-requests
+          path: |
+            out/sec-issuer-lei-cusip-2024-12-31.csv
+            out/sec-issuer-lei-source-summary-2024-12-31.json
+          retention-days: 14
+          if-no-files-found: error
