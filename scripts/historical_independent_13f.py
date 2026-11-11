@@ -126,7 +126,7 @@ def validate_complete_original(raw):
             "Original SEC Vanguard 13F header or timestamp mismatch")
     header = raw.split(b"<SEC-HEADER>", 1)[1].split(b"</SEC-HEADER>", 1)[0]
     declared_periods = re.findall(
-        rb"(?m)^[ \\t]*CONFORMED PERIOD OF REPORT:[ \\t]*([0-9]{8})[ \\t]*\\r?$",
+        rb"(?m)^[ \t]*CONFORMED PERIOD OF REPORT:[ \t]*([0-9]{8})[ \t]*\r?$",
         header)
     require(declared_periods == [PERIOD.replace("-", "").encode("ascii")],
             "Original SEC 13F holdings period differs from the frozen quarter")

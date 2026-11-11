@@ -62,16 +62,16 @@ class Original13fTests(unittest.TestCase):
         filing = {**original(), "cik": CIK, "form": "13F-HR",
                   "filed": "20241113"}
         def document(period):
-            return (b"<SEC-DOCUMENT>\\n<SEC-HEADER>\\n"
+            return (b"<SEC-DOCUMENT>\n<SEC-HEADER>\n"
                     + b"CONFORMED PERIOD OF REPORT: " + period
-                    + b"\\n</SEC-HEADER>\\n")
+                    + b"\n</SEC-HEADER>\n")
         with patch("scripts.historical_independent_13f.parse_original",
-                   return_value=filing), \\
+                   return_value=filing), \
              patch("scripts.historical_independent_13f.source_payload",
                    return_value=table(row("594918104"))):
             _, parsed = validate_complete_original(document(b"20240930"))
             self.assertEqual(len(parsed), 1)
-            for period in (b"20241231", b"", b"20240930\\nCONFORMED PERIOD OF REPORT: 20240930"):
+            for period in (b"20241231", b"", b"20240930\nCONFORMED PERIOD OF REPORT: 20240930"):
                 with self.subTest(period=period), self.assertRaisesRegex(
                         ValueError, "holdings period"):
                     validate_complete_original(document(period))
@@ -82,11 +82,11 @@ class Original13fTests(unittest.TestCase):
             receipt = Path(tmp) / "receipt.json"
             saved.write_bytes(b"already archived")
             receipt.write_text("{}")
-            with patch("scripts.historical_independent_13f.ORIGINAL", saved), \\
-                 patch("scripts.historical_independent_13f.RECEIPT", receipt), \\
+            with patch("scripts.historical_independent_13f.ORIGINAL", saved), \
+                 patch("scripts.historical_independent_13f.RECEIPT", receipt), \
                  patch("scripts.historical_independent_13f.archived",
-                       return_value=(original(), [])), \\
-                 patch("scripts.historical_independent_13f.spy_review", return_value=spy()), \\
+                       return_value=(original(), [])), \
+                 patch("scripts.historical_independent_13f.spy_review", return_value=spy()), \
                  patch("scripts.historical_independent_13f.get_original",
                        side_effect=AssertionError("Unexpected redownload")):
                 report = acquire(user_agent=None)
