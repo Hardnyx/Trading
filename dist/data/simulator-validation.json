@@ -1,126 +1,126 @@
 {
  "schema_version": 1,
  "price_kernel_version": "1.0.0",
- "updated_at": "2026-11-11T15:48:57.996Z",
- "sealed": 11,
- "historical_sealed": 11,
+ "updated_at": "2026-11-12T04:05:13.995Z",
+ "sealed": 12,
+ "historical_sealed": 12,
  "excluded_nonprospective": 0,
  "horizons": {
   "1": {
-   "sealed": 11,
-   "scored_origins": 8,
-   "nonoverlapping_origins": 8,
-   "asset_observations": 312,
-   "nonoverlapping_asset_observations": 312,
+   "sealed": 12,
+   "scored_origins": 9,
+   "nonoverlapping_origins": 9,
+   "asset_observations": 351,
+   "nonoverlapping_asset_observations": 351,
    "missing_outcomes": 0,
    "kernel": {
-    "crps": 0.011346620874877904,
-    "var95_exception": 0.14423076923076922,
-    "es_residual": 0.028436276125490493,
-    "mean_error": -0.0005044614928211339,
-    "qlike": -4.6053584624138635
+    "crps": 0.0108888328606107,
+    "var95_exception": 0.1282051282051282,
+    "es_residual": 0.024612547903189935,
+    "mean_error": 0.00026553016399659857,
+    "qlike": -5.065109301061394
    },
    "ewma_zero_mean": {
-    "crps": 0.01133448913451324,
-    "var95_exception": 0.15384615384615385,
-    "es_residual": 0.027962302106449552,
-    "mean_error": -0.00028933567981888553,
-    "qlike": -4.829598368169097
+    "crps": 0.010886490756154641,
+    "var95_exception": 0.13675213675213677,
+    "es_residual": 0.02420298728282597,
+    "mean_error": 0.0004752109046554683,
+    "qlike": -5.263570479825183
    },
    "portfolios": {
     "PORTFOLIO:reference-decision": {
-     "observations": 8,
+     "observations": 9,
      "kernel": {
-      "crps": 0.0041773600891802185,
-      "var95_exception": 0.25,
-      "es_residual": 0.02379069741843373,
-      "mean_error": -0.0002969791814502414,
-      "qlike": -6.723678323823282
+      "crps": 0.003744537582938772,
+      "var95_exception": 0.2222222222222222,
+      "es_residual": 0.021101359927322066,
+      "mean_error": -0.0002943747218744949,
+      "qlike": -7.4735442963027054
      },
      "ewma_zero_mean": {
-      "crps": 0.004182659990493882,
-      "var95_exception": 0.25,
-      "es_residual": 0.022932993502098188,
-      "mean_error": -0.0001519691506969964,
-      "qlike": -6.704212603324948
+      "crps": 0.0037503317214306817,
+      "var95_exception": 0.2222222222222222,
+      "es_residual": 0.020330189141154892,
+      "mean_error": -0.0001518348547666742,
+      "qlike": -7.455935185270704
      }
     },
     "PORTFOLIO:risk-comparator": {
-     "observations": 8,
+     "observations": 9,
      "kernel": {
-      "crps": 0.0024285250074394596,
-      "var95_exception": 0.375,
-      "es_residual": 0.016772346116671118,
-      "mean_error": -0.0008514058307365609,
-      "qlike": -6.311465419579398
+      "crps": 0.002328686123517389,
+      "var95_exception": 0.3333333333333333,
+      "es_residual": 0.014777694209074186,
+      "mean_error": -0.0004814589920111141,
+      "qlike": -6.832436258268906
      },
      "ewma_zero_mean": {
-      "crps": 0.002420217775322919,
-      "var95_exception": 0.25,
-      "es_residual": 0.01602823341389051,
-      "mean_error": -0.0007364694731238615,
-      "qlike": -6.084861587955575
+      "crps": 0.002327425389170874,
+      "var95_exception": 0.2222222222222222,
+      "es_residual": 0.014139929376256641,
+      "mean_error": -0.000364393174574322,
+      "qlike": -6.619292075638752
      }
     }
    },
-   "origin_paired_crps_gain": -0.000012131740364665348,
+   "origin_paired_crps_gain": -0.0000023421044560575945,
    "origin_block95_crps_gain": null,
    "status": "accumulating"
   },
   "5": {
-   "sealed": 11,
-   "scored_origins": 4,
+   "sealed": 12,
+   "scored_origins": 5,
    "nonoverlapping_origins": 1,
-   "asset_observations": 156,
+   "asset_observations": 195,
    "nonoverlapping_asset_observations": 39,
    "missing_outcomes": 0,
    "kernel": {
-    "crps": 0.02052434524552551,
-    "var95_exception": 0.15384615384615385,
-    "es_residual": 0.06954439879890104,
-    "mean_error": -0.003309195828735192,
-    "qlike": -5.040758154390572
+    "crps": 0.01891380171754059,
+    "var95_exception": 0.13333333333333333,
+    "es_residual": 0.06001642749503192,
+    "mean_error": -0.005011195385131358,
+    "qlike": -5.472799535700866
    },
    "ewma_zero_mean": {
-    "crps": 0.02086373498387175,
-    "var95_exception": 0.15384615384615385,
-    "es_residual": 0.06977815845777062,
-    "mean_error": -0.0019164670290878554,
-    "qlike": -5.500136638105267
+    "crps": 0.019128510051515123,
+    "var95_exception": 0.13333333333333333,
+    "es_residual": 0.06000551979861577,
+    "mean_error": -0.0036432397342798387,
+    "qlike": -5.856681389575547
    },
    "portfolios": {
     "PORTFOLIO:reference-decision": {
-     "observations": 4,
+     "observations": 5,
      "kernel": {
-      "crps": 0.0031528745523308043,
-      "var95_exception": 0.25,
-      "es_residual": -0.0018961666300998676,
-      "mean_error": -0.002960717509760091,
-      "qlike": -9.45992262682421
+      "crps": 0.0033272600431754214,
+      "var95_exception": 0.2,
+      "es_residual": -0.002176571573661013,
+      "mean_error": -0.003723460814025812,
+      "qlike": -9.363525827563922
      },
      "ewma_zero_mean": {
-      "crps": 0.0028704137282645407,
+      "crps": 0.0030070745173184825,
       "var95_exception": 0,
-      "es_residual": -0.0021984435977807533,
-      "mean_error": -0.00219491140436009,
-      "qlike": -9.95768685187657
+      "es_residual": -0.002270670157396051,
+      "mean_error": -0.002956246153321857,
+      "qlike": -9.799726717454693
      }
     },
     "PORTFOLIO:risk-comparator": {
-     "observations": 4,
+     "observations": 5,
      "kernel": {
-      "crps": 0.003599800772425003,
-      "var95_exception": 0.5,
-      "es_residual": 0.02853030938926813,
-      "mean_error": -0.004446042052170571,
-      "qlike": -8.07520543484924
+      "crps": 0.0032577287425178117,
+      "var95_exception": 0.4,
+      "es_residual": 0.02245959686874786,
+      "mean_error": -0.004195393410183135,
+      "qlike": -8.556112012197275
      },
      "ewma_zero_mean": {
-      "crps": 0.0033305818178801174,
-      "var95_exception": 0.5,
-      "es_residual": 0.02499682607290593,
-      "mean_error": -0.0039202111654063196,
-      "qlike": -8.175427377916098
+      "crps": 0.0029794015514105427,
+      "var95_exception": 0.4,
+      "es_residual": 0.019720100757733474,
+      "mean_error": -0.0036762013405397505,
+      "qlike": -8.692674086961134
      }
     }
    },
@@ -129,7 +129,7 @@
    "status": "accumulating"
   },
   "21": {
-   "sealed": 11,
+   "sealed": 12,
    "scored_origins": 0,
    "nonoverlapping_origins": 0,
    "asset_observations": 0,
