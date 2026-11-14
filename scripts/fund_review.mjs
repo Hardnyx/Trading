@@ -1,12 +1,11 @@
 /**
- * Daily review of the simulated fund under its frozen policy.
+ * Daily review of the simulated fund.
  *
- * Holdings roll forward with adjusted closes, so distributions stay invested
- * in the fund that paid them. The engine starts from those holdings and only a
- * transition that beats holding in every decision model, after costs and a
- * Monte Carlo lower bound, becomes a rebalance. Re-entering a recently
- * abandoned portfolio needs a larger confirmed gain. Research simulation only:
- * no broker orders and no claim of predictive validity.
+ * The published fund follows fondo-v2 (docs/fondo-v2-registro.json): fixed
+ * strategic weights, rebalanced only when a sleeve drifts beyond 5 pp. The
+ * archived fondo-v1 engine review (reviewFund) is kept for its record and
+ * tests. Holdings roll forward with adjusted closes, so distributions stay
+ * invested. Research simulation only: no broker orders.
  */
 import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync } from "node:fs";
 import { createHash } from "node:crypto";
@@ -15,6 +14,7 @@ import { fileURLToPath } from "node:url";
 import { composeMultiStart } from "../dist/assets/js/composer.mjs?v=0.35.0";
 import { economicClass } from "../dist/assets/js/economic-exposure.mjs?v=0.35.0";
 import { FUND_POLICY, emptyFundState, fundRequest, overlap, rebalanceOrders } from "../dist/assets/js/fund-policy.mjs";
+import { FUND_V2, mixWeights, reviewStrategic } from "../dist/assets/js/strategic-fund.mjs";
 
 const sha = bytes => createHash("sha256").update(bytes).digest("hex");
 const round = (value, digits = 6) => Math.round(value * 10 ** digits) / 10 ** digits;
@@ -170,31 +170,105 @@ export function publicFund(state, reviews, snapshot, policy = FUND_POLICY) {
   };
 }
 
+const V2_DIR = "data/fund/fondo-v2", V1_DIR = "data/fund/fondo-v1";
+
+function readReviews(dir) {
+  return existsSync(dir + "/reviews") ? readdirSync(dir + "/reviews").filter(f => f.endsWith(".json")).sort()
+    .map(f => JSON.parse(readFileSync(`${dir}/reviews/${f}`, "utf8"))) : [];
+}
+
+export function emptyStrategicState(policy = FUND_V2) {
+  return { schema: "simulated-fund-state-v2", policy: policy.id, inception: null, as_of: null,
+    cash: policy.initialCapital, positions: [], peak: null };
+}
+
+/** Public summary of fondo-v2 for the web page, with fondo-v1 archived. */
+export function publicStrategicFund(state, reviews, snapshot, archived = null, policy = FUND_V2) {
+  const asset = s => snapshot.assets.find(a => a.symbol === s);
+  const value = holdingsValue(state, snapshot), target = mixWeights(policy.mix, policy);
+  const holdings = state.positions.map(p => {
+    const a = asset(p.symbol), amount = p.quantity * a.price;
+    return { symbol: p.symbol, name: a.name || p.symbol, class: economicClass(a),
+      shares: round(p.quantity, 4), whole_shares: Math.floor(p.quantity + 1e-9), price: a.price,
+      value: round(amount, 2), weight: round(amount / value),
+      target_weight: round(target.find(t => t.symbol === p.symbol)?.weight || 0) };
+  }).sort((a, b) => b.weight - a.weight);
+  const last = reviews.at(-1) || null;
+  const prices = Object.fromEntries(Object.values(policy.instruments).map(s => [s, asset(s)?.price ?? null]));
+  const names = Object.fromEntries(Object.values(policy.instruments).map(s => [s, asset(s)?.name ?? s]));
+  return {
+    schema_version: 2, policy: policy.id, adopted_on: policy.adoptedOn, as_of: state.as_of,
+    inception: state.inception, initial_capital: policy.initialCapital, value: round(value, 2),
+    return_since_inception: round(value / policy.initialCapital - 1),
+    drawdown: state.peak ? round(value / state.peak - 1) : 0,
+    cash: round(state.cash, 2), cash_weight: round(state.cash / value),
+    equity_weight: round(holdings.filter(h => EQUITY.has(h.class)).reduce((s, h) => s + h.weight, 0)),
+    holdings, target: target.map(t => ({ ...t, weight: round(t.weight) })),
+    mix: policy.mix, instruments: policy.instruments, threshold: policy.threshold, prices, names,
+    last_review: last && { date: last.date, status: last.status, reason: last.reason,
+      drift: last.drift, orders: last.orders },
+    benchmarks: state.inception ? benchmarkReturns(snapshot, state.inception, state.as_of) : null,
+    rebalances: reviews.filter(r => r.status === "rebalance").map(r => r.date),
+    history: reviews.map(r => ({ date: r.date, status: r.status, value: r.value })),
+    evidence: {
+      moves_money: ["mandate weights", "broad market diversification", "drift rebalancing"],
+      supported_not_yet_used: ["bond carry anchor (docs/registro-anclas-valoracion.md)"],
+      disabled: ["equity valuation tilts (not supported)", "bond duration timing", "risk timing", "stock selection"],
+    },
+    archived, research_only: true,
+  };
+}
+
 function writePublic(snapshot) {
-  const state = JSON.parse(readFileSync("data/fund/state.json", "utf8"));
-  const reviews = existsSync("data/fund/reviews") ? readdirSync("data/fund/reviews").filter(f => f.endsWith(".json")).sort()
-    .map(f => JSON.parse(readFileSync("data/fund/reviews/" + f, "utf8"))) : [];
-  writeFileSync("dist/data/fund.json", JSON.stringify(publicFund(state, reviews, snapshot), null, 1) + "\n");
+  const state = JSON.parse(readFileSync(V2_DIR + "/state.json", "utf8"));
+  const v1 = existsSync(V1_DIR + "/state.json") ? JSON.parse(readFileSync(V1_DIR + "/state.json", "utf8")) : null;
+  const archived = v1 && [{ policy: v1.policy, from: v1.inception, until: "2026-11-14",
+    reason: "Reemplazado: sus apuestas regionales se basaban en un ancla de acciones no respaldada.",
+    reviews: readReviews(V1_DIR).length }];
+  writeFileSync("dist/data/fund.json", JSON.stringify(publicStrategicFund(state, readReviews(V2_DIR), snapshot, archived), null, 1) + "\n");
+}
+
+/** One fondo-v2 review on a market snapshot; returns the next state and its record. */
+export function reviewV2(market, previous, policy = FUND_V2) {
+  let state;
+  try { state = rollForward(previous, market); }
+  catch (error) { state = structuredClone(previous); state.rollError = error.message; }
+  const prices = Object.fromEntries(market.assets.map(a => [a.symbol, a.price]));
+  const result = state.rollError
+    ? { date: market.price_as_of, policy: policy.id, target: mixWeights(policy.mix, policy), status: "hold",
+        reason: "Sin operar: " + state.rollError, drift: null, orders: [] }
+    : reviewStrategic({ asOf: market.price_as_of, generatedOn: (market.generated_at || "").slice(0, 10), prices }, state, policy);
+  const next = structuredClone(state);
+  delete next.rollError;
+  if (result.status === "rebalance") { next.positions = result.next.positions; next.cash = result.next.cash; }
+  next.as_of = market.price_as_of;
+  next.inception ??= market.price_as_of;
+  const value = state.rollError ? null : holdingsValue(next, market);
+  if (value !== null) next.peak = Math.max(next.peak || 0, value);
+  const { next: _drop, current, ...rest } = result;
+  const record = { schema: "simulated-fund-review-v2", ...rest,
+    value: value === null ? null : round(value, 2),
+    current: current?.map(p => ({ ...p, weight: round(p.weight) })) ?? null,
+    drift: result.drift === null ? null : round(result.drift),
+    orders: result.orders.map(o => ({ ...o, trade_shares: round(o.trade_shares, 4), target_shares: round(o.target_shares, 4) })),
+    engine_tilts: "disabled", research_only: true };
+  return { state: next, record };
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  const marketBytes = readFileSync("dist/data/market.json"), volatilityBytes = readFileSync("dist/data/volatility.json");
-  const market = JSON.parse(marketBytes), volatility = JSON.parse(volatilityBytes);
-  if (volatility.as_of !== market.price_as_of || volatility.source_market_generated_at !== market.generated_at)
-    throw Error("Market snapshot and risk calibration are not the same cut");
-  const snapshot = { ...market, volatility }, statePath = "data/fund/state.json";
-  const previous = existsSync(statePath) ? JSON.parse(readFileSync(statePath, "utf8")) : emptyFundState();
+  const marketBytes = readFileSync("dist/data/market.json"), market = JSON.parse(marketBytes);
+  const statePath = V2_DIR + "/state.json";
+  const previous = existsSync(statePath) ? JSON.parse(readFileSync(statePath, "utf8")) : emptyStrategicState();
   if (process.argv.includes("--publish-only") || (previous.as_of && previous.as_of >= market.price_as_of)) {
-    if (previous.as_of === market.price_as_of) writePublic(snapshot);
+    if (previous.as_of === market.price_as_of) writePublic(market);
     console.log(JSON.stringify({ skipped: true, reason: "cut already reviewed", as_of: previous.as_of }));
     process.exit(0);
   }
-  const { state, record } = reviewFund(snapshot, previous);
+  const { state, record } = reviewV2(market, previous);
   record.market_sha256 = sha(marketBytes);
-  record.volatility_sha256 = sha(volatilityBytes);
-  mkdirSync("data/fund/reviews", { recursive: true });
-  writeFileSync(`data/fund/reviews/${record.date}.json`, JSON.stringify(record, null, 1) + "\n");
+  mkdirSync(V2_DIR + "/reviews", { recursive: true });
+  writeFileSync(`${V2_DIR}/reviews/${record.date}.json`, JSON.stringify(record, null, 1) + "\n");
   writeFileSync(statePath, JSON.stringify(state, null, 1) + "\n");
-  writePublic(snapshot);
-  console.log(JSON.stringify({ date: record.date, status: record.status, reason: record.reason, target: record.target }));
+  writePublic(market);
+  console.log(JSON.stringify({ date: record.date, status: record.status, reason: record.reason, drift: record.drift }));
 }

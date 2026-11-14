@@ -3220,3 +3220,20 @@ td:last-child {
 .decision-fields .input-unit:has(> input[type="checkbox"]) {
   min-height: var(--control-height);
 }
+/* Local what-if mix of the simulated fund. */
+.fund-mixer > p,
+.fund-mixer #fund-mix-result > p {
+  margin: 0;
+  padding: 0 var(--pad) var(--pad);
+}
+.fund-mixer-controls {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px 24px;
+  align-items: end;
+  padding: 0 var(--pad) var(--pad);
+}
+.fund-mixer-controls .field input[type="range"],
+.fund-mixer-controls .field input[type="number"] {
+  width: 100%;
+}

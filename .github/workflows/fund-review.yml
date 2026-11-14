@@ -27,7 +27,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: node --test tests/fund-policy.test.mjs
+      - run: node --test tests/fund-policy.test.mjs tests/strategic-fund.test.mjs
       - name: Review the fund on the latest cut
         run: node scripts/fund_review.mjs
       - name: Commit the review

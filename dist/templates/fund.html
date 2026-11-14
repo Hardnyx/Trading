@@ -5,7 +5,7 @@
     <title>Plantillas del fondo simulado</title>
   </head>
   <body>
-    <!-- fund: published state of the simulated fund; presentation only. -->
+    <!-- fund: published state of the simulated fund; presentation and a local what-if mix. -->
 
     <template id="fund-panel">
       <section class="panel composition-report fund-panel" id="fund">
@@ -22,6 +22,7 @@
           <h3>ÚLTIMA REVISIÓN · {{reviewDate}}</h3>
           <p>{{decision}}</p>
           <p>{{rule}}</p>
+          <p>{{evidence}}</p>
         </div>
         <div class="table-wrap">
           <table class="composition-positions">
@@ -29,11 +30,11 @@
               <tr>
                 <th>ACTIVO</th>
                 <th>PESO</th>
+                <th>OBJETIVO</th>
                 <th>ACCIONES</th>
                 <th>ACCIONES ENTERAS</th>
                 <th>PRECIO</th>
                 <th>VALOR</th>
-                <th>CLASE</th>
               </tr>
             </thead>
             <tbody>
@@ -41,8 +42,8 @@
             </tbody>
           </table>
         </div>
-        {{{evidence}}}
         {{{orders}}}
+        {{{mixer}}}
         <div class="chart-footnote">{{footnote}}</div>
       </section>
     </template>
@@ -51,28 +52,12 @@
       <tr>
         <td><button class="text-button symbol" data-detail="{{symbol}}">{{symbol2}}</button><div class="muted small">{{name}}</div></td>
         <td class="mono">{{weight}}</td>
+        <td class="mono">{{target}}</td>
         <td class="mono">{{shares}}</td>
         <td class="mono">{{whole}}</td>
         <td class="mono">{{price}}</td>
         <td class="mono">{{value}}</td>
-        <td>{{kind}}</td>
       </tr>
-    </template>
-
-    <template id="fund-evidence">
-      <div class="composition-contributions">
-        <h3>EVIDENCIA DE LA DECISIÓN · MEJORA FRENTE A MANTENER</h3>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>MODELO</th><th>FUNCIÓN</th><th>MEJORA ESTIMADA</th><th>COTA INFERIOR</th><th>RESULTADO</th></tr></thead>
-            <tbody>{{{rows}}}</tbody>
-          </table>
-        </div>
-      </div>
-    </template>
-
-    <template id="fund-evidence-row">
-      <tr><td>{{model}}</td><td>{{role}}</td><td class="mono">{{gain}}</td><td class="mono">{{lower}}</td><td>{{result}}</td></tr>
     </template>
 
     <template id="fund-orders">
@@ -89,6 +74,47 @@
 
     <template id="fund-order-row">
       <tr><td>{{symbol}}</td><td>{{side}}</td><td class="mono">{{shares}}</td><td class="mono">{{whole}}</td><td class="mono">{{price}}</td></tr>
+    </template>
+
+    <template id="fund-mixer">
+      <div class="composition-contributions fund-mixer">
+        <h3>AJUSTAR MI MEZCLA · CÁLCULO LOCAL</h3>
+        <p class="muted small">Variante personal sobre los mismos ETF y precios. No cambia el fondo publicado, que sigue los pesos registrados.</p>
+        <div class="fund-mixer-controls">
+          <div class="field">
+            <div class="field-topline"><label for="fund-mix-equity">Acciones</label><output id="fund-mix-equity-out">{{equity}}</output></div>
+            <input id="fund-mix-equity" type="range" min="0" max="100" step="1" value="{{equityValue}}" data-fund-mix="equity" />
+          </div>
+          <div class="field">
+            <div class="field-topline"><label for="fund-mix-us">EE. UU. dentro de acciones</label><output id="fund-mix-us-out">{{us}}</output></div>
+            <input id="fund-mix-us" type="range" min="0" max="100" step="1" value="{{usValue}}" data-fund-mix="usShare" />
+          </div>
+          <div class="field">
+            <div class="field-topline"><label for="fund-mix-cash">Efectivo</label><output id="fund-mix-cash-out">{{cash}}</output></div>
+            <input id="fund-mix-cash" type="range" min="0" max="50" step="1" value="{{cashValue}}" data-fund-mix="cash" />
+          </div>
+          <div class="field">
+            <div class="field-topline"><label for="fund-mix-capital">Capital (USD)</label></div>
+            <input id="fund-mix-capital" type="number" min="1000" max="100000000" step="1000" value="{{capital}}" data-fund-mix="capital" />
+          </div>
+          <button class="button" data-action="fund-mix-reset">Volver a la mezcla registrada</button>
+        </div>
+        <div id="fund-mix-result">{{{result}}}</div>
+      </div>
+    </template>
+
+    <template id="fund-mix-result">
+      <p class="muted small">{{summary}}</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>ACTIVO</th><th>PESO</th><th>ACCIONES ENTERAS</th><th>MONTO</th><th>PRECIO</th></tr></thead>
+          <tbody>{{{rows}}}</tbody>
+        </table>
+      </div>
+    </template>
+
+    <template id="fund-mix-row">
+      <tr><td>{{symbol}}</td><td class="mono">{{weight}}</td><td class="mono">{{whole}}</td><td class="mono">{{amount}}</td><td class="mono">{{price}}</td></tr>
     </template>
 
     <template id="fund-notice">

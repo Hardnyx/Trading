@@ -1,6 +1,6 @@
 # Fondo simulado · política `fondo-v1`
 
-**Adoptada:** 14-nov-2026. **Código:** [`fund-policy.mjs`](../dist/assets/js/fund-policy.mjs), [`fund_review.mjs`](../scripts/fund_review.mjs). **Estado:** simulación de investigación; la capacidad predictiva no está acreditada.
+**Adoptada:** 14-nov-2026. **Código:** [`fund-policy.mjs`](../dist/assets/js/fund-policy.mjs), [`fund_review.mjs`](../scripts/fund_review.mjs). **Estado:** archivado el 14-nov-2026 y reemplazado por [`fondo-v2`](fondo-v2.md): sus apuestas regionales se basaban en el ancla de valoración de acciones, que [no superó a la media histórica](registro-anclas-valoracion.md). Su historial queda en `data/fund/fondo-v1/`.
 
 ## Qué es
 
@@ -25,11 +25,11 @@ Un fondo de USD 100.000 que invierte solo en ETF cotizados en EE. UU. Cada revis
 
 ## Dónde verlo
 
-La web muestra el panel **Fondo simulado · fondo-v1** al inicio de la vista Cartera. Lee `dist/data/fund.json`, que la revisión diaria regenera y publica junto con su despliegue; la página no recalcula ni modifica el fondo.
+Mientras estuvo activo, la web mostraba su panel al inicio de la vista Cartera. Hoy muestra `fondo-v2`.
 
 ## Cómo seguirlo en un simulador
 
-Cada revisión deja en `data/fund/reviews/<fecha>.json` el estado (`hold` o `rebalance`), las ganancias confirmadas por modelo y, si hay cambio, las órdenes con acciones fraccionarias y enteras (`target_whole_shares`, `trade_whole_shares`). Para un simulador sin fracciones, usar las acciones enteras y dejar el resto en efectivo. `data/fund/state.json` guarda las posiciones simuladas del fondo.
+Cada revisión dejaba en `data/fund/fondo-v1/reviews/<fecha>.json` el estado (`hold` o `rebalance`), las ganancias confirmadas por modelo y, si hay cambio, las órdenes con acciones fraccionarias y enteras (`target_whole_shares`, `trade_whole_shares`). Para un simulador sin fracciones, usar las acciones enteras y dejar el resto en efectivo. `data/fund/fondo-v1/state.json` guarda las posiciones simuladas del fondo.
 
 ## Referencias de comparación
 

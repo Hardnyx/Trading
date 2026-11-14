@@ -19,6 +19,7 @@ import {
 import { fmt, pct, money, dateLabel } from "./ui/format.mjs?v=0.35.0";
 import { createViews, NAV } from "./ui/views.mjs?v=0.35.0";
 import { loadTemplates } from "./ui/templates.mjs?v=0.35.0";
+import { personalMix, mixResult } from "./ui/fund-view.mjs?v=0.35.0";
 import { applyVisualValues, showStartupError } from "./ui/dom.mjs?v=0.35.0";
 import { createTickerRotation } from "./ui/ticker-rotation.mjs?v=0.35.0";
 import { createValueFlash } from "./ui/value-flash.mjs?v=0.35.0";
@@ -226,6 +227,7 @@ function persist() {
         assetAssumptions: state.assetAssumptions,
         macroRegimes: state.macroRegimes,
         regimeProbabilities: state.regimeProbabilities,
+        fundMix: state.fundMix,
         ...(journalDBReady ? {} : { journal: state.journal }),
       }),
     );
@@ -832,7 +834,7 @@ async function simulatedFund() {
   try {
     const r=await fetch(new URL('../../data/fund.json',import.meta.url),{cache:'no-cache'});
     if(!r.ok)return null;
-    const s=await r.json();return s.schema_version===1&&Array.isArray(s.holdings)?s:null;
+    const s=await r.json();return s.schema_version===2&&Array.isArray(s.holdings)?s:null;
   } catch {return null;}
 }
 async function validationReview() {
@@ -1043,6 +1045,12 @@ document.addEventListener("click", async (event) => {
     return;
   }
   const action = element.dataset.action;
+  if (action === "fund-mix-reset") {
+    state.fundMix = null;
+    persist();
+    render();
+    return;
+  }
   if (action === "account-add") {
     const symbol = $("#account-symbol")?.value;
     if (symbol && !state.account.positions.some((p) => p.symbol === symbol)) {
@@ -1219,8 +1227,24 @@ document.addEventListener("click", async (event) => {
     }
   }
 });
+let fundMixTimer = null;
 document.addEventListener("input", (event) => {
   const el = event.target;
+  if (el.dataset.fundMix && data?.fund) {
+    // Local what-if only: recompute the personal table without touching the fund.
+    const key = el.dataset.fundMix, raw = Number(el.value);
+    if (el.value === "" || !finite(raw)) return;
+    const mix = personalMix(data.fund, state.fundMix);
+    mix[key] = key === "capital" ? raw : raw / 100;
+    state.fundMix = personalMix(data.fund, mix);
+    const out = $("#fund-mix-" + (key === "usShare" ? "us" : key) + "-out");
+    if (out) out.textContent = Math.round(raw) + "%";
+    const result = $("#fund-mix-result");
+    if (result) result.innerHTML = mixResult(data.fund, state.fundMix);
+    clearTimeout(fundMixTimer);
+    fundMixTimer = setTimeout(persist, 350);
+    return;
+  }
   if (el.dataset.weight) {
     const value = Number(el.value);
     if (el.value !== "" && finite(value) && value >= 0 && value <= 100) {

@@ -925,7 +925,7 @@ export function createViews(context) {
               : "",
         }),
       ) +
-      fundPanel(data.fund, data) +
+      fundPanel(data.fund, data, state.fundMix) +
       compositionControls() +
       financialCoverageView(data) +
       priceMonitorView(data,state.account?.enabled?state.account.positions:state.positions,

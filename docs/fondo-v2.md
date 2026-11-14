@@ -29,3 +29,7 @@ El dinero solo se mueve por el mandato o por componentes con una prueba registra
 1. **Historia larga (1900–2018):** peor año, caída máxima, meses hasta recuperar, retornos típicos y volatilidad de 70/25/5 frente a 60/40 y 100 % acciones. Es descriptiva: los rangos se aceptan antes de empezar.
 2. **Era de ETF (desde feb-2011):** con VTI, VXUS y AGG reales y costos, error de seguimiento frente a la misma mezcla rebalanceada cada mes ≤ 1,5 % anual, operaciones ≤ 6 por año y costos ≤ 0,10 % anual.
 3. **Ensayo operativo:** en los últimos 30 cortes, ninguna orden sin desviación mayor a 5 puntos, el mismo resultado al repetir y órdenes en acciones enteras sin efectivo negativo.
+
+## Dónde verlo
+
+Panel **Fondo simulado · fondo-v2** al inicio de la vista Cartera, leído de `dist/data/fund.json`. Muestra posiciones, pesos objetivo, desviación, órdenes en acciones enteras y la comparación con 60/40, SPY y letras. La sección **Ajustar mi mezcla** calcula en el navegador una variante personal (acciones, parte de EE. UU., efectivo y capital) sobre los mismos ETF y precios; se guarda solo en ese navegador y no cambia el fondo publicado. Estado y revisiones: `data/fund/fondo-v2/`.

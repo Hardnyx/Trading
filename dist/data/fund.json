@@ -1,203 +1,125 @@
 {
- "schema_version": 1,
- "policy": "fondo-v1",
+ "schema_version": 2,
+ "policy": "fondo-v2",
  "adopted_on": "2026-11-14",
  "as_of": "2026-11-13",
  "inception": "2026-11-13",
  "initial_capital": 100000,
  "value": 100000,
  "return_since_inception": 0,
+ "drawdown": 0,
  "cash": 5000,
  "cash_weight": 0.05,
- "equity_weight": 0.6,
+ "equity_weight": 0.7,
  "holdings": [
   {
-   "symbol": "LQD",
-   "name": "iShares iBoxx Investment Grade Corporate Bond",
-   "class": "credit",
-   "shares": 243.167,
-   "whole_shares": 243,
-   "price": 102.809998,
+   "symbol": "VTI",
+   "name": "Vanguard Total Stock Market",
+   "class": "us-equity",
+   "shares": 113.174,
+   "whole_shares": 113,
+   "price": 371.109985,
+   "value": 42000,
+   "weight": 0.42,
+   "target_weight": 0.42
+  },
+  {
+   "symbol": "VXUS",
+   "name": "Vanguard Total International Stock",
+   "class": "international-equity",
+   "shares": 338.819,
+   "whole_shares": 338,
+   "price": 82.639999,
+   "value": 28000,
+   "weight": 0.28,
+   "target_weight": 0.28
+  },
+  {
+   "symbol": "AGG",
+   "name": "iShares Core U.S. Aggregate Bond",
+   "class": "mixed-bond",
+   "shares": 262.9088,
+   "whole_shares": 262,
+   "price": 95.089996,
    "value": 25000,
+   "weight": 0.25,
+   "target_weight": 0.25
+  }
+ ],
+ "target": [
+  {
+   "symbol": "VTI",
+   "weight": 0.42
+  },
+  {
+   "symbol": "VXUS",
+   "weight": 0.28
+  },
+  {
+   "symbol": "AGG",
    "weight": 0.25
   },
   {
-   "symbol": "EFA",
-   "name": "iShares MSCI EAFE",
-   "class": "international-equity",
-   "shares": 143.9954,
-   "whole_shares": 143,
-   "price": 104.169998,
-   "value": 15000,
-   "weight": 0.15
-  },
-  {
-   "symbol": "DGRO",
-   "name": "iShares Core Dividend Growth",
-   "class": "us-equity",
-   "shares": 182.8153,
-   "whole_shares": 182,
-   "price": 82.050003,
-   "value": 15000,
-   "weight": 0.15
-  },
-  {
-   "symbol": "ACWX",
-   "name": "iShares MSCI ACWI ex U.S.",
-   "class": "international-equity",
-   "shares": 203.6383,
-   "whole_shares": 203,
-   "price": 73.660004,
-   "value": 15000,
-   "weight": 0.15
-  },
-  {
-   "symbol": "EEM",
-   "name": "iShares MSCI Emerging Markets",
-   "class": "international-equity",
-   "shares": 164.1497,
-   "whole_shares": 164,
-   "price": 60.919998,
-   "value": 10000,
-   "weight": 0.1
-  },
-  {
-   "symbol": "HYG",
-   "name": "iShares iBoxx High Yield Corporate Bond",
-   "class": "credit",
-   "shares": 129.9714,
-   "whole_shares": 129,
-   "price": 76.940002,
-   "value": 10000,
-   "weight": 0.1
-  },
-  {
-   "symbol": "SCHD",
-   "name": "Schwab U.S. Dividend Equity",
-   "class": "us-equity",
-   "shares": 138.4275,
-   "whole_shares": 138,
-   "price": 36.119999,
-   "value": 5000,
+   "symbol": "CASH",
    "weight": 0.05
   }
  ],
+ "mix": {
+  "equity": 0.7,
+  "usShare": 0.6,
+  "cash": 0.05
+ },
+ "instruments": {
+  "us": "VTI",
+  "international": "VXUS",
+  "bonds": "AGG"
+ },
+ "threshold": 0.05,
+ "prices": {
+  "VTI": 371.109985,
+  "VXUS": 82.639999,
+  "AGG": 95.089996
+ },
+ "names": {
+  "VTI": "Vanguard Total Stock Market",
+  "VXUS": "Vanguard Total International Stock",
+  "AGG": "iShares Core U.S. Aggregate Bond"
+ },
  "last_review": {
   "date": "2026-11-13",
   "status": "rebalance",
-  "reason": null,
-  "evidence": [
-   {
-    "model": "original",
-    "gain": 5752.51,
-    "lower_gain": 4096.02,
-    "failures": []
-   },
-   {
-    "model": "no_rerating",
-    "gain": 5730.07,
-    "lower_gain": 4076.56,
-    "failures": []
-   },
-   {
-    "model": "margin_stress",
-    "gain": 5408.09,
-    "lower_gain": 3707.11,
-    "failures": []
-   },
-   {
-    "model": "combined",
-    "gain": 5291.59,
-    "lower_gain": 3596.11,
-    "failures": []
-   }
-  ],
-  "risk_only": [
-   {
-    "model": "low_conviction",
-    "failures": []
-   }
-  ],
-  "hurdle": 250,
-  "hysteresis": {
-   "hurdle": 250,
-   "revisits": null
-  },
-  "metrics": {
-   "median_return": 0.05258091206142723,
-   "cvar95": 0.1741138116515215,
-   "loss_probability": 0.32769230769230767
-  },
+  "reason": "Compra inicial a los pesos objetivo.",
+  "drift": 0.95,
   "orders": [
    {
-    "symbol": "HYG",
-    "price": 76.940002,
-    "target_weight": 0.1,
-    "target_shares": 129.9714,
-    "target_whole_shares": 129,
+    "symbol": "VTI",
+    "price": 371.109985,
+    "target_weight": 0.42,
+    "target_shares": 113.174,
+    "target_whole_shares": 113,
     "held_shares": 0,
-    "trade_shares": 129.9714,
-    "trade_whole_shares": 129
+    "trade_shares": 113.174,
+    "trade_whole_shares": 113
    },
    {
-    "symbol": "SCHD",
-    "price": 36.119999,
-    "target_weight": 0.05,
-    "target_shares": 138.4275,
-    "target_whole_shares": 138,
+    "symbol": "AGG",
+    "price": 95.089996,
+    "target_weight": 0.25000000000000006,
+    "target_shares": 262.9088,
+    "target_whole_shares": 262,
     "held_shares": 0,
-    "trade_shares": 138.4275,
-    "trade_whole_shares": 138
+    "trade_shares": 262.9088,
+    "trade_whole_shares": 262
    },
    {
-    "symbol": "EFA",
-    "price": 104.169998,
-    "target_weight": 0.15,
-    "target_shares": 143.9954,
-    "target_whole_shares": 143,
+    "symbol": "VXUS",
+    "price": 82.639999,
+    "target_weight": 0.27999999999999997,
+    "target_shares": 338.819,
+    "target_whole_shares": 338,
     "held_shares": 0,
-    "trade_shares": 143.9954,
-    "trade_whole_shares": 143
-   },
-   {
-    "symbol": "EEM",
-    "price": 60.919998,
-    "target_weight": 0.1,
-    "target_shares": 164.1497,
-    "target_whole_shares": 164,
-    "held_shares": 0,
-    "trade_shares": 164.1497,
-    "trade_whole_shares": 164
-   },
-   {
-    "symbol": "DGRO",
-    "price": 82.050003,
-    "target_weight": 0.15,
-    "target_shares": 182.8153,
-    "target_whole_shares": 182,
-    "held_shares": 0,
-    "trade_shares": 182.8153,
-    "trade_whole_shares": 182
-   },
-   {
-    "symbol": "ACWX",
-    "price": 73.660004,
-    "target_weight": 0.15,
-    "target_shares": 203.6383,
-    "target_whole_shares": 203,
-    "held_shares": 0,
-    "trade_shares": 203.6383,
-    "trade_whole_shares": 203
-   },
-   {
-    "symbol": "LQD",
-    "price": 102.809998,
-    "target_weight": 0.25,
-    "target_shares": 243.167,
-    "target_whole_shares": 243,
-    "held_shares": 0,
-    "trade_shares": 243.167,
-    "trade_whole_shares": 243
+    "trade_shares": 338.819,
+    "trade_whole_shares": 338
    }
   ]
  },
@@ -217,26 +139,30 @@
    "value": 100000
   }
  ],
- "mandate": {
-  "equity": [
-   0.6,
-   0.9
+ "evidence": {
+  "moves_money": [
+   "mandate weights",
+   "broad market diversification",
+   "drift rebalancing"
   ],
-  "cvar95": 0.3,
-  "purchase": [
-   "etf"
+  "supported_not_yet_used": [
+   "bond carry anchor (docs/registro-anclas-valoracion.md)"
   ],
-  "risk_only_models": [
-   "low_conviction"
-  ],
-  "min_benefit": 250,
-  "benefit_cost_ratio": 3,
-  "hysteresis": {
-   "sessions": 20,
-   "overlap": 0.8,
-   "multiplier": 2
-  }
+  "disabled": [
+   "equity valuation tilts (not supported)",
+   "bond duration timing",
+   "risk timing",
+   "stock selection"
+  ]
  },
- "research_only": true,
- "predictive_validation": "not-established"
+ "archived": [
+  {
+   "policy": "fondo-v1",
+   "from": "2026-11-13",
+   "until": "2026-11-14",
+   "reason": "Reemplazado: sus apuestas regionales se basaban en un ancla de acciones no respaldada.",
+   "reviews": 1
+  }
+ ],
+ "research_only": true
 }

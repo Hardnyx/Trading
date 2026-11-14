@@ -1,0 +1,22 @@
+{
+ "schema": "simulated-fund-state-v2",
+ "policy": "fondo-v2",
+ "inception": "2026-11-13",
+ "as_of": "2026-11-13",
+ "cash": 5000,
+ "positions": [
+  {
+   "symbol": "VTI",
+   "quantity": 113.17399611330856
+  },
+  {
+   "symbol": "VXUS",
+   "quantity": 338.81897796247546
+  },
+  {
+   "symbol": "AGG",
+   "quantity": 262.9088342794757
+  }
+ ],
+ "peak": 100000
+}
