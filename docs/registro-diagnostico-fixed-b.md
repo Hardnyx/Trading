@@ -37,7 +37,7 @@ La rejilla no cubre cambios estructurales, volatilidad condicional, dependencia 
 
 ## Resultado observado y corte de evidencia: 14-nov-2026 UTC
 
-**Estado de la verificación:** resultados de la ejecución local reproducible con el presupuesto registrado; la CI rápida [43614210400](https://github.com/Hardnyx/Trading/actions/runs/43614210400) y la auditoría completa [43614216242](https://github.com/Hardnyx/Trading/actions/runs/43614216242) estaban en curso al publicar este texto.
+**Estado de la verificación:** la [CI rápida 43614210400](https://github.com/Hardnyx/Trading/actions/runs/43614210400) y la [auditoría completa 43614216242](https://github.com/Hardnyx/Trading/actions/runs/43614216242) sobre `18df876` terminaron correctamente. El artefacto `confirmatory-fixed-b-independent-stress` de la auditoría coincide fila a fila con la ejecución local que se resume abajo.
 
 Implementación publicada después del registro: [`18df876`](https://github.com/Hardnyx/Trading/commit/18df876a). El diseño congelado (`7233aab`, SHA-1 del objeto `44a46e21…`) se ejecutó con el presupuesto completo: **100.000 series de referencia por `b`, 64 escenarios × 2 brazos × 512 réplicas**, semilla de evaluación `20261114` y de referencia `20261115`. No se leyeron retornos de Trading.
 
