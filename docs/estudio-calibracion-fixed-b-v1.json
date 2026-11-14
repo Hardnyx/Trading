@@ -1,0 +1,98 @@
+{
+ "schema": "confirmatory-fixed-b-independent-stress-design-v1",
+ "registered_on_utc": "2026-11-14",
+ "design_role": "exploratory-synthetic-precommitment-not-inference-registration",
+ "source_prospective_protocol": "docs/protocolo-confirmacion-integral-v2.json",
+ "source_prospective_study_status": "registered-methodology-inactive-confirmatory-inference",
+ "registration_base_commit": "b2e8faf31bd1d39da7aa0bb22168665b763f6e3a",
+ "prior_failed_candidate": "docs/estudio-calibracion-hac-v1.json",
+ "real_market_data_permitted": false,
+ "trading_predictive_validation": "not-established",
+ "rationale": "The registered Bartlett HAC candidate used Gaussian asymptotic tails. Fixed-b asymptotics keep the bandwidth ratio b = M/n fixed and replace the Gaussian tail by the non-standard limit of the same studentized statistic, which the literature introduced for this finite-sample size distortion. Both arms were chosen from the literature before evaluation, not from inspected frequencies.",
+ "statistic": {
+  "name": "one-sided Bartlett-studentized mean",
+  "sample_mean_centering": true,
+  "autocovariance_divisor": "n",
+  "bartlett_weight": "1-k/(M+1) for k=1,...,M",
+  "test_statistic": "sqrt(n)*mean(effect)/sqrt(gamma_0+2*sum(bartlett_weight*gamma_k))",
+  "nonpositive_or_nonfinite_lrv_p_value": 1,
+  "null_estimand": "mean_monthly_effect<=0"
+ },
+ "arms": [
+  {
+   "id": "A-fixed-b-lag12",
+   "bandwidth_lags": "12 for every sample size",
+   "fixed_b_ratio": "12/n: 0.125 at 96 months, 0.0625 at 192 months",
+   "purpose": "Same statistic as the failed HAC candidate; only the reference distribution changes",
+   "status": "research-candidate-not-validated-or-selected"
+  },
+  {
+   "id": "B-kvb-full-bandwidth",
+   "bandwidth_lags": "n-1, weights 1-k/n",
+   "fixed_b_ratio": "1",
+   "purpose": "Kiefer-Vogelsang-Bunzel full-sample Bartlett studentization",
+   "status": "research-candidate-not-validated-or-selected"
+  }
+ ],
+ "reference_distribution": {
+  "method": "Monte Carlo of the same statistic on independent standard Gaussian series, approximating the fixed-b limit for each b",
+  "series_length": 1200,
+  "bandwidth_lags_by_b": {"0.125": 150, "0.0625": 75, "1": 1199},
+  "draws_per_b": 100000,
+  "reference_seed": 20261115,
+  "reference_seed_policy": "sha256(reference_seed|b) first 8 bytes",
+  "p_value": "(1 + count(reference >= statistic)) / (1 + draws)",
+  "independent_of_evaluation_seed": true
+ },
+ "multiplicity": {
+  "hypotheses": [
+   "return_mse:21",
+   "return_mse:63",
+   "return_mse:252",
+   "ranking_ic:21",
+   "ranking_ic:63",
+   "ranking_ic:252",
+   "net_economic_value:21"
+  ],
+  "alpha": 0.05,
+  "procedure": "Holm step-down on marginal p-values",
+  "true_null_indices_partial": [0, 1, 2, 3],
+  "shifted_false_null_indices_partial": [4, 5, 6],
+  "shifted_effect_in_marginal_sd_units": 0.5
+ },
+ "synthetic_data": {
+  "generator": "scripts/confirmatory_hac_stress.py synthetic_effects, unchanged",
+  "monthly_counts": [96, 192],
+  "ar1_phi": [0, 0.3, 0.6, 0.85],
+  "cross_hypothesis_factor_correlations": [0, 0.75],
+  "innovation_families": ["gaussian", "standardized_student_t_df5"],
+  "null_configurations": ["global", "partial"],
+  "autoregression_burn_in_months": 256,
+  "repetitions_per_scenario": 512,
+  "independent_simulation_seed": 20261114,
+  "scenario_count_per_arm": 64,
+  "scenario_seed_policy": "sha256(seed|n|phi|rho|innovation|null) first 8 bytes, the same effects for both arms",
+  "independent_repetitions_within_scenario": true
+ },
+ "calibration_evaluation": {
+  "nominal_familywise_error": 0.05,
+  "simultaneous_confidence": 0.95,
+  "interval_count": 128,
+  "interval_method": "Clopper-Pearson bilateral with Bonferroni across both arms and 64 synthetic scenarios",
+  "per_tail_probability": 0.0001953125,
+  "excess_evidence_rule": "any simultaneous lower bound >0.05 in an arm",
+  "grid_upper_bound_rule": "all simultaneous upper bounds of an arm <=0.05",
+  "power_diagnostic": "count of partial-null repetitions rejecting at least one shifted hypothesis; descriptive only",
+  "interpretation": "simulation-specific exploratory diagnosis; never proof for unknown market DGP",
+  "candidate_approval_permitted": false,
+  "arm_or_bandwidth_selection_by_inspected_results_permitted": false,
+  "both_arms_reported_whatever_the_result": true
+ },
+ "activation": {
+  "registered_v2_modified": false,
+  "confirmatory_collection_open": false,
+  "formal_inference_enabled": false,
+  "no_market_outcomes_read": true,
+  "new_version_and_independent_origin_cohort_required_for_any_future_change": true
+ }
+}
