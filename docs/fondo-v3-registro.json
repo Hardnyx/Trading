@@ -1,0 +1,19 @@
+{
+ "schema": "simulated-fund-policy-registration-v3",
+ "policy": "fondo-v3",
+ "registered_on_utc": "2026-11-14",
+ "role": "shadow: published and reviewed daily next to fondo-v2, which remains the reference fund; no one is asked to trade it",
+ "enabled_by": "docs/registro-momento-riesgo.md (supported risk-timing gate, commit 3efc47b)",
+ "base": "fondo-v2: VTI/VXUS 60/40 inside equity, AGG, 5% cash, 5 pp drift rebalancing, other engine tilts disabled",
+ "equity_share": "clip(0.70 * sigma_bar / sigma, 0.60, 0.90) from the gate test rule; bonds = 0.95 - equity; cash = 0.05",
+ "volatility": {
+  "daily_market_returns": "Kenneth French Mkt-RF + RF until the last archived day, then VTI adjusted-close returns from the market snapshot",
+  "sigma": "sqrt(252) * EWMA daily volatility, lambda 0.94, at the last session of the previous calendar month",
+  "sigma_bar": "mean of sigma at every earlier month end since 1963-07",
+  "update": "the target changes only when a new calendar month starts"
+ },
+ "rebalancing": "trade back to the current target when any sleeve deviates more than 5 pp from it",
+ "comparison_with_fondo_v2": "same inception, capital, prices and costs; reported side by side from the first common review",
+ "promotion_rule": "fondo-v3 can replace fondo-v2 only by a new registration after at least 12 monthly targets, reporting its live Sharpe and drawdown against fondo-v2; no earlier switch",
+ "post_hoc_changes_permitted": false
+}
