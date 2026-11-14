@@ -1,0 +1,77 @@
+{
+ "schema": "simulated-fund-state-v1",
+ "policy": "fondo-v1",
+ "inception": "2026-11-13",
+ "as_of": "2026-11-13",
+ "cash": 5000,
+ "positions": [
+  {
+   "symbol": "EEM",
+   "quantity": 164.14970991955713
+  },
+  {
+   "symbol": "EFA",
+   "quantity": 143.99539491207437
+  },
+  {
+   "symbol": "LQD",
+   "quantity": 243.1670118308922
+  },
+  {
+   "symbol": "HYG",
+   "quantity": 129.97140291210286
+  },
+  {
+   "symbol": "SCHD",
+   "quantity": 138.427467841292
+  },
+  {
+   "symbol": "DGRO",
+   "quantity": 182.81534980565448
+  },
+  {
+   "symbol": "ACWX",
+   "quantity": 203.6383272528739
+  }
+ ],
+ "held": [
+  {
+   "from": "2026-11-13",
+   "until": null,
+   "positions": [
+    {
+     "symbol": "EEM",
+     "weight": 0.1
+    },
+    {
+     "symbol": "EFA",
+     "weight": 0.15
+    },
+    {
+     "symbol": "LQD",
+     "weight": 0.25
+    },
+    {
+     "symbol": "HYG",
+     "weight": 0.1
+    },
+    {
+     "symbol": "SCHD",
+     "weight": 0.05
+    },
+    {
+     "symbol": "DGRO",
+     "weight": 0.15
+    },
+    {
+     "symbol": "ACWX",
+     "weight": 0.15
+    },
+    {
+     "symbol": "CASH",
+     "weight": 0.05
+    }
+   ]
+  }
+ ]
+}

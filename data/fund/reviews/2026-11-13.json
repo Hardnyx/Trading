@@ -1,0 +1,207 @@
+{
+ "schema": "simulated-fund-review-v1",
+ "policy": "fondo-v1",
+ "date": "2026-11-13",
+ "engine_version": "0.35.0",
+ "status": "rebalance",
+ "reason": null,
+ "value": 100000,
+ "current": [
+  {
+   "symbol": "CASH",
+   "weight": 1
+  }
+ ],
+ "target": [
+  {
+   "symbol": "EEM",
+   "weight": 0.1
+  },
+  {
+   "symbol": "EFA",
+   "weight": 0.15
+  },
+  {
+   "symbol": "LQD",
+   "weight": 0.25
+  },
+  {
+   "symbol": "HYG",
+   "weight": 0.1
+  },
+  {
+   "symbol": "SCHD",
+   "weight": 0.05
+  },
+  {
+   "symbol": "DGRO",
+   "weight": 0.15
+  },
+  {
+   "symbol": "ACWX",
+   "weight": 0.15
+  },
+  {
+   "symbol": "CASH",
+   "weight": 0.05
+  }
+ ],
+ "proposal": [
+  {
+   "symbol": "EEM",
+   "weight": 0.1
+  },
+  {
+   "symbol": "EFA",
+   "weight": 0.15
+  },
+  {
+   "symbol": "LQD",
+   "weight": 0.25
+  },
+  {
+   "symbol": "HYG",
+   "weight": 0.1
+  },
+  {
+   "symbol": "SCHD",
+   "weight": 0.05
+  },
+  {
+   "symbol": "DGRO",
+   "weight": 0.15
+  },
+  {
+   "symbol": "ACWX",
+   "weight": 0.15
+  },
+  {
+   "symbol": "CASH",
+   "weight": 0.05
+  }
+ ],
+ "engine_status": "proposed",
+ "evidence": [
+  {
+   "model": "original",
+   "gain": 5752.51,
+   "lower_gain": 4096.02,
+   "failures": []
+  },
+  {
+   "model": "no_rerating",
+   "gain": 5730.07,
+   "lower_gain": 4076.56,
+   "failures": []
+  },
+  {
+   "model": "margin_stress",
+   "gain": 5408.09,
+   "lower_gain": 3707.11,
+   "failures": []
+  },
+  {
+   "model": "combined",
+   "gain": 5291.59,
+   "lower_gain": 3596.11,
+   "failures": []
+  }
+ ],
+ "risk_only": [
+  {
+   "model": "low_conviction",
+   "failures": []
+  }
+ ],
+ "hurdle": 250,
+ "hysteresis": {
+  "hurdle": 250,
+  "revisits": null
+ },
+ "metrics": {
+  "median_return": 0.05258091206142723,
+  "cvar95": 0.1741138116515215,
+  "loss_probability": 0.32769230769230767
+ },
+ "orders": [
+  {
+   "symbol": "HYG",
+   "price": 76.940002,
+   "target_weight": 0.1,
+   "target_shares": 129.9714,
+   "target_whole_shares": 129,
+   "held_shares": 0,
+   "trade_shares": 129.9714,
+   "trade_whole_shares": 129
+  },
+  {
+   "symbol": "SCHD",
+   "price": 36.119999,
+   "target_weight": 0.05,
+   "target_shares": 138.4275,
+   "target_whole_shares": 138,
+   "held_shares": 0,
+   "trade_shares": 138.4275,
+   "trade_whole_shares": 138
+  },
+  {
+   "symbol": "EFA",
+   "price": 104.169998,
+   "target_weight": 0.15,
+   "target_shares": 143.9954,
+   "target_whole_shares": 143,
+   "held_shares": 0,
+   "trade_shares": 143.9954,
+   "trade_whole_shares": 143
+  },
+  {
+   "symbol": "EEM",
+   "price": 60.919998,
+   "target_weight": 0.1,
+   "target_shares": 164.1497,
+   "target_whole_shares": 164,
+   "held_shares": 0,
+   "trade_shares": 164.1497,
+   "trade_whole_shares": 164
+  },
+  {
+   "symbol": "DGRO",
+   "price": 82.050003,
+   "target_weight": 0.15,
+   "target_shares": 182.8153,
+   "target_whole_shares": 182,
+   "held_shares": 0,
+   "trade_shares": 182.8153,
+   "trade_whole_shares": 182
+  },
+  {
+   "symbol": "ACWX",
+   "price": 73.660004,
+   "target_weight": 0.15,
+   "target_shares": 203.6383,
+   "target_whole_shares": 203,
+   "held_shares": 0,
+   "trade_shares": 203.6383,
+   "trade_whole_shares": 203
+  },
+  {
+   "symbol": "LQD",
+   "price": 102.809998,
+   "target_weight": 0.25,
+   "target_shares": 243.167,
+   "target_whole_shares": 243,
+   "held_shares": 0,
+   "trade_shares": 243.167,
+   "trade_whole_shares": 243
+  }
+ ],
+ "search": {
+  "candidates": 120,
+  "paths": 250,
+  "finalPaths": 650
+ },
+ "research_only": true,
+ "predictive_validation": "not-established",
+ "market_sha256": "05da6b0333e2a8ea0ed99f8b8133d388f3107ced6d5971d63322037cce5d9dff",
+ "volatility_sha256": "1b714c2435064c11edb2068a88af6a9d07601d507542009de0a744d31068da1c"
+}
