@@ -77,3 +77,18 @@ test('a review holds unless every decision model clears the hurdle',()=>{
   assert.equal(kept.state.cash,start.cash);
   assert.equal(kept.record.risk_only[0].model,'low_conviction');
 });
+
+test('the public fund summary reports holdings, equity share and the last decision',async()=>{
+  const {publicFund}=await import('../scripts/fund_review.mjs');
+  const {fundPanel,validFund}=await import('../dist/assets/js/ui/fund-view.mjs');
+  const snap={price_as_of:'2026-11-13',assets:[{symbol:'SPY',type:'etf',name:'SPDR S&P 500',price:500},{symbol:'AGG',type:'etf',name:'iShares Core US Aggregate Bond',price:100}]};
+  const state={...emptyFundState(),as_of:'2026-11-13',inception:'2026-11-13',cash:5000,positions:[{symbol:'SPY',quantity:130},{symbol:'AGG',quantity:300}]};
+  const fund=publicFund(state,[{date:'2026-11-13',status:'rebalance',value:100000,reason:null,evidence:[],risk_only:[],orders:[]}],snap);
+  assert.equal(fund.value,100000);
+  assert.equal(fund.equity_weight,.65);
+  assert.deepEqual(fund.rebalances,['2026-11-13']);
+  assert.equal(fund.holdings[0].symbol,'SPY');
+  assert.equal(validFund(fund),true);
+  assert.equal(validFund({...fund,holdings:null}),false);
+  assert.equal(fundPanel(null,snap),'');
+});

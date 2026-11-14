@@ -14,6 +14,7 @@ const files = [
   "plot-forecast",
   "composition",
   "decision",
+  "fund",
 ];
 
 const escapeText = (value) =>

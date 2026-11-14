@@ -38,6 +38,7 @@ import { priceMonitor } from '../price-monitor.mjs?v=0.35.0';
 
 import { createDecisionViews } from "./decision-views.mjs?v=0.35.0";
 import {validationReviewPanel,reviewDecisionWarning} from './validation-review.mjs?v=0.35.0';
+import {fundPanel} from './fund-view.mjs?v=0.35.0';
 
 /**
  * Describes the process the Monte Carlo actually runs. Jumps and the GBM /
@@ -924,6 +925,7 @@ export function createViews(context) {
               : "",
         }),
       ) +
+      fundPanel(data.fund, data) +
       compositionControls() +
       financialCoverageView(data) +
       priceMonitorView(data,state.account?.enabled?state.account.positions:state.positions,

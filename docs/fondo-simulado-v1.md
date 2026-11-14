@@ -23,6 +23,10 @@ Un fondo de USD 100.000 que invierte solo en ETF cotizados en EE. UU. Cada revis
 | Revisión | Tras cada actualización diaria de mercado | Permite aprovechar oportunidades sin rotar por ruido |
 | Dividendos | Reinvertidos en el mismo ETF (precio ajustado) | Comparación coherente con referencias de retorno total |
 
+## Dónde verlo
+
+La web muestra el panel **Fondo simulado · fondo-v1** al inicio de la vista Cartera. Lee `dist/data/fund.json`, que la revisión diaria regenera y publica junto con su despliegue; la página no recalcula ni modifica el fondo.
+
 ## Cómo seguirlo en un simulador
 
 Cada revisión deja en `data/fund/reviews/<fecha>.json` el estado (`hold` o `rebalance`), las ganancias confirmadas por modelo y, si hay cambio, las órdenes con acciones fraccionarias y enteras (`target_whole_shares`, `trade_whole_shares`). Para un simulador sin fracciones, usar las acciones enteras y dejar el resto en efectivo. `data/fund/state.json` guarda las posiciones simuladas del fondo.

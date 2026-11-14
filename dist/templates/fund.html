@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <title>Plantillas del fondo simulado</title>
+  </head>
+  <body>
+    <!-- fund: published state of the simulated fund; presentation only. -->
+
+    <template id="fund-panel">
+      <section class="panel composition-report fund-panel" id="fund">
+        <div class="panel-header">
+          <h2 class="panel-title">
+            <span class="panel-index">F</span>FONDO SIMULADO · {{policy}}
+          </h2>
+          <span class="panel-meta">{{statusLabel}}</span>
+        </div>
+        {{{notice}}}
+        <p class="composition-source">{{source}}</p>
+        <div class="composition-metrics">{{{metrics}}}</div>
+        <div class="composition-brief">
+          <h3>ÚLTIMA REVISIÓN · {{reviewDate}}</h3>
+          <p>{{decision}}</p>
+          <p>{{rule}}</p>
+        </div>
+        <div class="table-wrap">
+          <table class="composition-positions">
+            <thead>
+              <tr>
+                <th>ACTIVO</th>
+                <th>PESO</th>
+                <th>ACCIONES</th>
+                <th>ACCIONES ENTERAS</th>
+                <th>PRECIO</th>
+                <th>VALOR</th>
+                <th>CLASE</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{{rows}}}
+            </tbody>
+          </table>
+        </div>
+        {{{evidence}}}
+        {{{orders}}}
+        <div class="chart-footnote">{{footnote}}</div>
+      </section>
+    </template>
+
+    <template id="fund-row">
+      <tr>
+        <td><button class="text-button symbol" data-detail="{{symbol}}">{{symbol2}}</button><div class="muted small">{{name}}</div></td>
+        <td class="mono">{{weight}}</td>
+        <td class="mono">{{shares}}</td>
+        <td class="mono">{{whole}}</td>
+        <td class="mono">{{price}}</td>
+        <td class="mono">{{value}}</td>
+        <td>{{kind}}</td>
+      </tr>
+    </template>
+
+    <template id="fund-evidence">
+      <div class="composition-contributions">
+        <h3>EVIDENCIA DE LA DECISIÓN · MEJORA FRENTE A MANTENER</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>MODELO</th><th>FUNCIÓN</th><th>MEJORA ESTIMADA</th><th>COTA INFERIOR</th><th>RESULTADO</th></tr></thead>
+            <tbody>{{{rows}}}</tbody>
+          </table>
+        </div>
+      </div>
+    </template>
+
+    <template id="fund-evidence-row">
+      <tr><td>{{model}}</td><td>{{role}}</td><td class="mono">{{gain}}</td><td class="mono">{{lower}}</td><td>{{result}}</td></tr>
+    </template>
+
+    <template id="fund-orders">
+      <div class="composition-contributions">
+        <h3>ÓRDENES DE LA ÚLTIMA REVISIÓN · {{date}}</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>ACTIVO</th><th>OPERACIÓN</th><th>ACCIONES</th><th>ACCIONES ENTERAS</th><th>PRECIO</th></tr></thead>
+            <tbody>{{{rows}}}</tbody>
+          </table>
+        </div>
+      </div>
+    </template>
+
+    <template id="fund-order-row">
+      <tr><td>{{symbol}}</td><td>{{side}}</td><td class="mono">{{shares}}</td><td class="mono">{{whole}}</td><td class="mono">{{price}}</td></tr>
+    </template>
+
+    <template id="fund-notice">
+      <div class="notice">{{message}}</div>
+    </template>
+  </body>
+</html>

@@ -17,6 +17,9 @@ jobs:
     timeout-minutes: 30
     permissions:
       contents: write
+    outputs:
+      changed: ${{ steps.commit.outputs.changed }}
+      commit_sha: ${{ steps.commit.outputs.commit_sha }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -28,10 +31,12 @@ jobs:
       - name: Review the fund on the latest cut
         run: node scripts/fund_review.mjs
       - name: Commit the review
+        id: commit
         run: |
-          git add data/fund
+          git add data/fund dist/data/fund.json
           if git diff --cached --quiet; then
             echo "No new review"
+            echo 'changed=false' >> "$GITHUB_OUTPUT"
             exit 0
           fi
           git config user.name 'github-actions[bot]'
@@ -42,9 +47,23 @@ jobs:
             git fetch origin main
             git rebase origin/main
             if git push origin HEAD:main; then
+              echo 'changed=true' >> "$GITHUB_OUTPUT"
+              echo "commit_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
               exit 0
             fi
             sleep 3
           done
           echo "Fund review push failed after 4 attempts" >&2
           exit 1
+  # Commits made with the workflow token trigger no push workflow, so the
+  # published fund page is deployed explicitly.
+  deploy:
+    needs: review
+    if: needs.review.outputs.changed == 'true'
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    uses: ./.github/workflows/pages.yml
+    with:
+      ref: ${{ needs.review.outputs.commit_sha }}

@@ -827,6 +827,14 @@ async function historyInventory() {
     const s=await r.json();return s.schema_version===1&&Array.isArray(s.datasets)?s:null;
   } catch {return null;}
 }
+// Published state of the simulated fund (fondo-v1); never recomputed here.
+async function simulatedFund() {
+  try {
+    const r=await fetch(new URL('../../data/fund.json',import.meta.url),{cache:'no-cache'});
+    if(!r.ok)return null;
+    const s=await r.json();return s.schema_version===1&&Array.isArray(s.holdings)?s:null;
+  } catch {return null;}
+}
 async function validationReview() {
   try {
     const r=await fetch(new URL('../../data/validation-review.json',import.meta.url),{cache:'no-cache'});
@@ -868,6 +876,7 @@ async function loadData() {
   checked.simulatorValidation=await simulatorValidation();
   checked.validationReview=await validationReview();
   checked.historyInventory=await historyInventory();
+  checked.fund=await simulatedFund();
   data = withCashAsset(checked);
   if (state.proposal &&
       (state.proposal.model_version !== MODEL_VERSION ||
@@ -935,6 +944,7 @@ setInterval(async () => {
     next.simulatorValidation=await simulatorValidation();
     next.validationReview=await validationReview();
     next.historyInventory=await historyInventory();
+    next.fund=await simulatedFund();
     data = withCashAsset(next);
     if (state.proposal &&
         (state.proposal.model_version !== MODEL_VERSION ||

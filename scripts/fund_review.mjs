@@ -8,11 +8,12 @@
  * abandoned portfolio needs a larger confirmed gain. Research simulation only:
  * no broker orders and no claim of predictive validity.
  */
-import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
+import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { composeMultiStart } from "../dist/assets/js/composer.mjs?v=0.35.0";
+import { economicClass } from "../dist/assets/js/economic-exposure.mjs?v=0.35.0";
 import { FUND_POLICY, emptyFundState, fundRequest, overlap, rebalanceOrders } from "../dist/assets/js/fund-policy.mjs";
 
 const sha = bytes => createHash("sha256").update(bytes).digest("hex");
@@ -111,6 +112,46 @@ export function reviewFund(snapshot, previous, { policy = FUND_POLICY, compose =
   return { state: next, record };
 }
 
+const EQUITY = new Set(["us-equity", "international-equity", "global-equity", "direct-equity"]);
+
+/** Public summary for the web page: holdings at the latest reviewed cut. */
+export function publicFund(state, reviews, snapshot, policy = FUND_POLICY) {
+  const asset = s => snapshot.assets.find(a => a.symbol === s);
+  const value = holdingsValue(state, snapshot);
+  const holdings = state.positions.map(p => {
+    const a = asset(p.symbol), amount = p.quantity * a.price;
+    return { symbol: p.symbol, name: a.name || p.symbol, class: economicClass(a),
+      shares: round(p.quantity, 4), whole_shares: Math.floor(p.quantity + 1e-9), price: a.price,
+      value: round(amount, 2), weight: round(amount / value) };
+  }).sort((a, b) => b.weight - a.weight);
+  const last = reviews.at(-1) || null;
+  return {
+    schema_version: 1, policy: policy.id, adopted_on: policy.adoptedOn, as_of: state.as_of,
+    inception: state.inception, initial_capital: policy.initialCapital, value: round(value, 2),
+    return_since_inception: round(value / policy.initialCapital - 1),
+    cash: round(state.cash, 2), cash_weight: round(state.cash / value),
+    equity_weight: round(holdings.filter(h => EQUITY.has(h.class)).reduce((s, h) => s + h.weight, 0)),
+    holdings,
+    last_review: last && { date: last.date, status: last.status, reason: last.reason,
+      evidence: last.evidence, risk_only: last.risk_only, hurdle: last.hurdle,
+      hysteresis: last.hysteresis, metrics: last.metrics, orders: last.orders },
+    rebalances: reviews.filter(r => r.status === "rebalance").map(r => r.date),
+    history: reviews.map(r => ({ date: r.date, status: r.status, value: r.value })),
+    mandate: { equity: [policy.rules.minEquity, policy.rules.maxEquity], cvar95: policy.rules.cvarBudget,
+      purchase: policy.purchaseTypes, risk_only_models: policy.riskOnlyModels,
+      min_benefit: policy.execution.minBenefit, benefit_cost_ratio: policy.execution.benefitCostRatio,
+      hysteresis: policy.hysteresis },
+    research_only: true, predictive_validation: "not-established",
+  };
+}
+
+function writePublic(snapshot) {
+  const state = JSON.parse(readFileSync("data/fund/state.json", "utf8"));
+  const reviews = existsSync("data/fund/reviews") ? readdirSync("data/fund/reviews").filter(f => f.endsWith(".json")).sort()
+    .map(f => JSON.parse(readFileSync("data/fund/reviews/" + f, "utf8"))) : [];
+  writeFileSync("dist/data/fund.json", JSON.stringify(publicFund(state, reviews, snapshot), null, 1) + "\n");
+}
+
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const marketBytes = readFileSync("dist/data/market.json"), volatilityBytes = readFileSync("dist/data/volatility.json");
   const market = JSON.parse(marketBytes), volatility = JSON.parse(volatilityBytes);
@@ -118,7 +159,8 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
     throw Error("Market snapshot and risk calibration are not the same cut");
   const snapshot = { ...market, volatility }, statePath = "data/fund/state.json";
   const previous = existsSync(statePath) ? JSON.parse(readFileSync(statePath, "utf8")) : emptyFundState();
-  if (previous.as_of && previous.as_of >= market.price_as_of) {
+  if (process.argv.includes("--publish-only") || (previous.as_of && previous.as_of >= market.price_as_of)) {
+    if (previous.as_of === market.price_as_of) writePublic(snapshot);
     console.log(JSON.stringify({ skipped: true, reason: "cut already reviewed", as_of: previous.as_of }));
     process.exit(0);
   }
@@ -128,5 +170,6 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
   mkdirSync("data/fund/reviews", { recursive: true });
   writeFileSync(`data/fund/reviews/${record.date}.json`, JSON.stringify(record, null, 1) + "\n");
   writeFileSync(statePath, JSON.stringify(state, null, 1) + "\n");
+  writePublic(snapshot);
   console.log(JSON.stringify({ date: record.date, status: record.status, reason: record.reason, target: record.target }));
 }

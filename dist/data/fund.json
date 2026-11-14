@@ -1,0 +1,236 @@
+{
+ "schema_version": 1,
+ "policy": "fondo-v1",
+ "adopted_on": "2026-11-14",
+ "as_of": "2026-11-13",
+ "inception": "2026-11-13",
+ "initial_capital": 100000,
+ "value": 100000,
+ "return_since_inception": 0,
+ "cash": 5000,
+ "cash_weight": 0.05,
+ "equity_weight": 0.6,
+ "holdings": [
+  {
+   "symbol": "LQD",
+   "name": "iShares iBoxx Investment Grade Corporate Bond",
+   "class": "credit",
+   "shares": 243.167,
+   "whole_shares": 243,
+   "price": 102.809998,
+   "value": 25000,
+   "weight": 0.25
+  },
+  {
+   "symbol": "EFA",
+   "name": "iShares MSCI EAFE",
+   "class": "international-equity",
+   "shares": 143.9954,
+   "whole_shares": 143,
+   "price": 104.169998,
+   "value": 15000,
+   "weight": 0.15
+  },
+  {
+   "symbol": "DGRO",
+   "name": "iShares Core Dividend Growth",
+   "class": "us-equity",
+   "shares": 182.8153,
+   "whole_shares": 182,
+   "price": 82.050003,
+   "value": 15000,
+   "weight": 0.15
+  },
+  {
+   "symbol": "ACWX",
+   "name": "iShares MSCI ACWI ex U.S.",
+   "class": "international-equity",
+   "shares": 203.6383,
+   "whole_shares": 203,
+   "price": 73.660004,
+   "value": 15000,
+   "weight": 0.15
+  },
+  {
+   "symbol": "EEM",
+   "name": "iShares MSCI Emerging Markets",
+   "class": "international-equity",
+   "shares": 164.1497,
+   "whole_shares": 164,
+   "price": 60.919998,
+   "value": 10000,
+   "weight": 0.1
+  },
+  {
+   "symbol": "HYG",
+   "name": "iShares iBoxx High Yield Corporate Bond",
+   "class": "credit",
+   "shares": 129.9714,
+   "whole_shares": 129,
+   "price": 76.940002,
+   "value": 10000,
+   "weight": 0.1
+  },
+  {
+   "symbol": "SCHD",
+   "name": "Schwab U.S. Dividend Equity",
+   "class": "us-equity",
+   "shares": 138.4275,
+   "whole_shares": 138,
+   "price": 36.119999,
+   "value": 5000,
+   "weight": 0.05
+  }
+ ],
+ "last_review": {
+  "date": "2026-11-13",
+  "status": "rebalance",
+  "reason": null,
+  "evidence": [
+   {
+    "model": "original",
+    "gain": 5752.51,
+    "lower_gain": 4096.02,
+    "failures": []
+   },
+   {
+    "model": "no_rerating",
+    "gain": 5730.07,
+    "lower_gain": 4076.56,
+    "failures": []
+   },
+   {
+    "model": "margin_stress",
+    "gain": 5408.09,
+    "lower_gain": 3707.11,
+    "failures": []
+   },
+   {
+    "model": "combined",
+    "gain": 5291.59,
+    "lower_gain": 3596.11,
+    "failures": []
+   }
+  ],
+  "risk_only": [
+   {
+    "model": "low_conviction",
+    "failures": []
+   }
+  ],
+  "hurdle": 250,
+  "hysteresis": {
+   "hurdle": 250,
+   "revisits": null
+  },
+  "metrics": {
+   "median_return": 0.05258091206142723,
+   "cvar95": 0.1741138116515215,
+   "loss_probability": 0.32769230769230767
+  },
+  "orders": [
+   {
+    "symbol": "HYG",
+    "price": 76.940002,
+    "target_weight": 0.1,
+    "target_shares": 129.9714,
+    "target_whole_shares": 129,
+    "held_shares": 0,
+    "trade_shares": 129.9714,
+    "trade_whole_shares": 129
+   },
+   {
+    "symbol": "SCHD",
+    "price": 36.119999,
+    "target_weight": 0.05,
+    "target_shares": 138.4275,
+    "target_whole_shares": 138,
+    "held_shares": 0,
+    "trade_shares": 138.4275,
+    "trade_whole_shares": 138
+   },
+   {
+    "symbol": "EFA",
+    "price": 104.169998,
+    "target_weight": 0.15,
+    "target_shares": 143.9954,
+    "target_whole_shares": 143,
+    "held_shares": 0,
+    "trade_shares": 143.9954,
+    "trade_whole_shares": 143
+   },
+   {
+    "symbol": "EEM",
+    "price": 60.919998,
+    "target_weight": 0.1,
+    "target_shares": 164.1497,
+    "target_whole_shares": 164,
+    "held_shares": 0,
+    "trade_shares": 164.1497,
+    "trade_whole_shares": 164
+   },
+   {
+    "symbol": "DGRO",
+    "price": 82.050003,
+    "target_weight": 0.15,
+    "target_shares": 182.8153,
+    "target_whole_shares": 182,
+    "held_shares": 0,
+    "trade_shares": 182.8153,
+    "trade_whole_shares": 182
+   },
+   {
+    "symbol": "ACWX",
+    "price": 73.660004,
+    "target_weight": 0.15,
+    "target_shares": 203.6383,
+    "target_whole_shares": 203,
+    "held_shares": 0,
+    "trade_shares": 203.6383,
+    "trade_whole_shares": 203
+   },
+   {
+    "symbol": "LQD",
+    "price": 102.809998,
+    "target_weight": 0.25,
+    "target_shares": 243.167,
+    "target_whole_shares": 243,
+    "held_shares": 0,
+    "trade_shares": 243.167,
+    "trade_whole_shares": 243
+   }
+  ]
+ },
+ "rebalances": [
+  "2026-11-13"
+ ],
+ "history": [
+  {
+   "date": "2026-11-13",
+   "status": "rebalance",
+   "value": 100000
+  }
+ ],
+ "mandate": {
+  "equity": [
+   0.6,
+   0.9
+  ],
+  "cvar95": 0.3,
+  "purchase": [
+   "etf"
+  ],
+  "risk_only_models": [
+   "low_conviction"
+  ],
+  "min_benefit": 250,
+  "benefit_cost_ratio": 3,
+  "hysteresis": {
+   "sessions": 20,
+   "overlap": 0.8,
+   "multiplier": 2
+  }
+ },
+ "research_only": true,
+ "predictive_validation": "not-established"
+}
