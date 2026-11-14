@@ -78,3 +78,29 @@ test('a review publishes a valid page summary and replays identically',()=>{
   assert.equal(again.record.status,'hold');
   assert.match(again.record.reason,/^Mantener/);
 });
+
+test('fondo-v3 uses only volatility known at the previous month end',async()=>{
+  const {FUND_V3,timedEquityShare,volatilityForCut}=await import('../dist/assets/js/strategic-fund.mjs');
+  assert.equal(FUND_V3.role,'shadow');
+  assert.equal(timedEquityShare(.3,.15),.6);
+  assert.equal(timedEquityShare(.1,.15),.9);
+  near(timedEquityShare(.15,.15),.7);
+  const days=[];
+  for(let m=0;m<70;m++)for(let d=1;d<=20;d++){
+    const y=2000+Math.floor(m/12),mm=String(m%12+1).padStart(2,'0');
+    days.push({date:`${y}-${mm}-${String(d).padStart(2,'0')}`,r:(d%2?1:-1)*.01});
+  }
+  const cut='2005-10-15',base=volatilityForCut(days,cut);
+  assert.equal(base.monthEnd,'2005-09-20');
+  // A shock inside the cut's own month cannot change its target.
+  const shocked=days.map(x=>x.date.startsWith('2005-10')?{...x,r:.2}:x);
+  assert.deepEqual(volatilityForCut(shocked,cut),base);
+  assert.equal(volatilityForCut(days.slice(0,600),'2002-06-15'),null);
+});
+
+test('fondo-v3 falls back to the static mix without enough history',async()=>{
+  const {v3Mix}=await import('../scripts/fund_review.mjs');
+  const r=v3Mix([{date:'2026-01-02',r:.01}],'2026-11-13');
+  assert.equal(r.volatility,null);
+  near(r.mix.equity,.7);
+});

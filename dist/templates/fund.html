@@ -43,6 +43,7 @@
           </table>
         </div>
         {{{orders}}}
+        {{{shadow}}}
         {{{mixer}}}
         <div class="chart-footnote">{{footnote}}</div>
       </section>
@@ -115,6 +116,23 @@
 
     <template id="fund-mix-row">
       <tr><td>{{symbol}}</td><td class="mono">{{weight}}</td><td class="mono">{{whole}}</td><td class="mono">{{amount}}</td><td class="mono">{{price}}</td></tr>
+    </template>
+
+    <template id="fund-shadow">
+      <div class="composition-contributions fund-shadow">
+        <h3>SOMBRA · {{policy}} · NO OPERAR</h3>
+        <p class="muted small">{{summary}}</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>ACTIVO</th><th>PESO</th><th>OBJETIVO</th><th>ACCIONES ENTERAS</th><th>VALOR</th></tr></thead>
+            <tbody>{{{rows}}}</tbody>
+          </table>
+        </div>
+      </div>
+    </template>
+
+    <template id="fund-shadow-row">
+      <tr><td>{{symbol}}</td><td class="mono">{{weight}}</td><td class="mono">{{target}}</td><td class="mono">{{whole}}</td><td class="mono">{{value}}</td></tr>
     </template>
 
     <template id="fund-notice">

@@ -1,0 +1,75 @@
+{
+ "schema": "simulated-fund-review-v2",
+ "date": "2026-11-13",
+ "policy": "fondo-v3",
+ "target": [
+  {
+   "symbol": "VTI",
+   "weight": 0.4926434470621168
+  },
+  {
+   "symbol": "VXUS",
+   "weight": 0.3284289647080779
+  },
+  {
+   "symbol": "AGG",
+   "weight": 0.12892758822980527
+  },
+  {
+   "symbol": "CASH",
+   "weight": 0.05
+  }
+ ],
+ "status": "rebalance",
+ "reason": "Compra inicial a los pesos objetivo.",
+ "drift": 0.95,
+ "value": 100000,
+ "orders": [
+  {
+   "symbol": "VTI",
+   "price": 371.109985,
+   "target_weight": 0.4926434470621168,
+   "target_shares": 132.7486,
+   "target_whole_shares": 132,
+   "held_shares": 0,
+   "trade_shares": 132.7486,
+   "trade_whole_shares": 132
+  },
+  {
+   "symbol": "AGG",
+   "price": 95.089996,
+   "target_weight": 0.12892758822980527,
+   "target_shares": 135.5848,
+   "target_whole_shares": 135,
+   "held_shares": 0,
+   "trade_shares": 135.5848,
+   "trade_whole_shares": 135
+  },
+  {
+   "symbol": "VXUS",
+   "price": 82.639999,
+   "target_weight": 0.3284289647080779,
+   "target_shares": 397.4213,
+   "target_whole_shares": 397,
+   "held_shares": 0,
+   "trade_shares": 397.4213,
+   "trade_whole_shares": 397
+  }
+ ],
+ "current": [
+  {
+   "symbol": "CASH",
+   "weight": 1
+  }
+ ],
+ "engine_tilts": "disabled",
+ "research_only": true,
+ "equity_target": 0.821072,
+ "volatility": {
+  "month_end": "2026-10-30",
+  "sigma": 0.119094,
+  "sigma_bar": 0.139693,
+  "month_ends": 760
+ },
+ "market_sha256": "05da6b0333e2a8ea0ed99f8b8133d388f3107ced6d5971d63322037cce5d9dff"
+}

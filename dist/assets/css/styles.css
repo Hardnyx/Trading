@@ -3222,6 +3222,7 @@ td:last-child {
 }
 /* Local what-if mix of the simulated fund. */
 .fund-mixer > p,
+.fund-shadow > p,
 .fund-mixer #fund-mix-result > p {
   margin: 0;
   padding: 0 var(--pad) var(--pad);

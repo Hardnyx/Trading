@@ -17,6 +17,41 @@ export const FUND_V2 = Object.freeze({
   worstHistoricalDrawdown: -0.671,
 });
 
+/** fondo-v3 (docs/fondo-v3-registro.json): fondo-v2 with the supported risk timing. */
+export const FUND_V3 = Object.freeze({
+  ...FUND_V2,
+  id: "fondo-v3",
+  role: "shadow",
+  timing: Object.freeze({ base: 0.7, min: 0.6, max: 0.9, lambda: 0.94 }),
+});
+
+/** Equity share from month-end volatility against its own earlier average. */
+export function timedEquityShare(sigma, sigmaBar, timing = FUND_V3.timing) {
+  if (!(sigma > 0) || !(sigmaBar > 0)) return timing.base;
+  return Math.min(timing.max, Math.max(timing.min, timing.base * sigmaBar / sigma));
+}
+
+/**
+ * Month-end EWMA volatilities from daily returns [{date, r}] in date order.
+ * Returns the share for a cut: sigma at the last session of the previous
+ * month and the mean of all earlier month-end sigmas.
+ */
+export function volatilityForCut(returns, cut, lambda = FUND_V3.timing.lambda) {
+  const month = cut.slice(0, 7), ends = [];
+  let variance = null;
+  for (let i = 0; i < returns.length && returns[i].date.slice(0, 7) < month; i++) {
+    const r = returns[i].r;
+    variance = variance === null ? r * r : lambda * variance + (1 - lambda) * r * r;
+    const next = returns[i + 1];
+    if (!next || next.date.slice(0, 7) !== returns[i].date.slice(0, 7))
+      ends.push({ date: returns[i].date, sigma: Math.sqrt(252 * variance) });
+  }
+  if (ends.length < 61) return null;
+  const last = ends.at(-1), earlier = ends.slice(0, -1);
+  return { monthEnd: last.date, sigma: last.sigma,
+    sigmaBar: earlier.reduce((s, e) => s + e.sigma, 0) / earlier.length, monthEnds: ends.length };
+}
+
 /** Target weights from a mix; bonds take what equity and cash leave. */
 export function mixWeights(mix, policy = FUND_V2) {
   const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, Number.isFinite(v) ? v : lo));
@@ -74,8 +109,8 @@ export function ordersFor(prices, holdings, cash, target) {
 }
 
 /** One review: hold unless a sleeve drifts beyond the threshold or data fail. */
-export function reviewStrategic({ asOf, generatedOn, prices }, state, policy = FUND_V2) {
-  const target = mixWeights(policy.mix, policy);
+export function reviewStrategic({ asOf, generatedOn, prices, mix = null }, state, policy = FUND_V2) {
+  const target = mixWeights(mix || policy.mix, policy);
   const symbols = [...new Set([...state.positions.map(p => p.symbol), ...target.map(t => t.symbol).filter(s => s !== "CASH")])];
   const missing = symbols.filter(s => !(prices[s] > 0));
   const base = { date: asOf, policy: policy.id, target };

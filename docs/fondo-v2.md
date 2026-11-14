@@ -55,3 +55,7 @@ Desde 1946 (descriptivo), la peor caída del fondo fue **−33,6 % (oct-2007 a m
 **Regla de excepción calibrada por T3:** una caída mayor que −67,1 % desde el máximo activa un aviso de revisión, sin ventas discrecionales.
 
 **Límites.** T3 usa solo acciones de EE. UU.; el fondo tiene 40 % de sus acciones fuera de EE. UU., cuya historia larga no está en el archivo. Son retornos nominales, sin impuestos. Un historial pasado describe riesgos posibles; no garantiza retornos.
+
+## Sombra `fondo-v3`
+
+Desde el 14-nov-2026 la web muestra bajo el fondo una sombra registrada en [fondo-v3-registro.json](fondo-v3-registro.json): el mismo fondo con la proporción de acciones ajustada por volatilidad según la [prueba respaldada](registro-momento-riesgo.md). Se revisa a diario con los mismos precios y costos, pero nadie opera con ella. Solo puede reemplazar a `fondo-v2` con un registro nuevo tras al menos 12 objetivos mensuales, comparando su Sharpe y su caída en vivo. Estado y revisiones: `data/fund/fondo-v3/`.

@@ -54,6 +54,16 @@ export function fundPanel(fund, market, saved = null) {
   const orders = review?.orders?.length ? template('fund-orders', { date: dateLabel(review.date), rows: review.orders.map(o =>
     template('fund-order-row', { symbol: o.symbol, side: o.trade_shares >= 0 ? 'Comprar' : 'Vender',
       shares: fmt(Math.abs(o.trade_shares), 2), whole: fmt(Math.abs(o.trade_whole_shares), 0), price: money(o.price, 2) })).join('') }) : '';
+  const sh = fund.shadow;
+  const shadow = sh && Array.isArray(sh.holdings) ? template('fund-shadow', { policy: sh.policy,
+    summary: `Mismo fondo con acciones ajustadas por volatilidad (prueba respaldada 1964–2018). Objetivo en acciones ${pct(sh.equity_target, 0)}` +
+      (sh.volatility ? ` · volatilidad al ${dateLabel(sh.volatility.month_end)} ${pct(sh.volatility.sigma, 1)} frente a su media ${pct(sh.volatility.sigma_bar, 1)}` : '') +
+      ` · valor ${money(sh.value, 0)} (${pct(sh.return_since_inception, 2, true)}) frente a ${money(fund.value, 0)} del fondo. ` +
+      'Solo podrá reemplazar al fondo con un registro nuevo tras al menos 12 objetivos mensuales.',
+    rows: sh.holdings.map(h => template('fund-shadow-row', { symbol: h.symbol, weight: pct(h.weight, 1), target: pct(h.target_weight, 1),
+      whole: fmt(h.whole_shares, 0), value: money(h.value, 0) })).join('') +
+      template('fund-shadow-row', { symbol: 'Efectivo', weight: pct(sh.cash_weight, 1), target: pct(sh.target.find(t => t.symbol === 'CASH')?.weight || 0, 1),
+        whole: '—', value: money(sh.cash, 0) }) }) : '';
   const mix = personalMix(fund, saved);
   const mixer = template('fund-mixer', { equity: pct(mix.equity, 0), equityValue: Math.round(mix.equity * 100),
     us: pct(mix.usShare, 0), usValue: Math.round(mix.usShare * 100), cash: pct(mix.cash, 0), cashValue: Math.round(mix.cash * 100),
@@ -65,7 +75,7 @@ export function fundPanel(fund, market, saved = null) {
     metrics, reviewDate: review ? dateLabel(review.date) : '—', decision: review?.reason || 'Sin revisiones todavía.',
     rule: `Solo opera si algún componente se aparta más de ${fmt(fund.threshold * 100, 0)} pp de su objetivo; entonces vuelve a los pesos registrados. ${fund.rebalances.length} operación(es) desde el inicio.`,
     evidence: 'Mueven dinero solo el mandato, la diversificación de mercado y el rebalanceo. Las apuestas del motor (valoración, duración, momento de riesgo, acciones individuales) están apagadas hasta que una prueba registrada las respalde.',
-    rows, orders, mixer,
+    rows, orders, shadow, mixer,
     footnote: (fund.archived?.length ? `Archivado: ${fund.archived.map(a => `${a.policy} (${a.reason})`).join(' ')} ` : '') +
       'Simulación de investigación; un rendimiento pasado o esperado no garantiza resultados.',
   });

@@ -70,6 +70,8 @@
   "usShare": 0.6,
   "cash": 0.05
  },
+ "equity_target": 0.7,
+ "volatility": null,
  "instruments": {
   "us": "VTI",
   "international": "VXUS",
@@ -165,5 +167,149 @@
    "reviews": 1
   }
  ],
- "research_only": true
+ "research_only": true,
+ "shadow": {
+  "schema_version": 2,
+  "policy": "fondo-v3",
+  "adopted_on": "2026-11-14",
+  "as_of": "2026-11-13",
+  "inception": "2026-11-13",
+  "initial_capital": 100000,
+  "value": 100000,
+  "return_since_inception": 0,
+  "drawdown": 0,
+  "review_flag": null,
+  "cash": 5000,
+  "cash_weight": 0.05,
+  "equity_weight": 0.821072,
+  "holdings": [
+   {
+    "symbol": "VTI",
+    "name": "Vanguard Total Stock Market",
+    "class": "us-equity",
+    "shares": 132.7486,
+    "whole_shares": 132,
+    "price": 371.109985,
+    "value": 49264.34,
+    "weight": 0.492643,
+    "target_weight": 0.492643
+   },
+   {
+    "symbol": "VXUS",
+    "name": "Vanguard Total International Stock",
+    "class": "international-equity",
+    "shares": 397.4213,
+    "whole_shares": 397,
+    "price": 82.639999,
+    "value": 32842.9,
+    "weight": 0.328429,
+    "target_weight": 0.328429
+   },
+   {
+    "symbol": "AGG",
+    "name": "iShares Core U.S. Aggregate Bond",
+    "class": "mixed-bond",
+    "shares": 135.5848,
+    "whole_shares": 135,
+    "price": 95.089996,
+    "value": 12892.76,
+    "weight": 0.128928,
+    "target_weight": 0.128928
+   }
+  ],
+  "target": [
+   {
+    "symbol": "VTI",
+    "weight": 0.492643
+   },
+   {
+    "symbol": "VXUS",
+    "weight": 0.328429
+   },
+   {
+    "symbol": "AGG",
+    "weight": 0.128928
+   },
+   {
+    "symbol": "CASH",
+    "weight": 0.05
+   }
+  ],
+  "mix": {
+   "equity": 0.7,
+   "usShare": 0.6,
+   "cash": 0.05
+  },
+  "equity_target": 0.821072,
+  "volatility": {
+   "month_end": "2026-10-30",
+   "sigma": 0.119094,
+   "sigma_bar": 0.139693,
+   "month_ends": 760
+  },
+  "instruments": {
+   "us": "VTI",
+   "international": "VXUS",
+   "bonds": "AGG"
+  },
+  "threshold": 0.05,
+  "last_review": {
+   "date": "2026-11-13",
+   "status": "rebalance",
+   "reason": "Compra inicial a los pesos objetivo.",
+   "drift": 0.95,
+   "orders": [
+    {
+     "symbol": "VTI",
+     "price": 371.109985,
+     "target_weight": 0.4926434470621168,
+     "target_shares": 132.7486,
+     "target_whole_shares": 132,
+     "held_shares": 0,
+     "trade_shares": 132.7486,
+     "trade_whole_shares": 132
+    },
+    {
+     "symbol": "AGG",
+     "price": 95.089996,
+     "target_weight": 0.12892758822980527,
+     "target_shares": 135.5848,
+     "target_whole_shares": 135,
+     "held_shares": 0,
+     "trade_shares": 135.5848,
+     "trade_whole_shares": 135
+    },
+    {
+     "symbol": "VXUS",
+     "price": 82.639999,
+     "target_weight": 0.3284289647080779,
+     "target_shares": 397.4213,
+     "target_whole_shares": 397,
+     "held_shares": 0,
+     "trade_shares": 397.4213,
+     "trade_whole_shares": 397
+    }
+   ]
+  },
+  "benchmarks": {
+   "method": "total-return-adjusted-closes",
+   "balanced_60_40": 0,
+   "spy": 0,
+   "tbills": 0
+  },
+  "rebalances": [
+   "2026-11-13"
+  ],
+  "history": [
+   {
+    "date": "2026-11-13",
+    "status": "rebalance",
+    "value": 100000
+   }
+  ],
+  "research_only": true,
+  "role": "shadow",
+  "registration": "docs/fondo-v3-registro.json",
+  "promotion_rule": "only by a new registration after at least 12 monthly targets"
+ }
 }
