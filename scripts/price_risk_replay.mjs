@@ -41,11 +41,12 @@ export function replayInputs(assets,cut,protocol=REPLAY_PROTOCOL){
   return x;
 }
 
-export function runPriceRiskReplay(market,{protocol=REPLAY_PROTOCOL,paths=protocol.paths,lastOrigins=null,onProgress=()=>{}}={}){
+export function runPriceRiskReplay(market,{protocol=REPLAY_PROTOCOL,paths=protocol.paths,lastOrigins=null,cutWindow=null,onProgress=()=>{}}={}){
   const spy=market.assets.find(a=>a.symbol==='SPY'),dates=spy.history.filter(r=>r.date<=market.price_as_of).map(r=>r.date),
     months=new Map();dates.forEach((day,i)=>months.set(day.slice(0,7),i));
   let indices=[...months.values()].filter(i=>i>=protocol.minimumTraining&&i+protocol.lead+1<dates.length);
   if(lastOrigins)indices=indices.slice(-lastOrigins);
+  if(cutWindow)indices=indices.filter(i=>dates[i]>=cutWindow.first&&dates[i]<=cutWindow.last);
   const prices=new Map(market.assets.map(a=>[a.symbol,new Map(a.history.map(r=>[r.date,r.adj_close]))])),
     targets=[...protocol.symbols.map(symbol=>({name:symbol,weights:{[symbol]:1},scope:'instrument'})),
       ...Object.entries(protocol.baskets).map(([name,weights])=>({name:'PORTFOLIO:'+name,weights,
