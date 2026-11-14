@@ -1,0 +1,84 @@
+{
+ "schema": "fund-laboratory-result-v1",
+ "L1": {
+  "5_years": {
+   "engine_trailing_earnings": {
+    "origins": 114,
+    "r2_os": -0.0306,
+    "nonoverlapping_subsample_r2": [
+     -0.0111,
+     0.2819,
+     -0.2561,
+     -0.1613,
+     0.059
+    ],
+    "share_positive": 0.4,
+    "verdict": "not-supported",
+    "mean_error": 0.0107
+   },
+   "descriptive_cape": {
+    "origins": 114,
+    "r2_os": 0.0509,
+    "nonoverlapping_subsample_r2": [
+     -0.0154,
+     0.2208,
+     0.026,
+     0.0221,
+     0.0625
+    ],
+    "share_positive": 0.8,
+    "verdict": "descriptive",
+    "mean_error": 0.0121
+   }
+  },
+  "10_years": {
+   "engine_trailing_earnings": {
+    "origins": 109,
+    "r2_os": 0.3717,
+    "nonoverlapping_subsample_r2": [
+     0.2619,
+     0.6345,
+     0.5198,
+     -0.1349,
+     0.2183,
+     0.1377,
+     0.1744,
+     0.1648,
+     0.5062,
+     0.5618
+    ],
+    "share_positive": 0.9,
+    "verdict": "supported",
+    "mean_error": 0.007
+   },
+   "descriptive_cape": {
+    "origins": 109,
+    "r2_os": 0.3956,
+    "nonoverlapping_subsample_r2": [
+     0.1738,
+     0.5451,
+     0.707,
+     0.0766,
+     0.134,
+     0.2108,
+     0.2249,
+     0.4376,
+     0.5899,
+     0.4867
+    ],
+    "share_positive": 1.0,
+    "verdict": "descriptive",
+    "mean_error": 0.0085
+   }
+  }
+ },
+ "L2": {
+  "origins": 82,
+  "r2_os": 0.1462,
+  "clark_west_t": 3.436,
+  "p_one_sided": 0.0005,
+  "mean_error_spread": 0.0013,
+  "mean_error_benchmark": 0.0011,
+  "verdict": "supported"
+ }
+}
