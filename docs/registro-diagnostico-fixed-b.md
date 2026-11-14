@@ -34,3 +34,24 @@ La rejilla no cubre cambios estructurales, volatilidad condicional, dependencia 
 - Kiefer, N. M., Vogelsang, T. J. y Bunzel, H. (2000), *Simple Robust Testing of Regression Hypotheses*, Econometrica 68(3), 695–714: https://doi.org/10.1111/1468-0262.00128
 - Kiefer, N. M. y Vogelsang, T. J. (2005), *A New Asymptotic Theory for Heteroskedasticity-Autocorrelation Robust Tests*, Econometric Theory 21(6), 1130–1164: https://doi.org/10.1017/S0266466605050565
 - Sun, Y., Phillips, P. C. B. y Jin, S. (2008), *Optimal Bandwidth Selection in Heteroskedasticity-Autocorrelation Robust Testing*, Econometrica 76(1), 175–194: https://doi.org/10.1111/j.0012-9682.2008.00822.x
+
+## Resultado observado y corte de evidencia: 14-nov-2026 UTC
+
+**Estado de la verificación:** resultados de la ejecución local reproducible con el presupuesto registrado; la CI rápida [43614210400](https://github.com/Hardnyx/Trading/actions/runs/43614210400) y la auditoría completa [43614216242](https://github.com/Hardnyx/Trading/actions/runs/43614216242) estaban en curso al publicar este texto.
+
+Implementación publicada después del registro: [`18df876`](https://github.com/Hardnyx/Trading/commit/18df876a). El diseño congelado (`7233aab`, SHA-1 del objeto `44a46e21…`) se ejecutó con el presupuesto completo: **100.000 series de referencia por `b`, 64 escenarios × 2 brazos × 512 réplicas**, semilla de evaluación `20261114` y de referencia `20261115`. No se leyeron retornos de Trading.
+
+**Control de la implementación.** La referencia simulada para `b = 1` da cuantiles 95 % y 97,5 % de **3,743 y 4,762**, frente a **3,764 y 4,771** publicados por Kiefer, Vogelsang y Bunzel (2000); la diferencia es compatible con el error Monte Carlo. Con rezago 12 el estadístico reproduce exactamente el del estudio HAC (prueba de regresión).
+
+| Brazo | Escenarios con exceso (cota inferior > 5 %) | Tasa de error familiar | Detección descriptiva de efectos desplazados |
+|---|---:|---|---|
+| HAC con cola normal, registro anterior | 43/64 | 4,88 %–41,21 % | — |
+| A · fixed-b, rezago 12 | **19/64** | 2,34 %–22,85 % | 45,5 %–100 % (mediana 98,4 %) |
+| B · KVB, `b = 1` | **5/64** | 2,73 %–13,28 % | 29,1 %–100 % (mediana 91,0 %) |
+
+**Conclusión registrada: evidencia de exceso de error familiar en ambos brazos.** Ninguno cumple el criterio y ninguno queda aprobado.
+
+- **A** falla con persistencia 0,85 en los dos tamaños (7/8 y 8/8 escenarios) y ocasionalmente con 0,3–0,6. Corregir la cola sin ampliar el ancho de banda no basta.
+- **B** concentra sus cinco excesos en **96 meses con AR(1) ≥ 0,6 y sin correlación entre hipótesis**; el peor es 96 meses, AR(1) 0,85, gaussiano, nulo global: 68/512 = 13,28 % (intervalo simultáneo 8,52 %–19,32 %). **A 192 meses, sus 32 escenarios no muestran exceso.** Es una observación de esta rejilla, no una selección: usar KVB o fijar 192 meses exigiría otro registro y una cohorte de simulaciones no examinada.
+
+**Implicación para H0.3.** La persistencia alta no es un caso extremo del diseño v2. Los horizontes de 63 y 252 sesiones evaluados mensualmente se solapan durante varios meses, así que sus series de efectos tienen autocorrelación cercana a la de los escenarios que fallan. Con 96 meses, ningún candidato examinado (bootstrap registrado, HAC normal, fixed-b con rezago 12 o KVB) controla el error familiar en toda la rejilla. Las alternativas siguen siendo decisiones de diseño, no de inferencia: más meses (192 meses prospectivos llegarían a fines de 2042), menos solapamiento (orígenes no solapados reducen drásticamente la muestra a 252 días) o una familia de pruebas distinta. Cualquiera requiere justificación económica y un registro previo nuevo. v2 sigue inactivo y sin cambios.
