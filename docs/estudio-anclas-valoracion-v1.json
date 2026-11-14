@@ -1,0 +1,34 @@
+{
+ "schema": "valuation-anchor-out-of-sample-registration-v1",
+ "registered_on_utc": "2026-11-14",
+ "role": "retrospective-out-of-sample-test-of-the-deployed-index-and-bond-return-anchors",
+ "question": "Would the engine's index earnings-yield anchor and its bond carry anchor, computed only with information available at each date, have forecast the next 12-month total return better than the expanding historical mean?",
+ "data": {"source": "data/history/valuation/shiller-monthly.csv.gz (Shiller: monthly average S&P composite price, 12-month dividends and earnings, CPI, 10-year Treasury rate GS10)", "original_vintages": false, "inspection_before_registration": "file layout and first/last dates only; no returns or anchors computed"},
+ "equity_anchor": {
+  "engine_formula": "prior + confidence * (earnings_yield + inflation - prior), dist/assets/js/return-model.mjs valuationAnchor",
+  "prior": 0.06, "confidence": 0.6, "expense_ratio": 0,
+  "earnings_yield": "E(t-3 months) / P(t): earnings assumed public with a 3-month lag",
+  "inflation": "CPI(t-1)/CPI(t-13) - 1: trailing 12 months, one-month publication lag; replaces the 10-year breakeven, unavailable before 2003",
+  "realized": "prod over k=0..11 of (P(t+k+1) + D(t+k)/12) / P(t+k) - 1"
+ },
+ "bond_anchor": {
+  "engine_formula": "carry = yield to maturity at the cut (base regime, no fee)",
+  "forecast": "GS10(t)/100",
+  "realized": "buy a 10-year par bond with coupon GS10(t) at t; after 12 months value the remaining 9-year bond at GS10(t+12) with annual coupons; return = price + coupon - 1"
+ },
+ "benchmark": "expanding mean of all realized 12-month returns that matured by the origin, from 1871",
+ "secondary_benchmark": "constant 6% prior",
+ "primary_sample": {"origins": "every January", "first_origin_year": 1900, "last_origin_year": 2018, "count": 119, "overlap": "none"},
+ "metric": "R2_OS = 1 - sum((R - anchor)^2) / sum((R - benchmark)^2)",
+ "test": "one-sided Clark-West adjusted MSE difference on the 119 nonoverlapping origins, t statistic with ordinary standard error",
+ "verdict_rule": {
+  "supported": "R2_OS > 0 and Clark-West p < 0.05",
+  "not_supported": "R2_OS <= 0",
+  "inconclusive": "R2_OS > 0 and p >= 0.05",
+  "applied_separately_to": ["equity_anchor", "bond_anchor"]
+ },
+ "descriptive_only": ["the 12 calendar-month origin offsets", "subperiods 1900-1959, 1960-1989, 1990-2018", "constant 6% benchmark", "mean forecast error"],
+ "not_tested": ["international equity ETFs: no free history of their P/E", "constituent-based anchors of US equity ETFs and stocks: no point-in-time fundamentals", "credit spreads and expected losses", "regime scenarios and simulation"],
+ "limits": "The earnings-yield idea comes from a literature that studied this same Shiller series, so the test is not independent of that literature. Monthly average prices, not month-end closes. No result changes the engine or the fund.",
+ "post_hoc_changes_permitted": false
+}
