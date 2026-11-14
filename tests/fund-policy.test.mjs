@@ -92,3 +92,18 @@ test('the public fund summary reports holdings, equity share and the last decisi
   assert.equal(validFund({...fund,holdings:null}),false);
   assert.equal(fundPanel(null,snap),'');
 });
+
+test('passive comparators compound total returns and rebalance 60/40 monthly',async()=>{
+  const {benchmarkReturns}=await import('../scripts/fund_review.mjs');
+  const rows=(values)=>values.map(([date,adj_close])=>({date,close:adj_close,adj_close}));
+  const snap={assets:[
+    {symbol:'SPY',history:rows([['2026-10-30',100],['2026-11-02',110],['2026-11-03',121]])},
+    {symbol:'AGG',history:rows([['2026-10-30',100],['2026-11-02',100],['2026-11-03',100]])},
+    {symbol:'BIL',history:rows([['2026-10-30',100],['2026-11-03',100.1]])}]};
+  const r=benchmarkReturns(snap,'2026-10-30','2026-11-03');
+  // 60/40 is reset at the October/November boundary, then SPY drifts up.
+  assert.ok(Math.abs(r.spy-.21)<1e-9);
+  assert.ok(Math.abs(r.tbills-.001)<1e-9);
+  assert.ok(r.balanced_60_40>.12&&r.balanced_60_40<.13);
+  assert.equal(benchmarkReturns(snap,'2026-10-29','2026-11-03'),null);
+});

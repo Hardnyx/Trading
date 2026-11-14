@@ -114,6 +114,30 @@ export function reviewFund(snapshot, previous, { policy = FUND_POLICY, compose =
 
 const EQUITY = new Set(["us-equity", "international-equity", "global-equity", "direct-equity"]);
 
+/**
+ * Passive comparators from the fund's inception, total return (adjusted
+ * closes): 60/40 SPY/AGG rebalanced at each month end, SPY and Treasury bills.
+ */
+export function benchmarkReturns(snapshot, inception, asOf) {
+  const series = symbol => {
+    const rows = snapshot.assets.find(a => a.symbol === symbol)?.history || [];
+    return new Map(rows.filter(r => r.date >= inception && r.date <= asOf && r.adj_close > 0).map(r => [r.date, r.adj_close]));
+  };
+  const spy = series("SPY"), agg = series("AGG"), bil = series("BIL");
+  const dates = [...spy.keys()].filter(d => agg.has(d)).sort();
+  if (!dates.length || dates[0] !== inception || dates.at(-1) !== asOf) return null;
+  let equity = 0.6, bonds = 0.4;
+  for (let i = 1; i < dates.length; i++) {
+    equity *= spy.get(dates[i]) / spy.get(dates[i - 1]);
+    bonds *= agg.get(dates[i]) / agg.get(dates[i - 1]);
+    if (i < dates.length - 1 && dates[i].slice(0, 7) !== dates[i + 1].slice(0, 7)) {
+      const total = equity + bonds; equity = 0.6 * total; bonds = 0.4 * total;
+    }
+  }
+  const total = (map) => map.has(inception) && map.has(asOf) ? round(map.get(asOf) / map.get(inception) - 1) : null;
+  return { method: "total-return-adjusted-closes", balanced_60_40: round(equity + bonds - 1), spy: total(spy), tbills: total(bil) };
+}
+
 /** Public summary for the web page: holdings at the latest reviewed cut. */
 export function publicFund(state, reviews, snapshot, policy = FUND_POLICY) {
   const asset = s => snapshot.assets.find(a => a.symbol === s);
@@ -135,6 +159,7 @@ export function publicFund(state, reviews, snapshot, policy = FUND_POLICY) {
     last_review: last && { date: last.date, status: last.status, reason: last.reason,
       evidence: last.evidence, risk_only: last.risk_only, hurdle: last.hurdle,
       hysteresis: last.hysteresis, metrics: last.metrics, orders: last.orders },
+    benchmarks: state.inception ? benchmarkReturns(snapshot, state.inception, state.as_of) : null,
     rebalances: reviews.filter(r => r.status === "rebalance").map(r => r.date),
     history: reviews.map(r => ({ date: r.date, status: r.status, value: r.value })),
     mandate: { equity: [policy.rules.minEquity, policy.rules.maxEquity], cvar95: policy.rules.cvarBudget,

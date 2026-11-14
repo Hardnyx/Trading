@@ -19,9 +19,12 @@ export function fundPanel(fund, market) {
   const metric = (label, value, sub, className = '') => template('metric', { label, forecastsIcon: '',
     className, value, value5: '', sub });
   const metrics = [
-    metric('VALOR DEL FONDO', money(fund.value, 0), `Inicio ${dateLabel(fund.inception)} · ${money(fund.initial_capital, 0)}`),
-    metric('RETORNO DESDE EL INICIO', pct(fund.return_since_inception, 2, true), 'Dividendos reinvertidos · sin validar',
-      fund.return_since_inception >= 0 ? 'positive' : 'negative'),
+    metric('VALOR DEL FONDO', money(fund.value, 0),
+      `${pct(fund.return_since_inception, 2, true)} desde ${dateLabel(fund.inception)} · dividendos reinvertidos`,
+      fund.return_since_inception > 0 ? 'positive' : fund.return_since_inception < 0 ? 'negative' : ''),
+    metric('FRENTE A 60/40', fund.benchmarks ? pct(fund.return_since_inception - fund.benchmarks.balanced_60_40, 2, true) : '—',
+      fund.benchmarks ? `60/40 ${pct(fund.benchmarks.balanced_60_40, 2, true)} · SPY ${pct(fund.benchmarks.spy, 2, true)} · Letras ${pct(fund.benchmarks.tbills, 2, true)}` : 'Referencias desde el inicio',
+      fund.benchmarks && fund.return_since_inception < fund.benchmarks.balanced_60_40 ? 'negative' : ''),
     metric('RENTA VARIABLE', pct(fund.equity_weight, 0), `Mandato ${pct(fund.mandate.equity[0], 0)}–${pct(fund.mandate.equity[1], 0)}`),
     metric('RETORNO MEDIANO · 1 AÑO', review?.metrics ? pct(review.metrics.median_return, 1) : '—',
       review?.metrics ? `CVaR 95% ${pct(review.metrics.cvar95, 1)} · P(pérdida) ${pct(review.metrics.loss_probability, 0)}` : 'Modelo, no pronóstico validado'),

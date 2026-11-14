@@ -201,6 +201,12 @@
    }
   ]
  },
+ "benchmarks": {
+  "method": "total-return-adjusted-closes",
+  "balanced_60_40": 0,
+  "spy": 0,
+  "tbills": 0
+ },
  "rebalances": [
   "2026-11-13"
  ],
