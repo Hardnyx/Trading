@@ -80,5 +80,75 @@
   "mean_error_spread": 0.0013,
   "mean_error_benchmark": 0.0011,
   "verdict": "supported"
+ },
+ "L3": {
+  "1990-2018": {
+   "period": "1990-08 to 2018-12",
+   "fondo-v2": {
+    "annualized_return": 0.0768,
+    "annualized_volatility": 0.1008,
+    "worst_calendar_year": [
+     "2008",
+     -0.2555
+    ],
+    "rebalances": 18,
+    "max_drawdown": -0.3746,
+    "peak": "2007-10",
+    "trough": "2009-02",
+    "months_to_recover_from_peak": 39,
+    "drawdown_2000_2002": -0.275,
+    "drawdown_2007_2009": -0.3746
+   },
+   "US-only": {
+    "annualized_return": 0.0855,
+    "annualized_volatility": 0.1018,
+    "worst_calendar_year": [
+     "2008",
+     -0.2303
+    ],
+    "rebalances": 13,
+    "max_drawdown": -0.3518,
+    "peak": "2007-10",
+    "trough": "2009-02",
+    "months_to_recover_from_peak": 38,
+    "drawdown_2000_2002": -0.2831,
+    "drawdown_2007_2009": -0.3518
+   },
+   "flag_intl_drawdown_worse_by_5pp": false
+  },
+  "extension": {
+   "period": "1990-08 to 2026-09",
+   "fondo-v2": {
+    "annualized_return": 0.0831,
+    "annualized_volatility": 0.1045,
+    "worst_calendar_year": [
+     "2008",
+     -0.2555
+    ],
+    "rebalances": 23,
+    "max_drawdown": -0.3746,
+    "peak": "2007-10",
+    "trough": "2009-02",
+    "months_to_recover_from_peak": 39,
+    "drawdown_2000_2002": -0.275,
+    "drawdown_2007_2009": -0.3746
+   },
+   "US-only": {
+    "annualized_return": 0.0933,
+    "annualized_volatility": 0.1072,
+    "worst_calendar_year": [
+     "2008",
+     -0.2303
+    ],
+    "rebalances": 18,
+    "max_drawdown": -0.3518,
+    "peak": "2007-10",
+    "trough": "2009-02",
+    "months_to_recover_from_peak": 38,
+    "drawdown_2000_2002": -0.2831,
+    "drawdown_2007_2009": -0.3518
+   },
+   "flag_intl_drawdown_worse_by_5pp": false
+  }
  }
 }
