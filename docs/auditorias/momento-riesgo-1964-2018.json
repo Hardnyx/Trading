@@ -1,0 +1,44 @@
+{
+ "schema": "risk-timing-gate-result-v1",
+ "months": 660,
+ "sharpe": {
+  "static": 0.4302,
+  "timed": 0.4735
+ },
+ "sharpe_difference": 0.0433,
+ "bootstrap_p_one_sided": 0.0217,
+ "max_drawdown_excess": {
+  "static": -0.4406,
+  "timed": -0.3977
+ },
+ "annualized_excess_return": {
+  "static": 0.0475,
+  "timed": 0.0502
+ },
+ "annualized_volatility": {
+  "static": 0.1104,
+  "timed": 0.1061
+ },
+ "subperiod_sharpe": {
+  "1964-1989": {
+   "static": 0.2796,
+   "timed": 0.2929
+  },
+  "1990-2018": {
+   "static": 0.5907,
+   "timed": 0.6735
+  }
+ },
+ "equity_share": {
+  "min": 0.6,
+  "max": 0.9,
+  "mean_abs_monthly_change": 0.0508
+ },
+ "verdict": "supported",
+ "verdict_rule": {
+  "supported": "Sharpe(timed) > Sharpe(static), bootstrap p < 0.05, and the timed maximum drawdown is not worse than the static one by more than 2 percentage points",
+  "not_supported": "Sharpe(timed) <= Sharpe(static)",
+  "inconclusive": "otherwise"
+ },
+ "limits": "Volatility-managed portfolios were studied on this same French data (Moreira and Muir, 2017), so the test is not independent of that literature. US equity only; the fund holds international equity too. Approximated bond returns."
+}
