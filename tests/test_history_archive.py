@@ -85,6 +85,18 @@ class Sources(unittest.TestCase):
         self.assertEqual(header, ["date", "Mkt-RF", "SMB", "RF"])
         self.assertEqual(rows, [["1963-07-01", -0.67, 0.0, 0.01], ["1963-07-02", 0.79, -0.27, 0.01]])
 
+    def test_french_monthly_block_stops_before_annual_factors(self):
+        text = ("header\n\n,Mkt-RF,SMB,HML,RF\n199007    ,1.99    ,2.64    ,0.38    ,0.68\n"
+                "199008    ,-10.3   ,1.0     ,0.2     ,0.66\n\n Annual Factors: January-December\n"
+                ",Mkt-RF,SMB,HML,RF\n1991    ,12.0,1,2,5\n")
+        buffer = io.BytesIO()
+        with zipfile.ZipFile(buffer, "w") as archive:
+            archive.writestr("f.csv", text)
+        header, rows = h.parse_french(buffer.getvalue())
+        self.assertEqual(header, ["date", "Mkt-RF", "SMB", "HML", "RF"])
+        self.assertEqual([r[0] for r in rows], ["1990-07-01", "1990-08-01"])
+        self.assertEqual(rows[1][1], -10.3)
+
     def test_sp500_constituents_require_the_expected_table(self):
         cells = "".join(f"<tr><td>T{i}</td><td>Co {i}</td><td>Sector</td><td>Sub</td><td>HQ</td>"
                         f"<td>2000-01-0{i % 9 + 1}</td><td>{i:010d}</td><td>1900</td></tr>" for i in range(460))

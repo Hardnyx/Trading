@@ -76,6 +76,10 @@ FRED = [
 FRENCH = {
     "ff5-daily": ("F-F_Research_Data_5_Factors_2x3_daily_CSV.zip", "Mkt-RF SMB HML RMW CMA RF daily, percent"),
     "momentum-daily": ("F-F_Momentum_Factor_daily_CSV.zip", "Momentum factor daily, percent"),
+    "developed-ex-us-monthly": ("Developed_ex_US_3_Factors_CSV.zip",
+                                "Developed markets ex US Mkt-RF SMB HML RF monthly, percent, USD; dated first of month"),
+    "emerging-monthly": ("Emerging_5_Factors_CSV.zip",
+                         "Emerging markets Mkt-RF SMB HML RMW CMA RF monthly, percent, USD; dated first of month"),
 }
 FRENCH_BASE = "https://mba.tuck.dartmouth.edu/pages/faculty/ken.french/ftp/"
 SHILLER = "http://www.econ.yale.edu/~shiller/data/ie_data.xls"
@@ -260,20 +264,24 @@ def collect_fred():
 def parse_french(raw):
     archive = zipfile.ZipFile(io.BytesIO(raw))
     lines = archive.read(archive.namelist()[0]).decode("latin1").splitlines()
-    header, rows = None, []
+    header, rows, block = None, [], None
     for line in lines:
         cells = [c.strip() for c in line.split(",")]
         if header is None:
             if len(cells) > 1 and cells[0] == "" and cells[1]:
                 header = ["date"] + cells[1:]
             continue
-        if not cells[0].isdigit() or len(cells[0]) != 8:
+        width = len(cells[0]) if cells[0].isdigit() else 0
+        if width not in (6, 8) or (rows and width != block):
             if rows:
-                break  # the daily block ends; later blocks are other tables
+                break  # the first block ends; later blocks are annual or other tables
             continue
-        rows.append([f"{cells[0][:4]}-{cells[0][4:6]}-{cells[0][6:]}"] + [number(c) for c in cells[1:]])
+        block = width
+        date = (f"{cells[0][:4]}-{cells[0][4:6]}-{cells[0][6:]}" if width == 8
+                else f"{cells[0][:4]}-{cells[0][4:6]}-01")
+        rows.append([date] + [number(c) for c in cells[1:]])
     if header is None or not rows:
-        raise ValueError("no daily table")
+        raise ValueError("no daily or monthly table")
     return header, rows
 
 
