@@ -1,0 +1,22 @@
+{
+ "schema": "price-risk-out-of-sample-registration-v1",
+ "registered_on_utc": "2026-11-14",
+ "registration_base_commit": "49a775f3",
+ "role": "retrospective-out-of-sample-test-of-the-deployed-price-risk-kernel",
+ "question": "Does the deployed price/variance kernel give calibrated 21-session 95% VaR and better CRPS than flat EWMA in a period never used to build or audit it?",
+ "engine": {"script": "scripts/price_risk_replay.mjs", "protocol_id": "price-only-fallback-risk-v1", "price_kernel_version": "1.0.0", "models": ["targeted_ewma", "dynamic_ewma", "flat_ewma"], "deployed_model": "targeted_ewma", "lead": 2, "horizons": [1, 5, 21], "minimum_training": 126, "lookback": 500, "paths": 2000, "seed": 605664559, "parameters_changed": false},
+ "data": {"source": "data/history/prices (Yahoo chart API, split-adjusted closes plus dividend events)", "adjustment": "total-return factor from dividends: prior closes times (1 - dividend/previous close)", "history_cut": "2020-02-28", "original_vintages": false},
+ "period": {"first_cut": "2008-06-30", "last_cut": "2019-11-29", "origins": "last session of each month", "previously_examined_for_this_kernel": false, "prior_audit_window": "2021-11-15 onward"},
+ "instruments": ["SPY", "SHV", "IGSB", "SHY", "IEF", "TLT", "LQD", "HYG", "EMB", "GLD", "NVDA"],
+ "excluded": {"SGOV": "first trade 2020", "current_exposure basket": "contains SGOV and was selected ex post"},
+ "baskets": {"balanced_reference": {"SPY": 0.35, "SHY": 0.35, "IEF": 0.25, "CASH": 0.05}, "long_treasury_equity": {"TLT": 0.35, "IEF": 0.25, "SPY": 0.35, "CASH": 0.05}, "credit_equity": {"SPY": 0.35, "HYG": 0.2, "IGSB": 0.15, "SHY": 0.25, "CASH": 0.05}},
+ "primary_claims": {
+  "A_calibration": {"targets": ["SPY", "PORTFOLIO:balanced_reference", "PORTFOLIO:long_treasury_equity", "PORTFOLIO:credit_equity"], "horizon": 21, "model": "targeted_ewma", "sample": "nonoverlapping origins", "test": "Kupiec unconditional coverage of 95% VaR, Holm over the four targets at 0.05",
+   "not_supported": "any Holm-adjusted Kupiec p < 0.05", "supported": "no rejection and every exact 95% upper bound of the exception rate <= 0.12", "inconclusive": "otherwise"},
+  "B_improvement": {"targets": ["PORTFOLIO:balanced_reference", "PORTFOLIO:long_treasury_equity", "PORTFOLIO:credit_equity"], "horizon": 21, "comparison": "CRPS(flat_ewma) - CRPS(targeted_ewma), paired nonoverlapping origins", "interval": "3-origin block bootstrap, two-sided, alpha 0.05/3 per basket, seed 20261028",
+   "supported": "at least one interval above zero and none below zero", "not_supported": "any interval below zero", "inconclusive": "otherwise"}
+ },
+ "secondary_descriptive": ["other instruments and horizons", "Christoffersen independence", "dynamic_ewma comparisons", "per-year exception rates", "ES residuals"],
+ "limits": "Answers only the risk component. It does not test return forecasts, fundamentals, the optimizer or net economic value. Adjusted current revisions, not original vintages; ETF list fixed today (survivorship mostly irrelevant for these funds, not for NVDA). No rejection is not a certificate. Results do not change production.",
+ "post_hoc_changes_permitted": false
+}
