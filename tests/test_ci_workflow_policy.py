@@ -1,7 +1,8 @@
 """Check that expensive workflows cannot silently return to every push."""
 import unittest
 from scripts.ci_workflow_policy import (
-    FAST, FULL, PAGES, WORKFLOW_DIR, validate, validate_actions_budget,
+    FAST, FULL, GATE, PAGES, WORKFLOW_DIR, validate, validate_actions_budget,
+    validate_release_gate,
 )
 
 
@@ -42,14 +43,34 @@ class SelectiveCiPolicyTests(unittest.TestCase):
                 "scripts/confirmatory_calibration_gate.py --skip"),
                 self.pages)
 
-    def test_pages_paths_and_refresh_call_kept(self):
+    def test_pages_push_only_through_validated_fast_ci(self):
         with self.assertRaisesRegex(ValueError, "Pages"):
-            validate(self.fast, self.full,
-                     self.pages.replace("'dist/**'", "'docs/**'", 1))
+            validate(self.fast, self.full, self.pages.replace(
+                "  workflow_dispatch:\n",
+                "  push:\n    branches: [main]\n  workflow_dispatch:\n", 1))
         with self.assertRaisesRegex(ValueError, "Pages"):
             validate(self.fast, self.full,
                      self.pages.replace("  workflow_call:\n",
                                         "  renamed_call:\n", 1))
+        for old, new in (
+                ("    needs: checks\n", "    needs: []\n"),
+                ("if: needs.checks.outputs.deploy == 'true'", "if: always()"),
+                ("        id: release\n", "        id: renamed\n"),
+                ("scripts/pages_release_gate.py", "scripts/other_gate.py")):
+            with self.subTest(old=old):
+                self.assertIn(old, self.fast)
+                with self.assertRaisesRegex(ValueError, "same commit"):
+                    validate(self.fast.replace(old, new, 1), self.full, self.pages)
+
+    def test_release_gate_compares_every_published_path(self):
+        gate = GATE.read_text(encoding="utf-8")
+        self.assertTrue(all(validate_release_gate(gate).values()))
+        with self.assertRaisesRegex(ValueError, "published path"):
+            validate_release_gate(gate.replace('"package.json", ', "", 1))
+        with self.assertRaisesRegex(ValueError, "publishing"):
+            validate_release_gate(gate.replace(
+                'return True, "public build commit unknown"',
+                'return False, "public build commit unknown"', 1))
 
     def test_standard_runner_and_schedule_inventory(self):
         workflows = {

@@ -6,7 +6,7 @@
 
 **Auditoría integral de investigación (manual)** (`.github/workflows/research-full.yml`) conserva los comandos de la validación extensa anterior: bootstrap, control de error familiar y Holm, potencia, HAC, auditorías de fuentes, reproducción EWMA y publicación de artefactos. Ahora responde únicamente a `workflow_dispatch`. Antes de aceptar un nuevo hito metodológico, ejecutar este workflow manualmente y citar el SHA del commit verificado; un check rápido en verde no sustituye su resultado.
 
-**Deploy to GitHub Pages** (`.github/workflows/pages.yml`) se activa por push cuando cambian `dist/**`, `package.json`, `scripts/stamp-release.mjs` o el propio workflow. Conserva ejecución manual, `workflow_call` desde el refresh de datos y comprobaciones de la compilación publicada. No se vuelve a desplegar la web por modificaciones exclusivas de scripts de investigación o documentación.
+**Deploy to GitHub Pages** (`.github/workflows/pages.yml`) ya no responde directamente a `push`. Los cambios enviados a `main` se publican desde el job `deploy` de Validar aplicación, que solo se ejecuta después de que toda la batería rápida haya pasado en el **mismo commit** (véase la sección del 14-nov-2026). Conserva la ejecución manual, `workflow_call` desde los refresh de datos, señales y archivo histórico, y la comprobación de la compilación publicada.
 
 **Protección de la separación:** `python scripts/ci_workflow_policy.py --verify` y `python -m unittest tests.test_ci_workflow_policy` comprueban los triggers, gates críticos, comandos de auditoría manual y rutas de publicación. El guard no demuestra validez predictiva, disponibilidad de datos originales, rendimiento económico ni cobertura muestral.
 
@@ -39,3 +39,20 @@ La próxima ejecución semanal y la optimización real de la **segunda** baterí
 La política `scripts/ci_workflow_policy.py --verify`, incluida en la CI rápida, examina los **29 workflows**: admite únicamente runners estándar `ubuntu-latest` y `ubuntu-24.04`, exige límites explícitos de duración de hasta 60 minutos y fija el inventario de tres calendarios automáticos: actualización de mercado diaria (23:30 UTC), archivo histórico semanal (sábado 13:17 UTC) y diagnóstico exploratorio de pool semanal (domingo 02:37 UTC). Una ampliación de runners o de cron ahora exige revisar y modificar explícitamente esta política. Las pruebas adversariales verifican que el guard rechaza runners no estándar, timeouts excesivos y cron no aprobados.
 
 Los commits que `refresh-data.yml` y `signal-validation.yml` publican con el `GITHUB_TOKEN` del workflow **no disparan nuevos workflows de `push`** según la regla documentada de GitHub Actions. Por ello, los filtros `dist/**` existentes no implican una segunda ejecución automática por esos commits; las publicaciones se efectúan por los jobs `workflow_call` explícitos. Esta propiedad debe volver a revisarse antes de utilizar un PAT o token de GitHub App para los commits automáticos. El guard es estático y **no consulta cuotas, facturación ni costes observados**, ni garantiza que otros cambios de configuración de la cuenta no introduzcan cargos. Ninguna prueba estadística o contrato predictivo se altera.
+
+## Publicación de Pages tras la CI rápida (14-nov-2026)
+
+**Medición previa (7 días al 14-nov-2026 UTC):** 326 ejecuciones y unos 1.084 minutos de reloj; **Validar aplicación** acumuló 161 ejecuciones (≈539 min) y **Deploy to GitHub Pages** 111 (≈337 min). Cada push que tocaba `dist/**` lanzaba ambos workflows en paralelo, y Pages repetía la instalación de dependencias y las 600+ pruebas Python que la CI rápida ya ejecutaba sobre el mismo commit. Además, la cola `github-pages` no cancela, así que en las ráfagas de pushes se desplegaban versiones intermedias ya obsoletas.
+
+**Cambio.** `pages.yml` pierde el disparador `push`. Validar aplicación añade:
+
+- un paso final `scripts/pages_release_gate.py`, que compara el commit validado con el que declara el `build.json` público y con la punta actual de `main`, y
+- un job `deploy` con `needs: checks`, que llama a `pages.yml` con `skip_python_revalidation: true` solo si la puerta lo pide. Pages sigue ejecutando `npm run check`, `npm test` y la verificación del build servido.
+
+La puerta publica cuando algún archivo publicado (`dist`, `package.json`, `scripts/stamp-release.mjs`, `pages.yml`) difiere del build servido; por eso, si un push nuevo cancela un despliegue en curso, el siguiente run correcto lo recupera aunque no toque `dist`. No publica si el sitio ya sirve ese commit o un descendiente, ni si `main` avanzó (el commit siguiente, propio o automático, se publica por su propio flujo), lo que evita sobrescribir datos más recientes con un build antiguo. Si el `build.json` público no se puede leer o el commit servido no está en la historia, **publica**. Con la cancelación de la CI rápida, en una ráfaga solo se despliega el último commit.
+
+`setup-python` guarda en caché las descargas de pip (`requirements-research.txt`) en Validar aplicación y en Pages.
+
+**Lo que no cambia.** Los despliegues manuales y los de `workflow_call` del refresh y del archivo histórico siguen ejecutando la batería Python completa. Signal validation solo la reutiliza tras un refresh exitoso, como antes. `ci_workflow_policy.py --verify` exige ahora que Pages no tenga `push`, que el job `deploy` dependa de `checks` y de la salida de la puerta, y que la puerta compare todas las rutas publicadas y publique ante la duda; `tests/test_pages_release_gate.py` cubre los casos de despliegue cancelado, `main` adelantado, sitio más nuevo y metadatos ilegibles.
+
+**Efecto esperado, no observado aún:** un único workflow por push y ninguna segunda batería Python por despliegue (≈2 min por push con cambios en `dist`). El ahorro real se comprobará con las ejecuciones siguientes; no es una cifra de facturación, porque el repositorio es público y usa runners estándar.

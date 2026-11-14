@@ -1,13 +1,7 @@
 name: Deploy to GitHub Pages
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'dist/**'
-      - 'package.json'
-      - 'scripts/stamp-release.mjs'
-      - '.github/workflows/pages.yml'
+  # Pushes publish through the deploy job of check.yml after its full suite passes.
   workflow_dispatch:
   workflow_call:
     inputs:
@@ -16,7 +10,7 @@ on:
         required: false
         type: string
       skip_python_revalidation:
-        description: Skip duplicate Python suite only after successful upstream refresh
+        description: Skip duplicate Python suite only after the caller passed it on this commit
         required: false
         type: boolean
         default: false
@@ -50,6 +44,8 @@ jobs:
         if: ${{ !inputs.skip_python_revalidation }}
         with:
           python-version: '3.12'
+          cache: 'pip'
+          cache-dependency-path: requirements-research.txt
       - name: Install Python research dependencies
         if: ${{ !inputs.skip_python_revalidation }}
         run: python -m pip install -r requirements-research.txt

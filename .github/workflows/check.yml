@@ -24,6 +24,8 @@ jobs:
   checks:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    outputs:
+      deploy: ${{ steps.release.outputs.deploy }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -34,6 +36,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+          cache: 'pip'
+          cache-dependency-path: requirements-research.txt
       - run: npm run check
       - run: npm test
       - run: python -m pip install -r requirements-research.txt
@@ -43,3 +47,18 @@ jobs:
       - run: python scripts/prospective_study_registry.py --verify
       - run: python scripts/overfit_policy_guard.py --verify
       - run: python scripts/ci_workflow_policy.py --verify
+      - name: Decide whether the validated commit must be published
+        id: release
+        if: github.ref == 'refs/heads/main'
+        run: python scripts/pages_release_gate.py --site https://hardnyx.github.io/Trading --head "${{ github.sha }}"
+  deploy:
+    needs: checks
+    if: needs.checks.outputs.deploy == 'true'
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    uses: ./.github/workflows/pages.yml
+    with:
+      ref: ${{ github.sha }}
+      skip_python_revalidation: true

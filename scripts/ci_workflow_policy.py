@@ -1,5 +1,6 @@
 """Guard mandatory checks and explicit manual research workflows using stdlib."""
 import argparse
+import ast
 import re
 from pathlib import Path
 
@@ -7,6 +8,7 @@ ROOT = Path(__file__).resolve().parents[1]
 FAST = ROOT / ".github/workflows/check.yml"
 FULL = ROOT / ".github/workflows/research-full.yml"
 PAGES = ROOT / ".github/workflows/pages.yml"
+GATE = ROOT / "scripts/pages_release_gate.py"
 REQUIRED_FAST = (
     "npm run check", "npm test",
     "python -m unittest discover -s tests -p 'test_*.py'",
@@ -48,9 +50,18 @@ SOURCE_PATH_FILTERS = (
     "'.github/workflows/**'", "'requirements-research.txt'",
     "'package.json'", "'AGENTS.md'",
 )
-DEPLOY_PATH_FILTERS = (
-    "'dist/**'", "'package.json'", "'scripts/stamp-release.mjs'",
-    "'.github/workflows/pages.yml'",
+DEPLOY_PATHS = (
+    "dist", "package.json", "scripts/stamp-release.mjs",
+    ".github/workflows/pages.yml",
+)
+FAST_DEPLOY = (
+    "    outputs:\n      deploy: ${{ steps.release.outputs.deploy }}\n",
+    "        id: release\n        if: github.ref == 'refs/heads/main'\n"
+    "        run: python scripts/pages_release_gate.py",
+    "  deploy:\n    needs: checks\n"
+    "    if: needs.checks.outputs.deploy == 'true'\n",
+    "    uses: ./.github/workflows/pages.yml\n    with:\n"
+    "      ref: ${{ github.sha }}\n      skip_python_revalidation: true\n",
 )
 
 
@@ -78,10 +89,12 @@ def validate(fast, full, pages):
             all("  " + event + ":" not in r for event in
                 ("push", "pull_request", "schedule", "workflow_call")),
             "Full statistical audit must be manual")
-    require("  push:\n    branches: [main]\n    paths:\n" in p and
-            "  workflow_dispatch:" in p and "  workflow_call:" in p and
-            all(name in p for name in DEPLOY_PATH_FILTERS),
-            "Pages trigger must be limited to app/release changes")
+    require("  push:" not in p and "  schedule:" not in p and
+            "  workflow_dispatch:" in p and "  workflow_call:" in p,
+            "Pages must publish pushes only through the validated fast CI")
+    require(all(piece in fast for piece in FAST_DEPLOY) and
+            fast.index("  checks:\n") < fast.index("  deploy:\n"),
+            "Pages deployment must follow the full fast suite on the same commit")
     require(all(command in fast for command in REQUIRED_FAST),
             "Fast CI lost mandatory unit tests or causal guards")
     require(not any(command in fast for command in HEAVY_FORBIDDEN_FAST),
@@ -96,7 +109,21 @@ def validate(fast, full, pages):
     return {
         "fast_ci_scoped": True, "full_audit_manual_only": True,
         "full_evidence_preserved": True, "pages_scoped": True,
+        "pages_after_fast_ci": True,
     }
+
+
+def validate_release_gate(gate):
+    """The publication gate must compare every file that reaches the site."""
+    assigned = [node.value for node in ast.parse(gate).body
+                if isinstance(node, ast.Assign)
+                and any(getattr(t, "id", None) == "DEPLOY_PATHS" for t in node.targets)]
+    require(len(assigned) == 1 and ast.literal_eval(assigned[0]) == DEPLOY_PATHS,
+            "Pages release gate no longer compares every published path")
+    require('"diff", "--name-only", served, head, "--", *DEPLOY_PATHS' in gate and
+            'return True, "public build commit unknown"' in gate,
+            "Pages release gate must fail towards publishing")
+    return {"pages_release_gate_complete": True}
 
 
 POOL = ROOT / ".github/workflows/pool-opportunity.yml"
@@ -256,6 +283,7 @@ def main():
     result = validate(FAST.read_text(encoding="utf-8"),
                       FULL.read_text(encoding="utf-8"),
                       PAGES.read_text(encoding="utf-8"))
+    result.update(validate_release_gate(GATE.read_text(encoding="utf-8")))
     result.update(validate_refresh_dependents(
         POOL.read_text(encoding="utf-8"),
         SIGNAL.read_text(encoding="utf-8")))
