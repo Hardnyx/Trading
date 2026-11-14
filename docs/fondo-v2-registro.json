@@ -1,0 +1,24 @@
+{
+ "schema": "simulated-fund-policy-registration-v2",
+ "policy": "fondo-v2",
+ "registered_on_utc": "2026-11-14",
+ "replaces": "fondo-v1 (archived with its history; its equity tilts rest on the earnings-yield anchor that was not supported)",
+ "principle": "Money moves only on the mandate or on components with a supported registered out-of-sample verdict; everything else stays at a diversified market default.",
+ "strategic_weights": {"VTI": 0.42, "VXUS": 0.28, "AGG": 0.25, "CASH": 0.05},
+ "derivation": {"equity": 0.70, "us_share_of_equity": 0.60, "bonds": 0.25, "cash": 0.05,
+  "sources": "equity share chosen by the owner inside the 60-90% mandate; 60/40 US/international is the convention of broad index target-date funds; AGG is the US aggregate bond market"},
+ "rebalancing": {"rule": "trade back to the strategic weights only when any sleeve deviates more than 5 percentage points in absolute terms", "review": "after each market refresh", "trades_otherwise": "none"},
+ "distributions": "reinvested in the simulation through adjusted closes; in a broker account they arrive as cash and count toward drift",
+ "engine_tilts": {"status": "disabled", "enable_only_after_supported_registered_test": ["equity valuation anchor at long horizons", "bond duration from carry", "volatility-based risk timing", "individual stock selection"], "each_enablement": "new policy version with its own track record"},
+ "exception_rules": {
+  "missing_or_stale_price": "no trade that day; the review records the missing input",
+  "data_older_than_3_sessions": "no trade; the panel warns that the fund is not current",
+  "drawdown_beyond_historical_worst": "no discretionary selling; the rebalancing rule continues and the panel flags a review"},
+ "user_adjustments": "the web page offers sliders to compute a personal variant; the published fund always follows these registered weights",
+ "acceptance_tests": {
+  "T3_long_history": {"data": "data/history/valuation/shiller-monthly.csv.gz", "period": "1900-01 to 2018-12", "portfolios": ["70/25/5 equity/10-year Treasury/cash at zero yield", "60/40", "100/0"], "rebalancing": "same 5 pp threshold checked monthly", "report": ["worst calendar year", "maximum drawdown", "months to recover the previous peak", "median and 5th percentile 12-month return", "annualized return and volatility"], "acceptance": "descriptive: the owner accepts the reported ranges before any start"},
+  "T4_etf_era": {"data": "data/history/prices (adjusted closes)", "period": "2011-02-01 to the latest cut (VXUS inception 2011-01)", "costs": "5 bp spread plus 2 bp slippage on traded value", "acceptance": ["annualized tracking error against the same weights rebalanced monthly <= 1.5%", "average trades per year <= 6", "costs <= 0.10% per year"]},
+  "T5_operational_replay": {"period": "last 30 published cuts available in the repository archive", "acceptance": ["no order on a day without a deviation above 5 pp", "identical output on a second run", "whole-share orders leave cash >= 0"]}
+ },
+ "post_hoc_changes_permitted": false
+}
