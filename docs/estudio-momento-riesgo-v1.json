@@ -1,0 +1,24 @@
+{
+ "schema": "fund-tilt-gate-registration-v1",
+ "tilt": "volatility-based risk timing of the equity share",
+ "registered_on_utc": "2026-11-14",
+ "policy_base": "fondo-v2 (docs/fondo-v2-registro.json)",
+ "question": "Would scaling the equity share by the engine's EWMA volatility, inside the 60-90% mandate, have improved the risk-adjusted return of 70/25/5?",
+ "data": {"equity": "data/history/factors/ff5-daily: Mkt-RF + RF (Kenneth French data library, current revision)", "bonds": "data/history/macro/DGS10 daily, 10-year Treasury return by duration approximation y/252 - D*dy with D the modified duration of a 10-year par bond", "cash": "RF daily", "inspection_before_registration": "file layout and first dates only"},
+ "static_portfolio": "70% equity, 25% bonds, 5% cash, rebalanced at every month end",
+ "timed_portfolio": {
+  "rule": "at each month end t: sigma_t = sqrt(252) * EWMA daily volatility of equity returns with lambda 0.94 (the engine's RiskMetrics setting); sigma_bar_t = mean of sigma at all previous month ends; equity = clip(0.70 * sigma_bar_t / sigma_t, 0.60, 0.90); bonds = 0.95 - equity; cash = 0.05",
+  "warm_up": "static weights until 60 month ends of sigma exist"},
+ "costs": "7 bp of traded value at every rebalance, both portfolios",
+ "period": {"first_month": "1964-01", "last_month": "2018-12", "excluded": "2019 onward, close to the engine's development data"},
+ "primary_metric": "Sharpe ratio of monthly returns in excess of RF",
+ "test": "one-sided stationary-block bootstrap of the Sharpe difference, 12-month mean block, 10000 draws, seed 20261114",
+ "verdict_rule": {
+  "supported": "Sharpe(timed) > Sharpe(static), bootstrap p < 0.05, and the timed maximum drawdown is not worse than the static one by more than 2 percentage points",
+  "not_supported": "Sharpe(timed) <= Sharpe(static)",
+  "inconclusive": "otherwise"},
+ "descriptive_only": ["subperiods 1964-1989 and 1990-2018", "annualized return and volatility", "maximum drawdown", "average absolute change of the equity share per month"],
+ "if_supported": "a new policy version fondo-v3 with its own registration, not a change to fondo-v2",
+ "limits": "Volatility-managed portfolios were studied on this same French data (Moreira and Muir, 2017), so the test is not independent of that literature. US equity only; the fund holds international equity too. Approximated bond returns.",
+ "post_hoc_changes_permitted": false
+}
