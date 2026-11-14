@@ -50,7 +50,11 @@ Desde 1946 (descriptivo), la peor caída del fondo fue **−33,6 % (oct-2007 a m
 
 **T4 · Era de ETF, feb-2011 a nov-2026** (VTI, VXUS y AGG reales, costos de 7 pb): retorno anual 8,3 % frente a 8,1 % de la misma mezcla rebalanceada cada mes; error de seguimiento 0,45 % anual (límite 1,5 %); 10 rebalanceos en 15,8 años (0,6 por año; límite 6); costos inferiores a 0,01 % anual (límite 0,10 %). Caída máxima −25,0 % (feb–mar 2020), recuperada en 110 sesiones. **Cumple los tres criterios.**
 
+**Complemento descriptivo de T4 · crisis de 2008 (pedido por el plan):** VXUS no existía antes de 2011, así que entre oct-2007 y ene-2011 se usa 75 % EFA + 25 % EEM (correlación diaria 0,994 con VXUS desde 2011). Con su parte internacional, **el fondo habría caído −42,4 % entre oct-2007 y mar-2009** y tardado 806 sesiones (unos 3,2 años) en recuperar el máximo. Retorno anual oct-2007 a nov-2026: 7,0 %; 14 rebalanceos (0,7 por año). Es más severo que el −33,6 % de la serie solo de EE. UU. y es la referencia realista para una crisis financiera. No altera los criterios registrados de T4.
+
 **T5 · Ensayo operativo, 5-oct a 13-nov-2026:** 30 cortes sin operaciones (desviación máxima 1,4 pp), resultado idéntico al repetir, y órdenes en acciones enteras sin efectivo negativo. **Cumple los tres criterios.**
+
+**Control de riesgo del motor:** cada revisión simula un año de la mezcla objetivo con el núcleo de precios EWMA (el componente probado fuera de muestra en 2008–2019), sin retorno esperado para que no oculte la cola, y publica el CVaR 95 %. Si supera el presupuesto de 30 %, el panel pide revisar el mandato; nunca genera operaciones. Al 13-nov-2026: CVaR 95 % 27,4 %, volatilidad simulada 15,2 %.
 
 **Regla de excepción calibrada por T3:** una caída mayor que −67,1 % desde el máximo activa un aviso de revisión, sin ventas discrecionales.
 

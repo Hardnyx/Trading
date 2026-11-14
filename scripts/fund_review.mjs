@@ -14,6 +14,8 @@ import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { composeMultiStart } from "../dist/assets/js/composer.mjs?v=0.35.0";
 import { economicClass } from "../dist/assets/js/economic-exposure.mjs?v=0.35.0";
+import { generatePaths } from "../dist/assets/js/path-model.mjs?v=0.35.0";
+import { REPLAY_PROTOCOL, replayInputs } from "./price_risk_replay.mjs";
 import { FUND_POLICY, emptyFundState, fundRequest, overlap, rebalanceOrders } from "../dist/assets/js/fund-policy.mjs";
 import { FUND_V2, FUND_V3, mixWeights, reviewStrategic, timedEquityShare, volatilityForCut } from "../dist/assets/js/strategic-fund.mjs";
 
@@ -171,6 +173,38 @@ export function publicFund(state, reviews, snapshot, policy = FUND_POLICY) {
   };
 }
 
+/**
+ * Risk control by the engine's price kernel (EWMA variance, the component
+ * tested out of sample in 2008-2019): one-year simulated distribution of the
+ * target mix. It informs a review flag only; it never creates orders.
+ */
+export const RISK_BUDGET = { cvar95: 0.30, paths: 2000, seed: 0x5eed2026 };
+export function engineRisk(market, target, budget = RISK_BUDGET) {
+  const invested = target.filter(t => t.symbol !== "CASH" && t.weight > 0);
+  const x = replayInputs(market.assets, market.price_as_of, { ...REPLAY_PROTOCOL, symbols: invested.map(t => t.symbol) });
+  const sample = generatePaths(x, budget.paths, budget.seed, 52);
+  const steps = sample.steps, returns = new Array(budget.paths).fill(0);
+  // Risk only: each asset's simulated mean is removed, so the recent
+  // historical drift used by the replay setup cannot hide the loss tail.
+  for (const t of invested) {
+    const i = x.assets.findIndex(a => a.symbol === t.symbol), own = [];
+    for (let p = 0; p < budget.paths; p++) {
+      const offset = p * (steps + 1);
+      own.push(sample.gross[i][offset + steps] / sample.gross[i][offset] - 1);
+    }
+    const mean = own.reduce((a, b) => a + b, 0) / own.length;
+    own.forEach((r, p) => { returns[p] += t.weight * (r - mean); });
+  }
+  returns.sort((a, b) => a - b);
+  const tail = returns.slice(0, Math.max(1, Math.floor(returns.length * 0.05)));
+  const mean = returns.reduce((s, r) => s + r, 0) / returns.length;
+  const cvar = -tail.reduce((s, r) => s + r, 0) / tail.length;
+  return { method: "engine EWMA price kernel, one year, zero-mean risk only", paths: budget.paths,
+    var95: round(-returns[Math.floor(returns.length * 0.05)]), cvar95: round(cvar),
+    volatility: round(Math.sqrt(returns.reduce((s, r) => s + (r - mean) ** 2, 0) / (returns.length - 1))),
+    budget: budget.cvar95, within_budget: cvar <= budget.cvar95 };
+}
+
 const V2_DIR = "data/fund/fondo-v2", V1_DIR = "data/fund/fondo-v1", V3_DIR = "data/fund/fondo-v3";
 
 /** Daily market returns: French Mkt-RF + RF, then VTI adjusted closes after its last day. */
@@ -257,6 +291,11 @@ function writePublic(snapshot) {
     reason: "Reemplazado: sus apuestas regionales se basaban en un ancla de acciones no respaldada.",
     reviews: readReviews(V1_DIR).length }];
   const fund = publicStrategicFund(state, readReviews(V2_DIR), snapshot, archived);
+  try { fund.risk = engineRisk(snapshot, fund.target); }
+  catch (error) { fund.risk = { error: "Control de riesgo no disponible: " + error.message }; }
+  if (fund.risk.within_budget === false)
+    fund.review_flag = (fund.review_flag ? fund.review_flag + " " : "") +
+      `El riesgo simulado (CVaR 95 % ${(fund.risk.cvar95 * 100).toFixed(1)} %) supera el presupuesto de ${(fund.risk.budget * 100).toFixed(0)} %: revisar el mandato; no genera operaciones.`;
   if (existsSync(V3_DIR + "/state.json")) {
     const shadow = publicStrategicFund(JSON.parse(readFileSync(V3_DIR + "/state.json", "utf8")), readReviews(V3_DIR), snapshot, null, FUND_V3);
     const { archived: _a, evidence: _e, prices: _p, names: _n, ...rest } = shadow;

@@ -168,6 +168,15 @@
   }
  ],
  "research_only": true,
+ "risk": {
+  "method": "engine EWMA price kernel, one year, zero-mean risk only",
+  "paths": 2000,
+  "var95": 0.217313,
+  "cvar95": 0.273846,
+  "volatility": 0.151753,
+  "budget": 0.3,
+  "within_budget": true
+ },
  "shadow": {
   "schema_version": 2,
   "policy": "fondo-v3",

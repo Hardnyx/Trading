@@ -117,12 +117,41 @@ def t4(design):
     return result
 
 
+def t4_2008(design):
+    """Descriptive complement promised by the plan: the 2008 crisis with ETFs.
+
+    VXUS starts in 2011; before it, 75% EFA + 25% EEM stands in for it (daily
+    correlation 0.994 with VXUS from 2011). Not part of T4's registered limits.
+    """
+    names = ["VTI", "EFA", "EEM", "AGG", "VXUS"]
+    series = {s: {r["date"]: r["adj_close"] for r in adjusted_history(s, "2100-01-01")} for s in names}
+    dates = sorted(set.intersection(*(set(series[s]) for s in ["VTI", "EFA", "EEM", "AGG"])))
+    dates = [d for d in dates if d >= "2007-10-01"]
+    switch = min(d for d in series["VXUS"] if d >= "2011-02-01")
+    steps = []
+    for i in range(1, len(dates)):
+        a, b = dates[i - 1], dates[i]
+        ret = lambda s: series[s][b] / series[s][a] - 1
+        intl = ret("VXUS") if b > switch and a in series["VXUS"] and b in series["VXUS"] else .75 * ret("EFA") + .25 * ret("EEM")
+        steps.append((ret("VTI"), intl, ret("AGG"), 0.0))
+    weights = tuple(design["strategic_weights"][s] for s in ("VTI", "VXUS", "AGG", "CASH"))
+    values, trades, paid = simulate(steps, weights, 0.05, cost=0.0007)
+    years = (len(dates) - 1) / 252
+    crisis_end = dates.index(next(d for d in dates if d >= "2010-12-31"))
+    return {"role": "descriptive complement to T4; proxy before 2011-02", "period": f"{dates[0]} to {dates[-1]}",
+            "annualized_return": values[-1] ** (1 / years) - 1, "rebalances": trades,
+            "rebalances_per_year": trades / years, "cost_per_year_of_initial_capital": paid / years,
+            "crisis_2007_2010": drawdown_stats(values[:crisis_end + 1], dates[:crisis_end + 1], "sessions"),
+            "whole_period": drawdown_stats(values, dates, "sessions")}
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, default=ROOT / "docs/auditorias/fondo-v2-aceptacion.json")
     options = parser.parse_args()
     design = json.loads(DESIGN.read_text(encoding="utf-8"))
-    report = {"schema": "fondo-v2-acceptance-v1", "T3_long_history": t3(design), "T4_etf_era": t4(design)}
+    report = {"schema": "fondo-v2-acceptance-v1", "T3_long_history": t3(design), "T4_etf_era": t4(design),
+              "T4_complement_2008": t4_2008(design)}
     options.output.write_text(json.dumps(report, ensure_ascii=False, indent=1) + "\n")
     print(json.dumps(report, indent=1)[:4000])
 

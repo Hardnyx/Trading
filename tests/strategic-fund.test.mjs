@@ -104,3 +104,17 @@ test('fondo-v3 falls back to the static mix without enough history',async()=>{
   assert.equal(r.volatility,null);
   near(r.mix.equity,.7);
 });
+
+test('the engine risk control is zero-mean and never creates orders',async()=>{
+  const {engineRisk}=await import('../scripts/fund_review.mjs');
+  const days=[];let d=new Date('2025-01-02T12:00:00Z');
+  while(days.length<400){if(d.getUTCDay()%6)days.push(d.toISOString().slice(0,10));d.setUTCDate(d.getUTCDate()+1);}
+  const path=(drift,amp)=>days.map((date,i)=>{const p=100*Math.exp(drift*i+amp*Math.sin(i*1.7));return {date,close:p,adj_close:p};});
+  const assets=[{symbol:'AAA',type:'etf',sector:'x',history:path(.002,.01)},{symbol:'BBB',type:'etf',sector:'y',history:path(0,.002)}];
+  const market={price_as_of:days.at(-1),assets};
+  const risk=engineRisk(market,[{symbol:'AAA',weight:.6},{symbol:'BBB',weight:.35},{symbol:'CASH',weight:.05}],{cvar95:.3,paths:400,seed:1});
+  assert.ok(risk.cvar95>0&&risk.var95>0);
+  assert.ok(risk.cvar95>=risk.var95);
+  assert.equal(typeof risk.within_budget,'boolean');
+  assert.equal('orders' in risk,false);
+});

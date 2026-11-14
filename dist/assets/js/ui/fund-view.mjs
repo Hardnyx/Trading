@@ -73,7 +73,8 @@ export function fundPanel(fund, market, saved = null) {
     notice: (fund.review_flag ? template('fund-notice', { message: fund.review_flag }) : '') + (stale ? template('fund-notice', { message: `El fondo se revisó con el corte del ${dateLabel(fund.as_of)}; el mercado cargado es del ${dateLabel(market?.price_as_of)}. La próxima revisión automática lo actualizará.` }) : ''),
     source: `Pesos registrados: ${fund.target.map(t => `${t.symbol === 'CASH' ? 'efectivo' : t.symbol} ${pct(t.weight, 0)}`).join(' · ')} · precios ${dateLabel(fund.as_of)}`,
     metrics, reviewDate: review ? dateLabel(review.date) : '—', decision: review?.reason || 'Sin revisiones todavía.',
-    rule: `Solo opera si algún componente se aparta más de ${fmt(fund.threshold * 100, 0)} pp de su objetivo; entonces vuelve a los pesos registrados. ${fund.rebalances.length} operación(es) desde el inicio.`,
+    rule: `Solo opera si algún componente se aparta más de ${fmt(fund.threshold * 100, 0)} pp de su objetivo; entonces vuelve a los pesos registrados. ${fund.rebalances.length} operación(es) desde el inicio. ` +
+      (fund.risk?.cvar95 != null ? `Control de riesgo del motor: pérdida media en el peor 5 % de los años simulados (CVaR 95 %) ${pct(fund.risk.cvar95, 1)}, presupuesto ${pct(fund.risk.budget, 0)}; volatilidad simulada ${pct(fund.risk.volatility, 1)}. Solo avisa, no opera.` : (fund.risk?.error || '')),
     evidence: 'Mueven dinero solo el mandato, la diversificación de mercado y el rebalanceo. Las apuestas del motor (valoración, duración, momento de riesgo, acciones individuales) están apagadas hasta que una prueba registrada las respalde.',
     rows, orders, shadow, mixer,
     footnote: (fund.archived?.length ? `Archivado: ${fund.archived.map(a => `${a.policy} (${a.reason})`).join(' ')} ` : '') +
