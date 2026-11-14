@@ -3,7 +3,7 @@
 The fast CI calls this after every check has passed. It compares the commit
 served by the public site with the validated commit, so a deployment that a
 newer push cancelled is still published by the next successful run, and a
-commit that is no longer the tip of main never overwrites newer published data.
+commit never overwrites newer published files already on main.
 Any doubt about the served build resolves towards deploying.
 """
 import argparse
@@ -40,7 +40,12 @@ def served_commit(site_url, nonce="", opener=urllib.request.urlopen):
 def decide(head, tip, served, run=git):
     """Return (deploy, reason) for a validated head against main and the site."""
     if tip and tip != head:
-        return False, f"main advanced to {tip[:12]}; its own workflow publishes it"
+        # Later commits that touch published files are published by their own
+        # push or bot workflow; a later docs-only or [skip ci] commit publishes
+        # nothing, so this head must still be deployed.
+        code, later = run("diff", "--name-only", head, tip, "--", *DEPLOY_PATHS)
+        if code == 0 and later:
+            return False, f"main advanced to {tip[:12]} with published changes"
     if served is None:
         return True, "public build commit unknown"
     if served == head:

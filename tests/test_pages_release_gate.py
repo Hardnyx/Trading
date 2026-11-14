@@ -8,7 +8,8 @@ from scripts.pages_release_gate import DEPLOY_PATHS, decide, served_commit
 HEAD, SERVED, TIP = "a" * 40, "b" * 40, "c" * 40
 
 
-def fake_git(known=True, newer=False, changed="dist/index.html", diff_code=0):
+def fake_git(known=True, newer=False, changed="dist/index.html", diff_code=0,
+             later=""):
     def run(*args):
         if args[0] == "cat-file":
             return (0 if known else 1), ""
@@ -16,6 +17,9 @@ def fake_git(known=True, newer=False, changed="dist/index.html", diff_code=0):
             return (0 if newer else 1), ""
         if args[0] == "diff":
             assert args[-len(DEPLOY_PATHS):] == DEPLOY_PATHS
+            if args[2:4] == (HEAD, TIP):
+                return 0, later
+            assert args[2:4] == (SERVED, HEAD)
             return diff_code, changed
         raise AssertionError(args)
     return run
@@ -35,8 +39,13 @@ class PagesReleaseGateTests(unittest.TestCase):
         self.assertIn("2 published", reason)
 
     def test_never_overwrites_newer_main_or_newer_site(self):
-        self.assertFalse(decide(HEAD, TIP, SERVED, fake_git())[0])
+        self.assertFalse(decide(HEAD, TIP, SERVED, fake_git(later="dist/data/market.json"))[0])
         self.assertFalse(decide(HEAD, HEAD, SERVED, fake_git(newer=True))[0])
+
+    def test_later_unpublished_commit_does_not_block_this_release(self):
+        # A later docs-only or [skip ci] commit triggers no deployment of its own.
+        self.assertTrue(decide(HEAD, TIP, SERVED, fake_git(later=""))[0])
+        self.assertFalse(decide(HEAD, TIP, SERVED, fake_git(later="", changed=""))[0])
 
     def test_doubt_resolves_towards_publishing(self):
         self.assertTrue(decide(HEAD, HEAD, None, fake_git(changed=""))[0])
