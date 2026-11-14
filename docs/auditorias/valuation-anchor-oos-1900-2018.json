@@ -1,0 +1,91 @@
+{
+ "schema": "valuation-anchor-out-of-sample-result-v1",
+ "design": "estudio-anclas-valoracion-v1.json",
+ "equity_anchor": {
+  "verdict": "not-supported",
+  "primary": {
+   "n": 119,
+   "r2_os": -0.03944195215751245,
+   "clark_west_t": 0.4115612832062369,
+   "p_one_sided": 0.34070379585165167,
+   "mean_error_anchor": 0.026286275875281744,
+   "mean_error_benchmark": 0.01819671310247812
+  },
+  "versus_constant_6pct": 0.0141,
+  "r2_os_by_origin_month": {
+   "1": -0.0394,
+   "2": -0.0465,
+   "3": -0.0396,
+   "4": -0.0312,
+   "5": -0.0295,
+   "6": -0.0248,
+   "7": -0.0354,
+   "8": -0.0469,
+   "9": -0.0376,
+   "10": -0.0308,
+   "11": -0.0327,
+   "12": -0.0311
+  },
+  "subperiods": {
+   "1900-1959": {
+    "n": 60,
+    "r2_os": -0.0608,
+    "p_one_sided": 0.5398
+   },
+   "1960-1989": {
+    "n": 30,
+    "r2_os": 0.0768,
+    "p_one_sided": 0.0995
+   },
+   "1990-2018": {
+    "n": 29,
+    "r2_os": -0.0555,
+    "p_one_sided": 0.469
+   }
+  }
+ },
+ "bond_anchor": {
+  "verdict": "supported",
+  "primary": {
+   "n": 119,
+   "r2_os": 0.27863734006976726,
+   "clark_west_t": 2.528839740316718,
+   "p_one_sided": 0.006381956898647673,
+   "mean_error_anchor": 0.0012478914874960061,
+   "mean_error_benchmark": 0.0063818414692431505
+  },
+  "versus_constant_6pct": 0.296,
+  "r2_os_by_origin_month": {
+   "1": 0.2786,
+   "2": 0.3082,
+   "3": 0.3014,
+   "4": 0.2972,
+   "5": 0.2991,
+   "6": 0.29,
+   "7": 0.2948,
+   "8": 0.3125,
+   "9": 0.297,
+   "10": 0.284,
+   "11": 0.3024,
+   "12": 0.2759
+  },
+  "subperiods": {
+   "1900-1959": {
+    "n": 60,
+    "r2_os": 0.2628,
+    "p_one_sided": 0.0
+   },
+   "1960-1989": {
+    "n": 30,
+    "r2_os": 0.328,
+    "p_one_sided": 0.039
+   },
+   "1990-2018": {
+    "n": 29,
+    "r2_os": 0.2089,
+    "p_one_sided": 0.0035
+   }
+  }
+ },
+ "limits": "The earnings-yield idea comes from a literature that studied this same Shiller series, so the test is not independent of that literature. Monthly average prices, not month-end closes. No result changes the engine or the fund."
+}

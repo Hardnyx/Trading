@@ -18,3 +18,18 @@
 Los otros meses de origen, los subperiodos y la referencia constante de 6 % son descriptivos.
 
 **Lo que no se prueba.** Los ETF internacionales (no hay historia gratuita de su P/E), las anclas por componentes de los ETF de EE. UU. y de las acciones (faltan fundamentales con fecha de publicación), el crédito y los escenarios. La idea del rendimiento de beneficios proviene de una literatura que estudió esta misma serie, así que la prueba no es independiente de ella. El resultado no cambia el motor ni el fondo.
+
+## Resultado (14-nov-2026 UTC)
+
+Registro publicado en [`6e643d8`](https://github.com/Hardnyx/Trading/commit/6e643d8a) antes de calcular. Ejecución: `python scripts/valuation_anchor_oos.py`. Resumen: [auditorias/valuation-anchor-oos-1900-2018.json](auditorias/valuation-anchor-oos-1900-2018.json).
+
+| Ancla | R² fuera de muestra frente a la media histórica | Clark-West p | Veredicto |
+|---|---:|---:|---|
+| **Acciones** (rendimiento de beneficios + inflación, contraído al 6 %) | **−3,9 %** | 0,34 | **No respaldada** |
+| **Bonos** (rendimiento al vencimiento del Treasury a 10 años) | **+27,9 %** | 0,006 | **Respaldada** |
+
+**Acciones.** A 12 meses, el ancla pronostica peor que la media histórica en los 12 meses de origen (entre −2,5 % y −4,7 %), en 1900–1959 (−6,1 %) y en 1990–2018 (−5,6 %); solo mejora en 1960–1989 (+7,7 %, p = 0,10). En promedio **subestima el retorno en 2,6 puntos por año**. Supera por poco a un 6 % constante (+1,4 %). La literatura encuentra poder predictivo del rendimiento de beneficios a horizontes de 5 a 10 años, no a uno; el motor lo usa a un año.
+
+**Bonos.** El carry predice bien en los 12 meses de origen (R² entre +27,6 % y +31,3 %) y en los tres subperiodos, con error medio casi nulo (+0,1 puntos).
+
+**Implicación para el fondo.** El sesgo hacia acciones internacionales se apoya en diferencias de rendimiento de beneficios; en la serie de EE. UU. ese método no supera a la media histórica a un año y además subestima el retorno de las acciones, lo que empuja al motor hacia menos renta variable. La parte de bonos del fondo descansa en un ancla que sí está respaldada. Es una prueba sobre EE. UU.; los ETF internacionales no se pudieron probar.
