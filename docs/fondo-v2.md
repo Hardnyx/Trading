@@ -33,3 +33,25 @@ El dinero solo se mueve por el mandato o por componentes con una prueba registra
 ## Dónde verlo
 
 Panel **Fondo simulado · fondo-v2** al inicio de la vista Cartera, leído de `dist/data/fund.json`. Muestra posiciones, pesos objetivo, desviación, órdenes en acciones enteras y la comparación con 60/40, SPY y letras. La sección **Ajustar mi mezcla** calcula en el navegador una variante personal (acciones, parte de EE. UU., efectivo y capital) sobre los mismos ETF y precios; se guarda solo en ese navegador y no cambia el fondo publicado. Estado y revisiones: `data/fund/fondo-v2/`.
+
+## Resultados de aceptación (14-nov-2026)
+
+Pruebas fijadas en [`c653fbb`](https://github.com/Hardnyx/Trading/commit/c653fbb1) antes de ejecutarlas. Reproducción: `python scripts/fund_v2_acceptance.py` y `node scripts/fund_v2_replay.mjs`. Detalle: [aceptación](auditorias/fondo-v2-aceptacion.json) y [ensayo](auditorias/fondo-v2-ensayo.json).
+
+**T3 · Historia larga de EE. UU., 1900–2018** (S&P 500 con dividendos, Treasury a 10 años, efectivo sin rendimiento; precios promedio mensuales, que suavizan algo las caídas):
+
+| Mezcla | Retorno anual | Volatilidad | Peor año | Caída máxima | Meses hasta recuperar | 12 meses: mediana / peor 5 % | 12 meses en pérdida |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| **70/25/5 (fondo)** | **8,3 %** | **10,5 %** | **−30,2 % (1931)** | **−67,1 % (1929–1932)** | **85** | **+10,3 % / −13,2 %** | **24 %** |
+| 60/40 | 8,1 % | 9,2 % | −26,1 % (1931) | −61,0 % | 82 | +9,4 % / −10,6 % | 22 % |
+| 100/0 | 9,6 % | 14,7 % | −41,7 % (1931) | −81,7 % | 183 | +12,5 % / −21,3 % | 27 % |
+
+Desde 1946 (descriptivo), la peor caída del fondo fue **−33,6 % (oct-2007 a mar-2009)**, recuperada en 39 meses; 60/40 cayó −26,7 % y 100/0, −49,0 %. La mezcla rebalanceó en promedio 0,5 veces por año.
+
+**T4 · Era de ETF, feb-2011 a nov-2026** (VTI, VXUS y AGG reales, costos de 7 pb): retorno anual 8,3 % frente a 8,1 % de la misma mezcla rebalanceada cada mes; error de seguimiento 0,45 % anual (límite 1,5 %); 10 rebalanceos en 15,8 años (0,6 por año; límite 6); costos inferiores a 0,01 % anual (límite 0,10 %). Caída máxima −25,0 % (feb–mar 2020), recuperada en 110 sesiones. **Cumple los tres criterios.**
+
+**T5 · Ensayo operativo, 5-oct a 13-nov-2026:** 30 cortes sin operaciones (desviación máxima 1,4 pp), resultado idéntico al repetir, y órdenes en acciones enteras sin efectivo negativo. **Cumple los tres criterios.**
+
+**Regla de excepción calibrada por T3:** una caída mayor que −67,1 % desde el máximo activa un aviso de revisión, sin ventas discrecionales.
+
+**Límites.** T3 usa solo acciones de EE. UU.; el fondo tiene 40 % de sus acciones fuera de EE. UU., cuya historia larga no está en el archivo. Son retornos nominales, sin impuestos. Un historial pasado describe riesgos posibles; no garantiza retornos.

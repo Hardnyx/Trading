@@ -12,6 +12,9 @@ export const FUND_V2 = Object.freeze({
   instruments: Object.freeze({ us: "VTI", international: "VXUS", bonds: "AGG" }),
   threshold: 0.05,
   staleSessions: 3,
+  // Registered exception rule: a drawdown beyond the worst of acceptance test
+  // T3 (70/25/5, 1929-09 to 1932-06) flags a review but never forces a sale.
+  worstHistoricalDrawdown: -0.671,
 });
 
 /** Target weights from a mix; bonds take what equity and cash leave. */

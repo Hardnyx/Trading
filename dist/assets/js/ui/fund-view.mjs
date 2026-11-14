@@ -60,7 +60,7 @@ export function fundPanel(fund, market, saved = null) {
     capital: Math.round(mix.capital), result: mixResult(fund, mix) });
   return template('fund-panel', {
     policy: fund.policy, statusLabel: review?.status === 'rebalance' ? 'REBALANCEO REGISTRADO' : 'CARTERA VIGENTE',
-    notice: stale ? template('fund-notice', { message: `El fondo se revisó con el corte del ${dateLabel(fund.as_of)}; el mercado cargado es del ${dateLabel(market?.price_as_of)}. La próxima revisión automática lo actualizará.` }) : '',
+    notice: (fund.review_flag ? template('fund-notice', { message: fund.review_flag }) : '') + (stale ? template('fund-notice', { message: `El fondo se revisó con el corte del ${dateLabel(fund.as_of)}; el mercado cargado es del ${dateLabel(market?.price_as_of)}. La próxima revisión automática lo actualizará.` }) : ''),
     source: `Pesos registrados: ${fund.target.map(t => `${t.symbol === 'CASH' ? 'efectivo' : t.symbol} ${pct(t.weight, 0)}`).join(' · ')} · precios ${dateLabel(fund.as_of)}`,
     metrics, reviewDate: review ? dateLabel(review.date) : '—', decision: review?.reason || 'Sin revisiones todavía.',
     rule: `Solo opera si algún componente se aparta más de ${fmt(fund.threshold * 100, 0)} pp de su objetivo; entonces vuelve a los pesos registrados. ${fund.rebalances.length} operación(es) desde el inicio.`,

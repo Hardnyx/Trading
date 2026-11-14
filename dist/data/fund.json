@@ -8,6 +8,7 @@
  "value": 100000,
  "return_since_inception": 0,
  "drawdown": 0,
+ "review_flag": null,
  "cash": 5000,
  "cash_weight": 0.05,
  "equity_weight": 0.7,

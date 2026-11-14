@@ -201,6 +201,8 @@ export function publicStrategicFund(state, reviews, snapshot, archived = null, p
     inception: state.inception, initial_capital: policy.initialCapital, value: round(value, 2),
     return_since_inception: round(value / policy.initialCapital - 1),
     drawdown: state.peak ? round(value / state.peak - 1) : 0,
+    review_flag: state.peak && value / state.peak - 1 < policy.worstHistoricalDrawdown
+      ? "Caída mayor que la peor histórica de la mezcla: la regla sigue, sin ventas discrecionales; revisar el mandato." : null,
     cash: round(state.cash, 2), cash_weight: round(state.cash / value),
     equity_weight: round(holdings.filter(h => EQUITY.has(h.class)).reduce((s, h) => s + h.weight, 0)),
     holdings, target: target.map(t => ({ ...t, weight: round(t.weight) })),

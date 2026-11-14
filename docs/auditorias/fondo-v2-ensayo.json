@@ -1,0 +1,15 @@
+{
+ "schema": "fondo-v2-replay-v1",
+ "cuts": 30,
+ "period": "2026-10-05 to 2026-11-13",
+ "statuses": {
+  "hold": 30,
+  "rebalance": 0
+ },
+ "max_drift": 0.014442,
+ "acceptance": {
+  "no order on a day without a deviation above 5 pp": true,
+  "identical output on a second run": true,
+  "whole-share orders leave cash >= 0": true
+ }
+}
