@@ -34,6 +34,7 @@ jobs:
       - run: python scripts/confirmatory_power_feasibility.py --verify --output out/confirmatory-power-feasibility-v1.json
       - run: python scripts/confirmatory_economic_materiality.py --verify --output out/confirmatory-economic-materiality-v1.json
       - run: python scripts/confirmatory_hac_stress.py --verify --output out/confirmatory-hac-independent-stress-v1.json
+      - run: python scripts/confirmatory_fixed_b_stress.py --verify --output out/confirmatory-fixed-b-independent-stress-v1.json
       - run: python scripts/confirmatory_calendar_floor.py --verify --output out/confirmatory-calendar-floor-v1.json
       - run: node scripts/daily_archive_readiness.mjs
       - run: node scripts/forward_account_bridge.mjs
@@ -66,6 +67,11 @@ jobs:
         with:
           name: confirmatory-hac-independent-stress
           path: out/confirmatory-hac-independent-stress-v1.json
+          retention-days: 30
+      - uses: actions/upload-artifact@v4
+        with:
+          name: confirmatory-fixed-b-independent-stress
+          path: out/confirmatory-fixed-b-independent-stress-v1.json
           retention-days: 30
       - uses: actions/upload-artifact@v4
         with:

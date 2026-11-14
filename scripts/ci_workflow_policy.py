@@ -23,6 +23,7 @@ REQUIRED_FULL = (
     "scripts/confirmatory_power_feasibility.py --verify",
     "scripts/confirmatory_economic_materiality.py --verify",
     "scripts/confirmatory_hac_stress.py --verify",
+    "scripts/confirmatory_fixed_b_stress.py --verify",
     "scripts/confirmatory_calendar_floor.py --verify",
     "scripts/historical_spy_membership_audit.py",
     "scripts/historical_sec_numeric_concordance.py --help",
@@ -37,6 +38,7 @@ HEAVY_FORBIDDEN_FAST = (
     "confirmatory_familywise_bootstrap.py",
     "confirmatory_partial_null_bootstrap.py",
     "confirmatory_hac_stress.py",
+    "confirmatory_fixed_b_stress.py",
     "historical_spy_membership_audit.py",
     "actions/upload-artifact@",
 )
