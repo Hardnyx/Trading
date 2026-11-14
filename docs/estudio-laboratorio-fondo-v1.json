@@ -1,0 +1,39 @@
+{
+ "schema": "fund-laboratory-registration-v1",
+ "registered_on_utc": "2026-11-15",
+ "role": "three registered research tests; none changes fondo-v2 or fondo-v3, a supported result can only motivate a new registered policy version",
+ "inspection_before_registration": "file layouts and first/last dates only; no returns, anchors or portfolio paths computed",
+ "L1_equity_anchor_long_horizon": {
+  "question": "Does the engine's earnings-yield index anchor forecast annualized total returns over 5 and 10 years better than the expanding historical mean?",
+  "data": "data/history/valuation/shiller-monthly.csv.gz",
+  "forecast": "0.06 + 0.6 * (E(t-3)/P(t) + CPI(t-1)/CPI(t-13) - 1 - 0.06), the same dated inputs as docs/estudio-anclas-valoracion-v1.json",
+  "realized": "annualized total return over h years from monthly price and dividends",
+  "benchmark": "expanding mean of annualized h-year returns that matured by the origin, from 1871",
+  "horizons_years": [5, 10],
+  "origins": "every January from 1900 to 2018 - h",
+  "metric": "R2_OS",
+  "overlap_handling": "no p-value from overlapping windows; R2_OS is also computed on the h nonoverlapping subsamples starting in 1900, 1901, ..., 1900 + h - 1",
+  "verdict_rule": {"supported": "full-sample R2_OS > 0 and R2_OS > 0 in at least 80% of the nonoverlapping subsamples", "not_supported": "full-sample R2_OS <= 0", "inconclusive": "otherwise", "applied_separately_to": ["5 years", "10 years"]},
+  "descriptive_only": ["the same rule with 1/CAPE instead of trailing earnings"]
+ },
+ "L2_bond_duration_from_carry": {
+  "question": "Does the term spread forecast the 12-month return of the 10-year Treasury in excess of 3-month bills better than its expanding historical mean?",
+  "data": "data/history/valuation/shiller-monthly.csv.gz (GS10) and data/history/macro/TB3MS (monthly 3-month bill, first of month)",
+  "forecast": "(GS10(t) - TB3MS(t)) / 100",
+  "realized": "12-month return of a 10-year par bond bought at t and valued at GS10(t+12) as a 9-year bond, minus TB3MS(t)/100",
+  "benchmark": "expanding mean of realized excess returns that matured by the origin, from 1935",
+  "origins": "every January from 1937 to 2018",
+  "metric": "R2_OS with one-sided Clark-West on nonoverlapping origins",
+  "verdict_rule": {"supported": "R2_OS > 0 and p < 0.05", "not_supported": "R2_OS <= 0", "inconclusive": "otherwise"}
+ },
+ "L3_international_history": {
+  "question": "Descriptive: how did fondo-v2's mix behave with its international half included, compared with the same mix all in US equity?",
+  "data": "data/history/factors/developed-ex-us-monthly and emerging-monthly (French, USD, Mkt-RF + RF), ff5-daily compounded to months for US equity, month-end DGS10 for bonds by duration approximation",
+  "mixes": {"fondo-v2": "US 42%, international 28% (75% developed ex-US + 25% emerging), 10-year Treasury 25%, cash 5% at zero yield", "US-only": "US 70%, 10-year Treasury 25%, cash 5%"},
+  "rebalancing": "5 pp drift threshold checked at each month end",
+  "period": "1990-07 to 2018-12; extension to the last common month reported separately",
+  "report": ["annualized return and volatility", "worst calendar year", "maximum drawdown and months to recover", "drawdowns 2000-2002 and 2007-2009"],
+  "acceptance": "descriptive; a maximum drawdown of fondo-v2 worse than US-only by more than 5 points is flagged in the fund documentation"
+ },
+ "post_hoc_changes_permitted": false
+}
