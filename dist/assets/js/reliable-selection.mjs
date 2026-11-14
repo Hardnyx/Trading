@@ -1,6 +1,6 @@
 import { generatePaths, evaluatePaths, utilityCertaintyEquivalent } from './path-model.mjs?v=0.35.0';
 import { MODEL_VARIANTS, variantInputs } from './robust-core.mjs?v=0.35.0';
-import { pairedDecisionEvidence, reviewRobustDecision, tailStressInputs, DECISION_EXPERIMENT_SEEDS } from './robust-decision.mjs?v=0.35.0';
+import { pairedDecisionEvidence, reviewRobustDecision, riskOnlyModels, tailStressInputs, DECISION_EXPERIMENT_SEEDS } from './robust-decision.mjs?v=0.35.0';
 import { riskSamplingEvidence } from './simulation-evidence.mjs?v=0.35.0';
 import { tradePlan } from './policy.mjs?v=0.35.0';
 
@@ -69,14 +69,15 @@ export function selectReliableCandidate(inputs, candidates, { paths = 1000, vali
       worstScore:Infinity,maximumRisk:0,screenPass:true,models:[]});
   };
   add(x.current.positions); for(const p of candidates)add(p);
-  const inputsByModel=MODEL_VARIANTS.map(v=>variantInputs(x,v));
+  const inputsByModel=MODEL_VARIANTS.map(v=>variantInputs(x,v)), riskOnly=riskOnlyModels(x),
+    decides=k=>!riskOnly.has(MODEL_VARIANTS[k].id);
   // Every discovered candidate is screened under ALL economic models. These
   // draws are never reused for choosing finalists or confirming a transition.
-  for(const altered of inputsByModel){
+  for(const [k,altered] of inputsByModel.entries()){
     const sample=generatePaths(altered,100,DECISION_EXPERIMENT_SEEDS.screen,12);
     for(const row of rows){
       const m=evaluatePaths(row.weights,sample,{capital,cost:row.plan.total});
-      row.worstScore=Math.min(row.worstScore,m.score);
+      if(decides(k))row.worstScore=Math.min(row.worstScore,m.score);
       row.maximumRisk=Math.max(row.maximumRisk,m.cvar95);
       // Loose screen only; sampling margins are enforced on fresh paths.
       if(m.cvar95>x.rules.cvarBudget+2*m.cvar95SE||
@@ -99,10 +100,14 @@ export function selectReliableCandidate(inputs, candidates, { paths = 1000, vali
         evidence=pairedDecisionEvidence(m.pathUtilities,held.pathUtilities,x.policy,capital),
         risk=riskSamplingEvidence(m,x.rules,x.policy),
         hurdle=Math.max(x.costs.minBenefit,row.plan.total*x.costs.benefitCostRatio);
+      row.maximumRisk=Math.max(row.maximumRisk,risk.rows[0].upper);
+      if(!decides(k)){ // Risk-only stress: constrains feasibility, never ranks.
+        if(risk.failures.length)row.feasible=false;
+        continue;
+      }
       row.models.push({id:MODEL_VARIANTS[k].id,score:m.score,utilities:m.pathUtilities,evidence,risk});
       row.worstScore=Math.min(row.worstScore,m.score);
       row.minimumLowerGain=Math.min(row.minimumLowerGain,evidence.lowerGain);
-      row.maximumRisk=Math.max(row.maximumRisk,risk.rows[0].upper);
       if(risk.failures.length||(!row.hold&&(evidence.meanUtilityGain<=0||evidence.lowerGain<hurdle)))row.feasible=false;
     }
   }

@@ -41,6 +41,8 @@ export const DEFAULT_COMPOSITION_RULES = {
   maxOpportunity: 0.5,
   maxTreasury: 0.6,
   maxEquity: 0.5,
+  // An optional minEquity floor is left out of the defaults on purpose:
+  // registered requests hash these rules, so the reference must not change.
   // High-yield and EM debt combined: a prudential policy limit, not an
   // estimate. Their volatility is measured over two years without an EM or
   // default crisis.
@@ -69,6 +71,9 @@ function validateRules(rules) {
   ])
     if (!finite(rules[key]) || rules[key] <= 0 || rules[key] > 1)
       throw new Error("Revisa los límites de composición.");
+  if (!finite(rules.minEquity ?? 0) || (rules.minEquity ?? 0) < 0 ||
+      (rules.minEquity ?? 0) > rules.maxEquity)
+    throw new Error("Revisa los límites de composición.");
   if (
     !Number.isInteger(rules.maxPositions) ||
     rules.maxPositions < 2 ||
@@ -146,6 +151,9 @@ export function prepareComposition(
       reason = "Precio o historia común insuficiente al corte";
     if (!reason && policy.region === "us" && outsideUS(asset))
       reason = "Fuera del mandato: inversión limitada a EE. UU.";
+    if (!reason && Array.isArray(settings.purchaseTypes) && asset.type !== "cash" &&
+        !settings.purchaseTypes.includes(asset.type))
+      reason = "Fuera de la política: tipo de activo no admitido para nuevas compras";
     if (!reason && asset.type === "stock") {
       const forecast = fundamentalForecast(
         asset,
@@ -373,7 +381,11 @@ export function validWeights(w,x){
  const exposure=exposureReport(x.assets,w,x.asOf,x.informationAsOf,x.securitySectors);
  if(exposure.sleeves.unknownEtf>1e-8)return false;
  if(exposure.sleeves.treasury>x.rules.maxTreasury+1e-8)return false;
- if(exposure.sleeves.usEquity+exposure.sleeves.globalEquity>x.rules.maxEquity+1e-8)return false;
+ const equity=exposure.sleeves.usEquity+exposure.sleeves.globalEquity;
+ if(equity>x.rules.maxEquity+1e-8)return false;
+ // Partial random constructions park unallocated weight in cash; only a
+ // complete portfolio must reach the equity floor.
+ if(!x.partialConstruction&&equity<(x.rules.minEquity||0)-1e-8)return false;
  if(exposure.sleeves.riskyCredit>(x.rules.maxRiskyCredit??DEFAULT_COMPOSITION_RULES.maxRiskyCredit)+1e-8)return false;
  if(exposure.unclassifiedSectorWeight>x.rules.maxSector+1e-8 ||
     Object.values(exposure.sectorUpperBounds).some(v=>v>x.rules.maxSector+1e-8))return false;
@@ -397,7 +409,9 @@ function passes(metrics, x) {
       metrics.capitalFloorBreachProbability <= x.policy.maxLiquidityFailure)
   );
 }
+const EQUITY_CLASSES = new Set(["us-equity", "international-equity", "global-equity", "direct-equity"]);
 function candidate(x, random) {
+  const partial = (x.rules.minEquity || 0) > 0 ? { ...x, partialConstruction: true } : x;
   const cash = x.assets.findIndex((a) => a.symbol === "CASH"),
     w = Array(x.assets.length).fill(0),
     step = 0.05;
@@ -407,12 +421,19 @@ function candidate(x, random) {
     .filter((r) => r.i !== cash && x.buyAllowed[r.i])
     .sort((a, b) => a.key - b.key)
     .slice(0, x.rules.maxPositions - 1);
+  // With an equity floor, fill the equity sleeve first so random portfolios
+  // are complete and admissible instead of being discarded at the end.
+  const floor = x.rules.minEquity || 0,
+    isEquity = i => EQUITY_CLASSES.has(economicClass(x.assets[i]));
+  let equity = 0;
   let remaining = Math.round((1 - w[cash]) / step);
   for (; remaining > 0; remaining--) {
+    const needEquity = equity < floor - 1e-9;
     const available = order.filter(({ i }) => {
+      if (needEquity && !isEquity(i)) return false;
       w[i] += step;
       w[cash] += Math.max(0, (remaining - 1) * step);
-      const valid = validWeights(w, x);
+      const valid = validWeights(w, partial);
       w[cash] -= Math.max(0, (remaining - 1) * step);
       w[i] -= step;
       return valid;
@@ -423,6 +444,7 @@ function candidate(x, random) {
     }
     const { i } = available[Math.floor(random() * available.length)];
     w[i] += step;
+    if (isEquity(i)) equity += step;
   }
   return validWeights(w, x) ? w : null;
 }

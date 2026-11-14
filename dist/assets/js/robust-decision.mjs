@@ -43,6 +43,16 @@ export function pairedDecisionEvidence(candidate, incumbent, policy, capital, fa
     lowerGain: equivalent(base + mean - z * se) - equivalent(base) };
 }
 
+/** Declared models that only constrain risk; their utility never ranks or
+ * authorizes a transition. Empty by default, so every model decides. */
+export function riskOnlyModels(inputs) {
+  const ids = inputs.options?.riskOnlyModels ?? [];
+  if (!Array.isArray(ids) || ids.some(id => !MODEL_VARIANTS.some(v => v.id === id)) ||
+      ids.includes('original'))
+    throw Error('Modelos solo de riesgo no válidos');
+  return new Set(ids);
+}
+
 export function decisionRiskFailures(metrics, inputs) {
   const checks = [
     ['CVaR', metrics.cvar95, inputs.rules.cvarBudget],
@@ -84,6 +94,7 @@ export function reviewRobustDecision(inputs, target, { paths = 1000, seed, valid
     (initial || plan.turnover <= x.costs.maxTurnover + 1e-8);
   const hurdle = Math.max(x.costs.minBenefit, plan.total * x.costs.benefitCostRatio);
   const verificationSeed = seed ?? DECISION_EXPERIMENT_SEEDS.confirmation;
+  const riskOnly = riskOnlyModels(x);
   const rows = [];
   for (const model of MODEL_VARIANTS) {
     const altered = variantInputs(x, model);
@@ -98,10 +109,12 @@ export function reviewRobustDecision(inputs, target, { paths = 1000, seed, valid
     if (!executionOK) failures.push('Costes u operativa');
     const { pathUtilities: heldPaths, ...holdMetrics } = hold;
     const { pathUtilities: candidatePaths, ...candidateMetrics } = candidate;
-    rows.push({ id: model.id, description: model.description, evidence,
+    const role = riskOnly.has(model.id) ? 'risk-only' : 'decision';
+    rows.push({ id: model.id, description: model.description, role, evidence,
       hold: holdMetrics, candidate: candidateMetrics, failures, riskEvidence,
       holdFailures: riskSamplingEvidence(hold, altered.rules, altered.policy).failures,
-      passes: !failures.length && evidence.meanUtilityGain > 0 && evidence.lowerGain >= hurdle });
+      passes: !failures.length && (role === 'risk-only' ||
+        (evidence.meanUtilityGain > 0 && evidence.lowerGain >= hurdle)) });
   }
   const tailRequired = x.assets.some((a, i) => a.type!=='cash' && x.covariance[i][i]>0 &&
     (proposed[i] > 0 || current[i] > 0));
@@ -119,8 +132,9 @@ export function reviewRobustDecision(inputs, target, { paths = 1000, seed, valid
   }
   return { method: 'all-declared-models-paired-transition', status: rows.every(r => r.passes) && tailStress.passes ? 'passed' : 'rejected',
     seed: verificationSeed, paths, models: rows, hurdle,
-    minimumGain: Math.min(...rows.map(r => r.evidence.gain)),
-    minimumLowerGain: Math.min(...rows.map(r => r.evidence.lowerGain)),
+    minimumGain: Math.min(...rows.filter(r => r.role === 'decision').map(r => r.evidence.gain)),
+    minimumLowerGain: Math.min(...rows.filter(r => r.role === 'decision').map(r => r.evidence.lowerGain)),
+    riskOnlyModels: [...riskOnly],
     failingModels: [...rows.filter(r => !r.passes).map(r => r.id), ...(!tailStress.passes ? ['tail_student'] : [])],
     tailStress, priceInnovations: 'conditional-gaussian',
     currentViolatesRisk: rows.some(r => r.holdFailures.length) || !!tailStress.holdFailures?.length ||

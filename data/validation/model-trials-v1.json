@@ -34,6 +34,22 @@
       "new_independent_holdout_required": true,
       "reuses_inspected_period": false,
       "claim_predictive_validation": false
+    },
+    {
+      "trial_id": "simulated-fund-v1-20261114",
+      "reason": "Separate a simulated ETF fund from the reference proposal: decisions start from the fund's own holdings, only US-listed ETFs are bought, combined equity is kept within 60-90%, the zero-premium low-conviction model constrains risk without ranking trades, and returning to a recently abandoned portfolio needs twice the confirmed gain. The 35% sector cap made every 60% equity portfolio infeasible under its conservative bound for unclassified holdings, so the fund uses 50%; no realized return or score informed either value.",
+      "recorded_at": "2026-11-14T18:30:00Z",
+      "result_data_used": "none",
+      "model_affecting": true,
+      "old_cohort": "full-engine-prospective-registration-v2/0.35.0/canonical-cash",
+      "new_cohort": "simulated-fund/fondo-v1/0.35.0",
+      "first_eligible_new_origin": "2026-11-16",
+      "search_attempts": 2,
+      "all_search_attempts_logged": true,
+      "evidence_role": "research",
+      "new_independent_holdout_required": true,
+      "reuses_inspected_period": false,
+      "claim_predictive_validation": false
     }
   ]
 }
