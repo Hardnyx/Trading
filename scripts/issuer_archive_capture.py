@@ -36,18 +36,31 @@ def fetch(url, timeout=60, attempts=3):
             time.sleep(5 * (attempt + 1))
 
 
+def product_prefix(url):
+    """iShares keeps the product number and changes the trailing slug over time."""
+    parts = urllib.parse.urlparse(url)
+    segments = parts.path.strip("/").split("/")
+    if "products" in segments:
+        keep = segments[:segments.index("products") + 2]
+        return parts.netloc + "/" + "/".join(keep) + "/"
+    return parts.netloc + parts.path
+
+
 def last_capture(url, cut):
-    """Latest HTTP-200 capture timestamp on or before the cut, or None."""
-    query = urllib.parse.urlencode({"url": url, "to": cut.replace("-", "") + "235959", "output": "json",
-                                    "filter": "statuscode:200", "fl": "timestamp", "limit": "-1"})
+    """Latest HTTP-200 HTML capture of the product page on or before the cut: (timestamp, url)."""
+    query = urllib.parse.urlencode({"url": product_prefix(url), "matchType": "prefix",
+                                    "to": cut.replace("-", "") + "235959", "output": "json",
+                                    "filter": ["statuscode:200", "mimetype:text/html"], "fl": "timestamp,original",
+                                    "collapse": "digest", "limit": "-2000"}, doseq=True)
     rows = json.loads(fetch("https://web.archive.org/cdx/search/cdx?" + query) or b"[]")
-    stamps = [r[0] for r in rows[1:]] if rows else []
-    return max(stamps) if stamps else None
+    pages = [(stamp, original) for stamp, original in rows[1:]
+             if "?" not in original and not original.endswith((".ajax", ".csv", ".json", ".pdf"))] if rows else []
+    return max(pages) if pages else (None, None)
 
 
 def capture(symbol, url, cut, out):
-    stamp = last_capture(url, cut)
-    record = {"symbol": symbol, "source_url": url, "cut": cut}
+    stamp, original = last_capture(url, cut)
+    record = {"symbol": symbol, "source_url": url, "cut": cut, "archived_url": original}
     if not stamp:
         return {**record, "status": "no-capture-before-cut"}
     taken = dt.datetime.strptime(stamp, "%Y%m%d%H%M%S").replace(tzinfo=dt.timezone.utc)
@@ -55,11 +68,11 @@ def capture(symbol, url, cut, out):
     record.update(archive_timestamp=stamp, captured_at=taken.isoformat(), age_days=age)
     if age > MAX_AGE_DAYS:
         return {**record, "status": "capture-too-old"}
-    raw = fetch(f"https://web.archive.org/web/{stamp}id_/{url}")
+    raw = fetch(f"https://web.archive.org/web/{stamp}id_/{original}", timeout=120)
     name = f"{symbol}-{stamp}.html.gz"
     (out / name).write_bytes(gzip.compress(raw, mtime=0))
     return {**record, "status": "archived", "file": name, "raw_sha256": hashlib.sha256(raw).hexdigest(),
-            "bytes": len(raw), "archive_url": f"https://web.archive.org/web/{stamp}/{url}"}
+            "bytes": len(raw), "archive_url": f"https://web.archive.org/web/{stamp}/{original}"}
 
 
 def main():
