@@ -261,7 +261,8 @@
   line-height: 1.6;
   margin-top: 8px;
 }
-.composition-report {
+.composition-report,
+.fund-panel {
   margin-bottom: 12px;
   min-width: 0;
   overflow: hidden;
@@ -2752,22 +2753,28 @@ a.text-button,
 }
 
 /* Composition report: tables run edge to edge like every other panel table. */
-.composition-report > .composition-source {
+.composition-report > .composition-source,
+/* Composition report: tables run edge to edge like every other panel table. */
+.fund-panel > .composition-source {
   padding: 8px var(--pad);
   margin: 0;
   line-height: 1.6;
 }
-.composition-report > .table-wrap table {
+.composition-report > .table-wrap table,
+.fund-panel > .table-wrap table {
   min-width: 700px;
 }
 .composition-report > .table-wrap > table th:last-child,
-.composition-report > .table-wrap > table td:last-child {
+.composition-report > .table-wrap > table td:last-child,
+.fund-panel > .table-wrap > table th:last-child,
+.fund-panel > .table-wrap > table td:last-child {
   min-width: 250px;
   max-width: 640px;
   white-space: normal;
   text-align: left;
 }
-.composition-report > .table-wrap > table td:last-child {
+.composition-report > .table-wrap > table td:last-child,
+.fund-panel > .table-wrap > table td:last-child {
   font: var(--fs-sm) / 1.4 var(--sans);
   color: var(--soft);
 }
@@ -2791,52 +2798,65 @@ a.text-button,
 .composition-return-split:empty {
   display: none;
 }
-.composition-report .composition-contributions {
+.composition-report .composition-contributions,
+.fund-panel .composition-contributions {
   border-top: 1px solid var(--line);
 }
 .composition-report .composition-contributions h3,
 .composition-report .composition-brief h3,
 .composition-report .composition-method h3,
-.robustness-weights h3 {
+.robustness-weights h3,
+.fund-panel .composition-contributions h3,
+.fund-panel .composition-brief h3,
+.fund-panel .composition-method h3 {
   font: 600 var(--fs-sm) var(--sans);
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--text);
 }
-.composition-report .composition-contributions h3 {
+.composition-report .composition-contributions h3,
+.fund-panel .composition-contributions h3 {
   margin: 0;
   padding: var(--pad);
 }
-.composition-report .composition-contributions table {
+.composition-report .composition-contributions table,
+.fund-panel .composition-contributions table {
   min-width: 760px;
 }
-.composition-report .composition-attribution-note {
+.composition-report .composition-attribution-note,
+.fund-panel .composition-attribution-note {
   margin: 0;
   padding: 8px var(--pad);
   color: var(--muted);
   font: var(--fs-sm) / 1.6 var(--sans);
 }
-.composition-report .composition-brief {
+.composition-report .composition-brief,
+.fund-panel .composition-brief {
   border-top: 1px solid var(--line);
   padding: var(--pad);
   margin: 0;
 }
-.composition-report .composition-brief p {
+.composition-report .composition-brief p,
+.fund-panel .composition-brief p {
   font: var(--fs-sm) / 1.6 var(--sans);
   color: var(--muted);
   margin: 0 0 8px;
   overflow-wrap: anywhere;
 }
-.composition-report .composition-brief p:last-child {
+.composition-report .composition-brief p:last-child,
+.fund-panel .composition-brief p:last-child {
   margin-bottom: 0;
 }
-.composition-report .composition-brief h3 {
+.composition-report .composition-brief h3,
+.fund-panel .composition-brief h3 {
   margin: 0 0 8px;
 }
-.composition-report .composition-brief .composition-model-status {
+.composition-report .composition-brief .composition-model-status,
+.fund-panel .composition-brief .composition-model-status {
   font-size: var(--fs-xs);
 }
-.composition-report .composition-method h3 {
+.composition-report .composition-method h3,
+.fund-panel .composition-method h3 {
   margin: var(--pad) 0 8px;
 }
 .composition-valuation-details {
@@ -2853,12 +2873,14 @@ a.text-button,
 .composition-cash-comparisons {
   min-width: 800px;
 }
-.composition-report details.composition-method {
+.composition-report details.composition-method,
+.fund-panel details.composition-method {
   border-top: 1px solid var(--line);
   padding: 0 var(--pad);
   margin: 0;
 }
-.composition-report details.composition-method > summary {
+.composition-report details.composition-method > summary,
+.fund-panel details.composition-method > summary {
   padding: var(--pad) 0;
   font: var(--fs-sm) var(--mono);
   color: var(--text);
