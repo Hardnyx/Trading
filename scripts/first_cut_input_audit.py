@@ -108,7 +108,8 @@ def identity(market, binding, fundamentals):
         if ciks.get(position["cusip"]) != asset["cik"]:
             mismatches.append({"symbol": asset["symbol"], "check": "cik"})
             continue
-        row = next((r for r in asset["history"] if r["date"] == report_date), None)
+        # The filed value is the last close on or before the report date, which can be a weekend.
+        row = next((r for r in reversed(asset["history"]) if r["date"] <= report_date), None)
         if row is None:
             mismatches.append({"symbol": asset["symbol"], "check": "no close on the report date"})
             continue

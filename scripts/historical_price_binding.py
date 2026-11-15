@@ -27,6 +27,7 @@ OBSERVATIONS = ROOT / "data/historical/identifier-observations-v1/observations.j
 SEC_DIR = ROOT / "data/historical/provider-inputs-v1/sec"
 BINDINGS = ROOT / "data/historical/price-binding-v1"
 TOLERANCE = 0.005
+MIN_VERIFIED_WEIGHT = 0.9
 
 
 def binding_path(cut, root=ROOT):
@@ -83,7 +84,11 @@ def yahoo_symbol(ticker):
 
 
 def yahoo_close(symbol, day, opener=urllib.request.urlopen):
-    """Split-adjusted close on `day` and the product of later split ratios."""
+    """Split-adjusted close of the last session on or before `day` and the product of later split ratios.
+
+    A report date can fall on a weekend or holiday (2022-12-31); the fund
+    values its positions at the last close before it.
+    """
     start = int(datetime.fromisoformat(day).replace(tzinfo=timezone.utc).timestamp()) - 5 * 86400
     url = (f"https://query1.finance.yahoo.com/v8/finance/chart/{symbol}?period1={start}"
            f"&period2={int(time.time())}&interval=1d&events=split")
@@ -92,7 +97,9 @@ def yahoo_close(symbol, day, opener=urllib.request.urlopen):
         result = json.load(response)["chart"]["result"][0]
     days = [datetime.fromtimestamp(t, timezone.utc).strftime("%Y-%m-%d") for t in result.get("timestamp", [])]
     closes = result["indicators"]["quote"][0]["close"]
-    close = next((c for d, c in zip(days, closes) if d == day and c), None)
+    sessions = [(d, c) for d, c in zip(days, closes) if d <= day and c]
+    last = sessions[-1] if sessions else None
+    close = last[1] if last and (datetime.fromisoformat(day) - datetime.fromisoformat(last[0])).days <= 4 else None
     later = 1.0
     for split in (result.get("events", {}).get("splits") or {}).values():
         if datetime.fromtimestamp(split["date"], timezone.utc).strftime("%Y-%m-%d") > day:
@@ -197,6 +204,10 @@ def main():
     accession = row["spy_source"]["accession"]
     filings, report_date = filed_positions(accession)
     rows = bind(row, filings, report_date)
+    verified = sum(r["weight"] for r in rows if r["status"] == "verified") / sum(r["weight"] for r in rows)
+    if verified < MIN_VERIFIED_WEIGHT:
+        # A broken binding must stop the cut here, not reach the engine as an empty universe.
+        raise SystemExit(f"Only {verified:.1%} of SPY weight verified")
     result = {"schema": "first-cut-price-binding-v1", "cut": options.cut, "spy_accession": accession,
               "report_date": report_date, "tolerance": TOLERANCE, "retrieved_at": datetime.now(timezone.utc).isoformat(),
               "method": "filed USD value / shares versus the public close on the report date, undone for later splits",

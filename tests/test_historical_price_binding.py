@@ -65,3 +65,25 @@ class CutSelectionTests(unittest.TestCase):
             self.assertEqual(hb.cut_row("2025-03-31", path)["cut"], "2025-03-31")
             with self.assertRaises(ValueError):
                 hb.cut_row("2025-01-31", path)
+
+
+class WeekendReportDateTests(unittest.TestCase):
+    def test_a_weekend_report_date_uses_the_last_session_before_it(self):
+        import io, json as j
+        from datetime import datetime, timezone
+        from scripts import historical_price_binding as hb
+        ts = lambda d: int(datetime.fromisoformat(d).replace(tzinfo=timezone.utc).timestamp()) + 14 * 3600
+        body = {"chart": {"result": [{"timestamp": [ts("2022-12-29"), ts("2022-12-30"), ts("2023-01-03")],
+                                      "indicators": {"quote": [{"close": [10.0, 11.0, 12.0]}]},
+                                      "events": {"splits": {"s": {"date": ts("2023-06-01"), "numerator": 2, "denominator": 1}}}}]}}
+
+        class Response(io.BytesIO):
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *a):
+                return False
+        opener = lambda request, timeout=30: Response(j.dumps(body).encode())
+        self.assertEqual(hb.yahoo_close("AAA", "2022-12-31", opener), (11.0, 2.0))
+        body["chart"]["result"][0]["timestamp"] = [ts("2022-12-20"), ts("2022-12-21"), ts("2023-01-03")]
+        self.assertEqual(hb.yahoo_close("AAA", "2022-12-31", opener)[0], None)
