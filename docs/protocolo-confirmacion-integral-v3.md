@@ -15,3 +15,10 @@
 **Por qué sigue cerrado.** Ya se resolvieron la inferencia calibrada y los umbrales económicos. Faltan los bloqueos operativos de v2: publicar los pronósticos originales con primera captura verificable de forma independiente y verificar las vintages originales de fuentes, ajustes, holdings y flujos. El primer origen elegible será el primer corte mensual posterior a un commit fechado que registre ambos verificados.
 
 **Lo que no promete.** Con 120 meses, la potencia del 80 % solo se alcanza en escenarios de dispersión favorables. Ninguna regla permite alargar la muestra, cambiar umbrales o mirar resultados intermedios de la prueba confirmatoria.
+
+## Estado de los bloqueos operativos (15-nov-2026)
+
+- **Primera captura verificable de forma independiente:** mecanismo listo. Cada evidencia se sella con RFC 3161 ([sellado](sellado-tiempo-evidencia.md)), y [`v3_admission.py`](../scripts/v3_admission.py) admite una captura mensual solo si sus hashes se reproducen desde los archivos guardados y un sello firmado por al menos dos autoridades es anterior a la siguiente apertura posible. Se cumplirá con la primera captura mensual sellada (cierre de noviembre de 2026).
+- **Vintages, ajustes, holdings y flujos:** para orígenes prospectivos, las entradas son las capturadas por el propio motor tras el cierre y selladas antes de la apertura, lo que acredita qué datos existían al decidir; no certifica que sean idénticos a la primera publicación de cada proveedor. Los flujos de la cuenta se reconstruyen con historias de distribuciones de los emisores observadas y selladas después del horizonte; el auditor lo comprueba al vencer las 21 sesiones.
+
+El resultado de la auditoría se publica tras cada sellado en `data/timestamps/v3-admission.json`. La activación formal de la cohorte requiere un commit fechado que registre la primera captura admitida.

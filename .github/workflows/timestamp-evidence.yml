@@ -26,6 +26,8 @@ jobs:
         run: python scripts/timestamp_evidence.py --verify
       - name: Stamp new or changed evidence with independent authorities
         run: python scripts/timestamp_evidence.py
+      - name: Audit v3 admission of monthly captures
+        run: python scripts/v3_admission.py > data/timestamps/v3-admission.json
       - name: Commit the tokens
         run: |
           git add data/timestamps
