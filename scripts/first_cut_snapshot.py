@@ -23,12 +23,12 @@ from pathlib import Path
 
 if __package__:
     from . import refresh_data
-    from .history_archive import parse_sp500
+    from .history_archive import _Tables
     from .universe import SECTOR_PRIORS, expanded_universe
     from .historical_price_binding import binding_path
 else:
     import refresh_data
-    from history_archive import parse_sp500
+    from history_archive import _Tables
     from universe import SECTOR_PRIORS, expanded_universe
     from historical_price_binding import binding_path
 
@@ -78,15 +78,27 @@ def wiki_revision(cut, opener=urllib.request.urlopen):
 
 
 def sector_index(raw):
-    header, rows = parse_sp500(raw)
-    at = {name: header.index(name) for name in ("symbol", "gics_sector", "cik")}
+    """Sector by CIK and by symbol from a list revision; column sets changed over the years."""
+    parser = _Tables()
+    parser.feed(raw.decode("utf-8"))
+    table = parser.tables.get("constituents")
+    if not table or "Symbol" not in table[0] or "GICS Sector" not in table[0]:
+        raise ValueError("constituents table not found in the revision")
+    header = table[0]
+    at = {name: header.index(name) for name in ("Symbol", "GICS Sector")}
+    cik_at = header.index("CIK") if "CIK" in header else None
     by_cik, by_symbol = {}, {}
-    for row in rows:
-        sector = row[at["gics_sector"]].strip()
-        cik = re.sub(r"\D", "", row[at["cik"]])
-        if cik:
-            by_cik[int(cik)] = sector
-        by_symbol[row[at["symbol"]].strip().replace(".", "-")] = sector
+    for row in table[1:]:
+        if len(row) < len(header):
+            continue
+        sector = row[at["GICS Sector"]].strip()
+        if cik_at is not None:
+            cik = re.sub(r"\D", "", row[cik_at])
+            if cik:
+                by_cik[int(cik)] = sector
+        by_symbol[row[at["Symbol"]].strip().replace(".", "-")] = sector
+    if len(by_symbol) < 450:
+        raise ValueError("too few constituents in the revision")
     return by_cik, by_symbol
 
 

@@ -54,6 +54,14 @@ class SnapshotTests(unittest.TestCase):
         self.assertEqual(specs, [("BRK-B", "Berkshire", "Financiero", 1067983, 0.04, 15)])
         self.assertEqual([e["symbol"] for e in excluded], ["GONE"])
 
+    def test_older_list_revisions_with_other_columns_are_read(self):
+        old = """<table id="constituents"><tr><th>Symbol</th><th>Security</th><th>SEC filings</th><th>GICS Sector</th>
+<th>GICS Sub-Industry</th><th>Headquarters Location</th><th>Date first added</th><th>CIK</th><th>Founded</th></tr>{}</table>"""
+        row = "<tr><td>{}</td><td>Co</td><td>reports</td><td>{}</td><td>x</td><td>x</td><td>2000</td><td>{:010d}</td><td>1900</td></tr>"
+        rows = "".join(row.format(f"S{i}", "Utilities", 2000 + i) for i in range(450))
+        by_cik, by_symbol = fs.sector_index(old.format(rows).encode())
+        self.assertEqual((by_cik[2003], by_symbol["S3"]), ("Utilities", "Utilities"))
+
     def test_bond_profiles_map_to_the_engine_schema(self):
         import json, tempfile, pathlib
         data = {"funds": {"TIP": {"status": "parsed", "captured_at": "2024-12-20T00:00:00+00:00", "archive_url": "u",
