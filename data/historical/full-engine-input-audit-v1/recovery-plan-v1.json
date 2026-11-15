@@ -11,20 +11,136 @@
   "paid-or-unresolved": "no free source that satisfies the inventory requirement"
  },
  "components": [
-  {"component": "macro_vintages", "group": "verified", "source": "ALFRED/FRED vintages already archived", "license": "public; FRED terms, some series copyrighted by their original publishers", "originality": "vintage dates verified", "next_action": "none"},
-  {"component": "spy_holdings_source", "group": "verified", "source": "SEC N-PORT original filing for SPY at 2024-12-31", "license": "SEC public data; fair-access policy", "originality": "accession and SHA-256 verified", "next_action": "none"},
-  {"component": "historical_identifiers", "group": "free-primary-candidate", "source": "SEC N-PORT CUSIP and issuer LEI already archived (478 valid CUSIP, 463 checksum-valid LEI matches); SEC company ticker list for the CUSIP-to-ticker link", "license": "SEC public data", "originality": "N-PORT is original; ticker list is the current revision, so each link must be checked against the filing names", "next_action": "build the CUSIP-ticker-price link for the 478 valid CUSIP and list the 26 ISIN exceptions"},
-  {"component": "historical_universe", "group": "free-primary-candidate", "source": "SPY N-PORT holdings at the cut as the S&P 500 membership proxy", "license": "SEC public data", "originality": "original filing", "next_action": "derive membership from the verified N-PORT; members acquired or delisted during the outcome window still need post-cut prices (see tradable_prices_and_distributions)"},
-  {"component": "fundamentals_and_quality", "group": "free-primary-candidate", "source": "SEC Financial Statement Data Sets with filing dates (quarterly since 2009)", "license": "SEC public data", "originality": "as filed, dated by acceptance time", "next_action": "retrieve the 2024 quarters in CI with the SEC_USER_AGENT secret and build the as-of adapter (scripts/historical_sec_fsd_intake.py exists)"},
-  {"component": "corporate_actions", "group": "free-primary-candidate", "source": "issuer distribution histories (data/distributions), split events in the archive, SEC 8-K for mergers and spin-offs", "license": "SEC public; issuer pages under their terms of use", "originality": "issuer and SEC records; split data from an unofficial endpoint must be cross-checked", "next_action": "reconcile splits and cash distributions of the 2024-12-31 members for the outcome window; mergers and spin-offs reviewed from 8-K"},
-  {"component": "tradable_prices_and_distributions", "group": "paid-or-unresolved", "source": "free: current Yahoo closes and issuer distributions; paid for delisted members: EODHD or Sharadar", "license": "Yahoo chart endpoint is unofficial and for personal research; redistribution is not granted", "originality": "current revision, not an original vendor vintage", "next_action": "deferred with stock-selection data; until then the cut can only be a labeled reconstruction"},
-  {"component": "bond_etf_profiles", "group": "free-primary-candidate", "source": "Internet Archive captures of issuer product pages: SHY 2024-12-23, TLT 2024-12-25, AGG 2024-12-22, BND 2024-12-30", "license": "Internet Archive access; content copyright of the issuers, use for research citation", "originality": "first-party issuer page dated by an independent archive", "next_action": "retrieve the captures (web.archive.org is outside this session's network policy; run in CI) and parse duration, yield and expense ratio"},
-  {"component": "historical_model_parameters", "group": "derived", "source": "re-estimation with pre-cut data only", "license": "n/a", "originality": "computed", "next_action": "as-of adapter that refits the kernel and catalogue with data up to the cut"},
-  {"component": "volatility_and_dependence", "group": "derived", "source": "pre-cut prices", "license": "n/a", "originality": "computed", "next_action": "per-cut refit adapter"},
-  {"component": "return_forecasts", "group": "derived", "source": "engine valuation on the as-of snapshot", "license": "n/a", "originality": "computed", "next_action": "as-of snapshot builder from the components above"},
-  {"component": "monte_carlo", "group": "derived", "source": "engine simulation", "license": "n/a", "originality": "computed", "next_action": "run the production simulation on the as-of snapshot"},
-  {"component": "portfolio_optimization", "group": "derived", "source": "engine composer", "license": "n/a", "originality": "computed", "next_action": "run the production composer on the as-of snapshot"},
-  {"component": "orders_and_account", "group": "derived", "source": "engine trade plan plus reconciled cash flows", "license": "n/a", "originality": "computed", "next_action": "account adapter with corporate actions"}
+  {
+   "component": "macro_vintages",
+   "group": "verified",
+   "source": "ALFRED/FRED vintages already archived",
+   "license": "public; FRED terms, some series copyrighted by their original publishers",
+   "originality": "vintage dates verified",
+   "next_action": "none"
+  },
+  {
+   "component": "spy_holdings_source",
+   "group": "verified",
+   "source": "SEC N-PORT original filing for SPY at 2024-12-31",
+   "license": "SEC public data; fair-access policy",
+   "originality": "accession and SHA-256 verified",
+   "next_action": "none"
+  },
+  {
+   "component": "historical_identifiers",
+   "group": "free-primary-candidate",
+   "source": "SEC N-PORT CUSIP and issuer LEI already archived (478 valid CUSIP, 463 checksum-valid LEI matches); SEC company ticker list for the CUSIP-to-ticker link",
+   "license": "SEC public data",
+   "originality": "N-PORT is original; ticker list is the current revision, so each link must be checked against the filing names",
+   "next_action": "unresolved 23 positions: 17 acquired or delisted need paid prices; 5 changed CUSIP or domicile after 2024 and need a name-level link checked by the same price test",
+   "progress_2026_11_15": {
+    "artifact": "data/historical/price-binding-v1/first-cut.json",
+    "method": "filed USD value / shares in the original SPY N-PORT versus the public close on the report date, undone for later splits, tolerance 0.5%",
+    "verified_positions": 481,
+    "of_positions": 504,
+    "verified_weight": 0.986229,
+    "ticker_sources": {
+     "original-filing-ticker": 450,
+     "openfigi-isin": 24,
+     "openfigi-cusip": 7
+    },
+    "unresolved": {
+     "no_public_series": 17,
+     "no_ticker_candidate": 5,
+     "price_mismatch_correctly_rejected": 1
+    },
+    "certified": false
+   }
+  },
+  {
+   "component": "historical_universe",
+   "group": "free-primary-candidate",
+   "source": "SPY N-PORT holdings at the cut as the S&P 500 membership proxy",
+   "license": "SEC public data",
+   "originality": "original filing",
+   "next_action": "derive membership from the verified N-PORT; members acquired or delisted during the outcome window still need post-cut prices (see tradable_prices_and_distributions)"
+  },
+  {
+   "component": "fundamentals_and_quality",
+   "group": "free-primary-candidate",
+   "source": "SEC Financial Statement Data Sets with filing dates (quarterly since 2009)",
+   "license": "SEC public data",
+   "originality": "as filed, dated by acceptance time",
+   "next_action": "retrieve the 2024 quarters in CI with the SEC_USER_AGENT secret and build the as-of adapter (scripts/historical_sec_fsd_intake.py exists)"
+  },
+  {
+   "component": "corporate_actions",
+   "group": "free-primary-candidate",
+   "source": "issuer distribution histories (data/distributions), split events in the archive, SEC 8-K for mergers and spin-offs",
+   "license": "SEC public; issuer pages under their terms of use",
+   "originality": "issuer and SEC records; split data from an unofficial endpoint must be cross-checked",
+   "next_action": "reconcile splits and cash distributions of the 2024-12-31 members for the outcome window; mergers and spin-offs reviewed from 8-K"
+  },
+  {
+   "component": "tradable_prices_and_distributions",
+   "group": "paid-or-unresolved",
+   "source": "free: current Yahoo closes and issuer distributions; paid for delisted members: EODHD or Sharadar",
+   "license": "Yahoo chart endpoint is unofficial and for personal research; redistribution is not granted",
+   "originality": "current revision, not an original vendor vintage",
+   "next_action": "deferred with stock-selection data; until then the cut can only be a labeled reconstruction"
+  },
+  {
+   "component": "bond_etf_profiles",
+   "group": "free-primary-candidate",
+   "source": "Internet Archive captures of issuer product pages: SHY 2024-12-23, TLT 2024-12-25, AGG 2024-12-22, BND 2024-12-30",
+   "license": "Internet Archive access; content copyright of the issuers, use for research citation",
+   "originality": "first-party issuer page dated by an independent archive",
+   "next_action": "retrieve the captures (web.archive.org is outside this session's network policy; run in CI) and parse duration, yield and expense ratio"
+  },
+  {
+   "component": "historical_model_parameters",
+   "group": "derived",
+   "source": "re-estimation with pre-cut data only",
+   "license": "n/a",
+   "originality": "computed",
+   "next_action": "as-of adapter that refits the kernel and catalogue with data up to the cut"
+  },
+  {
+   "component": "volatility_and_dependence",
+   "group": "derived",
+   "source": "pre-cut prices",
+   "license": "n/a",
+   "originality": "computed",
+   "next_action": "per-cut refit adapter"
+  },
+  {
+   "component": "return_forecasts",
+   "group": "derived",
+   "source": "engine valuation on the as-of snapshot",
+   "license": "n/a",
+   "originality": "computed",
+   "next_action": "as-of snapshot builder from the components above"
+  },
+  {
+   "component": "monte_carlo",
+   "group": "derived",
+   "source": "engine simulation",
+   "license": "n/a",
+   "originality": "computed",
+   "next_action": "run the production simulation on the as-of snapshot"
+  },
+  {
+   "component": "portfolio_optimization",
+   "group": "derived",
+   "source": "engine composer",
+   "license": "n/a",
+   "originality": "computed",
+   "next_action": "run the production composer on the as-of snapshot"
+  },
+  {
+   "component": "orders_and_account",
+   "group": "derived",
+   "source": "engine trade plan plus reconciled cash flows",
+   "license": "n/a",
+   "originality": "computed",
+   "next_action": "account adapter with corporate actions"
+  }
  ],
  "license_finding": "data/history redistributes Yahoo chart data in a public repository; the endpoint grants no redistribution right. Keep it for personal research, or move it to a private store or artifact before relying on it publicly.",
  "certification": false
