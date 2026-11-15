@@ -1,0 +1,99 @@
+{
+ "schema": "issuer-archive-bond-profiles-v1",
+ "cut": "2023-05-31",
+ "funds": {
+  "AGG": {
+   "status": "missing-duration",
+   "captured_at": "2023-04-22T14:04:53+00:00",
+   "archive_url": "https://web.archive.org/web/20230422140453/https://www.ishares.com/us/products/239458/ishares-core-us-aggregate-bond-etf",
+   "raw_sha256": "dd2ce8ae5cab0bba42c4b4f5f8815dd39b4715a2aa662285c12fe366f6f96164",
+   "profile": {
+    "expense_ratio": {
+     "value": 0.0004,
+     "as_of": null,
+     "raw": "Expense Ratio: 0.04%"
+    }
+   },
+   "rejected_after_cut": []
+  },
+  "EMB": {
+   "status": "capture-too-old"
+  },
+  "HYG": {
+   "status": "capture-too-old"
+  },
+  "IEF": {
+   "status": "capture-too-old"
+  },
+  "IEI": {
+   "status": "capture-too-old"
+  },
+  "IGSB": {
+   "status": "capture-too-old"
+  },
+  "LQD": {
+   "status": "capture-too-old"
+  },
+  "SGOV": {
+   "status": "missing-duration",
+   "captured_at": "2023-05-31T23:40:53+00:00",
+   "archive_url": "https://web.archive.org/web/20230531234053/https://www.ishares.com/us/products/314116/fund",
+   "raw_sha256": "1d6cd563a89bfa3af7a50030d6836f22f325b9d657b628cfa69e0810bc691f34",
+   "profile": {
+    "expense_ratio": {
+     "value": 0.0012,
+     "as_of": null,
+     "raw": "Expense Ratio: 0.12%"
+    }
+   },
+   "rejected_after_cut": []
+  },
+  "SHV": {
+   "status": "missing-duration",
+   "captured_at": "2023-05-16T22:03:41+00:00",
+   "archive_url": "https://web.archive.org/web/20230516220341/https://www.ishares.com/us/products/239466/ishares-short-treasury-bond-etf/",
+   "raw_sha256": "92ae8b18e779d48b2c5718cadc62c9dc341b48c73fa582b56e7d0e5ee8180eaf",
+   "profile": {
+    "expense_ratio": {
+     "value": 0.0015,
+     "as_of": null,
+     "raw": "Expense Ratio: 0.15%"
+    }
+   },
+   "rejected_after_cut": []
+  },
+  "SHY": {
+   "status": "missing-duration",
+   "captured_at": "2023-05-16T23:21:44+00:00",
+   "archive_url": "https://web.archive.org/web/20230516232144/https://www.ishares.com/us/products/239452/ishares-13-year-treasury-bond-etf/",
+   "raw_sha256": "98d1994226fd19796f12030233e8fd623ae4058875db1892aa513d99f0e48512",
+   "profile": {
+    "expense_ratio": {
+     "value": 0.0015,
+     "as_of": null,
+     "raw": "Expense Ratio: 0.15%"
+    }
+   },
+   "rejected_after_cut": []
+  },
+  "TIP": {
+   "status": "error"
+  },
+  "TLT": {
+   "status": "missing-duration",
+   "captured_at": "2023-05-28T16:48:51+00:00",
+   "archive_url": "https://web.archive.org/web/20230528164851/https://www.ishares.com/us/products/239454/ishares-20-year-treasury-bond-etf",
+   "raw_sha256": "52ffb0fa5747ea0979f9c6ccedd046722425038cfd19aa33fb99913b002da7a6",
+   "profile": {
+    "expense_ratio": {
+     "value": 0.0015,
+     "as_of": null,
+     "raw": "Expense Ratio: 0.15%"
+    }
+   },
+   "rejected_after_cut": []
+  }
+ },
+ "source": "issuer pages captured by the Internet Archive before the cut",
+ "estimated_values": false
+}
