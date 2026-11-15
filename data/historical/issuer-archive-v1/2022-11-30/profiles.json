@@ -1,0 +1,132 @@
+{
+ "schema": "issuer-archive-bond-profiles-v1",
+ "cut": "2022-11-30",
+ "funds": {
+  "AGG": {
+   "status": "capture-too-old"
+  },
+  "EMB": {
+   "status": "missing-duration",
+   "captured_at": "2022-10-24T10:34:19+00:00",
+   "archive_url": "https://web.archive.org/web/20221024103419/https://www.ishares.com/us/products/239572/",
+   "raw_sha256": "43da5a4d33c651b9c360e8db38de13c5dbbc9813172379aa65831f10209673b7",
+   "profile": {
+    "expense_ratio": {
+     "value": 0.0039000000000000003,
+     "as_of": null,
+     "raw": "Expense Ratio: 0.39%"
+    }
+   },
+   "rejected_after_cut": []
+  },
+  "HYG": {
+   "status": "missing-duration",
+   "captured_at": "2022-10-24T10:44:22+00:00",
+   "archive_url": "https://web.archive.org/web/20221024104422/https://www.ishares.com/us/products/239565/",
+   "raw_sha256": "17348d3708d5fdbdb8269a918a859f6d7717fdf17f35ea80f25dd17b2fe9894b",
+   "profile": {
+    "expense_ratio": {
+     "value": 0.0048,
+     "as_of": null,
+     "raw": "Expense Ratio: 0.48%"
+    }
+   },
+   "rejected_after_cut": []
+  },
+  "IEF": {
+   "status": "capture-too-old"
+  },
+  "IEI": {
+   "status": "missing-duration",
+   "captured_at": "2022-10-30T15:57:35+00:00",
+   "archive_url": "https://web.archive.org/web/20221030155735/https://www.ishares.com/us/products/239455/ishares-37-year-treasury-bond-etf",
+   "raw_sha256": "1a304c4b882bb9fdba4d2784779d147967b62efdeaf4d3bd02a2e10e68313751",
+   "profile": {
+    "expense_ratio": {
+     "value": 0.0015,
+     "as_of": null,
+     "raw": "Expense Ratio: 0.15%"
+    }
+   },
+   "rejected_after_cut": []
+  },
+  "IGSB": {
+   "status": "missing-duration",
+   "captured_at": "2022-10-21T04:52:34+00:00",
+   "archive_url": "https://web.archive.org/web/20221021045234/https://www.ishares.com/us/products/239451/ishares-13-year-credit-bond-etf",
+   "raw_sha256": "18392c4ea775ce1f6b428c59a2ba722f1ac67b9c0d6a7716b7fd8c6fee6d2902",
+   "profile": {
+    "expense_ratio": {
+     "value": 0.0006,
+     "as_of": null,
+     "raw": "Expense Ratio: 0.06%"
+    }
+   },
+   "rejected_after_cut": []
+  },
+  "LQD": {
+   "status": "missing-duration",
+   "captured_at": "2022-10-18T07:01:26+00:00",
+   "archive_url": "https://web.archive.org/web/20221018070126/https://www.ishares.com/us/products/239566/ishares-iboxx-investment-grade-corporate-bond-etf",
+   "raw_sha256": "73ddbc70e99677cc2a65faf3a7a3fd52354c5a4272db0af05d70468f02987935",
+   "profile": {
+    "expense_ratio": {
+     "value": 0.0014000000000000002,
+     "as_of": null,
+     "raw": "Expense Ratio: 0.14%"
+    }
+   },
+   "rejected_after_cut": []
+  },
+  "SGOV": {
+   "status": "missing-duration",
+   "captured_at": "2022-10-21T05:11:10+00:00",
+   "archive_url": "https://web.archive.org/web/20221021051110/https://www.ishares.com/us/products/314116/ishares-0-3-month-treasury-bond-etf",
+   "raw_sha256": "66abb9d247f946780e6db6f0e6024147b55f8592e60f9f2491e494f37076ee21",
+   "profile": {
+    "expense_ratio": {
+     "value": 0.0012,
+     "as_of": null,
+     "raw": "Expense Ratio: 0.12%"
+    }
+   },
+   "rejected_after_cut": []
+  },
+  "SHV": {
+   "status": "capture-too-old"
+  },
+  "SHY": {
+   "status": "missing-duration",
+   "captured_at": "2022-10-20T07:32:50+00:00",
+   "archive_url": "https://web.archive.org/web/20221020073250/https://www.ishares.com/us/products/239452/ishares-13-year-treasury-bond-etf",
+   "raw_sha256": "86b7bf4f68e977acbef0d420e5e74ce151fc7940a718135f07b9a3c2d2f5f9b0",
+   "profile": {
+    "expense_ratio": {
+     "value": 0.0015,
+     "as_of": null,
+     "raw": "Expense Ratio: 0.15%"
+    }
+   },
+   "rejected_after_cut": []
+  },
+  "TIP": {
+   "status": "error"
+  },
+  "TLT": {
+   "status": "missing-duration",
+   "captured_at": "2022-11-16T20:53:19+00:00",
+   "archive_url": "https://web.archive.org/web/20221116205319/https://www.ishares.com/us/products/239454/ishares-20-year-treasury-bond-etf2",
+   "raw_sha256": "74f56ea04cf5e01866c22811b6ddfe4128718422aa239d412378c3ec2c1ff12e",
+   "profile": {
+    "expense_ratio": {
+     "value": 0.0015,
+     "as_of": null,
+     "raw": "Expense Ratio: 0.15%"
+    }
+   },
+   "rejected_after_cut": []
+  }
+ },
+ "source": "issuer pages captured by the Internet Archive before the cut",
+ "estimated_values": false
+}

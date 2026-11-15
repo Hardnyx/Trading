@@ -1,0 +1,12 @@
+{
+ "members_requested": 457,
+ "funds_requested": 100,
+ "failed": [],
+ "assets": 557,
+ "stocks": 457,
+ "price_as_of": "2022-11-30",
+ "with_eps": 432,
+ "macro": 16,
+ "errors": 10,
+ "excluded": 3
+}
