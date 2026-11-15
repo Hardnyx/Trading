@@ -1,0 +1,7 @@
+{
+ "schema": "v3-origin-admission-v1",
+ "origins": 0,
+ "admitted": 0,
+ "rows": [],
+ "scores_read": false
+}
