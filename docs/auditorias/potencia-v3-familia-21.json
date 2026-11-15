@@ -1,0 +1,311 @@
+{
+ "schema": "confirmatory-v3-power-feasibility-v1",
+ "alpha_first_holm_step": 0.016666666666666666,
+ "power": 0.8,
+ "method": "Gaussian known variance, AR(1) effects; optimistic lower bound for KVB",
+ "sources": {
+  "ranking_ic": "Grinold and Kahn, Active Portfolio Management: IC 0.05 good, 0.10 very good; increments of 0.02-0.03 are material at broad breadth",
+  "net_economic_value": "1-2% a year: the range of active management fees an investor would need to beat net",
+  "return_mse": "Campbell and Thompson (2008): monthly R2_OS of about 0.5% is economically meaningful for a mean-variance investor; its months are not computed because the dispersion of squared-error differences has no outcome-free value"
+ },
+ "rows": [
+  {
+   "test": "ranking_ic:21",
+   "threshold": 0.02,
+   "unit": "Spearman points per month",
+   "assumptions": {
+    "names": 100,
+    "ic_correlation": 0.0,
+    "true_ic_sd": 0.0
+   },
+   "difference_sd": 0.1421,
+   "delta_sd": 0.1407,
+   "months_phi0": 446,
+   "months_phi03": 827
+  },
+  {
+   "test": "ranking_ic:21",
+   "threshold": 0.03,
+   "unit": "Spearman points per month",
+   "assumptions": {
+    "names": 100,
+    "ic_correlation": 0.0,
+    "true_ic_sd": 0.0
+   },
+   "difference_sd": 0.1421,
+   "delta_sd": 0.2111,
+   "months_phi0": 198,
+   "months_phi03": 367
+  },
+  {
+   "test": "ranking_ic:21",
+   "threshold": 0.02,
+   "unit": "Spearman points per month",
+   "assumptions": {
+    "names": 100,
+    "ic_correlation": 0.0,
+    "true_ic_sd": 0.05
+   },
+   "difference_sd": 0.1507,
+   "delta_sd": 0.1327,
+   "months_phi0": 501,
+   "months_phi03": 929
+  },
+  {
+   "test": "ranking_ic:21",
+   "threshold": 0.03,
+   "unit": "Spearman points per month",
+   "assumptions": {
+    "names": 100,
+    "ic_correlation": 0.0,
+    "true_ic_sd": 0.05
+   },
+   "difference_sd": 0.1507,
+   "delta_sd": 0.1991,
+   "months_phi0": 223,
+   "months_phi03": 413
+  },
+  {
+   "test": "ranking_ic:21",
+   "threshold": 0.02,
+   "unit": "Spearman points per month",
+   "assumptions": {
+    "names": 100,
+    "ic_correlation": 0.5,
+    "true_ic_sd": 0.0
+   },
+   "difference_sd": 0.1005,
+   "delta_sd": 0.199,
+   "months_phi0": 223,
+   "months_phi03": 413
+  },
+  {
+   "test": "ranking_ic:21",
+   "threshold": 0.03,
+   "unit": "Spearman points per month",
+   "assumptions": {
+    "names": 100,
+    "ic_correlation": 0.5,
+    "true_ic_sd": 0.0
+   },
+   "difference_sd": 0.1005,
+   "delta_sd": 0.2985,
+   "months_phi0": 99,
+   "months_phi03": 184
+  },
+  {
+   "test": "ranking_ic:21",
+   "threshold": 0.02,
+   "unit": "Spearman points per month",
+   "assumptions": {
+    "names": 100,
+    "ic_correlation": 0.5,
+    "true_ic_sd": 0.05
+   },
+   "difference_sd": 0.1123,
+   "delta_sd": 0.1782,
+   "months_phi0": 278,
+   "months_phi03": 516
+  },
+  {
+   "test": "ranking_ic:21",
+   "threshold": 0.03,
+   "unit": "Spearman points per month",
+   "assumptions": {
+    "names": 100,
+    "ic_correlation": 0.5,
+    "true_ic_sd": 0.05
+   },
+   "difference_sd": 0.1123,
+   "delta_sd": 0.2673,
+   "months_phi0": 124,
+   "months_phi03": 229
+  },
+  {
+   "test": "ranking_ic:21",
+   "threshold": 0.02,
+   "unit": "Spearman points per month",
+   "assumptions": {
+    "names": 160,
+    "ic_correlation": 0.0,
+    "true_ic_sd": 0.0
+   },
+   "difference_sd": 0.1122,
+   "delta_sd": 0.1783,
+   "months_phi0": 278,
+   "months_phi03": 515
+  },
+  {
+   "test": "ranking_ic:21",
+   "threshold": 0.03,
+   "unit": "Spearman points per month",
+   "assumptions": {
+    "names": 160,
+    "ic_correlation": 0.0,
+    "true_ic_sd": 0.0
+   },
+   "difference_sd": 0.1122,
+   "delta_sd": 0.2675,
+   "months_phi0": 124,
+   "months_phi03": 229
+  },
+  {
+   "test": "ranking_ic:21",
+   "threshold": 0.02,
+   "unit": "Spearman points per month",
+   "assumptions": {
+    "names": 160,
+    "ic_correlation": 0.0,
+    "true_ic_sd": 0.05
+   },
+   "difference_sd": 0.1228,
+   "delta_sd": 0.1629,
+   "months_phi0": 333,
+   "months_phi03": 617
+  },
+  {
+   "test": "ranking_ic:21",
+   "threshold": 0.03,
+   "unit": "Spearman points per month",
+   "assumptions": {
+    "names": 160,
+    "ic_correlation": 0.0,
+    "true_ic_sd": 0.05
+   },
+   "difference_sd": 0.1228,
+   "delta_sd": 0.2443,
+   "months_phi0": 148,
+   "months_phi03": 274
+  },
+  {
+   "test": "ranking_ic:21",
+   "threshold": 0.02,
+   "unit": "Spearman points per month",
+   "assumptions": {
+    "names": 160,
+    "ic_correlation": 0.5,
+    "true_ic_sd": 0.0
+   },
+   "difference_sd": 0.0793,
+   "delta_sd": 0.2522,
+   "months_phi0": 139,
+   "months_phi03": 257
+  },
+  {
+   "test": "ranking_ic:21",
+   "threshold": 0.03,
+   "unit": "Spearman points per month",
+   "assumptions": {
+    "names": 160,
+    "ic_correlation": 0.5,
+    "true_ic_sd": 0.0
+   },
+   "difference_sd": 0.0793,
+   "delta_sd": 0.3783,
+   "months_phi0": 62,
+   "months_phi03": 114
+  },
+  {
+   "test": "ranking_ic:21",
+   "threshold": 0.02,
+   "unit": "Spearman points per month",
+   "assumptions": {
+    "names": 160,
+    "ic_correlation": 0.5,
+    "true_ic_sd": 0.05
+   },
+   "difference_sd": 0.0938,
+   "delta_sd": 0.2133,
+   "months_phi0": 194,
+   "months_phi03": 360
+  },
+  {
+   "test": "ranking_ic:21",
+   "threshold": 0.03,
+   "unit": "Spearman points per month",
+   "assumptions": {
+    "names": 160,
+    "ic_correlation": 0.5,
+    "true_ic_sd": 0.05
+   },
+   "difference_sd": 0.0938,
+   "delta_sd": 0.32,
+   "months_phi0": 87,
+   "months_phi03": 160
+  },
+  {
+   "test": "net_economic_value:21",
+   "threshold": 0.01,
+   "unit": "annualized log return net of costs",
+   "assumptions": {
+    "tracking_error_annual": 0.02
+   },
+   "difference_sd": 0.0058,
+   "delta_sd": 0.1443,
+   "months_phi0": 424,
+   "months_phi03": 786
+  },
+  {
+   "test": "net_economic_value:21",
+   "threshold": 0.01,
+   "unit": "annualized log return net of costs",
+   "assumptions": {
+    "tracking_error_annual": 0.04
+   },
+   "difference_sd": 0.0115,
+   "delta_sd": 0.0722,
+   "months_phi0": 1694,
+   "months_phi03": 3144
+  },
+  {
+   "test": "net_economic_value:21",
+   "threshold": 0.01,
+   "unit": "annualized log return net of costs",
+   "assumptions": {
+    "tracking_error_annual": 0.06
+   },
+   "difference_sd": 0.0173,
+   "delta_sd": 0.0481,
+   "months_phi0": 3810,
+   "months_phi03": 7075
+  },
+  {
+   "test": "net_economic_value:21",
+   "threshold": 0.02,
+   "unit": "annualized log return net of costs",
+   "assumptions": {
+    "tracking_error_annual": 0.02
+   },
+   "difference_sd": 0.0058,
+   "delta_sd": 0.2887,
+   "months_phi0": 106,
+   "months_phi03": 196
+  },
+  {
+   "test": "net_economic_value:21",
+   "threshold": 0.02,
+   "unit": "annualized log return net of costs",
+   "assumptions": {
+    "tracking_error_annual": 0.04
+   },
+   "difference_sd": 0.0115,
+   "delta_sd": 0.1443,
+   "months_phi0": 424,
+   "months_phi03": 786
+  },
+  {
+   "test": "net_economic_value:21",
+   "threshold": 0.02,
+   "unit": "annualized log return net of costs",
+   "assumptions": {
+    "tracking_error_annual": 0.06
+   },
+   "difference_sd": 0.0173,
+   "delta_sd": 0.0962,
+   "months_phi0": 953,
+   "months_phi03": 1769
+  }
+ ],
+ "market_outcomes_read": false,
+ "formal_inference_enabled": false
+}
