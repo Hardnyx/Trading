@@ -10,6 +10,7 @@ import datetime as dt
 import gzip
 import hashlib
 import json
+import re
 import time
 import urllib.parse
 import urllib.request
@@ -25,7 +26,8 @@ MAX_AGE_DAYS = 45
 HEADERS = {"User-Agent": "research-archive-client"}
 
 
-def fetch(url, timeout=60, attempts=3):
+def fetch(url, timeout=60, attempts=5):
+    """The archive throttles bursts with refusals and 503s: back off and retry."""
     for attempt in range(attempts):
         try:
             with urllib.request.urlopen(urllib.request.Request(url, headers=HEADERS), timeout=timeout) as response:
@@ -33,7 +35,7 @@ def fetch(url, timeout=60, attempts=3):
         except Exception:
             if attempt == attempts - 1:
                 raise
-            time.sleep(5 * (attempt + 1))
+            time.sleep(20 * (attempt + 1))
 
 
 def product_prefix(url):
@@ -69,6 +71,10 @@ def capture(symbol, url, cut, out):
     if age > MAX_AGE_DAYS:
         return {**record, "status": "capture-too-old"}
     raw = fetch(f"https://web.archive.org/web/{stamp}id_/{original}", timeout=120)
+    # iShares serves a product by number whatever the slug; the page itself must name the fund.
+    page = gzip.decompress(raw) if raw[:2] == b"\x1f\x8b" else raw  # stored as received, checked decoded
+    if not re.search(rb"\b" + symbol.encode() + rb"\b", page):
+        return {**record, "status": "page-does-not-name-fund"}
     name = f"{symbol}-{stamp}.html.gz"
     (out / name).write_bytes(gzip.compress(raw, mtime=0))
     return {**record, "status": "archived", "file": name, "raw_sha256": hashlib.sha256(raw).hexdigest(),
@@ -81,13 +87,20 @@ def main():
     options = parser.parse_args()
     out = ROOT / "data/historical/issuer-archive-v1" / options.cut
     out.mkdir(parents=True, exist_ok=True)
+    previous = {}
+    if (out / "manifest.json").exists():
+        previous = {r["symbol"]: r for r in json.loads((out / "manifest.json").read_text())["captures"]
+                    if r.get("status") == "archived" and (out / r["file"]).exists()}
     rows = []
     for symbol, url in sorted(DISTRIBUTION_URLS.items()):
+        if symbol in previous:  # archived captures are immutable; only missing funds are retried
+            rows.append(previous[symbol])
+            continue
         try:
             rows.append(capture(symbol, url, options.cut, out))
         except Exception as error:
             rows.append({"symbol": symbol, "source_url": url, "status": "error", "error": f"{type(error).__name__}: {str(error)[:120]}"})
-        time.sleep(2)
+        time.sleep(8)
     manifest = {"schema": "issuer-archive-capture-v1", "cut": options.cut, "max_age_days": MAX_AGE_DAYS,
                 "source": "Internet Archive Wayback Machine, original-content mode", "captures": rows,
                 "retrieved_at": dt.datetime.now(dt.timezone.utc).isoformat()}
