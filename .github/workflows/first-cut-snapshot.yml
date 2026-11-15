@@ -80,9 +80,12 @@ jobs:
           name="${{ inputs.cut }}"
           if [ "${{ inputs.limit }}" != "0" ]; then name="$name-smoke"; fi
           node scripts/first_cut_engine.mjs "$name"
+      - name: Audit the engine inputs of the cut
+        if: inputs.limit == '0'
+        run: python scripts/first_cut_input_audit.py --cut "${{ inputs.cut }}"
       - name: Commit the reconstruction
         run: |
-          git add data/historical/first-cut-snapshot-v1
+          git add data/historical/first-cut-snapshot-v1 data/historical/full-engine-input-audit-v1
           if git diff --cached --quiet; then
             exit 0
           fi

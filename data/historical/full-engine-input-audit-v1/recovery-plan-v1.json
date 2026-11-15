@@ -154,7 +154,13 @@
    "source": "pre-cut prices",
    "license": "n/a",
    "originality": "computed",
-   "next_action": "per-cut refit adapter"
+   "next_action": "per-cut refit adapter",
+   "progress_2026_11_15_snapshot": {
+    "status": "computed-on-as-of-snapshot",
+    "artifact": "per-cut refit on pre-cut prices (first-cut-snapshot-v1/2024-12-31.volatility.json.gz)",
+    "audit": "data/historical/full-engine-input-audit-v1/report.json",
+    "development_period_only": true
+   }
   },
   {
    "component": "return_forecasts",
@@ -162,7 +168,13 @@
    "source": "engine valuation on the as-of snapshot",
    "license": "n/a",
    "originality": "computed",
-   "next_action": "as-of snapshot builder from the components above"
+   "next_action": "as-of snapshot builder from the components above",
+   "progress_2026_11_15_snapshot": {
+    "status": "computed-on-as-of-snapshot",
+    "artifact": "engine valuation on the as-of snapshot (first-cut-snapshot-v1/2024-12-31.json.gz)",
+    "audit": "data/historical/full-engine-input-audit-v1/report.json",
+    "development_period_only": true
+   }
   },
   {
    "component": "monte_carlo",
@@ -170,7 +182,13 @@
    "source": "engine simulation",
    "license": "n/a",
    "originality": "computed",
-   "next_action": "run the production simulation on the as-of snapshot"
+   "next_action": "run the production simulation on the as-of snapshot",
+   "progress_2026_11_15_snapshot": {
+    "status": "computed-on-as-of-snapshot",
+    "artifact": "production simulation run on the as-of snapshot",
+    "audit": "data/historical/full-engine-input-audit-v1/report.json",
+    "development_period_only": true
+   }
   },
   {
    "component": "portfolio_optimization",
@@ -178,7 +196,13 @@
    "source": "engine composer",
    "license": "n/a",
    "originality": "computed",
-   "next_action": "run the production composer on the as-of snapshot"
+   "next_action": "run the production composer on the as-of snapshot",
+   "progress_2026_11_15_snapshot": {
+    "status": "computed-on-as-of-snapshot",
+    "artifact": "reference composer run on the as-of snapshot (2024-12-31.decision.json)",
+    "audit": "data/historical/full-engine-input-audit-v1/report.json",
+    "development_period_only": true
+   }
   },
   {
    "component": "orders_and_account",
