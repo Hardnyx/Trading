@@ -1,0 +1,261 @@
+{
+ "schema": "full-engine-first-cut-input-audit-v1",
+ "cut": "2023-04-28",
+ "snapshot_sha256": "c0a439e1c685ca2a2b68b41628aeadaa7bab409833bb327aebb4e2673831f767",
+ "volatility_sha256": "fe9fe7ca1ee3d80248eae964a37c5a932bc38472b056df5c20606777ad25a5f4",
+ "checks": {
+  "availability": {
+   "passed": true,
+   "fields_after_cut": [],
+   "count": 0
+  },
+  "universe": {
+   "passed": true,
+   "members": 470,
+   "spy_weight_covered": 0.976237,
+   "spy_weight_with_ttm_eps": 0.920927,
+   "unexplained_missing": [],
+   "not_in_binding": [],
+   "declared_exclusions": {
+    "unbound_positions": [
+     {
+      "cusip": "254709108",
+      "name": "Discover Financial Services",
+      "weight": 0.0008285524191399999,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "934423104",
+      "name": "Warner Bros Discovery Inc",
+      "weight": 0.00064493061181,
+      "status": "no-ticker-candidate"
+     },
+     {
+      "cusip": "25470M109",
+      "name": "DISH Network Corp",
+      "weight": 0.00010750148306999999,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "200340107",
+      "name": "Comerica Inc",
+      "weight": 0.00027282133969,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "42809H107",
+      "name": "Hess Corp",
+      "weight": 0.00121460471185,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "565849106",
+      "name": "Marathon Oil Corp",
+      "weight": 0.00053486759229,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "000000000",
+      "name": "Linde PLC",
+      "weight": 0.00501722919743,
+      "status": "no-ticker-candidate"
+     },
+     {
+      "cusip": "931427108",
+      "name": "Walgreens Boots Alliance Inc",
+      "weight": 0.000834350802,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "000000000",
+      "name": "Amcor PLC",
+      "weight": 0.00055539134194,
+      "status": "no-ticker-candidate"
+     },
+     {
+      "cusip": "78486Q101",
+      "name": "SVB Financial Group",
+      "weight": 0.00041440783396,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "74736K101",
+      "name": "Qorvo Inc",
+      "weight": 0.00029014875291,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "339041105",
+      "name": "FleetCor Technologies Inc",
+      "weight": 0.000427019051,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "127097103",
+      "name": "Coterra Energy Inc",
+      "weight": 0.00060548506889,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "81211K100",
+      "name": "Sealed Air Corp",
+      "weight": 0.00022961867219,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "92556H206",
+      "name": "Paramount Global",
+      "weight": 0.00026425949924,
+      "status": "price-mismatch"
+     },
+     {
+      "cusip": "487836108",
+      "name": "Kellogg Co",
+      "weight": 0.00056734449754,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "15677J108",
+      "name": "Ceridian HCM Holding Inc",
+      "weight": 0.00030446927313,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "00507V109",
+      "name": "Activision Blizzard Inc",
+      "weight": 0.00168959526743,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "48203R104",
+      "name": "Juniper Networks Inc",
+      "weight": 0.00031911102669,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "053484101",
+      "name": "AvalonBay Communities Inc",
+      "weight": 0.0007030766557,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "000000000",
+      "name": "TE Connectivity Ltd",
+      "weight": 0.00113837385332,
+      "status": "no-ticker-candidate"
+     },
+     {
+      "cusip": "96145D105",
+      "name": "Westrock Co",
+      "weight": 0.00027695084988,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "723787107",
+      "name": "Pioneer Natural Resources Co",
+      "weight": 0.00168991013249,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "285512109",
+      "name": "Electronic Arts Inc",
+      "weight": 0.00100056351033,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "03662Q105",
+      "name": "ANSYS Inc",
+      "weight": 0.00064661883344,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "82669G104",
+      "name": "Signature Bank/New York NY",
+      "weight": 0.00022281079488,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "460690100",
+      "name": "Interpublic Group of Cos Inc/The",
+      "weight": 0.00040271002759,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "000000000",
+      "name": "Aptiv PLC",
+      "weight": 0.00078511002237,
+      "status": "no-ticker-candidate"
+     },
+     {
+      "cusip": "148806102",
+      "name": "Catalent Inc",
+      "weight": 0.00024847906515,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "436440101",
+      "name": "Hologic Inc",
+      "weight": 0.00058131255729,
+      "status": "no-public-series"
+     }
+    ],
+    "unbound_weight": 0.022823,
+    "no_sector_in_list_revision": [
+     "FRCB",
+     "LUMN",
+     "VNO",
+     "VNT"
+    ],
+    "eps_withheld_by_engine_guards": [
+     "BLK",
+     "BRK-B",
+     "CPRT",
+     "ENPH",
+     "HAL",
+     "HSY",
+     "HWM",
+     "KIM",
+     "MNST",
+     "REG",
+     "SPG",
+     "STZ",
+     "TAP",
+     "TECH",
+     "TXT",
+     "V",
+     "XOM"
+    ]
+   }
+  },
+  "identity": {
+   "passed": true,
+   "report_date": "2022-12-31",
+   "tolerance": 0.005,
+   "mismatches": []
+  },
+  "units": {
+   "passed": true,
+   "problems": []
+  },
+  "engine_inputs": {
+   "passed": false,
+   "market_bytes": true,
+   "volatility_bytes": true,
+   "engine_version": true,
+   "proposed": false,
+   "weights_sum_to_one": true,
+   "outcomes_not_read": true
+  }
+ },
+ "input_checks_passed": false,
+ "status": "blocked",
+ "limitations": [
+  "Prices are the current Yahoo revision restated to the cut's share basis, not an original vendor vintage; the unofficial endpoint grants no redistribution.",
+  "Sectors come from the Wikipedia list revision in force at the cut, not from S&P's official file.",
+  "The ETF list is the current engine's list, chosen after the cut.",
+  "The engine, its parameters and the reference preset were developed after the cut: the decision is a development-period reconstruction and cannot be confirmatory evidence.",
+  "Members bought out or delisted after the cut without a free series are excluded positions, not priced."
+ ],
+ "outcomes_read": false,
+ "confirmatory_eligible": false
+}
