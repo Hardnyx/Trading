@@ -47,6 +47,7 @@ jobs:
       - run: python scripts/prospective_study_registry.py --verify
       - run: python scripts/overfit_policy_guard.py --verify
       - run: python scripts/ci_workflow_policy.py --verify
+      - run: python scripts/timestamp_evidence.py --verify
       - name: Decide whether the validated commit must be published
         id: release
         if: github.ref == 'refs/heads/main'
