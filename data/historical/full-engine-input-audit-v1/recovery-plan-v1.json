@@ -84,7 +84,30 @@
    "source": "issuer distribution histories (data/distributions), split events in the archive, SEC 8-K for mergers and spin-offs",
    "license": "SEC public; issuer pages under their terms of use",
    "originality": "issuer and SEC records; split data from an unofficial endpoint must be cross-checked",
-   "next_action": "reconcile splits and cash distributions of the 2024-12-31 members for the outcome window; mergers and spin-offs reviewed from 8-K"
+   "next_action": "terms of the 23 unbound positions from SEC 8-K (acquisitions) or new identifiers (CUSIP or domicile changes); spin-off distributions valued in the account adapter",
+   "progress_2026_11_15": {
+    "artifact": "data/historical/first-cut-corporate-actions-v1/2024-12-31.json",
+    "window": "2024-12-31 to 2025-12-31",
+    "members": 481,
+    "with_dividends": 397,
+    "share_splits": [
+     "ORLY",
+     "NFLX",
+     "NOW",
+     "FAST"
+    ],
+    "spin_off_adjustments": [
+     "HON",
+     "WDC",
+     "LEN",
+     "DD",
+     "J",
+     "FTV"
+    ],
+    "verified_members_ending_early": 0,
+    "events_needing_sec_terms": 23,
+    "certified": false
+   }
   },
   {
    "component": "tradable_prices_and_distributions",
