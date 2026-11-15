@@ -84,7 +84,10 @@ def capture(symbol, url, cut, out):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--cut", default="2024-12-31")
+    parser.add_argument("--budget-minutes", type=float, default=40,
+                        help="stop starting new funds after this; the rest are declared not attempted")
     options = parser.parse_args()
+    deadline = time.monotonic() + options.budget_minutes * 60
     out = ROOT / "data/historical/issuer-archive-v1" / options.cut
     out.mkdir(parents=True, exist_ok=True)
     previous = {}
@@ -95,6 +98,9 @@ def main():
     for symbol, url in sorted(DISTRIBUTION_URLS.items()):
         if symbol in previous:  # archived captures are immutable; only missing funds are retried
             rows.append(previous[symbol])
+            continue
+        if time.monotonic() > deadline:
+            rows.append({"symbol": symbol, "source_url": url, "status": "not-attempted-time-budget"})
             continue
         try:
             rows.append(capture(symbol, url, options.cut, out))
