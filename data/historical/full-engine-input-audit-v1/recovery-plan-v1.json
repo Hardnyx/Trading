@@ -67,7 +67,16 @@
    "source": "SEC Financial Statement Data Sets with filing dates (quarterly since 2009)",
    "license": "SEC public data",
    "originality": "as filed, dated by acceptance time",
-   "next_action": "retrieve the 2024 quarters in CI with the SEC_USER_AGENT secret and build the as-of adapter (scripts/historical_sec_fsd_intake.py exists)"
+   "next_action": "quality and confidence adapter on these facts inside the as-of snapshot builder",
+   "progress_2026_11_15": {
+    "artifact": "data/historical/first-cut-fundamentals-v1/2024-12-31.json.gz",
+    "method": "engine financials(cik, cutoff) on SEC companyfacts, facts filed on or before the cut; leak check on every member",
+    "members": 481,
+    "available": 481,
+    "with_ttm_eps": 459,
+    "ttm_eps_weight": 0.9359,
+    "certified": false
+   }
   },
   {
    "component": "corporate_actions",
