@@ -1,0 +1,610 @@
+{
+ "schema": "issuer-archive-bond-profiles-v1",
+ "cut": "2025-06-30",
+ "funds": {
+  "AGG": {
+   "status": "parsed",
+   "captured_at": "2025-05-21T06:07:39+00:00",
+   "archive_url": "https://web.archive.org/web/20250521060739/https://www.ishares.com/us/products/239458/ishares-core-us-aggregate-bond-etf",
+   "raw_sha256": "d5eba1374b0c70658fac55d6f3ad875936219c985063654e1410ca77b503e089",
+   "profile": {
+    "sec_yield_30d": {
+     "value": 0.044500000000000005,
+     "as_of": "2025-05-19",
+     "raw": "4.45%"
+    },
+    "weighted_avg_coupon": {
+     "value": 3.54,
+     "as_of": "2025-05-19",
+     "raw": "3.54"
+    },
+    "effective_duration_years": {
+     "value": 5.76,
+     "as_of": "2025-05-19",
+     "raw": "5.76 yrs"
+    },
+    "option_adjusted_spread": {
+     "value": 35.48,
+     "as_of": "2025-05-19",
+     "raw": "35.48 bps"
+    },
+    "trailing_yield_12m": {
+     "value": 0.0383,
+     "as_of": "2025-05-19",
+     "raw": "3.83%"
+    },
+    "yield_to_maturity": {
+     "value": 0.0478,
+     "as_of": "2025-05-19",
+     "raw": "4.78%"
+    },
+    "weighted_avg_maturity_years": {
+     "value": 8.1,
+     "as_of": "2025-05-19",
+     "raw": "8.10 yrs"
+    },
+    "convexity": {
+     "value": 0.53,
+     "as_of": "2025-05-19",
+     "raw": "0.53"
+    },
+    "expense_ratio": {
+     "value": 0.0003,
+     "as_of": null,
+     "raw": "Expense Ratio: 0.03%"
+    }
+   },
+   "rejected_after_cut": []
+  },
+  "EMB": {
+   "status": "parsed",
+   "captured_at": "2025-06-19T03:56:42+00:00",
+   "archive_url": "https://web.archive.org/web/20250619035642/https://www.ishares.com/us/products/239572/ishares-jp-morgan-usd-emerging-markets-bond-etf",
+   "raw_sha256": "bd9bea0b611d1286ffcec897f40688f2318301e2b47fb695b989c7a1c2d62419",
+   "profile": {
+    "sec_yield_30d": {
+     "value": 0.0622,
+     "as_of": "2025-06-17",
+     "raw": "6.22%"
+    },
+    "weighted_avg_coupon": {
+     "value": 5.28,
+     "as_of": "2025-06-17",
+     "raw": "5.28"
+    },
+    "effective_duration_years": {
+     "value": 6.78,
+     "as_of": "2025-06-17",
+     "raw": "6.78 yrs"
+    },
+    "option_adjusted_spread": {
+     "value": 233.56,
+     "as_of": "2025-06-17",
+     "raw": "233.56 bps"
+    },
+    "trailing_yield_12m": {
+     "value": 0.0556,
+     "as_of": "2025-06-17",
+     "raw": "5.56%"
+    },
+    "yield_to_maturity": {
+     "value": 0.0674,
+     "as_of": "2025-06-17",
+     "raw": "6.74%"
+    },
+    "weighted_avg_maturity_years": {
+     "value": 11.4,
+     "as_of": "2025-06-17",
+     "raw": "11.40 yrs"
+    },
+    "convexity": {
+     "value": 0.78,
+     "as_of": "2025-06-17",
+     "raw": "0.78"
+    },
+    "expense_ratio": {
+     "value": 0.0039000000000000003,
+     "as_of": null,
+     "raw": "Expense Ratio: 0.39%"
+    }
+   },
+   "rejected_after_cut": []
+  },
+  "HYG": {
+   "status": "parsed",
+   "captured_at": "2025-06-10T08:55:49+00:00",
+   "archive_url": "https://web.archive.org/web/20250610085549/https://www.ishares.com/us/products/239565/ishares-iboxx-high-yield-corporate-bond-etf",
+   "raw_sha256": "3c76e6d5ea1548b04c8e489147660066e5509d9505f21d13df0a38ae3f183a9d",
+   "profile": {
+    "sec_yield_30d": {
+     "value": 0.0693,
+     "as_of": "2025-06-06",
+     "raw": "6.93%"
+    },
+    "weighted_avg_coupon": {
+     "value": 6.46,
+     "as_of": "2025-06-06",
+     "raw": "6.46"
+    },
+    "effective_duration_years": {
+     "value": 2.94,
+     "as_of": "2025-06-06",
+     "raw": "2.94 yrs"
+    },
+    "option_adjusted_spread": {
+     "value": 278.08,
+     "as_of": "2025-06-06",
+     "raw": "278.08 bps"
+    },
+    "trailing_yield_12m": {
+     "value": 0.058600000000000006,
+     "as_of": "2025-06-06",
+     "raw": "5.86%"
+    },
+    "yield_to_maturity": {
+     "value": 0.0722,
+     "as_of": "2025-06-06",
+     "raw": "7.22%"
+    },
+    "weighted_avg_maturity_years": {
+     "value": 3.7,
+     "as_of": "2025-06-06",
+     "raw": "3.70 yrs"
+    },
+    "convexity": {
+     "value": -0.17,
+     "as_of": "2025-06-06",
+     "raw": "-0.17"
+    },
+    "expense_ratio": {
+     "value": 0.0049,
+     "as_of": null,
+     "raw": "Expense Ratio: 0.49%"
+    }
+   },
+   "rejected_after_cut": []
+  },
+  "IEF": {
+   "status": "parsed",
+   "captured_at": "2025-06-24T10:34:32+00:00",
+   "archive_url": "https://web.archive.org/web/20250624103432/https://www.ishares.com/us/products/239456/ishares-710-year-treasury-bond-etf",
+   "raw_sha256": "a6d26fc9c4333a6db3d6a2d8cba15d09213c764a1609aec107180a183b84cb81",
+   "profile": {
+    "sec_yield_30d": {
+     "value": 0.042199999999999994,
+     "as_of": "2025-06-20",
+     "raw": "4.22%"
+    },
+    "weighted_avg_coupon": {
+     "value": 3.95,
+     "as_of": "2025-06-20",
+     "raw": "3.95"
+    },
+    "effective_duration_years": {
+     "value": 7.05,
+     "as_of": "2025-06-20",
+     "raw": "7.05 yrs"
+    },
+    "option_adjusted_spread": {
+     "value": 2.01,
+     "as_of": "2025-06-20",
+     "raw": "2.01 bps"
+    },
+    "trailing_yield_12m": {
+     "value": 0.0374,
+     "as_of": "2025-06-20",
+     "raw": "3.74%"
+    },
+    "yield_to_maturity": {
+     "value": 0.0429,
+     "as_of": "2025-06-20",
+     "raw": "4.29%"
+    },
+    "weighted_avg_maturity_years": {
+     "value": 8.52,
+     "as_of": "2025-06-20",
+     "raw": "8.52 yrs"
+    },
+    "convexity": {
+     "value": 0.59,
+     "as_of": "2025-06-20",
+     "raw": "0.59"
+    },
+    "expense_ratio": {
+     "value": 0.0015,
+     "as_of": null,
+     "raw": "Expense Ratio: 0.15%"
+    }
+   },
+   "rejected_after_cut": []
+  },
+  "IEI": {
+   "status": "parsed",
+   "captured_at": "2025-06-21T11:38:44+00:00",
+   "archive_url": "https://web.archive.org/web/20250621113844/https://www.ishares.com/us/products/239455/",
+   "raw_sha256": "05daaaa1aa8d30c2209ea86bdb677e7a2cbcbc34ac58cafd861419a6c665fa1e",
+   "profile": {
+    "sec_yield_30d": {
+     "value": 0.0393,
+     "as_of": "2025-06-18",
+     "raw": "3.93%"
+    },
+    "weighted_avg_coupon": {
+     "value": 3.16,
+     "as_of": "2025-06-18",
+     "raw": "3.16"
+    },
+    "effective_duration_years": {
+     "value": 4.28,
+     "as_of": "2025-06-18",
+     "raw": "4.28 yrs"
+    },
+    "option_adjusted_spread": {
+     "value": -0.23,
+     "as_of": "2025-06-18",
+     "raw": "-0.23 bps"
+    },
+    "trailing_yield_12m": {
+     "value": 0.0329,
+     "as_of": "2025-06-18",
+     "raw": "3.29%"
+    },
+    "yield_to_maturity": {
+     "value": 0.04,
+     "as_of": "2025-06-18",
+     "raw": "4.00%"
+    },
+    "weighted_avg_maturity_years": {
+     "value": 4.73,
+     "as_of": "2025-06-18",
+     "raw": "4.73 yrs"
+    },
+    "convexity": {
+     "value": 0.22,
+     "as_of": "2025-06-18",
+     "raw": "0.22"
+    },
+    "expense_ratio": {
+     "value": 0.0015,
+     "as_of": null,
+     "raw": "Expense Ratio: 0.15%"
+    }
+   },
+   "rejected_after_cut": []
+  },
+  "IGSB": {
+   "status": "capture-too-old"
+  },
+  "LQD": {
+   "status": "parsed",
+   "captured_at": "2025-06-14T23:27:17+00:00",
+   "archive_url": "https://web.archive.org/web/20250614232717/https://www.ishares.com/us/products/239566/ishares-iboxx-investment-grade-corporate-bond-etf",
+   "raw_sha256": "2a65255df582aab1edc6fdce42185d325b0c845934632dd8532f15b89832d0dd",
+   "profile": {
+    "sec_yield_30d": {
+     "value": 0.0525,
+     "as_of": "2025-06-12",
+     "raw": "5.25%"
+    },
+    "weighted_avg_coupon": {
+     "value": 4.4,
+     "as_of": "2025-06-12",
+     "raw": "4.40"
+    },
+    "effective_duration_years": {
+     "value": 8.06,
+     "as_of": "2025-06-12",
+     "raw": "8.06 yrs"
+    },
+    "option_adjusted_spread": {
+     "value": 86.81,
+     "as_of": "2025-06-12",
+     "raw": "86.81 bps"
+    },
+    "trailing_yield_12m": {
+     "value": 0.044199999999999996,
+     "as_of": "2025-06-12",
+     "raw": "4.42%"
+    },
+    "yield_to_maturity": {
+     "value": 0.0527,
+     "as_of": "2025-06-12",
+     "raw": "5.27%"
+    },
+    "weighted_avg_maturity_years": {
+     "value": 12.87,
+     "as_of": "2025-06-12",
+     "raw": "12.87 yrs"
+    },
+    "convexity": {
+     "value": 1.12,
+     "as_of": "2025-06-12",
+     "raw": "1.12"
+    },
+    "expense_ratio": {
+     "value": 0.0014000000000000002,
+     "as_of": null,
+     "raw": "Expense Ratio: 0.14%"
+    }
+   },
+   "rejected_after_cut": []
+  },
+  "SGOV": {
+   "status": "parsed",
+   "captured_at": "2025-06-26T04:31:22+00:00",
+   "archive_url": "https://web.archive.org/web/20250626043122/https://www.ishares.com/us/products/314116/ishares-0-3-month-treasury-bond-etf",
+   "raw_sha256": "9578f4d1c22131910d99a34a04d12c3de6358c46e4ae0952598e8ca4af47b7cb",
+   "profile": {
+    "sec_yield_30d": {
+     "value": 0.0417,
+     "as_of": "2025-06-24",
+     "raw": "4.17%"
+    },
+    "weighted_avg_coupon": {
+     "value": 0.0,
+     "as_of": "2025-06-24",
+     "raw": "0.00"
+    },
+    "effective_duration_years": {
+     "value": 0.09,
+     "as_of": "2025-06-24",
+     "raw": "0.09 yrs"
+    },
+    "option_adjusted_spread": {
+     "value": -14.83,
+     "as_of": "2025-06-24",
+     "raw": "-14.83 bps"
+    },
+    "trailing_yield_12m": {
+     "value": 0.0462,
+     "as_of": "2025-06-24",
+     "raw": "4.62%"
+    },
+    "yield_to_maturity": {
+     "value": 0.0424,
+     "as_of": "2025-06-24",
+     "raw": "4.24%"
+    },
+    "weighted_avg_maturity_years": {
+     "value": 0.1,
+     "as_of": "2025-06-24",
+     "raw": "0.10 yrs"
+    },
+    "convexity": {
+     "value": 0.0,
+     "as_of": "2025-06-24",
+     "raw": "0.00"
+    },
+    "expense_ratio": {
+     "value": 0.0009,
+     "as_of": null,
+     "raw": "Expense Ratio: 0.09%"
+    }
+   },
+   "rejected_after_cut": []
+  },
+  "SHV": {
+   "status": "parsed",
+   "captured_at": "2025-06-07T19:01:47+00:00",
+   "archive_url": "https://web.archive.org/web/20250607190147/https://www.ishares.com/us/products/239466/ishares-short-treasury-bond-etf",
+   "raw_sha256": "e25d9f3b43555085a26f505e0c2f913dcf1cdfce77a31373f1918d88ecbb969d",
+   "profile": {
+    "sec_yield_30d": {
+     "value": 0.041100000000000005,
+     "as_of": "2025-06-05",
+     "raw": "4.11%"
+    },
+    "weighted_avg_coupon": {
+     "value": 2.49,
+     "as_of": "2025-06-05",
+     "raw": "2.49"
+    },
+    "effective_duration_years": {
+     "value": 0.29,
+     "as_of": "2025-06-05",
+     "raw": "0.29 yrs"
+    },
+    "option_adjusted_spread": {
+     "value": -7.06,
+     "as_of": "2025-06-05",
+     "raw": "-7.06 bps"
+    },
+    "trailing_yield_12m": {
+     "value": 0.0464,
+     "as_of": "2025-06-05",
+     "raw": "4.64%"
+    },
+    "yield_to_maturity": {
+     "value": 0.042699999999999995,
+     "as_of": "2025-06-05",
+     "raw": "4.27%"
+    },
+    "weighted_avg_maturity_years": {
+     "value": 0.29,
+     "as_of": "2025-06-05",
+     "raw": "0.29 yrs"
+    },
+    "convexity": {
+     "value": 0.0,
+     "as_of": "2025-06-05",
+     "raw": "0.00"
+    },
+    "expense_ratio": {
+     "value": 0.0015,
+     "as_of": null,
+     "raw": "Expense Ratio: 0.15%"
+    }
+   },
+   "rejected_after_cut": []
+  },
+  "SHY": {
+   "status": "parsed",
+   "captured_at": "2025-05-25T01:29:43+00:00",
+   "archive_url": "https://web.archive.org/web/20250525012943/https://www.ishares.com/us/products/239452/ishares-132025-treasury-bond-etf",
+   "raw_sha256": "993d16196da1f31f4a97adebfb4d72830e6d266fe68b25107760df5fd5863494",
+   "profile": {
+    "sec_yield_30d": {
+     "value": 0.0381,
+     "as_of": "2025-05-22",
+     "raw": "3.81%"
+    },
+    "weighted_avg_coupon": {
+     "value": 2.75,
+     "as_of": "2025-05-22",
+     "raw": "2.75"
+    },
+    "effective_duration_years": {
+     "value": 1.81,
+     "as_of": "2025-05-22",
+     "raw": "1.81 yrs"
+    },
+    "option_adjusted_spread": {
+     "value": -0.53,
+     "as_of": "2025-05-22",
+     "raw": "-0.53 bps"
+    },
+    "trailing_yield_12m": {
+     "value": 0.039599999999999996,
+     "as_of": "2025-05-22",
+     "raw": "3.96%"
+    },
+    "yield_to_maturity": {
+     "value": 0.0404,
+     "as_of": "2025-05-22",
+     "raw": "4.04%"
+    },
+    "weighted_avg_maturity_years": {
+     "value": 1.9,
+     "as_of": "2025-05-22",
+     "raw": "1.90 yrs"
+    },
+    "convexity": {
+     "value": 0.05,
+     "as_of": "2025-05-22",
+     "raw": "0.05"
+    },
+    "expense_ratio": {
+     "value": 0.0015,
+     "as_of": null,
+     "raw": "Expense Ratio: 0.15%"
+    }
+   },
+   "rejected_after_cut": []
+  },
+  "TIP": {
+   "status": "parsed",
+   "captured_at": "2025-05-21T05:14:40+00:00",
+   "archive_url": "https://web.archive.org/web/20250521051440/https://www.ishares.com/us/products/239467/ishares-tips-bond-etf",
+   "raw_sha256": "10b077d08b6f1e06139d0a0b3b899caa4ed6a2e9bf0830f9eccc43eaafe95c0d",
+   "profile": {
+    "sec_yield_30d": {
+     "value": 0.053200000000000004,
+     "as_of": "2025-05-19",
+     "raw": "5.32%"
+    },
+    "yield_to_maturity": {
+     "value": 0.0421,
+     "as_of": "2025-05-19",
+     "raw": "4.21%"
+    },
+    "weighted_avg_maturity_years": {
+     "value": 7.2,
+     "as_of": "2025-05-19",
+     "raw": "7.20 yrs"
+    },
+    "convexity": {
+     "value": 0.8,
+     "as_of": "2025-05-19",
+     "raw": "0.80"
+    },
+    "trailing_yield_12m": {
+     "value": 0.0291,
+     "as_of": "2025-05-19",
+     "raw": "2.91%"
+    },
+    "real_yield": {
+     "value": 0.0179,
+     "as_of": "2025-05-19",
+     "raw": "1.79%"
+    },
+    "weighted_avg_coupon": {
+     "value": 1.07,
+     "as_of": "2025-05-19",
+     "raw": "1.07"
+    },
+    "effective_duration_years": {
+     "value": 6.46,
+     "as_of": "2025-05-19",
+     "raw": "6.46 yrs"
+    },
+    "option_adjusted_spread": {
+     "value": -4.74,
+     "as_of": "2025-05-19",
+     "raw": "-4.74 bps"
+    },
+    "expense_ratio": {
+     "value": 0.0018,
+     "as_of": null,
+     "raw": "Expense Ratio: 0.18%"
+    }
+   },
+   "rejected_after_cut": []
+  },
+  "TLT": {
+   "status": "parsed",
+   "captured_at": "2025-06-16T18:45:25+00:00",
+   "archive_url": "https://web.archive.org/web/20250616184525/https://www.ishares.com/us/products/239454/TLT",
+   "raw_sha256": "7a2102897635cdd8299051e68590cb2d0a83f1fbee436c09dfe6b878395d234c",
+   "profile": {
+    "sec_yield_30d": {
+     "value": 0.048499999999999995,
+     "as_of": "2025-06-12",
+     "raw": "4.85%"
+    },
+    "weighted_avg_coupon": {
+     "value": 2.9,
+     "as_of": "2025-06-13",
+     "raw": "2.90"
+    },
+    "effective_duration_years": {
+     "value": 15.7,
+     "as_of": "2025-06-13",
+     "raw": "15.70 yrs"
+    },
+    "option_adjusted_spread": {
+     "value": -0.11,
+     "as_of": "2025-06-13",
+     "raw": "-0.11 bps"
+    },
+    "trailing_yield_12m": {
+     "value": 0.0436,
+     "as_of": "2025-06-12",
+     "raw": "4.36%"
+    },
+    "yield_to_maturity": {
+     "value": 0.049800000000000004,
+     "as_of": "2025-06-13",
+     "raw": "4.98%"
+    },
+    "weighted_avg_maturity_years": {
+     "value": 25.83,
+     "as_of": "2025-06-13",
+     "raw": "25.83 yrs"
+    },
+    "convexity": {
+     "value": 3.4,
+     "as_of": "2025-06-13",
+     "raw": "3.40"
+    },
+    "expense_ratio": {
+     "value": 0.0015,
+     "as_of": null,
+     "raw": "Expense Ratio: 0.15%"
+    }
+   },
+   "rejected_after_cut": []
+  }
+ },
+ "source": "issuer pages captured by the Internet Archive before the cut",
+ "estimated_values": false
+}

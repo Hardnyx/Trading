@@ -1,0 +1,96 @@
+{
+ "schema": "first-cut-engine-decision-v1",
+ "cut": "2025-06-30",
+ "price_as_of": "2025-06-30",
+ "computed_at": "2026-11-15T07:02:06.983Z",
+ "seconds": 80,
+ "engine_version": "0.35.0",
+ "price_kernel_version": "1.0.0",
+ "market_sha256": "8d68c4bd65c8e712f3db72d0147411a972aa1c8360720207f6aea30aa5f6584d",
+ "volatility_sha256": "c9e12d77d9e9c3aee7a33408dd81cb10395524d08c3df1b20486f6df2d8172bf",
+ "universe": {
+  "assets": 587,
+  "stocks": 487
+ },
+ "settings": {
+  "seed": 20261024,
+  "horizon": 1,
+  "mandate": {
+   "objective": "growth",
+   "referenceCurrency": "USD",
+   "horizon": 1,
+   "maxDrawdown": 0.25,
+   "maxDrawdownProbability": 0.25,
+   "minimumCash": 0.05,
+   "monthlyWithdrawal": 0,
+   "withdrawals": [],
+   "terminalTarget": 0,
+   "capitalFloor": 0,
+   "maxLiquidityFailure": 0.02,
+   "fxSpot": 1,
+   "fxAnnualChange": 0,
+   "fxVolatility": 0,
+   "fxMarketCorrelation": 0,
+   "fxConfirmed": false,
+   "benchmark": "SPY",
+   "riskAversion": 5,
+   "dividendPolicy": "cash",
+   "dividendWithholding": 0,
+   "cashYield": 0,
+   "region": "us"
+  },
+  "volatility_mode": "hybrid",
+  "search": {
+   "candidates": 300,
+   "paths": 600,
+   "finalPaths": 3000
+  }
+ },
+ "status": "proposed",
+ "positions": [
+  {
+   "symbol": "AGG",
+   "weight": 0.3
+  },
+  {
+   "symbol": "HYG",
+   "weight": 0.15
+  },
+  {
+   "symbol": "CASH",
+   "weight": 0.05
+  },
+  {
+   "symbol": "ACGL",
+   "weight": 0.15
+  },
+  {
+   "symbol": "CF",
+   "weight": 0.05
+  },
+  {
+   "symbol": "HPQ",
+   "weight": 0.15
+  },
+  {
+   "symbol": "EMN",
+   "weight": 0.1
+  },
+  {
+   "symbol": "QCOM",
+   "weight": 0.05
+  }
+ ],
+ "metrics": {
+  "mean": 0.07391905402355502,
+  "median": 0.0569023506335975,
+  "p05": -0.11552385376872698,
+  "p95": 0.32358090075900886,
+  "loss_probability": 0.312,
+  "cvar95": 0.1573275916424822
+ },
+ "warnings": [],
+ "outcomes_read": false,
+ "prospective": false,
+ "note": "Development-period reconstruction with the current engine; it says nothing about predictive skill until scored under a registered protocol."
+}
