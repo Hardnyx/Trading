@@ -102,14 +102,29 @@
    "symbol": "SGOV",
    "source_url": "https://www.ishares.com/us/products/314116/ishares-0-3-month-treasury-bond-etf",
    "cut": "2023-03-31",
-   "archived_url": null,
-   "status": "no-capture-before-cut"
+   "archived_url": "https://www.ishares.com/us/products/314116/ishares-0-3-month-treasury-bond-etf",
+   "archive_timestamp": "20230326212429",
+   "captured_at": "2023-03-26T21:24:29+00:00",
+   "age_days": 5,
+   "status": "archived",
+   "file": "SGOV-20230326212429.html.gz",
+   "raw_sha256": "565f1d99afc76a1bf916d64b32cb1a020c78ba928ae23ab564b6369edccde250",
+   "bytes": 398211,
+   "archive_url": "https://web.archive.org/web/20230326212429/https://www.ishares.com/us/products/314116/ishares-0-3-month-treasury-bond-etf"
   },
   {
    "symbol": "SHV",
    "source_url": "https://www.ishares.com/us/products/239466/ishares-01-year-treasury-bond-etf",
-   "status": "error",
-   "error": "HTTPError: HTTP Error 504: Gateway Time-out"
+   "cut": "2023-03-31",
+   "archived_url": "https://www.ishares.com/us/products/239466/ishares-short-treasury-bond-etf",
+   "archive_timestamp": "20230320200030",
+   "captured_at": "2023-03-20T20:00:30+00:00",
+   "age_days": 11,
+   "status": "archived",
+   "file": "SHV-20230320200030.html.gz",
+   "raw_sha256": "75af631aa68a9820a0510b74557caa7e91765be3fb309c12123aeb07d8cc1307",
+   "bytes": 1048576,
+   "archive_url": "https://web.archive.org/web/20230320200030/https://www.ishares.com/us/products/239466/ishares-short-treasury-bond-etf"
   },
   {
    "symbol": "SHY",
@@ -154,5 +169,5 @@
    "archive_url": "https://web.archive.org/web/20230326094029/https://www.ishares.com/us/products/239454/ishares-20-year-treasury-bond-etf/"
   }
  ],
- "retrieved_at": "2026-11-15T07:26:19.492177+00:00"
+ "retrieved_at": "2026-11-15T07:45:40.954395+00:00"
 }

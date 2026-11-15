@@ -90,10 +90,32 @@
    "rejected_after_cut": []
   },
   "SGOV": {
-   "status": "no-capture-before-cut"
+   "status": "missing-duration",
+   "captured_at": "2023-03-26T21:24:29+00:00",
+   "archive_url": "https://web.archive.org/web/20230326212429/https://www.ishares.com/us/products/314116/ishares-0-3-month-treasury-bond-etf",
+   "raw_sha256": "565f1d99afc76a1bf916d64b32cb1a020c78ba928ae23ab564b6369edccde250",
+   "profile": {
+    "expense_ratio": {
+     "value": 0.0012,
+     "as_of": null,
+     "raw": "Expense Ratio: 0.12%"
+    }
+   },
+   "rejected_after_cut": []
   },
   "SHV": {
-   "status": "error"
+   "status": "missing-duration",
+   "captured_at": "2023-03-20T20:00:30+00:00",
+   "archive_url": "https://web.archive.org/web/20230320200030/https://www.ishares.com/us/products/239466/ishares-short-treasury-bond-etf",
+   "raw_sha256": "75af631aa68a9820a0510b74557caa7e91765be3fb309c12123aeb07d8cc1307",
+   "profile": {
+    "expense_ratio": {
+     "value": 0.0015,
+     "as_of": null,
+     "raw": "Expense Ratio: 0.15%"
+    }
+   },
+   "rejected_after_cut": []
   },
   "SHY": {
    "status": "missing-duration",
