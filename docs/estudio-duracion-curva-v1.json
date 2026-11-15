@@ -1,0 +1,20 @@
+{
+ "schema": "fund-tilt-gate-registration-v1",
+ "tilt": "bond duration from the slope of the yield curve",
+ "registered_on_utc": "2026-11-15",
+ "enabled_by": "laboratory test L2 (docs/registro-laboratorio-fondo.md): the term spread forecasts the 10-year excess return over bills",
+ "question": "Would holding the 10-year Treasury only when its yield exceeds the 3-month bill yield, and bills otherwise, have improved the bond sleeve against always holding the 10-year bond?",
+ "data": "data/history/valuation/shiller-monthly.csv.gz (GS10) and data/history/macro/TB3MS",
+ "returns": {"bond": "monthly 10-year par bond by duration approximation GS10(t)/12 - D * (GS10(t+1) - GS10(t))", "bills": "TB3MS(t)/1200"},
+ "rule": "at each month t hold the bond in month t+1 if GS10(t) > TB3MS(t), otherwise bills",
+ "comparison": "always the 10-year bond",
+ "period": {"first_month": "1937-01", "last_month": "2018-12"},
+ "costs": "5 bp per switch",
+ "primary_metric": "annualized mean monthly return difference (rule minus always-bond)",
+ "test": "one-sided stationary-block bootstrap of the mean difference, 12-month mean block, 10000 draws, seed 20261115",
+ "verdict_rule": {"supported": "difference > 0, p < 0.05 and the rule's maximum drawdown is not worse than always-bond", "not_supported": "difference <= 0", "inconclusive": "otherwise"},
+ "descriptive_only": ["months in bills", "Sharpe of each sleeve in excess of bills", "effect on the full 70/25/5 mix with US equity from Shiller", "subperiods 1937-1979 and 1980-2018"],
+ "if_supported": "a registered shadow fund version, never a change to fondo-v2",
+ "limits": "Monthly average yields, duration approximation, US Treasuries only (AGG also holds mortgages and corporate bonds).",
+ "post_hoc_changes_permitted": false
+}
