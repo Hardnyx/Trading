@@ -1,0 +1,454 @@
+{
+ "schema": "historical-cut-calendar-v1",
+ "cuts": 48,
+ "counts": {
+  "excluded": 22,
+  "pending": 24,
+  "audited-pass": 2
+ },
+ "every_cut_accounted": false,
+ "rows": [
+  {
+   "cut": "2022-10-31",
+   "spy_accession": "0001752724-22-196968",
+   "spy_as_of": "2022-06-30",
+   "spy_age_days": 123,
+   "spy_source_status": "stale-or-invalid-source",
+   "status": "excluded",
+   "reason": "stale or invalid SPY holdings source under the registered rule"
+  },
+  {
+   "cut": "2022-11-30",
+   "spy_accession": "0001752724-22-271183",
+   "spy_as_of": "2022-09-30",
+   "spy_age_days": 61,
+   "spy_source_status": "source-available",
+   "status": "pending",
+   "reason": "fresh source; reconstruction not yet run"
+  },
+  {
+   "cut": "2022-12-30",
+   "spy_accession": "0001752724-22-271183",
+   "spy_as_of": "2022-09-30",
+   "spy_age_days": 91,
+   "spy_source_status": "source-available",
+   "status": "pending",
+   "reason": "fresh source; reconstruction not yet run"
+  },
+  {
+   "cut": "2023-01-31",
+   "spy_accession": "0001752724-22-271183",
+   "spy_as_of": "2022-09-30",
+   "spy_age_days": 123,
+   "spy_source_status": "stale-or-invalid-source",
+   "status": "excluded",
+   "reason": "stale or invalid SPY holdings source under the registered rule"
+  },
+  {
+   "cut": "2023-02-28",
+   "spy_accession": "0001752724-22-271183",
+   "spy_as_of": "2022-09-30",
+   "spy_age_days": 151,
+   "spy_source_status": "stale-or-invalid-source",
+   "status": "excluded",
+   "reason": "stale or invalid SPY holdings source under the registered rule"
+  },
+  {
+   "cut": "2023-03-31",
+   "spy_accession": "0001752724-23-046862",
+   "spy_as_of": "2022-12-31",
+   "spy_age_days": 90,
+   "spy_source_status": "source-available",
+   "status": "pending",
+   "reason": "fresh source; reconstruction not yet run"
+  },
+  {
+   "cut": "2023-04-28",
+   "spy_accession": "0001752724-23-046862",
+   "spy_as_of": "2022-12-31",
+   "spy_age_days": 118,
+   "spy_source_status": "source-available",
+   "status": "pending",
+   "reason": "fresh source; reconstruction not yet run"
+  },
+  {
+   "cut": "2023-05-31",
+   "spy_accession": "0001752724-23-123974",
+   "spy_as_of": "2023-03-31",
+   "spy_age_days": 61,
+   "spy_source_status": "source-available",
+   "status": "pending",
+   "reason": "fresh source; reconstruction not yet run"
+  },
+  {
+   "cut": "2023-06-30",
+   "spy_accession": "0001752724-23-123974",
+   "spy_as_of": "2023-03-31",
+   "spy_age_days": 91,
+   "spy_source_status": "source-available",
+   "status": "pending",
+   "reason": "fresh source; reconstruction not yet run"
+  },
+  {
+   "cut": "2023-07-31",
+   "spy_accession": "0001752724-23-123974",
+   "spy_as_of": "2023-03-31",
+   "spy_age_days": 122,
+   "spy_source_status": "stale-or-invalid-source",
+   "status": "excluded",
+   "reason": "stale or invalid SPY holdings source under the registered rule"
+  },
+  {
+   "cut": "2023-08-31",
+   "spy_accession": "0001752724-23-196486",
+   "spy_as_of": "2023-06-30",
+   "spy_age_days": 62,
+   "spy_source_status": "source-available",
+   "status": "pending",
+   "reason": "fresh source; reconstruction not yet run"
+  },
+  {
+   "cut": "2023-09-29",
+   "spy_accession": "0001752724-23-196486",
+   "spy_as_of": "2023-06-30",
+   "spy_age_days": 91,
+   "spy_source_status": "source-available",
+   "status": "pending",
+   "reason": "fresh source; reconstruction not yet run"
+  },
+  {
+   "cut": "2023-10-31",
+   "spy_accession": "0001752724-23-196486",
+   "spy_as_of": "2023-06-30",
+   "spy_age_days": 123,
+   "spy_source_status": "stale-or-invalid-source",
+   "status": "excluded",
+   "reason": "stale or invalid SPY holdings source under the registered rule"
+  },
+  {
+   "cut": "2023-11-30",
+   "spy_accession": "0001752724-23-267659",
+   "spy_as_of": "2023-09-30",
+   "spy_age_days": 61,
+   "spy_source_status": "source-available",
+   "status": "pending",
+   "reason": "fresh source; reconstruction not yet run"
+  },
+  {
+   "cut": "2023-12-29",
+   "spy_accession": "0001752724-23-267659",
+   "spy_as_of": "2023-09-30",
+   "spy_age_days": 90,
+   "spy_source_status": "source-available",
+   "status": "pending",
+   "reason": "fresh source; reconstruction not yet run"
+  },
+  {
+   "cut": "2024-01-31",
+   "spy_accession": "0001752724-23-267659",
+   "spy_as_of": "2023-09-30",
+   "spy_age_days": 123,
+   "spy_source_status": "stale-or-invalid-source",
+   "status": "excluded",
+   "reason": "stale or invalid SPY holdings source under the registered rule"
+  },
+  {
+   "cut": "2024-02-29",
+   "spy_accession": "0001752724-23-267659",
+   "spy_as_of": "2023-09-30",
+   "spy_age_days": 152,
+   "spy_source_status": "stale-or-invalid-source",
+   "status": "excluded",
+   "reason": "stale or invalid SPY holdings source under the registered rule"
+  },
+  {
+   "cut": "2024-03-28",
+   "spy_accession": "0001752724-24-043296",
+   "spy_as_of": "2023-12-31",
+   "spy_age_days": 88,
+   "spy_source_status": "source-available",
+   "status": "pending",
+   "reason": "fresh source; reconstruction not yet run"
+  },
+  {
+   "cut": "2024-04-30",
+   "spy_accession": "0001752724-24-043296",
+   "spy_as_of": "2023-12-31",
+   "spy_age_days": 121,
+   "spy_source_status": "stale-or-invalid-source",
+   "status": "excluded",
+   "reason": "stale or invalid SPY holdings source under the registered rule"
+  },
+  {
+   "cut": "2024-05-31",
+   "spy_accession": "0001752724-24-122729",
+   "spy_as_of": "2024-03-31",
+   "spy_age_days": 61,
+   "spy_source_status": "source-available",
+   "status": "pending",
+   "reason": "fresh source; reconstruction not yet run"
+  },
+  {
+   "cut": "2024-06-28",
+   "spy_accession": "0001752724-24-122729",
+   "spy_as_of": "2024-03-31",
+   "spy_age_days": 89,
+   "spy_source_status": "source-available",
+   "status": "pending",
+   "reason": "fresh source; reconstruction not yet run"
+  },
+  {
+   "cut": "2024-07-31",
+   "spy_accession": "0001752724-24-122729",
+   "spy_as_of": "2024-03-31",
+   "spy_age_days": 122,
+   "spy_source_status": "stale-or-invalid-source",
+   "status": "excluded",
+   "reason": "stale or invalid SPY holdings source under the registered rule"
+  },
+  {
+   "cut": "2024-08-30",
+   "spy_accession": "0001752724-24-196595",
+   "spy_as_of": "2024-06-30",
+   "spy_age_days": 61,
+   "spy_source_status": "source-available",
+   "status": "pending",
+   "reason": "fresh source; reconstruction not yet run"
+  },
+  {
+   "cut": "2024-09-30",
+   "spy_accession": "0001752724-24-196595",
+   "spy_as_of": "2024-06-30",
+   "spy_age_days": 92,
+   "spy_source_status": "source-available",
+   "status": "pending",
+   "reason": "fresh source; reconstruction not yet run"
+  },
+  {
+   "cut": "2024-10-31",
+   "spy_accession": "0001752724-24-196595",
+   "spy_as_of": "2024-06-30",
+   "spy_age_days": 123,
+   "spy_source_status": "stale-or-invalid-source",
+   "status": "excluded",
+   "reason": "stale or invalid SPY holdings source under the registered rule"
+  },
+  {
+   "cut": "2024-11-29",
+   "spy_accession": "0001752724-24-196595",
+   "spy_as_of": "2024-06-30",
+   "spy_age_days": 152,
+   "spy_source_status": "stale-or-invalid-source",
+   "status": "excluded",
+   "reason": "stale or invalid SPY holdings source under the registered rule"
+  },
+  {
+   "cut": "2024-12-31",
+   "spy_accession": "0001752724-24-264697",
+   "spy_as_of": "2024-09-30",
+   "spy_age_days": 92,
+   "spy_source_status": "source-available",
+   "status": "audited-pass",
+   "failed_checks": [],
+   "members": 479,
+   "spy_weight_covered": 0.986095,
+   "spy_weight_with_ttm_eps": 0.863062,
+   "snapshot_sha256": "a49bea000d380fa23adbab8dba7dee544f1b66e19ce72a2e9e7c9527f9fe3e06"
+  },
+  {
+   "cut": "2025-01-31",
+   "spy_accession": "0001752724-24-264697",
+   "spy_as_of": "2024-09-30",
+   "spy_age_days": 123,
+   "spy_source_status": "stale-or-invalid-source",
+   "status": "excluded",
+   "reason": "stale or invalid SPY holdings source under the registered rule"
+  },
+  {
+   "cut": "2025-02-28",
+   "spy_accession": "0001752724-24-264697",
+   "spy_as_of": "2024-09-30",
+   "spy_age_days": 151,
+   "spy_source_status": "stale-or-invalid-source",
+   "status": "excluded",
+   "reason": "stale or invalid SPY holdings source under the registered rule"
+  },
+  {
+   "cut": "2025-03-31",
+   "spy_accession": "0001752724-25-043826",
+   "spy_as_of": "2024-12-31",
+   "spy_age_days": 90,
+   "spy_source_status": "source-available",
+   "status": "pending",
+   "reason": "fresh source; reconstruction not yet run"
+  },
+  {
+   "cut": "2025-04-30",
+   "spy_accession": "0001752724-25-043826",
+   "spy_as_of": "2024-12-31",
+   "spy_age_days": 120,
+   "spy_source_status": "source-available",
+   "status": "pending",
+   "reason": "fresh source; reconstruction not yet run"
+  },
+  {
+   "cut": "2025-05-30",
+   "spy_accession": "0001752724-25-043826",
+   "spy_as_of": "2024-12-31",
+   "spy_age_days": 150,
+   "spy_source_status": "stale-or-invalid-source",
+   "status": "excluded",
+   "reason": "stale or invalid SPY holdings source under the registered rule"
+  },
+  {
+   "cut": "2025-06-30",
+   "spy_accession": "0001752724-25-125179",
+   "spy_as_of": "2025-03-31",
+   "spy_age_days": 91,
+   "spy_source_status": "source-available",
+   "status": "audited-pass",
+   "failed_checks": [],
+   "members": 487,
+   "spy_weight_covered": 0.992275,
+   "spy_weight_with_ttm_eps": 0.930628,
+   "snapshot_sha256": "8d68c4bd65c8e712f3db72d0147411a972aa1c8360720207f6aea30aa5f6584d"
+  },
+  {
+   "cut": "2025-07-31",
+   "spy_accession": "0001752724-25-125179",
+   "spy_as_of": "2025-03-31",
+   "spy_age_days": 122,
+   "spy_source_status": "stale-or-invalid-source",
+   "status": "excluded",
+   "reason": "stale or invalid SPY holdings source under the registered rule"
+  },
+  {
+   "cut": "2025-08-29",
+   "spy_accession": "0001752724-25-125179",
+   "spy_as_of": "2025-03-31",
+   "spy_age_days": 151,
+   "spy_source_status": "stale-or-invalid-source",
+   "status": "excluded",
+   "reason": "stale or invalid SPY holdings source under the registered rule"
+  },
+  {
+   "cut": "2025-09-30",
+   "spy_accession": "0001752724-25-211156",
+   "spy_as_of": "2025-06-30",
+   "spy_age_days": 92,
+   "spy_source_status": "source-available",
+   "status": "pending",
+   "reason": "fresh source; reconstruction not yet run"
+  },
+  {
+   "cut": "2025-10-31",
+   "spy_accession": "0001752724-25-211156",
+   "spy_as_of": "2025-06-30",
+   "spy_age_days": 123,
+   "spy_source_status": "stale-or-invalid-source",
+   "status": "excluded",
+   "reason": "stale or invalid SPY holdings source under the registered rule"
+  },
+  {
+   "cut": "2025-11-28",
+   "spy_accession": "0001752724-25-211156",
+   "spy_as_of": "2025-06-30",
+   "spy_age_days": 151,
+   "spy_source_status": "stale-or-invalid-source",
+   "status": "excluded",
+   "reason": "stale or invalid SPY holdings source under the registered rule"
+  },
+  {
+   "cut": "2025-12-31",
+   "spy_accession": "0001410368-25-031962",
+   "spy_as_of": "2025-09-30",
+   "spy_age_days": 92,
+   "spy_source_status": "source-available",
+   "status": "pending",
+   "reason": "fresh source; reconstruction not yet run"
+  },
+  {
+   "cut": "2026-01-30",
+   "spy_accession": "0001410368-25-031962",
+   "spy_as_of": "2025-09-30",
+   "spy_age_days": 122,
+   "spy_source_status": "stale-or-invalid-source",
+   "status": "excluded",
+   "reason": "stale or invalid SPY holdings source under the registered rule"
+  },
+  {
+   "cut": "2026-02-27",
+   "spy_accession": "0001410368-25-031962",
+   "spy_as_of": "2025-09-30",
+   "spy_age_days": 150,
+   "spy_source_status": "stale-or-invalid-source",
+   "status": "excluded",
+   "reason": "stale or invalid SPY holdings source under the registered rule"
+  },
+  {
+   "cut": "2026-03-31",
+   "spy_accession": "0001410368-26-020131",
+   "spy_as_of": "2025-12-31",
+   "spy_age_days": 90,
+   "spy_source_status": "source-available",
+   "status": "pending",
+   "reason": "fresh source; reconstruction not yet run"
+  },
+  {
+   "cut": "2026-04-30",
+   "spy_accession": "0001410368-26-020131",
+   "spy_as_of": "2025-12-31",
+   "spy_age_days": 120,
+   "spy_source_status": "source-available",
+   "status": "pending",
+   "reason": "fresh source; reconstruction not yet run"
+  },
+  {
+   "cut": "2026-05-29",
+   "spy_accession": "0001410368-26-020131",
+   "spy_as_of": "2025-12-31",
+   "spy_age_days": 149,
+   "spy_source_status": "stale-or-invalid-source",
+   "status": "excluded",
+   "reason": "stale or invalid SPY holdings source under the registered rule"
+  },
+  {
+   "cut": "2026-06-30",
+   "spy_accession": "0001410368-26-055357",
+   "spy_as_of": "2026-03-31",
+   "spy_age_days": 91,
+   "spy_source_status": "source-available",
+   "status": "pending",
+   "reason": "fresh source; reconstruction not yet run"
+  },
+  {
+   "cut": "2026-07-31",
+   "spy_accession": "0001410368-26-055357",
+   "spy_as_of": "2026-03-31",
+   "spy_age_days": 122,
+   "spy_source_status": "stale-or-invalid-source",
+   "status": "excluded",
+   "reason": "stale or invalid SPY holdings source under the registered rule"
+  },
+  {
+   "cut": "2026-08-31",
+   "spy_accession": "0001410368-26-089410",
+   "spy_as_of": "2026-06-30",
+   "spy_age_days": 62,
+   "spy_source_status": "source-available",
+   "status": "pending",
+   "reason": "fresh source; reconstruction not yet run"
+  },
+  {
+   "cut": "2026-09-30",
+   "spy_accession": "0001410368-26-089410",
+   "spy_as_of": "2026-06-30",
+   "spy_age_days": 92,
+   "spy_source_status": "source-available",
+   "status": "pending",
+   "reason": "fresh source; reconstruction not yet run"
+  }
+ ],
+ "development_period_only": true,
+ "outcomes_read": false
+}
