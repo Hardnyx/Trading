@@ -1,0 +1,39 @@
+{
+ "schema": "full-engine-prospective-registration-v3",
+ "registration_day_utc": "2026-11-15",
+ "status": "registered-methodology-inactive-confirmatory-inference",
+ "predecessor": {"path": "docs/protocolo-confirmacion-integral-v2.json", "sha256": "360781f12ff19a6580e5c936395ca516106ac7eda94a4cd8a472482a86df5102", "role": "unchanged; its seven-test family could not be calibrated with overlapping horizons"},
+ "evidence_for_redesign": ["docs/registro-diagnostico-fixed-b.md", "docs/registro-calibracion-familia-21.md", "docs/potencia-v3-familia-21.md"],
+ "inherited_from_v2_unchanged": ["sampling.first_possible_cut", "sampling.cut_rule", "sampling.units", "primary_references", "forecast_target", "execution_rule", "costs_rule", "fixed_cohort", "admission"],
+ "sampling": {"origin_frequency": "monthly", "horizon_sessions": [21], "overlap_between_origins": "none by construction", "fixed_analysis_after_mature_eligible_months": 120, "retain_absent_months": true, "no_outcome_driven_selection": true},
+ "confirmatory_test": {
+  "id": "ranking_ic:21",
+  "effect": "monthly Spearman IC of the full engine minus the filed EPS/price benchmark, same eligible instruments per origin",
+  "null_hypothesis": "mean improvement <= 0",
+  "method": "one-sided Bartlett studentized mean with full bandwidth (KVB, b = 1) and a Monte Carlo fixed-b reference of 100000 Gaussian series",
+  "alpha": 0.05,
+  "material_threshold": 0.03,
+  "claim_rule": {"supported_and_material": "p < 0.05 and mean improvement >= 0.03", "supported_not_material": "p < 0.05 and mean improvement < 0.03", "not_supported": "p >= 0.05"},
+  "power_note": "80% power at 120 months only under the favorable dispersion scenarios of docs/potencia-v3-familia-21.md (62-114 months in the Gaussian bound); otherwise lower. Reported as such, never extended by looking at the data."
+ },
+ "harm_monitor": {
+  "id": "net_economic_value:21",
+  "effect": "annualized monthly paired log return of the net full-engine account minus the beta-matched SPY plus cash reference",
+  "null_hypothesis": "mean difference >= 0 (no harm)",
+  "method": "one-sided KVB as above, testing for underperformance",
+  "schedule": "after every 12 mature eligible months, up to 10 looks",
+  "alpha_per_look": 0.005,
+  "action_if_rejected": "record harm and stop any use of the engine's tilts in published portfolios pending review; never extend or restart the cohort"
+ },
+ "descriptive_only": ["return_mse:21 with R2_OS against the expanding mean; Campbell and Thompson (2008) 0.5% monthly as the reference for economic meaning", "annual reports of all three series without p-values"],
+ "economic_effect_thresholds": {"ranking_ic": 0.03, "net_economic_value": "harm only, no advantage claim", "return_mse": "descriptive", "status": "justified-by-external-sources-before-any-cohort"},
+ "activation": {
+  "registration_recorded": true,
+  "confirmatory_collection_open": false,
+  "formal_inference_enabled": false,
+  "resolved_blockers": ["calibrated inference for the registered family", "economic-effect magnitudes and power sized before any confirmation score"],
+  "remaining_blockers": ["publish original full-engine forecasts with independently verifiable first capture", "verify all required original source vintages, model fits, holdings and cash flows"],
+  "first_eligible_origin": "first monthly cut after both remaining blockers are verified and recorded by a dated commit"
+ },
+ "post_hoc_changes_permitted": false
+}
