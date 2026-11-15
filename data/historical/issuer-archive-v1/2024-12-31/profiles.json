@@ -165,7 +165,58 @@
    "rejected_after_cut": []
   },
   "IEF": {
-   "status": "error"
+   "status": "parsed",
+   "captured_at": "2024-12-02T12:10:47+00:00",
+   "archive_url": "https://web.archive.org/web/20241202121047/https://www.ishares.com/us/products/239456/ishares-710-year-treasury-bond-etf",
+   "raw_sha256": "8ac501e73b630319fa0f78cf38397fadad9d7c990d1cbeca4f7a902d9a89745f",
+   "profile": {
+    "sec_yield_30d": {
+     "value": 0.042,
+     "as_of": "2024-11-27",
+     "raw": "4.20%"
+    },
+    "weighted_avg_coupon": {
+     "value": 3.57,
+     "as_of": "2024-11-29",
+     "raw": "3.57"
+    },
+    "effective_duration_years": {
+     "value": 7.18,
+     "as_of": "2024-11-29",
+     "raw": "7.18 yrs"
+    },
+    "option_adjusted_spread": {
+     "value": 2.09,
+     "as_of": "2024-11-29",
+     "raw": "2.09 bps"
+    },
+    "trailing_yield_12m": {
+     "value": 0.0346,
+     "as_of": "2024-11-27",
+     "raw": "3.46%"
+    },
+    "yield_to_maturity": {
+     "value": 0.0418,
+     "as_of": "2024-11-29",
+     "raw": "4.18%"
+    },
+    "weighted_avg_maturity_years": {
+     "value": 8.55,
+     "as_of": "2024-11-29",
+     "raw": "8.55 yrs"
+    },
+    "convexity": {
+     "value": 0.61,
+     "as_of": "2024-11-29",
+     "raw": "0.61"
+    },
+    "expense_ratio": {
+     "value": 0.0015,
+     "as_of": null,
+     "raw": "Expense Ratio: 0.15%"
+    }
+   },
+   "rejected_after_cut": []
   },
   "IEI": {
    "status": "parsed",
@@ -222,10 +273,112 @@
    "rejected_after_cut": []
   },
   "IGSB": {
-   "status": "error"
+   "status": "parsed",
+   "captured_at": "2024-12-06T11:47:01+00:00",
+   "archive_url": "https://web.archive.org/web/20241206114701/https://www.ishares.com/us/products/239451/",
+   "raw_sha256": "f0ed9deeb8ed9c47aff8232a847bdc4c1445bb3f67544bd0e758a39571431526",
+   "profile": {
+    "sec_yield_30d": {
+     "value": 0.0481,
+     "as_of": "2024-12-04",
+     "raw": "4.81%"
+    },
+    "weighted_avg_coupon": {
+     "value": 4.04,
+     "as_of": "2024-12-04",
+     "raw": "4.04"
+    },
+    "effective_duration_years": {
+     "value": 2.6,
+     "as_of": "2024-12-04",
+     "raw": "2.60 yrs"
+    },
+    "option_adjusted_spread": {
+     "value": 56.61,
+     "as_of": "2024-12-04",
+     "raw": "56.61 bps"
+    },
+    "trailing_yield_12m": {
+     "value": 0.039599999999999996,
+     "as_of": "2024-12-04",
+     "raw": "3.96%"
+    },
+    "yield_to_maturity": {
+     "value": 0.0473,
+     "as_of": "2024-12-04",
+     "raw": "4.73%"
+    },
+    "weighted_avg_maturity_years": {
+     "value": 2.9,
+     "as_of": "2024-12-04",
+     "raw": "2.90 yrs"
+    },
+    "convexity": {
+     "value": 0.07,
+     "as_of": "2024-12-04",
+     "raw": "0.07"
+    },
+    "expense_ratio": {
+     "value": 0.0004,
+     "as_of": null,
+     "raw": "Expense Ratio: 0.04%"
+    }
+   },
+   "rejected_after_cut": []
   },
   "LQD": {
-   "status": "error"
+   "status": "parsed",
+   "captured_at": "2024-11-29T22:12:11+00:00",
+   "archive_url": "https://web.archive.org/web/20241129221211/https://www.ishares.com/us/products/239566/ishares-iboxx-investment-grade-corporate-bond-etf",
+   "raw_sha256": "e2aea5007be6bf30dd431313b5378e17b0f47f0c6a04e8e00821d88fc58e9012",
+   "profile": {
+    "sec_yield_30d": {
+     "value": 0.051500000000000004,
+     "as_of": "2024-11-26",
+     "raw": "5.15%"
+    },
+    "weighted_avg_coupon": {
+     "value": 4.32,
+     "as_of": "2024-11-27",
+     "raw": "4.32"
+    },
+    "effective_duration_years": {
+     "value": 8.41,
+     "as_of": "2024-11-27",
+     "raw": "8.41 yrs"
+    },
+    "option_adjusted_spread": {
+     "value": 85.12,
+     "as_of": "2024-11-27",
+     "raw": "85.12 bps"
+    },
+    "trailing_yield_12m": {
+     "value": 0.0436,
+     "as_of": "2024-11-26",
+     "raw": "4.36%"
+    },
+    "yield_to_maturity": {
+     "value": 0.0519,
+     "as_of": "2024-11-27",
+     "raw": "5.19%"
+    },
+    "weighted_avg_maturity_years": {
+     "value": 13.21,
+     "as_of": "2024-11-27",
+     "raw": "13.21 yrs"
+    },
+    "convexity": {
+     "value": 1.22,
+     "as_of": "2024-11-27",
+     "raw": "1.22"
+    },
+    "expense_ratio": {
+     "value": 0.0014000000000000002,
+     "as_of": null,
+     "raw": "Expense Ratio: 0.14%"
+    }
+   },
+   "rejected_after_cut": []
   },
   "SGOV": {
    "status": "parsed",
@@ -282,7 +435,58 @@
    "rejected_after_cut": []
   },
   "SHV": {
-   "status": "error"
+   "status": "parsed",
+   "captured_at": "2024-12-25T11:40:01+00:00",
+   "archive_url": "https://web.archive.org/web/20241225114001/https://www.ishares.com/us/products/239466/ishares-short-treasury-bond-etf",
+   "raw_sha256": "867e076772aa5da4cd62c48549f9a74032e46a5570d68fc110274d88085dc97e",
+   "profile": {
+    "sec_yield_30d": {
+     "value": 0.043899999999999995,
+     "as_of": "2024-12-23",
+     "raw": "4.39%"
+    },
+    "weighted_avg_coupon": {
+     "value": 0.0,
+     "as_of": "2024-12-23",
+     "raw": "0.00"
+    },
+    "effective_duration_years": {
+     "value": 0.26,
+     "as_of": "2024-12-23",
+     "raw": "0.26 yrs"
+    },
+    "option_adjusted_spread": {
+     "value": -8.75,
+     "as_of": "2024-12-23",
+     "raw": "-8.75 bps"
+    },
+    "trailing_yield_12m": {
+     "value": 0.050300000000000004,
+     "as_of": "2024-12-23",
+     "raw": "5.03%"
+    },
+    "yield_to_maturity": {
+     "value": 0.0429,
+     "as_of": "2024-12-23",
+     "raw": "4.29%"
+    },
+    "weighted_avg_maturity_years": {
+     "value": 0.27,
+     "as_of": "2024-12-23",
+     "raw": "0.27 yrs"
+    },
+    "convexity": {
+     "value": 0.0,
+     "as_of": "2024-12-23",
+     "raw": "0.00"
+    },
+    "expense_ratio": {
+     "value": 0.0015,
+     "as_of": null,
+     "raw": "Expense Ratio: 0.15%"
+    }
+   },
+   "rejected_after_cut": []
   },
   "SHY": {
    "status": "parsed",
@@ -339,7 +543,63 @@
    "rejected_after_cut": []
   },
   "TIP": {
-   "status": "error"
+   "status": "parsed",
+   "captured_at": "2024-12-17T04:28:43+00:00",
+   "archive_url": "https://web.archive.org/web/20241217042843/https://www.ishares.com/us/products/239467/ishares-tips-bond-etf",
+   "raw_sha256": "b62075a66453397f6584e382e452ddde257b897b3050289b75e3f61ec40d27f6",
+   "profile": {
+    "sec_yield_30d": {
+     "value": 0.0358,
+     "as_of": "2024-12-13",
+     "raw": "3.58%"
+    },
+    "yield_to_maturity": {
+     "value": 0.0432,
+     "as_of": "2024-12-13",
+     "raw": "4.32%"
+    },
+    "weighted_avg_maturity_years": {
+     "value": 7.22,
+     "as_of": "2024-12-13",
+     "raw": "7.22 yrs"
+    },
+    "convexity": {
+     "value": 0.83,
+     "as_of": "2024-12-13",
+     "raw": "0.83"
+    },
+    "trailing_yield_12m": {
+     "value": 0.023399999999999997,
+     "as_of": "2024-12-13",
+     "raw": "2.34%"
+    },
+    "real_yield": {
+     "value": 0.0195,
+     "as_of": "2024-12-13",
+     "raw": "1.95%"
+    },
+    "weighted_avg_coupon": {
+     "value": 1.0,
+     "as_of": "2024-12-13",
+     "raw": "1.00"
+    },
+    "effective_duration_years": {
+     "value": 6.54,
+     "as_of": "2024-12-13",
+     "raw": "6.54 yrs"
+    },
+    "option_adjusted_spread": {
+     "value": -3.44,
+     "as_of": "2024-12-13",
+     "raw": "-3.44 bps"
+    },
+    "expense_ratio": {
+     "value": 0.0019,
+     "as_of": null,
+     "raw": "Expense Ratio: 0.19%"
+    }
+   },
+   "rejected_after_cut": []
   },
   "TLT": {
    "status": "parsed",

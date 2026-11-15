@@ -100,7 +100,22 @@
    "source": "Internet Archive captures of issuer product pages: SHY 2024-12-23, TLT 2024-12-25, AGG 2024-12-22, BND 2024-12-30",
    "license": "Internet Archive access; content copyright of the issuers, use for research citation",
    "originality": "first-party issuer page dated by an independent archive",
-   "next_action": "retrieve the captures (web.archive.org is outside this session's network policy; run in CI) and parse duration, yield and expense ratio"
+   "next_action": "feed these dated profiles to the engine's bond return model inside the as-of snapshot builder",
+   "progress_2026_11_15": {
+    "artifacts": [
+     "data/historical/issuer-archive-v1/2024-12-31/manifest.json",
+     "data/historical/issuer-archive-v1/2024-12-31/profiles.json"
+    ],
+    "funds_archived": 12,
+    "of_funds": 12,
+    "capture_age_days_range": [
+     6,
+     32
+    ],
+    "fields": "effective duration, yield to maturity (real yield for TIP), SEC and trailing yields, average maturity, convexity, expense ratio",
+    "values_dated_after_cut": 0,
+    "certified": false
+   }
   },
   {
    "component": "historical_model_parameters",

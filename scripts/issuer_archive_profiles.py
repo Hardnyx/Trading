@@ -19,7 +19,8 @@ CAPTION = re.compile(r'<div class="caption">\s*([^<]+?)\s*<', re.S)
 AS_OF = re.compile(r'<div class="as-of-date">\s*as of\s*([^<]+?)\s*</div>', re.S)
 EXPENSE = re.compile(r'Expense Ratio:\s*([0-9.]+)%')
 WANTED = {"Effective Duration": "effective_duration_years", "Yield to Maturity": "yield_to_maturity",
-          "Average Yield to Maturity": "yield_to_maturity", "12m Trailing Yield": "trailing_yield_12m",
+          "Average Yield to Maturity": "yield_to_maturity", "Weighted Avg YTM": "yield_to_maturity",
+          "Real Yield": "real_yield", "12m Trailing Yield": "trailing_yield_12m",
           "30 Day SEC Yield": "sec_yield_30d", "Weighted Avg Maturity": "weighted_avg_maturity_years",
           "Convexity": "convexity", "Weighted Avg Coupon": "weighted_avg_coupon", "Option Adjusted Spread": "option_adjusted_spread"}
 
