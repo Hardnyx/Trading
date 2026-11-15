@@ -1,0 +1,17 @@
+{
+ "schema": "confirmatory-21-session-family-stress-design-v1",
+ "registered_on_utc": "2026-11-15",
+ "design_role": "exploratory-synthetic-precommitment-not-inference-registration",
+ "milestone": "H0.3 redesign after docs/registro-diagnostico-fixed-b.md",
+ "rationale": "Every method tested on the seven-test v2 family failed at 96 months, with failures concentrated in persistent effect series. The 63- and 252-session horizons overlap across monthly origins by construction, which creates that persistence. A family restricted to 21-session horizons evaluated at monthly origins has no overlap by construction. This study checks whether familywise error is then controlled, keeping the high-persistence scenarios in the grid so that the redesign is not assumed to remove them.",
+ "family": ["return_mse:21", "ranking_ic:21", "net_economic_value:21"],
+ "multiplicity": {"procedure": "Holm step-down", "alpha": 0.05, "true_null_indices_partial": [0, 1], "shifted_false_null_indices_partial": [2], "shifted_effect_in_marginal_sd_units": 0.5},
+ "arms": [
+  {"id": "A-iid-student-t", "statistic": "sqrt(n)*mean/sd with sample sd (divisor n-1)", "p_value": "one-sided Student t with n-1 degrees of freedom", "purpose": "the test justified when monthly 21-session effects are serially independent"},
+  {"id": "B-kvb-full-bandwidth", "statistic": "Bartlett with M = n-1 (fixed-b, b = 1), as in docs/estudio-calibracion-fixed-b-v1.json", "p_value": "(1 + #{reference >= t}) / (1 + draws) with a new reference of 100000 Gaussian series of length 1200", "purpose": "robust to residual persistence"}
+ ],
+ "synthetic_data": {"generator": "the AR(1) common-factor generator of scripts/confirmatory_hac_stress.py with three columns instead of seven", "monthly_counts": [96, 192], "ar1_phi": [0, 0.3, 0.6, 0.85], "cross_hypothesis_factor_correlations": [0, 0.75], "innovation_families": ["gaussian", "standardized_student_t_df5"], "null_configurations": ["global", "partial"], "autoregression_burn_in_months": 256, "repetitions_per_scenario": 512, "independent_simulation_seed": 20261116, "reference_seed": 20261117, "scenario_count_per_arm": 64},
+ "calibration_evaluation": {"nominal_familywise_error": 0.05, "interval_count": 128, "interval_method": "Clopper-Pearson bilateral with Bonferroni over both arms and 64 scenarios", "per_tail_probability": 0.0001953125, "excess_evidence_rule": "any simultaneous lower bound > 0.05 in an arm", "primary_reading": "scenarios with AR(1) 0 and 0.3 represent the non-overlapping design; 0.6 and 0.85 are kept as stress and reported separately", "candidate_approval_permitted": false, "both_arms_reported_whatever_the_result": true},
+ "activation": {"registered_v2_modified": false, "formal_inference_enabled": false, "no_market_outcomes_read": true, "next_step_if_controlled": "a separate v3 confirmatory registration with power analysis and economic effect sizes before any new cohort"},
+ "post_hoc_changes_permitted": false
+}
