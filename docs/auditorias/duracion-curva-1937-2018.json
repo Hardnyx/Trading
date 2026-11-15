@@ -1,0 +1,43 @@
+{
+ "schema": "duration-curve-gate-result-v1",
+ "months": 984,
+ "months_in_bills": 67,
+ "annualized_difference": 0.0031,
+ "bootstrap_p_one_sided": 0.123,
+ "annualized_return": {
+  "rule": 0.0534,
+  "always": 0.0499
+ },
+ "sharpe_over_bills": {
+  "rule": 0.3406,
+  "always": 0.2545
+ },
+ "max_drawdown": {
+  "rule": -0.1231,
+  "always": -0.1599
+ },
+ "subperiods": {
+  "1937-1979": {
+   "annualized_difference": 0.0044,
+   "sharpe_rule": 0.0994,
+   "sharpe_always": -0.0386
+  },
+  "1980-2018": {
+   "annualized_difference": 0.0017,
+   "sharpe_rule": 0.4984,
+   "sharpe_always": 0.4365
+  }
+ },
+ "mix_70_25_5_descriptive": {
+  "rule": {
+   "annualized_return": 0.0862,
+   "max_drawdown": -0.3394
+  },
+  "always": {
+   "annualized_return": 0.0853,
+   "max_drawdown": -0.3394
+  }
+ },
+ "verdict": "inconclusive",
+ "limits": "Monthly average yields, duration approximation, US Treasuries only (AGG also holds mortgages and corporate bonds)."
+}

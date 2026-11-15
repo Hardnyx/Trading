@@ -17,6 +17,9 @@ class FundLaboratoryTests(unittest.TestCase):
         self.assertEqual(audit["L1"]["10_years"]["engine_trailing_earnings"]["verdict"], "supported")
         self.assertEqual(audit["L2"]["verdict"], "supported")
         self.assertFalse(audit["L3"]["1990-2018"]["flag_intl_drawdown_worse_by_5pp"])
+        gate = json.loads((AUDIT.parent / "duracion-curva-1937-2018.json").read_text(encoding="utf-8"))
+        self.assertEqual(gate["verdict"], "inconclusive")
+        self.assertEqual(gate["months"], 984)
 
     def test_inputs_are_dated(self):
         rows = [{"price": 100.0, "dividend": 12.0, "earnings": 10.0, "cpi": 100.0} for _ in range(200)]

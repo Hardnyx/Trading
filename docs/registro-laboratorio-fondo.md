@@ -35,3 +35,17 @@ Datos de French para mercados desarrollados fuera de EE. UU. y emergentes, archi
 Extendido hasta sep-2026: 8,3 % anual frente a 9,3 %, con las mismas caídas máximas.
 
 **Lectura.** En este periodo la parte internacional restó retorno, porque EE. UU. fue excepcional desde 1990, y no redujo la caída de 2008: la empeoró 2,3 puntos, por debajo del umbral registrado de 5 puntos. Amortiguó levemente 2000–2002. Es un solo periodo y no demuestra que la diversificación internacional sobre o falte en el futuro; confirma que una crisis financiera puede costar alrededor de −38 % con datos mensuales y −42 % con los ETF diarios.
+
+## Prueba de entrada · Duración según la curva (1937–2018)
+
+Registro: [estudio-duracion-curva-v1.json](estudio-duracion-curva-v1.json), publicado en [`87b3e0a`](https://github.com/Hardnyx/Trading/commit/87b3e0a3) antes de calcular. Ejecución: `python scripts/duration_curve_gate.py`. Resultado: [auditorias/duracion-curva-1937-2018.json](auditorias/duracion-curva-1937-2018.json).
+
+Regla: mantener el bono a 10 años si su rendimiento supera al de la letra a 3 meses; si no, letras. La curva estuvo plana o invertida en 67 de 984 meses.
+
+| Parte de bonos | Siempre bono a 10 años | Con la regla |
+|---|---:|---:|
+| Retorno anual | 4,99 % | 5,34 % |
+| Sharpe sobre letras | 0,25 | 0,34 |
+| Caída máxima | −16,0 % | −12,3 % |
+
+Diferencia +0,31 puntos por año, bootstrap p = 0,12: **inconclusa**. Mejora en ambos subperiodos, pero sobre la mezcla 70/25/5 el efecto es de +0,09 puntos por año, con la misma caída máxima. **No habilita una versión nueva del fondo:** el efecto es pequeño, poco frecuente y no supera el umbral registrado.
