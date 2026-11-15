@@ -112,7 +112,9 @@ def identity(market, binding, fundamentals):
         if row is None:
             mismatches.append({"symbol": asset["symbol"], "check": "no close on the report date"})
             continue
-        between = math.prod(s["ratio"] for s in asset.get("splits") or [] if report_date < s["date"])
+        # Share splits and the spin-off price adjustments the provider applies backwards to earlier closes.
+        events = (asset.get("splits") or []) + (asset.get("price_adjustments") or [])
+        between = math.prod(s["ratio"] for s in events if report_date < s["date"])
         difference = row["close"] * between / position["filed_price"] - 1
         if abs(difference) > TOLERANCE:
             mismatches.append({"symbol": asset["symbol"], "check": "filed price", "difference": round(difference, 6)})

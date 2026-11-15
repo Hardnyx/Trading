@@ -143,21 +143,10 @@
    }
   },
   "identity": {
-   "passed": false,
+   "passed": true,
    "report_date": "2025-03-31",
    "tolerance": 0.005,
-   "mismatches": [
-    {
-     "symbol": "FTV",
-     "check": "filed price",
-     "difference": -0.24642
-    },
-    {
-     "symbol": "J",
-     "check": "filed price",
-     "difference": -0.009901
-    }
-   ]
+   "mismatches": []
   },
   "units": {
    "passed": true,
@@ -173,8 +162,8 @@
    "outcomes_not_read": true
   }
  },
- "input_checks_passed": false,
- "status": "blocked",
+ "input_checks_passed": true,
+ "status": "inputs-pass-with-declared-exclusions",
  "limitations": [
   "Prices are the current Yahoo revision restated to the cut's share basis, not an original vendor vintage; the unofficial endpoint grants no redistribution.",
   "Sectors come from the Wikipedia list revision in force at the cut, not from S&P's official file.",

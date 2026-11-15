@@ -51,6 +51,13 @@ class InputAuditTests(unittest.TestCase):
         market["assets"][0]["splits"] = []
         self.assertEqual(audit.identity(market, BINDING, FUNDAMENTALS)["mismatches"][0]["check"], "filed price")
 
+    def test_spin_off_price_adjustments_are_undone_like_splits(self):
+        market = copy.deepcopy(MARKET)
+        market["assets"][0]["splits"] = []
+        market["assets"][0]["price_adjustments"] = [{"date": "2024-11-01", "ratio": 2.0,
+                                                    "classification": "price_adjustment_not_share_split"}]
+        self.assertTrue(audit.identity(market, BINDING, FUNDAMENTALS)["passed"])
+
     def test_units_reject_a_negative_price_and_an_out_of_range_rate(self):
         market = copy.deepcopy(MARKET)
         market["assets"][0]["history"][0]["close"] = -1
