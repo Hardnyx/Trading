@@ -2,6 +2,38 @@
 import { template } from './templates.mjs?v=0.35.0';
 import { fmt, pct, money, dateLabel } from './format.mjs?v=0.35.0';
 import { mixWeights, ordersFor } from '../strategic-fund.mjs?v=0.35.0';
+import { lineChart } from '../charts.mjs?v=0.35.0';
+
+/** Cumulative returns of the fund, its shadow and passive comparators since inception. */
+export function fundChart(fund) {
+  const rows = (fund.history || []).filter(r => Number.isFinite(r.value));
+  if (rows.length < 2) return '';
+  const dates = rows.map(r => r.date), start = fund.initial_capital;
+  const shadow = new Map((fund.shadow?.history || []).map(r => [r.date, r.value]));
+  const series = [{ name: fund.policy, color: '#ffab00', values: rows.map(r => r.value / start - 1) }];
+  if (rows.every(r => shadow.has(r.date)))
+    series.push({ name: fund.shadow.policy + ' (sombra)', color: '#4cc9a6', dashed: true,
+      values: rows.map(r => shadow.get(r.date) / fund.shadow.initial_capital - 1) });
+  if (rows.every(r => r.benchmarks)) {
+    series.push({ name: '60/40', color: '#8f9aa3', values: rows.map(r => r.benchmarks.balanced_60_40) });
+    series.push({ name: 'SPY', color: '#5b8def', dashed: true, values: rows.map(r => r.benchmarks.spy) });
+  }
+  return lineChart(series, dates, { height: 210, percent: true, area: false, decimals: 1, label: 'Retorno acumulado desde el inicio' }) +
+    template('fund-legend', { items: series.map(x => template('fund-legend-item', { color: x.color, name: x.name })).join('') });
+}
+
+/** CSV with whole-share positions for a simulator without fractional shares. */
+export function ordersCsv(rows) {
+  const lines = ['Symbol,Shares,Price,Value'];
+  for (const r of rows) lines.push([r.symbol, r.shares, r.price.toFixed(2), (r.shares * r.price).toFixed(2)].join(','));
+  return lines.join('\n') + '\n';
+}
+
+export function fundPositionsCsv(fund, mix = null) {
+  if (!mix) return ordersCsv(fund.holdings.map(h => ({ symbol: h.symbol, shares: h.whole_shares, price: h.price })));
+  const plan = ordersFor(fund.prices, [], mix.capital, mixWeights(mix, { instruments: fund.instruments }));
+  return ordersCsv(plan.orders.map(o => ({ symbol: o.symbol, shares: o.target_whole_shares, price: o.price })));
+}
 
 export function validFund(fund) {
   return !!fund && fund.schema_version === 2 && typeof fund.policy === 'string' && Array.isArray(fund.holdings) &&
@@ -76,7 +108,7 @@ export function fundPanel(fund, market, saved = null) {
     rule: `Solo opera si algún componente se aparta más de ${fmt(fund.threshold * 100, 0)} pp de su objetivo; entonces vuelve a los pesos registrados. ${fund.rebalances.length} operación(es) desde el inicio. ` +
       (fund.risk?.cvar95 != null ? `Control de riesgo del motor: pérdida media en el peor 5 % de los años simulados (CVaR 95 %) ${pct(fund.risk.cvar95, 1)}, presupuesto ${pct(fund.risk.budget, 0)}; volatilidad simulada ${pct(fund.risk.volatility, 1)}. Solo avisa, no opera.` : (fund.risk?.error || '')),
     evidence: 'Mueven dinero solo el mandato, la diversificación de mercado y el rebalanceo. Las apuestas del motor (valoración, duración, momento de riesgo, acciones individuales) están apagadas hasta que una prueba registrada las respalde.',
-    rows, orders, shadow, mixer,
+    rows, orders, shadow, mixer, chart: fundChart(fund),
     footnote: (fund.archived?.length ? `Archivado: ${fund.archived.map(a => `${a.policy} (${a.reason})`).join(' ')} ` : '') +
       'Simulación de investigación; un rendimiento pasado o esperado no garantiza resultados.',
   });

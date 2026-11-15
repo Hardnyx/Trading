@@ -3238,3 +3238,22 @@ td:last-child {
 .fund-mixer-controls .field input[type="number"] {
   width: 100%;
 }
+.fund-actions {
+  padding: 0 var(--pad) var(--pad);
+}
+.fund-chart:empty {
+  display: none;
+}
+.fund-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  padding: 0 var(--pad) var(--pad);
+}
+.fund-legend i {
+  display: inline-block;
+  width: 10px;
+  height: 2px;
+  margin-right: 6px;
+  vertical-align: middle;
+}

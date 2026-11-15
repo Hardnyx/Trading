@@ -59,6 +59,7 @@ export function lineChart(
     percent = false,
     label = "Evolución de la cartera",
     area = true,
+    decimals = null,
   } = {},
 ) {
   if (!series.length || !dates.length) return template("chart-line-chart-7");
@@ -84,17 +85,18 @@ export function lineChart(
       y4: y(value),
       value5: width - pad.right + 10,
       value6: y(value) + 4,
-      number: number(percent ? value * 100 : value, percent ? 0 : 1),
+      number: number(percent ? value * 100 : value, decimals ?? (percent ? 0 : 1)),
       value8: percent ? "%" : "",
     });
   }).join("");
-  const ticks = [
+  // Short series would repeat a date label; keep each index once.
+  const ticks = [...new Set([
     0,
     Math.round((dates.length - 1) / 4),
     Math.round((dates.length - 1) / 2),
     Math.round(((dates.length - 1) * 3) / 4),
     dates.length - 1,
-  ];
+  ])];
   const labels = ticks
     .map((i, t) =>
       template("chart-line-chart-5", {

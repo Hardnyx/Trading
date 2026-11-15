@@ -24,6 +24,8 @@
           <p>{{rule}}</p>
           <p>{{evidence}}</p>
         </div>
+        <div class="fund-chart">{{{chart}}}</div>
+        <div class="fund-actions"><button class="button" data-action="fund-csv" data-source="fund">Descargar posiciones (CSV, acciones enteras)</button></div>
         <div class="table-wrap">
           <table class="composition-positions">
             <thead>
@@ -99,6 +101,7 @@
             <input id="fund-mix-capital" type="number" min="1000" max="100000000" step="1000" value="{{capital}}" data-fund-mix="capital" />
           </div>
           <button class="button" data-action="fund-mix-reset">Volver a la mezcla registrada</button>
+          <button class="button" data-action="fund-csv" data-source="mix">Descargar mi mezcla (CSV)</button>
         </div>
         <div id="fund-mix-result">{{{result}}}</div>
       </div>
@@ -133,6 +136,14 @@
 
     <template id="fund-shadow-row">
       <tr><td>{{symbol}}</td><td class="mono">{{weight}}</td><td class="mono">{{target}}</td><td class="mono">{{whole}}</td><td class="mono">{{value}}</td></tr>
+    </template>
+
+    <template id="fund-legend">
+      <div class="fund-legend muted small">{{{items}}}</div>
+    </template>
+
+    <template id="fund-legend-item">
+      <span><i style="background: {{color}}"></i>{{name}}</span>
     </template>
 
     <template id="fund-notice">

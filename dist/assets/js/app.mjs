@@ -19,7 +19,7 @@ import {
 import { fmt, pct, money, dateLabel } from "./ui/format.mjs?v=0.35.0";
 import { createViews, NAV } from "./ui/views.mjs?v=0.35.0";
 import { loadTemplates } from "./ui/templates.mjs?v=0.35.0";
-import { personalMix, mixResult } from "./ui/fund-view.mjs?v=0.35.0";
+import { personalMix, mixResult, fundPositionsCsv } from "./ui/fund-view.mjs?v=0.35.0";
 import { applyVisualValues, showStartupError } from "./ui/dom.mjs?v=0.35.0";
 import { createTickerRotation } from "./ui/ticker-rotation.mjs?v=0.35.0";
 import { createValueFlash } from "./ui/value-flash.mjs?v=0.35.0";
@@ -1045,6 +1045,16 @@ document.addEventListener("click", async (event) => {
     return;
   }
   const action = element.dataset.action;
+  if (action === "fund-csv" && data?.fund) {
+    const mix = element.dataset.source === "mix" ? personalMix(data.fund, state.fundMix) : null;
+    const blob = new Blob([fundPositionsCsv(data.fund, mix)], { type: "text/csv" }),
+      link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = `${mix ? "mi-mezcla" : data.fund.policy}-${data.fund.as_of}.csv`;
+    link.click();
+    setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+    return;
+  }
   if (action === "fund-mix-reset") {
     state.fundMix = null;
     persist();

@@ -118,3 +118,13 @@ test('the engine risk control is zero-mean and never creates orders',async()=>{
   assert.equal(typeof risk.within_budget,'boolean');
   assert.equal('orders' in risk,false);
 });
+
+test('the fund chart needs two reviews and the CSV lists whole shares',async()=>{
+  const {fundChart,fundPositionsCsv}=await import('../dist/assets/js/ui/fund-view.mjs');
+  const fund={policy:'fondo-v2',initial_capital:100000,instruments:FUND_V2.instruments,prices,
+    holdings:[{symbol:'VTI',whole_shares:113,price:400}],history:[{date:'2026-11-13',value:100000,benchmarks:null}]};
+  assert.equal(fundChart(fund),'');
+  assert.equal(fundPositionsCsv(fund),'Symbol,Shares,Price,Value\nVTI,113,400.00,45200.00\n');
+  const mixCsv=fundPositionsCsv(fund,{equity:1,usShare:1,cash:0,capital:10000}).trim().split('\n');
+  assert.deepEqual(mixCsv,['Symbol,Shares,Price,Value','VTI,25,400.00,10000.00']);
+});
