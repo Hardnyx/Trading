@@ -25,13 +25,26 @@ ROOT = Path(__file__).resolve().parents[1]
 CUT = "2024-12-31"
 OBSERVATIONS = ROOT / "data/historical/identifier-observations-v1/observations.json.gz"
 SEC_DIR = ROOT / "data/historical/provider-inputs-v1/sec"
-OUT = ROOT / "data/historical/price-binding-v1/first-cut.json"
+BINDINGS = ROOT / "data/historical/price-binding-v1"
 TOLERANCE = 0.005
 
 
-def first_cut_row(path=OBSERVATIONS):
+def binding_path(cut, root=ROOT):
+    """The first cut keeps its original file name; later cuts are named by date."""
+    base = root / "data/historical/price-binding-v1"
+    return base / ("first-cut.json" if cut == CUT else f"{cut}.json")
+
+
+def cut_row(cut=CUT, path=OBSERVATIONS):
     archive = json.loads(gzip.decompress(path.read_bytes()))
-    return next(r for r in archive["matrix"] if r["cut"] == CUT)
+    row = next(r for r in archive["matrix"] if r["cut"] == cut)
+    if row["spy_source"]["status"] != "source-available" or not row["positions"]:
+        raise ValueError(f"{cut}: no fresh SPY holdings source ({row['spy_source']['status']})")
+    return row
+
+
+def first_cut_row(path=OBSERVATIONS):
+    return cut_row(CUT, path)
 
 
 def filed_positions(accession, folder=SEC_DIR):
@@ -176,13 +189,15 @@ def summarize(rows):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--output", type=Path, default=OUT)
+    parser.add_argument("--cut", default=CUT)
+    parser.add_argument("--output", type=Path)
     options = parser.parse_args()
-    row = first_cut_row()
+    options.output = options.output or binding_path(options.cut)
+    row = cut_row(options.cut)
     accession = row["spy_source"]["accession"]
     filings, report_date = filed_positions(accession)
     rows = bind(row, filings, report_date)
-    result = {"schema": "first-cut-price-binding-v1", "cut": CUT, "spy_accession": accession,
+    result = {"schema": "first-cut-price-binding-v1", "cut": options.cut, "spy_accession": accession,
               "report_date": report_date, "tolerance": TOLERANCE, "retrieved_at": datetime.now(timezone.utc).isoformat(),
               "method": "filed USD value / shares versus the public close on the report date, undone for later splits",
               "public_source": "Yahoo chart endpoint (unofficial; personal research)", "summary": summarize(rows),

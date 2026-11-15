@@ -46,3 +46,22 @@ class PriceBindingTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class CutSelectionTests(unittest.TestCase):
+    def test_first_cut_keeps_its_file_and_later_cuts_are_dated(self):
+        from scripts import historical_price_binding as hb
+        self.assertEqual(hb.binding_path("2024-12-31").name, "first-cut.json")
+        self.assertEqual(hb.binding_path("2025-06-30").name, "2025-06-30.json")
+
+    def test_a_stale_spy_source_is_refused(self):
+        import gzip, json, tempfile, pathlib
+        from scripts import historical_price_binding as hb
+        matrix = {"matrix": [{"cut": "2025-01-31", "positions": [], "spy_source": {"status": "stale-or-invalid-source"}},
+                             {"cut": "2025-03-31", "positions": [{}], "spy_source": {"status": "source-available"}}]}
+        with tempfile.TemporaryDirectory() as tmp:
+            path = pathlib.Path(tmp) / "o.json.gz"
+            path.write_bytes(gzip.compress(json.dumps(matrix).encode()))
+            self.assertEqual(hb.cut_row("2025-03-31", path)["cut"], "2025-03-31")
+            with self.assertRaises(ValueError):
+                hb.cut_row("2025-01-31", path)

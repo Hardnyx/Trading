@@ -19,10 +19,17 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 CUT = "2024-12-31"
-SNAPSHOT = ROOT / "data/historical/first-cut-snapshot-v1"
-BINDING = ROOT / "data/historical/price-binding-v1/first-cut.json"
-FUNDAMENTALS = ROOT / "data/historical/first-cut-fundamentals-v1/2024-12-31.json.gz"
-OUT = ROOT / "data/historical/full-engine-input-audit-v1/report.json"
+OUT = ROOT / "data/historical/full-engine-input-audit-v1"
+
+
+def report_path(cut, root=ROOT):
+    """The first cut keeps its original report name; later cuts are named by date."""
+    base = root / "data/historical/full-engine-input-audit-v1"
+    return base / ("report.json" if cut == CUT else f"report-{cut}.json")
+
+
+def audited_cuts(root=ROOT):
+    return sorted(p.name[:10] for p in (root / "data/historical/first-cut-snapshot-v1").glob("????-??-??.decision.json"))
 RATES = {"DFF", "DFII10", "DGS10", "DGS2", "DGS30", "DGS3MO", "DGS5", "T10YIE"}
 MACRO_UNITS = {"%", "USD/hour", "index", "thousands"}
 CLOSE = "T21:00:00+00:00"
@@ -160,7 +167,8 @@ def audit(cut=CUT, root=ROOT):
     volatility_bytes = gzip.decompress((base / f"{cut}.volatility.json.gz").read_bytes())
     market, volatility = json.loads(market_bytes), json.loads(volatility_bytes)
     decision = json.loads((base / f"{cut}.decision.json").read_text())
-    binding = json.loads((root / "data/historical/price-binding-v1/first-cut.json").read_text())
+    name = "first-cut.json" if cut == CUT else f"{cut}.json"
+    binding = json.loads((root / "data/historical/price-binding-v1" / name).read_text())
     fundamentals = json.loads(gzip.decompress((root / "data/historical/first-cut-fundamentals-v1" / f"{cut}.json.gz").read_bytes()))
     checks = {"availability": availability(market, volatility, cut), "universe": universe(market, binding, cut),
               "identity": identity(market, binding, fundamentals), "units": units(market),
@@ -186,16 +194,16 @@ def audit(cut=CUT, root=ROOT):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--cut", default=CUT)
-    parser.add_argument("--verify", action="store_true", help="recompute and compare with the archived report")
+    parser.add_argument("--verify", action="store_true", help="recompute every audited cut and compare with its report")
     options = parser.parse_args()
-    report = audit(options.cut)
     if options.verify:
-        archived = json.loads(OUT.read_text())
-        if archived != report:
-            raise SystemExit("Archived input audit does not reproduce")
-        print("input audit reproduced:", report["status"])
+        for cut in audited_cuts():
+            if json.loads(report_path(cut).read_text()) != audit(cut):
+                raise SystemExit(f"{cut}: archived input audit does not reproduce")
+            print(cut, "input audit reproduced")
         return
-    OUT.write_text(json.dumps(report, indent=1, ensure_ascii=False) + "\n")
+    report = audit(options.cut)
+    report_path(options.cut).write_text(json.dumps(report, indent=1, ensure_ascii=False) + "\n")
     print(json.dumps({k: (v["passed"] if isinstance(v, dict) else v) for k, v in report["checks"].items()}, indent=1))
     print(report["status"])
 

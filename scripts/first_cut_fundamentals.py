@@ -15,11 +15,12 @@ from pathlib import Path
 
 try:
     from . import refresh_data as rd
+    from .historical_price_binding import binding_path
 except ImportError:
     import refresh_data as rd
+    from historical_price_binding import binding_path
 
 ROOT = Path(__file__).resolve().parents[1]
-BINDING = ROOT / "data/historical/price-binding-v1/first-cut.json"
 OUT = ROOT / "data/historical/first-cut-fundamentals-v1"
 KEEP = ("eps", "continuing_eps", "revenue", "operating_income", "net_income", "cfo", "capex", "sbc", "buybacks",
         "cash", "equity", "assets", "long_debt", "current_debt", "shares")
@@ -67,7 +68,9 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--cut", default="2024-12-31")
     options = parser.parse_args()
-    binding = json.loads(BINDING.read_text())
+    binding = json.loads(binding_path(options.cut).read_text())
+    if binding["cut"] != options.cut:
+        raise ValueError("Binding is for another cut")
     members = collect(options.cut, binding, ticker_ciks())
     summary = {}
     for m in members:

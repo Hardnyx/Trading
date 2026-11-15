@@ -25,17 +25,18 @@ if __package__:
     from . import refresh_data
     from .history_archive import parse_sp500
     from .universe import SECTOR_PRIORS, expanded_universe
+    from .historical_price_binding import binding_path
 else:
     import refresh_data
     from history_archive import parse_sp500
     from universe import SECTOR_PRIORS, expanded_universe
+    from historical_price_binding import binding_path
 
 ROOT = Path(__file__).resolve().parents[1]
 CUT = "2024-12-31"
-BINDING = ROOT / "data/historical/price-binding-v1/first-cut.json"
-FUNDAMENTALS = ROOT / "data/historical/first-cut-fundamentals-v1/2024-12-31.json.gz"
+FUNDAMENTALS = ROOT / "data/historical/first-cut-fundamentals-v1"
 PROVIDERS = ROOT / "data/historical/provider-inputs-v1"
-PROFILES = ROOT / "data/historical/issuer-archive-v1/2024-12-31/profiles.json"
+ARCHIVE = ROOT / "data/historical/issuer-archive-v1"
 CURRENT = ROOT / "dist/data/market.json"
 OUT = ROOT / "data/historical/first-cut-snapshot-v1"
 WIKI = "https://en.wikipedia.org/w/api.php"
@@ -182,7 +183,7 @@ def macro_vintages(cut, current):
     return out
 
 
-def bond_profiles(path=PROFILES):
+def bond_profiles(path):
     """Issuer profiles archived before the cut, in the engine's bond_profile schema."""
     funds = json.loads(path.read_text())["funds"]
     out = {}
@@ -279,13 +280,15 @@ def main():
     options = parser.parse_args()
     revision, raw = wiki_revision(options.cut)
     by_cik, by_symbol = sector_index(raw)
-    binding = json.loads(BINDING.read_text())
-    fundamentals = json.loads(gzip.decompress(FUNDAMENTALS.read_bytes()))
+    binding = json.loads(binding_path(options.cut).read_text())
+    fundamentals = json.loads(gzip.decompress((FUNDAMENTALS / f"{options.cut}.json.gz").read_bytes()))
+    if binding["cut"] != options.cut or fundamentals["cut"] != options.cut:
+        raise ValueError("Binding or fundamentals are for another cut")
     stocks, excluded = member_specs(binding, fundamentals, by_cik, by_symbol)
     specs = (stocks[:options.limit] if options.limit else stocks) + fund_specs()
     assets, errors, failed = build(specs, options.cut)
     current = json.loads(CURRENT.read_text())
-    profiles = bond_profiles()
+    profiles = bond_profiles(ARCHIVE / options.cut / "profiles.json")
     for asset in assets:
         if asset["symbol"] in profiles:
             asset["bond_profile"] = profiles[asset["symbol"]]
