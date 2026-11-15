@@ -69,6 +69,7 @@ class SnapshotTests(unittest.TestCase):
             out = fs.bond_profiles(path)
         self.assertEqual(list(out), ["TIP"])
         self.assertTrue(out["TIP"]["inflationLinked"])
+        self.assertEqual(out["TIP"]["observed_at"], "2024-12-20T00:00:00+00:00")
         self.assertEqual((out["TIP"]["duration"], out["TIP"]["date"], out["TIP"]["expenseRatio"]), (6.54, "2024-12-19", .0018))
 
     def test_future_leaks_are_named(self):
@@ -79,3 +80,15 @@ class SnapshotTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class KnowledgeTests(unittest.TestCase):
+    def test_retrieval_after_the_cut_is_dated_at_the_cut_close_and_kept(self):
+        asset = {"price_observed_at": "2026-11-15T05:00:00+00:00",
+                 "financials": {"earnings_history": {"observed_at": "2026-11-15T05:01:00+00:00"}},
+                 "bond_profile": {"observed_at": "2024-12-22T13:18:15+00:00"}}
+        fs.known_at_cut(asset, "2024-12-31")
+        self.assertEqual(asset["price_observed_at"], "2024-12-31T21:00:00+00:00")
+        self.assertEqual(asset["price_retrieved_at"], "2026-11-15T05:00:00+00:00")
+        self.assertEqual(asset["financials"]["earnings_history"]["retrieved_at"], "2026-11-15T05:01:00+00:00")
+        self.assertEqual(asset["bond_profile"]["observed_at"], "2024-12-22T13:18:15+00:00")

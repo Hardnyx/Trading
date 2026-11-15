@@ -41,6 +41,7 @@ OUT = ROOT / "data/historical/first-cut-snapshot-v1"
 WIKI = "https://en.wikipedia.org/w/api.php"
 WIKI_PAGE = "List of S&P 500 companies"
 MAX_SEC_FAILURE = 0.02
+CLOSE_UTC = "T21:00:00+00:00"  # 16:00 New York in winter
 HISTORY_DAYS = 5 * 365 + 1  # the daily refresh asks for five years of daily prices
 GICS_ES = {
     "Information Technology": "Tecnología", "Financials": "Financiero", "Health Care": "Salud",
@@ -177,7 +178,7 @@ def macro_vintages(cut, current):
             raise ValueError(f"{series}: vintage not known by the cut")
         template = templates.get(series, {})
         out.append({**normalized, "label": template.get("label", series), "description": template.get("description", ""),
-                    "observed_at": None, "vintage_sha256": row["sha256"]})
+                    "observed_at": f"{normalized['known_by_day']}T23:59:59+00:00", "vintage_sha256": row["sha256"]})
     return out
 
 
@@ -191,7 +192,7 @@ def bond_profiles(path=PROFILES):
         if fund.get("status") != "parsed" or not duration or not (ytm or p.get("real_yield")):
             continue
         dated = [x["as_of"] for x in (duration, ytm, p.get("real_yield"), p.get("sec_yield_30d")) if x and x.get("as_of")]
-        profile = {"source_url": fund["archive_url"], "observed_at": None, "archived_at": fund["captured_at"],
+        profile = {"source_url": fund["archive_url"], "observed_at": fund["captured_at"],
                    "expenseRatio": (p.get("expense_ratio") or {}).get("value"),
                    "duration": duration["value"], "duration_date": duration["as_of"],
                    "date": max(dated), "source_sha256": fund["raw_sha256"]}
@@ -224,6 +225,30 @@ def future_leaks(asset, cut):
     return leaks
 
 
+def known_at_cut(node, cut, depth=0):
+    """Date every retrieval stamp at the cut's close; the content was already cut to what was public then.
+
+    The engine refuses records observed after its information date. Here every
+    record was filtered to rows dated, filed or ex-dated on or before the cut,
+    so its knowledge time is the cut close; the real retrieval time is kept.
+    """
+    if depth > 30:
+        raise ValueError("Nested metadata exceeded limit")
+    if isinstance(node, list):
+        for item in node:
+            known_at_cut(item, cut, depth + 1)
+    elif isinstance(node, dict):
+        for key in ("observed_at", "price_observed_at"):
+            value = node.get(key)
+            if isinstance(value, str) and value[:10] > cut:
+                node[key.replace("observed_at", "retrieved_at")] = value
+                node[key] = f"{cut}{CLOSE_UTC}"
+        for value in node.values():
+            if isinstance(value, (dict, list)):
+                known_at_cut(value, cut, depth + 1)
+    return node
+
+
 def build(specs, cut, workers=6):
     factors, errors, assets, failed = {}, [], [], []
     refresh_data.download = asof_download(refresh_data.download, cut, factors)
@@ -238,7 +263,7 @@ def build(specs, cut, workers=6):
             if leaks:
                 raise ValueError(f"{spec[0]}: data after the cut in {leaks}")
             asset["later_split_factor_undone"] = factors.get(spec[0], 1.0)
-            assets.append(asset)
+            assets.append(known_at_cut(asset, cut))
     sec_failed = sum(a["type"] == "stock" and (a.get("financials") or {}).get("refresh_status") != "available" for a in assets)
     if sec_failed > MAX_SEC_FAILURE * max(1, sum(a["type"] == "stock" for a in assets)):
         # No earlier snapshot backs a reconstruction: missing SEC records would silently drop fundamentals.
@@ -279,6 +304,8 @@ def main():
             "sector_source": revision, "members_requested": len(stocks), "members_excluded": excluded,
             "funds_requested": len(fund_specs()), "failed": failed,
             "bond_profiles": sorted(profiles), "price_basis": "share basis of the cut; later splits undone",
+            "knowledge_basis": "records cut to rows dated, filed or ex-dated by the cut carry observed_at at the cut close "
+                               "and their real retrieved_at; macro at the vintage day, bond profiles at the archive capture",
             "etf_universe": "current fund list; funds without a five-year-window series at the cut drop out",
             "outcomes_read": False, "decision_record": False,
         },

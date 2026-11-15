@@ -72,6 +72,14 @@ jobs:
           python scripts/build_volatility.py --snapshot "$RUNNER_TEMP/market.json" \
             --output "$RUNNER_TEMP/volatility.json" --parameter-dir "$base/volatility-parameters-$name"
           gzip -n -c "$RUNNER_TEMP/volatility.json" > "$base/$name.volatility.json.gz"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Run the engine's reference decision on the cut
+        run: |
+          name="${{ inputs.cut }}"
+          if [ "${{ inputs.limit }}" != "0" ]; then name="$name-smoke"; fi
+          node scripts/first_cut_engine.mjs "$name"
       - name: Commit the reconstruction
         run: |
           git add data/historical/first-cut-snapshot-v1
