@@ -1,0 +1,3082 @@
+{
+ "schema": "full-engine-first-cut-input-audit-v1",
+ "cut": "2023-03-31",
+ "snapshot_sha256": "876cdbda6e9e29c7cd477bb5ddff4c0dc43c2f4b1add54ee4e3605d9ee85d81b",
+ "volatility_sha256": "b28be50788d873d6d0cb313ef507a0ba31451b2f6cb4a6821c784ac0d9a05355",
+ "checks": {
+  "availability": {
+   "passed": true,
+   "fields_after_cut": [],
+   "count": 0
+  },
+  "universe": {
+   "passed": true,
+   "members": 0,
+   "spy_weight_covered": 0.0,
+   "spy_weight_with_ttm_eps": 0.0,
+   "unexplained_missing": [],
+   "not_in_binding": [],
+   "declared_exclusions": {
+    "unbound_positions": [
+     {
+      "cusip": "438516106",
+      "name": "Honeywell International Inc",
+      "weight": 0.0044761189734,
+      "status": "no-ticker-candidate"
+     },
+     {
+      "cusip": "254709108",
+      "name": "Discover Financial Services",
+      "weight": 0.0008285524191399999,
+      "status": "no-ticker-candidate"
+     },
+     {
+      "cusip": "302491303",
+      "name": "FMC Corp",
+      "weight": 0.00048744828955,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "26884L109",
+      "name": "EQT Corp",
+      "weight": 0.00038285707518,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "655663102",
+      "name": "Nordson Corp",
+      "weight": 0.00039762338211000005,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "159864107",
+      "name": "Charles River Laboratories International Inc",
+      "weight": 0.00033629051553,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "29414B104",
+      "name": "EPAM Systems Inc",
+      "weight": 0.00058294265766,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "17275R102",
+      "name": "Cisco Systems Inc",
+      "weight": 0.00608596520371,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "012653101",
+      "name": "Albemarle Corp",
+      "weight": 0.00079038325789,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "04621X108",
+      "name": "Assurant Inc",
+      "weight": 0.00020650022646,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "79466L302",
+      "name": "Salesforce Inc",
+      "weight": 0.00412527254371,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "461202103",
+      "name": "Intuit Inc",
+      "weight": 0.0034133488161199998,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "260557103",
+      "name": "Dow Inc",
+      "weight": 0.0011222132071,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "502431109",
+      "name": "L3Harris Technologies Inc",
+      "weight": 0.0012341499405099999,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "09247X101",
+      "name": "BlackRock Inc",
+      "weight": 0.00331226618547,
+      "status": "no-ticker-candidate"
+     },
+     {
+      "cusip": "989207105",
+      "name": "Zebra Technologies Corp",
+      "weight": 0.00041162132822999996,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "934423104",
+      "name": "Warner Bros Discovery Inc",
+      "weight": 0.00064493061181,
+      "status": "no-ticker-candidate"
+     },
+     {
+      "cusip": "911312106",
+      "name": "United Parcel Service Inc",
+      "weight": 0.00393959304097,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "256677105",
+      "name": "Dollar General Corp",
+      "weight": 0.00173100247821,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "25470M109",
+      "name": "DISH Network Corp",
+      "weight": 0.00010750148306999999,
+      "status": "no-ticker-candidate"
+     },
+     {
+      "cusip": "000000000",
+      "name": "Accenture PLC",
+      "weight": 0.00522438977755,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "24906P109",
+      "name": "DENTSPLY SIRONA Inc",
+      "weight": 0.00021366992939999998,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "29476L107",
+      "name": "Equity Residential",
+      "weight": 0.00061738395813,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "031100100",
+      "name": "AMETEK Inc",
+      "weight": 0.0009920813066799999,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "025537101",
+      "name": "American Electric Power Co Inc",
+      "weight": 0.00151803677813,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "37045V100",
+      "name": "General Motors Co",
+      "weight": 0.0014869645643699999,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "958102105",
+      "name": "Western Digital Corp",
+      "weight": 0.00030425896208,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "200340107",
+      "name": "Comerica Inc",
+      "weight": 0.00027282133969,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "879360105",
+      "name": "Teledyne Technologies Inc",
+      "weight": 0.0005742332307,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "95040Q104",
+      "name": "Welltower Inc",
+      "weight": 0.00096370069848,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "302130109",
+      "name": "Expeditors International of Washington Inc",
+      "weight": 0.0005271571564299999,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "372460105",
+      "name": "Genuine Parts Co",
+      "weight": 0.00076323489589,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "55354G100",
+      "name": "MSCI Inc",
+      "weight": 0.00116518316655,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "169656105",
+      "name": "Chipotle Mexican Grill Inc",
+      "weight": 0.00119349192718,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "92556V106",
+      "name": "Viatris Inc",
+      "weight": 0.00041333608198,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "743315103",
+      "name": "Progressive Corp/The",
+      "weight": 0.00236116582832,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "426281101",
+      "name": "Jack Henry & Associates Inc",
+      "weight": 0.0003979357551,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "73278L105",
+      "name": "Pool Corp",
+      "weight": 0.00037205434393,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "030420103",
+      "name": "American Water Works Co Inc",
+      "weight": 0.00086229299289,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "92532F100",
+      "name": "Vertex Pharmaceuticals Inc",
+      "weight": 0.00230630288777,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "25746U109",
+      "name": "Dominion Energy Inc",
+      "weight": 0.0015827419710999998,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "609207105",
+      "name": "Mondelez International Inc",
+      "weight": 0.00283233431996,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "907818108",
+      "name": "Union Pacific Corp",
+      "weight": 0.0039608771681100005,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "478160104",
+      "name": "Johnson & Johnson",
+      "weight": 0.014385276348139998,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "756109104",
+      "name": "Realty Income Corp",
+      "weight": 0.0012376975757800001,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "580135101",
+      "name": "McDonald's Corp",
+      "weight": 0.006003775992790001,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "64110D104",
+      "name": "NetApp Inc",
+      "weight": 0.00041347787787,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "42809H107",
+      "name": "Hess Corp",
+      "weight": 0.00121460471185,
+      "status": "no-ticker-candidate"
+     },
+     {
+      "cusip": "91324P102",
+      "name": "UnitedHealth Group Inc",
+      "weight": 0.0154124917139,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "189054109",
+      "name": "Clorox Co/The",
+      "weight": 0.00052944134033,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "60871R209",
+      "name": "Molson Coors Beverage Co",
+      "weight": 0.00030002183232,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "718172109",
+      "name": "Philip Morris International Inc",
+      "weight": 0.00488152884701,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "911363109",
+      "name": "United Rentals Inc",
+      "weight": 0.00077092103923,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "459200101",
+      "name": "International Business Machines Corp",
+      "weight": 0.00396325384245,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "000000000",
+      "name": "Pentair PLC",
+      "weight": 0.00022900506413999999,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "91913Y100",
+      "name": "Valero Energy Corp",
+      "weight": 0.0015216722452199999,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "032095101",
+      "name": "Amphenol Corp",
+      "weight": 0.0014097412122700001,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "949746101",
+      "name": "Wells Fargo & Co",
+      "weight": 0.00489517280371,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "665859104",
+      "name": "Northern Trust Corp",
+      "weight": 0.00056646400388,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "65249B109",
+      "name": "News Corp",
+      "weight": 0.00022011421820000002,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "56585A102",
+      "name": "Marathon Petroleum Corp",
+      "weight": 0.00169711173207,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "714046109",
+      "name": "PerkinElmer Inc",
+      "weight": 0.00054483239439,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "65339F101",
+      "name": "NextEra Energy Inc",
+      "weight": 0.00516873206292,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "43300A203",
+      "name": "Hilton Worldwide Holdings Inc",
+      "weight": 0.001073544144,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "902653104",
+      "name": "UDR Inc",
+      "weight": 0.00036874681324,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "370334104",
+      "name": "General Mills Inc",
+      "weight": 0.0015490546582100002,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "23331A109",
+      "name": "DR Horton Inc",
+      "weight": 0.0008737888533,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "704326107",
+      "name": "Paychex Inc",
+      "weight": 0.00115324038092,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "565849106",
+      "name": "Marathon Oil Corp",
+      "weight": 0.00053486759229,
+      "status": "no-ticker-candidate"
+     },
+     {
+      "cusip": "57060D108",
+      "name": "MarketAxess Holdings Inc",
+      "weight": 0.00032531299577,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "000000000",
+      "name": "Schlumberger Ltd",
+      "weight": 0.0023585535923,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "00287Y109",
+      "name": "AbbVie Inc",
+      "weight": 0.00889222955424,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "892356106",
+      "name": "Tractor Supply Co",
+      "weight": 0.00077419110742,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "913903100",
+      "name": "Universal Health Services Inc",
+      "weight": 0.00029220095392,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "058498106",
+      "name": "Ball Corp",
+      "weight": 0.00049831772383,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "000000000",
+      "name": "Seagate Technology Holdings PLC",
+      "weight": 0.00031822198028,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "009158106",
+      "name": "Air Products and Chemicals Inc",
+      "weight": 0.00212723827821,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "92276F100",
+      "name": "Ventas Inc",
+      "weight": 0.00055341378406,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "883556102",
+      "name": "Thermo Fisher Scientific Inc",
+      "weight": 0.00671982924868,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "22160K105",
+      "name": "Costco Wholesale Corp",
+      "weight": 0.00628650754151,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "30212P303",
+      "name": "Expedia Group Inc",
+      "weight": 0.00040578916381,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "000000000",
+      "name": "Everest Re Group Ltd",
+      "weight": 0.00040539868484999996,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "115637209",
+      "name": "Brown-Forman Corp",
+      "weight": 0.00036850531956,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "880770102",
+      "name": "Teradyne Inc",
+      "weight": 0.00042470565210999994,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "192446102",
+      "name": "Cognizant Technology Solutions Corp",
+      "weight": 0.00091717787829,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "574599106",
+      "name": "Masco Corp",
+      "weight": 0.00032636102505,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "278642103",
+      "name": "eBay Inc",
+      "weight": 0.00070651609551,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "92939U106",
+      "name": "WEC Energy Group Inc",
+      "weight": 0.00092015412118,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "26875P101",
+      "name": "EOG Resources Inc",
+      "weight": 0.00236700180339,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "000000000",
+      "name": "Arch Capital Group Ltd",
+      "weight": 0.00072246672195,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "88579Y101",
+      "name": "3M Co",
+      "weight": 0.00206231503633,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "654106103",
+      "name": "NIKE Inc",
+      "weight": 0.00458412977488,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "00846U101",
+      "name": "Agilent Technologies Inc",
+      "weight": 0.00138432205008,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "595112103",
+      "name": "Micron Technology Inc",
+      "weight": 0.00169057256003,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "758849103",
+      "name": "Regency Centers Corp",
+      "weight": 0.00029340630319,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "969457100",
+      "name": "Williams Cos Inc/The",
+      "weight": 0.0012429368574,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "833034101",
+      "name": "Snap-on Inc",
+      "weight": 0.0003786986119,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "172967424",
+      "name": "Citigroup Inc",
+      "weight": 0.00272559574419,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "000000000",
+      "name": "Linde PLC",
+      "weight": 0.00501722919743,
+      "status": "no-ticker-candidate"
+     },
+     {
+      "cusip": "931427108",
+      "name": "Walgreens Boots Alliance Inc",
+      "weight": 0.000834350802,
+      "status": "no-ticker-candidate"
+     },
+     {
+      "cusip": "000000000",
+      "name": "Chubb Ltd",
+      "weight": 0.0028566321435600003,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "681919106",
+      "name": "Omnicom Group Inc",
+      "weight": 0.00051756948759,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "000000000",
+      "name": "Amcor PLC",
+      "weight": 0.00055539134194,
+      "status": "no-ticker-candidate"
+     },
+     {
+      "cusip": "693475105",
+      "name": "PNC Financial Services Group Inc/The",
+      "weight": 0.00198189749856,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "12769G100",
+      "name": "Caesars Entertainment Inc",
+      "weight": 0.0002741595136,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "369550108",
+      "name": "General Dynamics Corp",
+      "weight": 0.0017296801718900002,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "98389B100",
+      "name": "Xcel Energy Inc",
+      "weight": 0.00119371666869,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "23918K108",
+      "name": "DaVita Inc",
+      "weight": 0.00012894693684,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "78486Q101",
+      "name": "SVB Financial Group",
+      "weight": 0.00041440783396,
+      "status": "no-ticker-candidate"
+     },
+     {
+      "cusip": "61945C103",
+      "name": "Mosaic Co/The",
+      "weight": 0.00046972324957000004,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "000000000",
+      "name": "Allegion plc",
+      "weight": 0.00028993860837,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "20030N101",
+      "name": "Comcast Corp",
+      "weight": 0.00469368203352,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "74736K101",
+      "name": "Qorvo Inc",
+      "weight": 0.00029014875291,
+      "status": "no-ticker-candidate"
+     },
+     {
+      "cusip": "150870103",
+      "name": "Celanese Corp",
+      "weight": 0.00031597122398,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "693506107",
+      "name": "PPG Industries Inc",
+      "weight": 0.0009163121612900001,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "000000000",
+      "name": "Invesco Ltd",
+      "weight": 0.00025370377411,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "049560105",
+      "name": "Atmos Energy Corp",
+      "weight": 0.00048170651122,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "571903202",
+      "name": "Marriott International Inc/MD",
+      "weight": 0.00124640219755,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "615369105",
+      "name": "Moody's Corp",
+      "weight": 0.0013629209883699999,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "35137L105",
+      "name": "Fox Corp",
+      "weight": 0.00028869766367,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "69351T106",
+      "name": "PPL Corp",
+      "weight": 0.0006662355694400001,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "30161N101",
+      "name": "Exelon Corp",
+      "weight": 0.00132915281694,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "670346105",
+      "name": "Nucor Corp",
+      "weight": 0.00107024315461,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "172908105",
+      "name": "Cintas Corp",
+      "weight": 0.0012043846533999999,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "339041105",
+      "name": "FleetCor Technologies Inc",
+      "weight": 0.000427019051,
+      "status": "no-ticker-candidate"
+     },
+     {
+      "cusip": "000000000",
+      "name": "Medtronic PLC",
+      "weight": 0.00321401743064,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "70432V102",
+      "name": "Paycom Software Inc",
+      "weight": 0.00046929307983,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "89832Q109",
+      "name": "Truist Financial Corp",
+      "weight": 0.0017762516557499998,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "22052L104",
+      "name": "Corteva Inc",
+      "weight": 0.0013083533677199998,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "007903107",
+      "name": "Advanced Micro Devices Inc",
+      "weight": 0.00324379938401,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "446150104",
+      "name": "Huntington Bancshares Inc/OH",
+      "weight": 0.00062740767046,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "29355A107",
+      "name": "Enphase Energy Inc",
+      "weight": 0.0011125481349499998,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "127097103",
+      "name": "Coterra Energy Inc",
+      "weight": 0.00060548506889,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "713448108",
+      "name": "PepsiCo Inc",
+      "weight": 0.007743886930029999,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "882508104",
+      "name": "Texas Instruments Inc",
+      "weight": 0.00468090040946,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "12572Q105",
+      "name": "CME Group Inc",
+      "weight": 0.00188206090529,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "929160109",
+      "name": "Vulcan Materials Co",
+      "weight": 0.00072412451692,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "70450Y103",
+      "name": "PayPal Holdings Inc",
+      "weight": 0.00252616481234,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "15135B101",
+      "name": "Centene Corp",
+      "weight": 0.00145355316341,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "02079K305",
+      "name": "Alphabet Inc",
+      "weight": 0.01639647733695,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "101121101",
+      "name": "Boston Properties Inc",
+      "weight": 0.00029480914793,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "518439104",
+      "name": "Estee Lauder Cos Inc/The",
+      "weight": 0.00177752368592,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "550241103",
+      "name": "Lumen Technologies Inc",
+      "weight": 0.00014811824158,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "718546104",
+      "name": "Phillips 66",
+      "weight": 0.00154809393756,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "595017104",
+      "name": "Microchip Technology Inc",
+      "weight": 0.00119941926223,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "74340W103",
+      "name": "Prologis Inc",
+      "weight": 0.00323757132528,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "534187109",
+      "name": "Lincoln National Corp",
+      "weight": 0.00014756010381000001,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "92826C839",
+      "name": "Visa Inc",
+      "weight": 0.01056877363924,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "42824C109",
+      "name": "Hewlett Packard Enterprise Co",
+      "weight": 0.00064039572042,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "842587107",
+      "name": "Southern Co/The",
+      "weight": 0.00241878178109,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "98978V103",
+      "name": "Zoetis Inc",
+      "weight": 0.0021249032092000002,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "629377508",
+      "name": "NRG Energy Inc",
+      "weight": 0.00023208074167,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "277432100",
+      "name": "Eastman Chemical Co",
+      "weight": 0.00031018400067,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "101137107",
+      "name": "Boston Scientific Corp",
+      "weight": 0.00206196003674,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "98956P102",
+      "name": "Zimmer Biomet Holdings Inc",
+      "weight": 0.0008324347772699999,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "039483102",
+      "name": "Archer-Daniels-Midland Co",
+      "weight": 0.0015869337160800002,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "761152107",
+      "name": "ResMed Inc",
+      "weight": 0.00094858764507,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "036752103",
+      "name": "Elevance Health Inc",
+      "weight": 0.0038179439053499997,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "526057104",
+      "name": "Lennar Corp",
+      "weight": 0.00071556581378,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "05722G100",
+      "name": "Baker Hughes Co",
+      "weight": 0.00092639337772,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "832696405",
+      "name": "J M Smucker Co/The",
+      "weight": 0.00052713035399,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "000000000",
+      "name": "NXP Semiconductors NV",
+      "weight": 0.0012856124074,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "928881101",
+      "name": "Vontier Corp",
+      "weight": 5.4189999999999996e-11,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "525327102",
+      "name": "Leidos Holdings Inc",
+      "weight": 0.0004448671465,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "12504L109",
+      "name": "CBRE Group Inc",
+      "weight": 0.0007661038992900001,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "754730109",
+      "name": "Raymond James Financial Inc",
+      "weight": 0.0006420072126600001,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "09062X103",
+      "name": "Biogen Inc",
+      "weight": 0.00124438016108,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "337738108",
+      "name": "Fiserv Inc",
+      "weight": 0.00200436922531,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "281020107",
+      "name": "Edison International",
+      "weight": 0.00075589036217,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "742718109",
+      "name": "Procter & Gamble Co/The",
+      "weight": 0.0111742904838,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "00971T101",
+      "name": "Akamai Technologies Inc",
+      "weight": 0.00041507064406,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "368736104",
+      "name": "Generac Holdings Inc",
+      "weight": 0.00019518148717999998,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "857477103",
+      "name": "State Street Corp",
+      "weight": 0.00088559241993,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "539830109",
+      "name": "Lockheed Martin Corp",
+      "weight": 0.00353043663375,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "548661107",
+      "name": "Lowe's Cos Inc",
+      "weight": 0.00384775351399,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "679580100",
+      "name": "Old Dominion Freight Line Inc",
+      "weight": 0.0008059851415200001,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "418056107",
+      "name": "Hasbro Inc",
+      "weight": 0.00024116833700999998,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "231021106",
+      "name": "Cummins Inc",
+      "weight": 0.0010581854121,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "000000000",
+      "name": "Royal Caribbean Cruises Ltd",
+      "weight": 0.00033571607857,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "45167R104",
+      "name": "IDEX Corp",
+      "weight": 0.00053295047857,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "751212101",
+      "name": "Ralph Lauren Corp",
+      "weight": 0.00014061530141,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "12514G108",
+      "name": "CDW Corp/DE",
+      "weight": 0.00074529805004,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "902252105",
+      "name": "Tyler Technologies Inc",
+      "weight": 0.00041769288573000003,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "655844108",
+      "name": "Norfolk Southern Corp",
+      "weight": 0.00177492044707,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "81211K100",
+      "name": "Sealed Air Corp",
+      "weight": 0.00022961867219,
+      "status": "no-ticker-candidate"
+     },
+     {
+      "cusip": "594918104",
+      "name": "Microsoft Corp",
+      "weight": 0.055621577573560003,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "831865209",
+      "name": "A O Smith Corp",
+      "weight": 0.00022777334097000003,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "016255101",
+      "name": "Align Technology Inc",
+      "weight": 0.00047585666819,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "92556H206",
+      "name": "Paramount Global",
+      "weight": 0.00026425949924,
+      "status": "no-ticker-candidate"
+     },
+     {
+      "cusip": "87612G101",
+      "name": "Targa Resources Corp",
+      "weight": 0.00051477546884,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "902494103",
+      "name": "Tyson Foods Inc",
+      "weight": 0.00056361061667,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "075887109",
+      "name": "Becton Dickinson and Co",
+      "weight": 0.00224852687577,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "03027X100",
+      "name": "American Tower Corp",
+      "weight": 0.00306909292244,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "256746108",
+      "name": "Dollar Tree Inc",
+      "weight": 0.00092565245023,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "695156109",
+      "name": "Packaging Corp of America",
+      "weight": 0.00037332416240999996,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "46266C105",
+      "name": "IQVIA Holdings Inc",
+      "weight": 0.00118456502278,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "45866F104",
+      "name": "Intercontinental Exchange Inc",
+      "weight": 0.00177444579589,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "038222105",
+      "name": "Applied Materials Inc",
+      "weight": 0.0026065507654999998,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "674599105",
+      "name": "Occidental Petroleum Corp",
+      "weight": 0.0014250261236699998,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "773903109",
+      "name": "Rockwell Automation Inc",
+      "weight": 0.0009175508663,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "60770K107",
+      "name": "Moderna Inc",
+      "weight": 0.00184637272458,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "21037T109",
+      "name": "Constellation Energy Corp",
+      "weight": 0.00087711091015,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "487836108",
+      "name": "Kellogg Co",
+      "weight": 0.00056734449754,
+      "status": "no-ticker-candidate"
+     },
+     {
+      "cusip": "313745101",
+      "name": "Federal Realty Investment Trust",
+      "weight": 0.00022979806394000002,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "863667101",
+      "name": "Stryker Corp",
+      "weight": 0.0025520652794600003,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "446413106",
+      "name": "Huntington Ingalls Industries Inc",
+      "weight": 0.00028442668337,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "000000000",
+      "name": "Trane Technologies PLC",
+      "weight": 0.00120968911156,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "651639106",
+      "name": "Newmont Corp",
+      "weight": 0.00115862268227,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "015271109",
+      "name": "Alexandria Real Estate Equities Inc",
+      "weight": 0.00066865111844,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "989701107",
+      "name": "Zions Bancorp NA",
+      "weight": 0.00022975553860000002,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "723484101",
+      "name": "Pinnacle West Capital Corp",
+      "weight": 0.00026503480485,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "21036P108",
+      "name": "Constellation Brands Inc",
+      "weight": 0.00117042200617,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "896239100",
+      "name": "Trimble Inc",
+      "weight": 0.00039055314962,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "000000000",
+      "name": "Willis Towers Watson PLC",
+      "weight": 0.0008332278337100001,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "67066G104",
+      "name": "NVIDIA Corp",
+      "weight": 0.01133419131929,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "086516101",
+      "name": "Best Buy Co Inc",
+      "weight": 0.00050184900561,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "166764100",
+      "name": "Chevron Corp",
+      "weight": 0.00993441792674,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "000000000",
+      "name": "Johnson Controls International plc",
+      "weight": 0.0013667376665,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "00724F101",
+      "name": "Adobe Inc",
+      "weight": 0.00488308566936,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "493267108",
+      "name": "KeyCorp",
+      "weight": 0.00049882547215,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "874054109",
+      "name": "Take-Two Interactive Software Inc",
+      "weight": 0.0005069765314300001,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "94106L109",
+      "name": "Waste Management Inc",
+      "weight": 0.00182971935483,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "29364G103",
+      "name": "Entergy Corp",
+      "weight": 0.0007070407327,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "02079K107",
+      "name": "Alphabet Inc",
+      "weight": 0.014617123753,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "125523100",
+      "name": "Cigna Corp",
+      "weight": 0.0031518659902500003,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "15677J108",
+      "name": "Ceridian HCM Holding Inc",
+      "weight": 0.00030446927313,
+      "status": "no-ticker-candidate"
+     },
+     {
+      "cusip": "55261F104",
+      "name": "M&T Bank Corp",
+      "weight": 0.0007901111777,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "816851109",
+      "name": "Sempra Energy",
+      "weight": 0.00151139741915,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "67103H107",
+      "name": "O'Reilly Automotive Inc",
+      "weight": 0.0016434252343399999,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "084423102",
+      "name": "W R Berkley Corp",
+      "weight": 0.00045908131232,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "126650100",
+      "name": "CVS Health Corp",
+      "weight": 0.00380972915007,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "22822V101",
+      "name": "Crown Castle Inc",
+      "weight": 0.00182749186555,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "26614N102",
+      "name": "DuPont de Nemours Inc",
+      "weight": 0.00106594498872,
+      "status": "no-ticker-candidate"
+     },
+     {
+      "cusip": "452327109",
+      "name": "Illumina Inc",
+      "weight": 0.00098955258363,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "254687106",
+      "name": "Walt Disney Co/The",
+      "weight": 0.00492787688486,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "000000000",
+      "name": "Garmin Ltd",
+      "weight": 0.00044142908519,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "74762E102",
+      "name": "Quanta Services Inc",
+      "weight": 0.00062609874501,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "87612E106",
+      "name": "Target Corp",
+      "weight": 0.00214292932093,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "366651107",
+      "name": "Gartner Inc",
+      "weight": 0.00082445471823,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "571748102",
+      "name": "Marsh & McLennan Cos Inc",
+      "weight": 0.00256003453482,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "74251V102",
+      "name": "Principal Financial Group Inc",
+      "weight": 0.0006026415099699999,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "931142103",
+      "name": "Walmart Inc",
+      "weight": 0.006226401037,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "191216100",
+      "name": "Coca-Cola Co/The",
+      "weight": 0.0077027599827899996,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "34959E109",
+      "name": "Fortinet Inc",
+      "weight": 0.0009921735851299998,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "770323103",
+      "name": "Robert Half International Inc",
+      "weight": 0.00025211839132,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "02376R102",
+      "name": "American Airlines Group Inc",
+      "weight": 0.00025267433282,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "74460D109",
+      "name": "Public Storage",
+      "weight": 0.0013727062146499998,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "854502101",
+      "name": "Stanley Black & Decker Inc",
+      "weight": 0.00034385289120000004,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "693718108",
+      "name": "PACCAR Inc",
+      "weight": 0.00107086359329,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "30231G102",
+      "name": "Exxon Mobil Corp",
+      "weight": 0.01413294734976,
+      "status": "no-ticker-candidate"
+     },
+     {
+      "cusip": "219350105",
+      "name": "Corning Inc",
+      "weight": 0.0007504910361300001,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "651229106",
+      "name": "Newell Brands Inc",
+      "weight": 0.00015297946542,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "354613101",
+      "name": "Franklin Resources Inc",
+      "weight": 0.00022290233292,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "29786A106",
+      "name": "Etsy Inc",
+      "weight": 0.00046723786089,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "125896100",
+      "name": "CMS Energy Corp",
+      "weight": 0.000565311243,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "44107P104",
+      "name": "Host Hotels & Resorts Inc",
+      "weight": 0.00035034351638999996,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "858119100",
+      "name": "Steel Dynamics Inc",
+      "weight": 0.0005045769532,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "237194105",
+      "name": "Darden Restaurants Inc",
+      "weight": 0.000525817397,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "011659109",
+      "name": "Alaska Air Group Inc",
+      "weight": 0.00016501337969999997,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "579780206",
+      "name": "McCormick & Co Inc/MD",
+      "weight": 0.00064629447832,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "00507V109",
+      "name": "Activision Blizzard Inc",
+      "weight": 0.00168959526743,
+      "status": "no-ticker-candidate"
+     },
+     {
+      "cusip": "209115104",
+      "name": "Consolidated Edison Inc",
+      "weight": 0.00105230369638,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "573284106",
+      "name": "Martin Marietta Materials Inc",
+      "weight": 0.00064776068498,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "22160N109",
+      "name": "CoStar Group Inc",
+      "weight": 0.00097785669748,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "33616C100",
+      "name": "First Republic Bank/CA",
+      "weight": 0.0006903926145600001,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "872540109",
+      "name": "TJX Cos Inc/The",
+      "weight": 0.0028896928490200003,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "45337C102",
+      "name": "Incyte Corp",
+      "weight": 0.00046402253798,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "61174X109",
+      "name": "Monster Beverage Corp",
+      "weight": 0.00121089317695,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "513272104",
+      "name": "Lamb Weston Holdings Inc",
+      "weight": 0.00039805541475,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "084670702",
+      "name": "Berkshire Hathaway Inc",
+      "weight": 0.01731597925348,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "427866108",
+      "name": "Hershey Co/The",
+      "weight": 0.00105450917158,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "893641100",
+      "name": "TransDigm Group Inc",
+      "weight": 0.00100644301557,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "64110L106",
+      "name": "Netflix Inc",
+      "weight": 0.0040828523267700005,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "127387108",
+      "name": "Cadence Design Systems Inc",
+      "weight": 0.00136499137189,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "49446R109",
+      "name": "Kimco Realty Corp",
+      "weight": 0.00040266426835999997,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "48203R104",
+      "name": "Juniper Networks Inc",
+      "weight": 0.00031911102669,
+      "status": "no-ticker-candidate"
+     },
+     {
+      "cusip": "46120E602",
+      "name": "Intuitive Surgical Inc",
+      "weight": 0.00293513156392,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "98419M100",
+      "name": "Xylem Inc/NY",
+      "weight": 0.00061209855068,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "278865100",
+      "name": "Ecolab Inc",
+      "weight": 0.00111272624892,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "57636Q104",
+      "name": "Mastercard Inc",
+      "weight": 0.00918906059528,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "760759100",
+      "name": "Republic Services Inc",
+      "weight": 0.00082147691025,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "00206R102",
+      "name": "AT&T Inc",
+      "weight": 0.00408226946982,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "844741108",
+      "name": "Southwest Airlines Co",
+      "weight": 0.0006220097162,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "11135F101",
+      "name": "Broadcom Inc",
+      "weight": 0.0070456581691800005,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "031162100",
+      "name": "Amgen Inc",
+      "weight": 0.00435598482928,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "060505104",
+      "name": "Bank of America Corp",
+      "weight": 0.0071921205057100005,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "23355L106",
+      "name": "DXC Technology Co",
+      "weight": 0.00018881598909,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "83417M104",
+      "name": "SolarEdge Technologies Inc",
+      "weight": 0.00048498701631,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "000000000",
+      "name": "Norwegian Cruise Line Holdings Ltd",
+      "weight": 0.00015736447128,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "297178105",
+      "name": "Essex Property Trust Inc",
+      "weight": 0.00042339961503,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "440452100",
+      "name": "Hormel Foods Corp",
+      "weight": 0.00040867671788,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "88160R101",
+      "name": "Tesla Inc",
+      "weight": 0.010286773182319998,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "902973304",
+      "name": "US Bancorp",
+      "weight": 0.00182813217935,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "134429109",
+      "name": "Campbell Soup Co",
+      "weight": 0.00035617478897,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "437076102",
+      "name": "Home Depot Inc/The",
+      "weight": 0.01005480686164,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "018802108",
+      "name": "Alliant Energy Corp",
+      "weight": 0.00042440152798000003,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "458140100",
+      "name": "Intel Corp",
+      "weight": 0.00339369354896,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "133131102",
+      "name": "Camden Property Trust",
+      "weight": 0.00036836104289,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "30034W106",
+      "name": "Evergy Inc",
+      "weight": 0.00044227623666,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "205887102",
+      "name": "Conagra Brands Inc",
+      "weight": 0.00057092619051,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "46284V101",
+      "name": "Iron Mountain Inc",
+      "weight": 0.00044486421717,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "929042109",
+      "name": "Vornado Realty Trust",
+      "weight": 0.00010105661029,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "69331C108",
+      "name": "PG&E Corp",
+      "weight": 0.00081451066636,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "099724106",
+      "name": "BorgWarner Inc",
+      "weight": 0.0002975332784,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "46982L108",
+      "name": "Jacobs Solutions Inc",
+      "weight": 0.00048017920939000003,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "68622V106",
+      "name": "Organon & Co",
+      "weight": 0.00021859969864,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "65249B208",
+      "name": "News Corp",
+      "weight": 6.994095869e-05,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "040413106",
+      "name": "Arista Networks Inc",
+      "weight": 0.00092723800481,
+      "status": "no-ticker-candidate"
+     },
+     {
+      "cusip": "002824100",
+      "name": "Abbott Laboratories",
+      "weight": 0.0059537366844999995,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "31428X106",
+      "name": "FedEx Corp",
+      "weight": 0.00129014742235,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "87165B103",
+      "name": "Synchrony Financial",
+      "weight": 0.00046062497201,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "345370860",
+      "name": "Ford Motor Co",
+      "weight": 0.00142403964083,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "57667L107",
+      "name": "Match Group Inc",
+      "weight": 0.00036143505864000004,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "78410G104",
+      "name": "SBA Communications Corp",
+      "weight": 0.00093639058944,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "25754A201",
+      "name": "Domino's Pizza Inc",
+      "weight": 0.00038516707669,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "701094104",
+      "name": "Parker-Hannifin Corp",
+      "weight": 0.00115357868078,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "126408103",
+      "name": "CSX Corp",
+      "weight": 0.00202646838904,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "49456B101",
+      "name": "Kinder Morgan Inc",
+      "weight": 0.00111136702322,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "983134107",
+      "name": "Wynn Resorts Ltd",
+      "weight": 0.00026832057715,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "172062101",
+      "name": "Cincinnati Financial Corp",
+      "weight": 0.0005053363031,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "38141G104",
+      "name": "Goldman Sachs Group Inc/The",
+      "weight": 0.00363260072209,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "775711104",
+      "name": "Rollins Inc",
+      "weight": 0.00026313810251,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "35671D857",
+      "name": "Freeport-McMoRan Inc",
+      "weight": 0.00168477519218,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "81762P102",
+      "name": "ServiceNow Inc",
+      "weight": 0.00243197222763,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "15189T107",
+      "name": "CenterPoint Energy Inc",
+      "weight": 0.0005804825707700001,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "871829107",
+      "name": "Sysco Corp",
+      "weight": 0.00120767488994,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "053484101",
+      "name": "AvalonBay Communities Inc",
+      "weight": 0.0007030766557,
+      "status": "no-ticker-candidate"
+     },
+     {
+      "cusip": "303075105",
+      "name": "FactSet Research Systems Inc",
+      "weight": 0.00046656649471,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "31620M106",
+      "name": "Fidelity National Information Services Inc",
+      "weight": 0.00125264340001,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "824348106",
+      "name": "Sherwin-Williams Co/The",
+      "weight": 0.0017356704002299999,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "252131107",
+      "name": "Dexcom Inc",
+      "weight": 0.00137421666296,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "460146103",
+      "name": "International Paper Co",
+      "weight": 0.00038832666023,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "65473P105",
+      "name": "NiSource Inc",
+      "weight": 0.00034388626292,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "337932107",
+      "name": "FirstEnergy Corp",
+      "weight": 0.00070587443784,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "369604301",
+      "name": "General Electric Co",
+      "weight": 0.00283965770784,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "03743Q108",
+      "name": "APA Corp",
+      "weight": 0.00047252469354,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "244199105",
+      "name": "Deere & Co",
+      "weight": 0.0036640924046899997,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "032654105",
+      "name": "Analog Devices Inc",
+      "weight": 0.00264442156517,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "808513105",
+      "name": "Charles Schwab Corp/The",
+      "weight": 0.00394151859304,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "59156R108",
+      "name": "MetLife Inc",
+      "weight": 0.00150362878922,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "452308109",
+      "name": "Illinois Tool Works Inc",
+      "weight": 0.00192429419628,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "552953101",
+      "name": "MGM Resorts International",
+      "weight": 0.00033925314697,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "001055102",
+      "name": "Aflac Inc",
+      "weight": 0.00128288453815,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "30040W108",
+      "name": "Eversource Energy",
+      "weight": 0.00090043309467,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "315616102",
+      "name": "F5 Inc",
+      "weight": 0.00026466489289,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "26441C204",
+      "name": "Duke Energy Corp",
+      "weight": 0.0024675531114999997,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "30303M102",
+      "name": "Meta Platforms Inc",
+      "weight": 0.00841933256737,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "717081103",
+      "name": "Pfizer Inc",
+      "weight": 0.008948913460970001,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "92343E102",
+      "name": "VeriSign Inc",
+      "weight": 0.0005944040453599999,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "778296103",
+      "name": "Ross Stores Inc",
+      "weight": 0.0012579732702400002,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "09073M104",
+      "name": "Bio-Techne Corp",
+      "weight": 0.00039607142806,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "023608102",
+      "name": "Ameren Corp",
+      "weight": 0.0007152062476,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "336433107",
+      "name": "First Solar Inc",
+      "weight": 0.00046204483131,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "92343V104",
+      "name": "Verizon Communications Inc",
+      "weight": 0.00514834852277,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "60855R100",
+      "name": "Molina Healthcare Inc",
+      "weight": 0.00059546394819,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "68389X105",
+      "name": "Oracle Corp",
+      "weight": 0.0039084328540699995,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "143130102",
+      "name": "CarMax Inc",
+      "weight": 0.000304572571,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "070830104",
+      "name": "Bath & Body Works Inc",
+      "weight": 0.00029794082119,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "75513E101",
+      "name": "Raytheon Technologies Corp",
+      "weight": 0.0046201562520299996,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "28176E108",
+      "name": "Edwards Lifesciences Corp",
+      "weight": 0.00143596782881,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "37959E102",
+      "name": "Globe Life Inc",
+      "weight": 0.00033827609021000004,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "053611109",
+      "name": "Avery Dennison Corp",
+      "weight": 0.00046070384413000003,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "115236101",
+      "name": "Brown & Brown Inc",
+      "weight": 0.00040902936852999996,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "097023105",
+      "name": "Boeing Co/The",
+      "weight": 0.00332032880466,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "052769106",
+      "name": "Autodesk Inc",
+      "weight": 0.0012573343765700002,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "000000000",
+      "name": "Aon PLC",
+      "weight": 0.0019316737072,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "35137L204",
+      "name": "Fox Corp",
+      "weight": 0.00012942495571000002,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "668771108",
+      "name": "Gen Digital Inc",
+      "weight": 0.00038282644864,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "020002101",
+      "name": "Allstate Corp/The",
+      "weight": 0.00113656610933,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "260003108",
+      "name": "Dover Corp",
+      "weight": 0.00059873830679,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "14149Y108",
+      "name": "Cardinal Health Inc",
+      "weight": 0.0006269291604599999,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "03073E105",
+      "name": "AmerisourceBergen Corp",
+      "weight": 0.00083501200482,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "000000000",
+      "name": "TE Connectivity Ltd",
+      "weight": 0.00113837385332,
+      "status": "no-ticker-candidate"
+     },
+     {
+      "cusip": "00751Y106",
+      "name": "Advance Auto Parts Inc",
+      "weight": 0.00027612052033,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "14448C104",
+      "name": "Carrier Global Corp",
+      "weight": 0.00107651634551,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "776696106",
+      "name": "Roper Technologies Inc",
+      "weight": 0.0014257293553200001,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "25179M103",
+      "name": "Devon Energy Corp",
+      "weight": 0.00124876895377,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "000000000",
+      "name": "LyondellBasell Industries NV",
+      "weight": 0.00065505730997,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "83088M102",
+      "name": "Skyworks Solutions Inc",
+      "weight": 0.00045286611185999995,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "02209S103",
+      "name": "Altria Group Inc",
+      "weight": 0.00255233693958,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "925652109",
+      "name": "VICI Properties Inc",
+      "weight": 0.0009643606939200001,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "501889208",
+      "name": "LKQ Corp",
+      "weight": 0.00043170686974999996,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "855244109",
+      "name": "Starbucks Corp",
+      "weight": 0.00354289566406,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "291011104",
+      "name": "Emerson Electric Co",
+      "weight": 0.0017634466491,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "445658107",
+      "name": "JB Hunt Transport Services Inc",
+      "weight": 0.00045022237767999997,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "174610105",
+      "name": "Citizens Financial Group Inc",
+      "weight": 0.00060046704165,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "828806109",
+      "name": "Simon Property Group Inc",
+      "weight": 0.0011858428541300001,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "988498101",
+      "name": "Yum! Brands Inc",
+      "weight": 0.00112958399,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "538034109",
+      "name": "Live Nation Entertainment Inc",
+      "weight": 0.00030716613418,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "745867101",
+      "name": "PulteGroup Inc",
+      "weight": 0.00032649100218,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "459506101",
+      "name": "International Flavors & Fragrances Inc",
+      "weight": 0.00083162213402,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "50540R409",
+      "name": "Laboratory Corp of America Holdings",
+      "weight": 0.00066039300504,
+      "status": "no-ticker-candidate"
+     },
+     {
+      "cusip": "064058100",
+      "name": "Bank of New York Mellon Corp/The",
+      "weight": 0.00103796995072,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "69370C100",
+      "name": "PTC Inc",
+      "weight": 0.00039060841988,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "617446448",
+      "name": "Morgan Stanley",
+      "weight": 0.00348719401794,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "143658300",
+      "name": "Carnival Corp",
+      "weight": 0.00024303688863,
+      "status": "no-ticker-candidate"
+     },
+     {
+      "cusip": "90384S303",
+      "name": "Ulta Beauty Inc",
+      "weight": 0.00075760862112,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "96145D105",
+      "name": "Westrock Co",
+      "weight": 0.00027695084988,
+      "status": "no-ticker-candidate"
+     },
+     {
+      "cusip": "723787107",
+      "name": "Pioneer Natural Resources Co",
+      "weight": 0.00168991013249,
+      "status": "no-ticker-candidate"
+     },
+     {
+      "cusip": "45687V106",
+      "name": "Ingersoll Rand Inc",
+      "weight": 0.0006500662032699999,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "149123101",
+      "name": "Caterpillar Inc",
+      "weight": 0.00387877221481,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "125269100",
+      "name": "CF Industries Holdings Inc",
+      "weight": 0.00052642522152,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "609839105",
+      "name": "Monolithic Power Systems Inc",
+      "weight": 0.00048691558199,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "747525103",
+      "name": "QUALCOMM Inc",
+      "weight": 0.00382791109086,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "883203101",
+      "name": "Textron Inc",
+      "weight": 0.00046426883007,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "512807108",
+      "name": "Lam Research Corp",
+      "weight": 0.00178484674515,
+      "status": "no-ticker-candidate"
+     },
+     {
+      "cusip": "053332102",
+      "name": "AutoZone Inc",
+      "weight": 0.00145672377941,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "682189105",
+      "name": "ON Semiconductor Corp",
+      "weight": 0.0008376324883199999,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "03076C106",
+      "name": "Ameriprise Financial Inc",
+      "weight": 0.00104441875844,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "40412C101",
+      "name": "HCA Healthcare Inc",
+      "weight": 0.00160213149916,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "090572207",
+      "name": "Bio-Rad Laboratories Inc",
+      "weight": 0.00027773221082,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "68902V107",
+      "name": "Otis Worldwide Corp",
+      "weight": 0.0010191056307,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "482480100",
+      "name": "KLA Corp",
+      "weight": 0.00165765946253,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "217204106",
+      "name": "Copart Inc",
+      "weight": 0.0008118266015599999,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "00130H105",
+      "name": "AES Corp/The",
+      "weight": 0.00058872978032,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "666807102",
+      "name": "Northrop Grumman Corp",
+      "weight": 0.00245755069868,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "416515104",
+      "name": "Hartford Financial Services Group Inc/The",
+      "weight": 0.00075988514434,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "25278X109",
+      "name": "Diamondback Energy Inc",
+      "weight": 0.0007537636042499999,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "62944T105",
+      "name": "NVR Inc",
+      "weight": 0.00044156431946,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "285512109",
+      "name": "Electronic Arts Inc",
+      "weight": 0.00100056351033,
+      "status": "no-ticker-candidate"
+     },
+     {
+      "cusip": "58155Q103",
+      "name": "McKesson Corp",
+      "weight": 0.00167224057066,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "7591EP100",
+      "name": "Regions Financial Corp",
+      "weight": 0.00062928269996,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "92345Y106",
+      "name": "Verisk Analytics Inc",
+      "weight": 0.00085859520767,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "444859102",
+      "name": "Humana Inc",
+      "weight": 0.00201760542363,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "876030107",
+      "name": "Tapestry Inc",
+      "weight": 0.00029731470496,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "49338L103",
+      "name": "Keysight Technologies Inc",
+      "weight": 0.0009544456119399999,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "501044101",
+      "name": "Kroger Co/The",
+      "weight": 0.0009037660535199999,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "910047109",
+      "name": "United Airlines Holdings Inc",
+      "weight": 0.00038345758053,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "34959J108",
+      "name": "Fortive Corp",
+      "weight": 0.0007071490655199999,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "171340102",
+      "name": "Church & Dwight Co Inc",
+      "weight": 0.00060527503736,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "871607107",
+      "name": "Synopsys Inc",
+      "weight": 0.0015106885834899999,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "037833100",
+      "name": "Apple Inc",
+      "weight": 0.060450126107619996,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "235851102",
+      "name": "Danaher Corp",
+      "weight": 0.00541032081837,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "03662Q105",
+      "name": "ANSYS Inc",
+      "weight": 0.00064661883344,
+      "status": "no-ticker-candidate"
+     },
+     {
+      "cusip": "75886F107",
+      "name": "Regeneron Pharmaceuticals Inc",
+      "weight": 0.00239655854267,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "12503M108",
+      "name": "Cboe Global Markets Inc",
+      "weight": 0.00041096405367,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "879369106",
+      "name": "Teleflex Inc",
+      "weight": 0.00035846694972,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "82669G104",
+      "name": "Signature Bank/New York NY",
+      "weight": 0.00022281079488,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "443201108",
+      "name": "Howmet Aerospace Inc",
+      "weight": 0.00045127532812,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "053015103",
+      "name": "Automatic Data Processing Inc",
+      "weight": 0.00307644287286,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "59522J103",
+      "name": "Mid-America Apartment Communities Inc",
+      "weight": 0.00055547776234,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "744320102",
+      "name": "Prudential Financial Inc",
+      "weight": 0.00114602194117,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "253868103",
+      "name": "Digital Realty Trust Inc",
+      "weight": 0.00089341684854,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "631103108",
+      "name": "Nasdaq Inc",
+      "weight": 0.00064483320277,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "384802104",
+      "name": "WW Grainger Inc",
+      "weight": 0.00078095822414,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "294429105",
+      "name": "Equifax Inc",
+      "weight": 0.00074038601144,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "316773100",
+      "name": "Fifth Third Bancorp",
+      "weight": 0.00070069558292,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "872590104",
+      "name": "T-Mobile US Inc",
+      "weight": 0.00261316825605,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "494368103",
+      "name": "Kimberly-Clark Corp",
+      "weight": 0.00142094818095,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "592688105",
+      "name": "Mettler-Toledo International Inc",
+      "weight": 0.00100795285454,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "460690100",
+      "name": "Interpublic Group of Cos Inc/The",
+      "weight": 0.00040271002759,
+      "status": "no-ticker-candidate"
+     },
+     {
+      "cusip": "89417E109",
+      "name": "Travelers Cos Inc/The",
+      "weight": 0.0013801022265999999,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "16119P108",
+      "name": "Charter Communications Inc",
+      "weight": 0.00113323808125,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "500754106",
+      "name": "Kraft Heinz Co/The",
+      "weight": 0.00100536802499,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "962166104",
+      "name": "Weyerhaeuser Co",
+      "weight": 0.000713718784,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "30225T102",
+      "name": "Extra Space Storage Inc",
+      "weight": 0.00060491885594,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "247361702",
+      "name": "Delta Air Lines Inc",
+      "weight": 0.0006459140698,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "517834107",
+      "name": "Las Vegas Sands Corp",
+      "weight": 0.00048972575892,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "09857L108",
+      "name": "Booking Holdings Inc",
+      "weight": 0.00243217134448,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "74144T108",
+      "name": "T Rowe Price Group Inc",
+      "weight": 0.00076237360542,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "000000000",
+      "name": "Aptiv PLC",
+      "weight": 0.00078511002237,
+      "status": "no-ticker-candidate"
+     },
+     {
+      "cusip": "49271V100",
+      "name": "Keurig Dr Pepper Inc",
+      "weight": 0.00093931725545,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "58933Y105",
+      "name": "Merck & Co Inc",
+      "weight": 0.00875211639598,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "29444U700",
+      "name": "Equinix Inc",
+      "weight": 0.00188585764116,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "42250P103",
+      "name": "Healthpeak Properties Inc",
+      "weight": 0.00041503369158,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "216648402",
+      "name": "Cooper Cos Inc/The",
+      "weight": 0.0005000592158799999,
+      "status": "no-ticker-candidate"
+     },
+     {
+      "cusip": "918204108",
+      "name": "VF Corp",
+      "weight": 0.00027454114367,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "194162103",
+      "name": "Colgate-Palmolive Co",
+      "weight": 0.00204098797752,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "11133T103",
+      "name": "Broadridge Financial Solutions Inc",
+      "weight": 0.0004910148211700001,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "74834L100",
+      "name": "Quest Diagnostics Inc",
+      "weight": 0.00056513053092,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "000000000",
+      "name": "STERIS PLC",
+      "weight": 0.00057008581248,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "78409V104",
+      "name": "S&P Global Inc",
+      "weight": 0.0034701771830900003,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "955306105",
+      "name": "West Pharmaceutical Services Inc",
+      "weight": 0.00053459921146,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "963320106",
+      "name": "Whirlpool Corp",
+      "weight": 0.00023883386509000002,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "941848103",
+      "name": "Waters Corp",
+      "weight": 0.00063565128717,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "532457108",
+      "name": "Eli Lilly & Co",
+      "weight": 0.00897676905698,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "363576109",
+      "name": "Arthur J Gallagher & Co",
+      "weight": 0.00122972509595,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "37940X102",
+      "name": "Global Payments Inc",
+      "weight": 0.0008536791850399999,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "806407102",
+      "name": "Henry Schein Inc",
+      "weight": 0.00034256029745,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "46625H100",
+      "name": "JPMorgan Chase & Co",
+      "weight": 0.012238095255829999,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "406216101",
+      "name": "Halliburton Co",
+      "weight": 0.00111172945427,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "023135106",
+      "name": "Amazon.com Inc",
+      "weight": 0.023195861475330003,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "40434L105",
+      "name": "HP Inc",
+      "weight": 0.00075841505091,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "929740108",
+      "name": "Westinghouse Air Brake Technologies Corp",
+      "weight": 0.00056287626328,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "233331107",
+      "name": "DTE Energy Co",
+      "weight": 0.00069968386232,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "540424108",
+      "name": "Loews Corp",
+      "weight": 0.00035281922221000006,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "148806102",
+      "name": "Catalent Inc",
+      "weight": 0.00024847906515,
+      "status": "no-ticker-candidate"
+     },
+     {
+      "cusip": "620076307",
+      "name": "Motorola Solutions Inc",
+      "weight": 0.0013320237337999998,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "45168D104",
+      "name": "IDEXX Laboratories Inc",
+      "weight": 0.00105324045849,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "682680103",
+      "name": "ONEOK Inc",
+      "weight": 0.00091362887176,
+      "status": "no-ticker-candidate"
+     },
+     {
+      "cusip": "436440101",
+      "name": "Hologic Inc",
+      "weight": 0.00058131255729,
+      "status": "no-ticker-candidate"
+     },
+     {
+      "cusip": "608190104",
+      "name": "Mohawk Industries Inc",
+      "weight": 0.00016275907743,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "071813109",
+      "name": "Baxter International Inc",
+      "weight": 0.0007932708204600001,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "110122108",
+      "name": "Bristol-Myers Squibb Co",
+      "weight": 0.00475741324554,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "46187W107",
+      "name": "Invitation Homes Inc",
+      "weight": 0.00053278358143,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "025816109",
+      "name": "American Express Co",
+      "weight": 0.00274770966672,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "12541W209",
+      "name": "CH Robinson Worldwide Inc",
+      "weight": 0.00035180427585,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "14040H105",
+      "name": "Capital One Financial Corp",
+      "weight": 0.00110633415074,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "744573106",
+      "name": "Public Service Enterprise Group Inc",
+      "weight": 0.00095129623332,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "026874784",
+      "name": "American International Group Inc",
+      "weight": 0.00146187896722,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "311900104",
+      "name": "Fastenal Co",
+      "weight": 0.00083538926508,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "000000000",
+      "name": "Eaton Corp PLC",
+      "weight": 0.00193815000421,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "375558103",
+      "name": "Gilead Sciences Inc",
+      "weight": 0.0033501695402,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "20825C104",
+      "name": "ConocoPhillips",
+      "weight": 0.00457476558303,
+      "status": "no-public-series"
+     }
+    ],
+    "unbound_weight": 1.0,
+    "no_sector_in_list_revision": [],
+    "eps_withheld_by_engine_guards": []
+   }
+  },
+  "identity": {
+   "passed": true,
+   "report_date": "2022-12-31",
+   "tolerance": 0.005,
+   "mismatches": []
+  },
+  "units": {
+   "passed": true,
+   "problems": []
+  },
+  "engine_inputs": {
+   "passed": false,
+   "market_bytes": true,
+   "volatility_bytes": true,
+   "engine_version": true,
+   "proposed": false,
+   "weights_sum_to_one": true,
+   "outcomes_not_read": true
+  }
+ },
+ "input_checks_passed": false,
+ "status": "blocked",
+ "limitations": [
+  "Prices are the current Yahoo revision restated to the cut's share basis, not an original vendor vintage; the unofficial endpoint grants no redistribution.",
+  "Sectors come from the Wikipedia list revision in force at the cut, not from S&P's official file.",
+  "The ETF list is the current engine's list, chosen after the cut.",
+  "The engine, its parameters and the reference preset were developed after the cut: the decision is a development-period reconstruction and cannot be confirmatory evidence.",
+  "Members bought out or delisted after the cut without a free series are excluded positions, not priced."
+ ],
+ "outcomes_read": false,
+ "confirmatory_eligible": false
+}

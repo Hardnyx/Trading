@@ -1,0 +1,70 @@
+{
+ "schema": "first-cut-engine-decision-v1",
+ "cut": "2023-03-31",
+ "price_as_of": "2023-03-31",
+ "computed_at": "2026-11-15T07:33:06.787Z",
+ "seconds": 3,
+ "engine_version": "0.35.0",
+ "price_kernel_version": "1.0.0",
+ "market_sha256": "876cdbda6e9e29c7cd477bb5ddff4c0dc43c2f4b1add54ee4e3605d9ee85d81b",
+ "volatility_sha256": "b28be50788d873d6d0cb313ef507a0ba31451b2f6cb4a6821c784ac0d9a05355",
+ "universe": {
+  "assets": 100,
+  "stocks": 0
+ },
+ "settings": {
+  "seed": 20261024,
+  "horizon": 1,
+  "mandate": {
+   "objective": "growth",
+   "referenceCurrency": "USD",
+   "horizon": 1,
+   "maxDrawdown": 0.25,
+   "maxDrawdownProbability": 0.25,
+   "minimumCash": 0.05,
+   "monthlyWithdrawal": 0,
+   "withdrawals": [],
+   "terminalTarget": 0,
+   "capitalFloor": 0,
+   "maxLiquidityFailure": 0.02,
+   "fxSpot": 1,
+   "fxAnnualChange": 0,
+   "fxVolatility": 0,
+   "fxMarketCorrelation": 0,
+   "fxConfirmed": false,
+   "benchmark": "SPY",
+   "riskAversion": 5,
+   "dividendPolicy": "cash",
+   "dividendWithholding": 0,
+   "cashYield": 0,
+   "region": "us"
+  },
+  "volatility_mode": "hybrid",
+  "search": {
+   "candidates": 300,
+   "paths": 600,
+   "finalPaths": 3000
+  }
+ },
+ "status": "hold",
+ "positions": [
+  {
+   "symbol": "CASH",
+   "weight": 1,
+   "price": 1,
+   "costBasis": 1
+  }
+ ],
+ "metrics": {
+  "mean": 0,
+  "median": 0,
+  "p05": 0,
+  "p95": 0,
+  "loss_probability": 0,
+  "cvar95": 0
+ },
+ "warnings": [],
+ "outcomes_read": false,
+ "prospective": false,
+ "note": "Development-period reconstruction with the current engine; it says nothing about predictive skill until scored under a registered protocol."
+}
