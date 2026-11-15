@@ -16,9 +16,9 @@
           <span class="panel-meta">{{statusLabel}}</span>
         </div>
         {{{notice}}}
-        <p class="composition-source">{{source}}</p>
-        <div class="composition-metrics">{{{metrics}}}</div>
-        <div class="composition-brief">
+        <p class="fund-source">{{source}}</p>
+        <div class="fund-metrics">{{{metrics}}}</div>
+        <div class="fund-brief">
           <h3>ÚLTIMA REVISIÓN · {{reviewDate}}</h3>
           <p>{{decision}}</p>
           <p>{{rule}}</p>
@@ -27,7 +27,7 @@
         <div class="fund-chart">{{{chart}}}</div>
         <div class="fund-actions"><button class="button" data-action="fund-csv" data-source="fund">Descargar posiciones (CSV, acciones enteras)</button></div>
         <div class="table-wrap">
-          <table class="composition-positions">
+          <table class="fund-positions">
             <thead>
               <tr>
                 <th>ACTIVO</th>
@@ -64,7 +64,7 @@
     </template>
 
     <template id="fund-orders">
-      <div class="composition-contributions">
+      <div class="fund-section">
         <h3>ÓRDENES DE LA ÚLTIMA REVISIÓN · {{date}}</h3>
         <div class="table-wrap">
           <table>
@@ -80,7 +80,7 @@
     </template>
 
     <template id="fund-mixer">
-      <div class="composition-contributions fund-mixer">
+      <div class="fund-section fund-mixer">
         <h3>AJUSTAR MI MEZCLA · CÁLCULO LOCAL</h3>
         <p class="muted small">Variante personal sobre los mismos ETF y precios. No cambia el fondo publicado, que sigue los pesos registrados.</p>
         <div class="fund-mixer-controls">
@@ -122,7 +122,7 @@
     </template>
 
     <template id="fund-shadow">
-      <div class="composition-contributions fund-shadow">
+      <div class="fund-section fund-shadow">
         <h3>SOMBRA · {{policy}} · NO OPERAR</h3>
         <p class="muted small">{{summary}}</p>
         <div class="table-wrap">

@@ -267,29 +267,35 @@
   min-width: 0;
   overflow: hidden;
 }
-.composition-metrics {
+.composition-metrics,
+.fund-metrics {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   border-bottom: 1px solid var(--line);
 }
-.composition-metrics > div {
+.composition-metrics > div,
+.fund-metrics > div {
   padding: 12px 12px;
   border-right: 1px solid var(--line);
 }
-.composition-metrics > div:last-child {
+.composition-metrics > div:last-child,
+.fund-metrics > div:last-child {
   border-right: 0;
 }
-.composition-metrics label {
+.composition-metrics label,
+.fund-metrics label {
   display: block;
   font: var(--fs-xs) var(--mono);
   color: var(--soft);
 }
-.composition-metrics strong {
+.composition-metrics strong,
+.fund-metrics strong {
   display: block;
   font: var(--fs-2xl) var(--mono);
   margin: 8px 0 8px;
 }
-.composition-metrics small {
+.composition-metrics small,
+.fund-metrics small {
   font: var(--fs-xs) var(--mono);
   color: var(--muted);
 }
@@ -298,7 +304,8 @@
 }
 @media (max-width: 760px) {
   .composition-fields,
-  .composition-metrics {
+  .composition-metrics,
+.fund-metrics {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   .page-title {
@@ -308,7 +315,8 @@
     padding-top: 0;
     justify-content: flex-start;
   }
-  .composition-metrics > div {
+  .composition-metrics > div,
+.fund-metrics > div {
     border-bottom: 1px solid var(--line);
   }
 }
@@ -2755,7 +2763,7 @@ a.text-button,
 /* Composition report: tables run edge to edge like every other panel table. */
 .composition-report > .composition-source,
 /* Composition report: tables run edge to edge like every other panel table. */
-.fund-panel > .composition-source {
+.fund-panel > .fund-source {
   padding: 8px var(--pad);
   margin: 0;
   line-height: 1.6;
@@ -2799,15 +2807,15 @@ a.text-button,
   display: none;
 }
 .composition-report .composition-contributions,
-.fund-panel .composition-contributions {
+.fund-panel .fund-section {
   border-top: 1px solid var(--line);
 }
 .composition-report .composition-contributions h3,
 .composition-report .composition-brief h3,
 .composition-report .composition-method h3,
 .robustness-weights h3,
-.fund-panel .composition-contributions h3,
-.fund-panel .composition-brief h3,
+.fund-panel .fund-section h3,
+.fund-panel .fund-brief h3,
 .fund-panel .composition-method h3 {
   font: 600 var(--fs-sm) var(--sans);
   letter-spacing: 0.04em;
@@ -2815,12 +2823,12 @@ a.text-button,
   color: var(--text);
 }
 .composition-report .composition-contributions h3,
-.fund-panel .composition-contributions h3 {
+.fund-panel .fund-section h3 {
   margin: 0;
   padding: var(--pad);
 }
 .composition-report .composition-contributions table,
-.fund-panel .composition-contributions table {
+.fund-panel .fund-section table {
   min-width: 760px;
 }
 .composition-report .composition-attribution-note,
@@ -2831,28 +2839,28 @@ a.text-button,
   font: var(--fs-sm) / 1.6 var(--sans);
 }
 .composition-report .composition-brief,
-.fund-panel .composition-brief {
+.fund-panel .fund-brief {
   border-top: 1px solid var(--line);
   padding: var(--pad);
   margin: 0;
 }
 .composition-report .composition-brief p,
-.fund-panel .composition-brief p {
+.fund-panel .fund-brief p {
   font: var(--fs-sm) / 1.6 var(--sans);
   color: var(--muted);
   margin: 0 0 8px;
   overflow-wrap: anywhere;
 }
 .composition-report .composition-brief p:last-child,
-.fund-panel .composition-brief p:last-child {
+.fund-panel .fund-brief p:last-child {
   margin-bottom: 0;
 }
 .composition-report .composition-brief h3,
-.fund-panel .composition-brief h3 {
+.fund-panel .fund-brief h3 {
   margin: 0 0 8px;
 }
 .composition-report .composition-brief .composition-model-status,
-.fund-panel .composition-brief .composition-model-status {
+.fund-panel .fund-brief .composition-model-status {
   font-size: var(--fs-xs);
 }
 .composition-report .composition-method h3,
