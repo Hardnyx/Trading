@@ -1,0 +1,97 @@
+{
+ "schema": "first-cut-engine-decision-v1",
+ "cut": "2024-06-28",
+ "price_as_of": "2024-06-28",
+ "computed_at": "2026-11-16T17:35:33.912Z",
+ "seconds": 94,
+ "engine_version": "0.35.0",
+ "price_kernel_version": "1.0.0",
+ "market_sha256": "8df98a2d503a41982772477b13ca552c4af172eaa8087816e2b14c599aa7015b",
+ "volatility_sha256": "1aa34fe49b6fc58c36bd433766a2bf5dbfa706709252fb7499856ecdcaefea5d",
+ "universe": {
+  "assets": 565,
+  "stocks": 465
+ },
+ "settings": {
+  "seed": 20261024,
+  "horizon": 1,
+  "mandate": {
+   "objective": "growth",
+   "referenceCurrency": "USD",
+   "horizon": 1,
+   "maxDrawdown": 0.25,
+   "maxDrawdownProbability": 0.25,
+   "minimumCash": 0.05,
+   "monthlyWithdrawal": 0,
+   "withdrawals": [],
+   "terminalTarget": 0,
+   "capitalFloor": 0,
+   "maxLiquidityFailure": 0.02,
+   "fxSpot": 1,
+   "fxAnnualChange": 0,
+   "fxVolatility": 0,
+   "fxMarketCorrelation": 0,
+   "fxConfirmed": false,
+   "benchmark": "SPY",
+   "riskAversion": 5,
+   "dividendPolicy": "cash",
+   "dividendWithholding": 0,
+   "cashYield": 0,
+   "region": "us"
+  },
+  "volatility_mode": "hybrid",
+  "search": {
+   "candidates": 300,
+   "paths": 600,
+   "finalPaths": 3000
+  }
+ },
+ "status": "proposed",
+ "reason": null,
+ "positions": [
+  {
+   "symbol": "HYG",
+   "weight": 0.15
+  },
+  {
+   "symbol": "SGOV",
+   "weight": 0.3
+  },
+  {
+   "symbol": "CASH",
+   "weight": 0.05
+  },
+  {
+   "symbol": "MO",
+   "weight": 0.1
+  },
+  {
+   "symbol": "CAG",
+   "weight": 0.1
+  },
+  {
+   "symbol": "LYB",
+   "weight": 0.05
+  },
+  {
+   "symbol": "VZ",
+   "weight": 0.15
+  },
+  {
+   "symbol": "CVS",
+   "weight": 0.1
+  }
+ ],
+ "metrics": {
+  "mean": 0.0625747405388797,
+  "median": 0.049010609229455215,
+  "p05": -0.08784215411795697,
+  "p95": 0.2506717387828286,
+  "loss_probability": 0.287,
+  "cvar95": 0.12164857681776833
+ },
+ "warnings": [],
+ "outcomes_read": false,
+ "prospective": false,
+ "note": "Development-period reconstruction with the current engine; it says nothing about predictive skill until scored under a registered protocol."
+}
