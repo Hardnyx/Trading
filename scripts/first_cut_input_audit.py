@@ -138,8 +138,9 @@ def units(market):
                       and all(-.05 <= p[k] <= .2 for k in ("yieldToMaturity", "secYield", "realYield") if k in p)):
             problems.append((asset["symbol"], "bond profile range"))
         eps = ((asset.get("financials") or {}).get("eps") or {}).get("value")
-        if eps is not None and not (finite(eps) and abs(eps) < asset["price"]):
-            problems.append((asset["symbol"], "EPS above price"))
+        # Unit or split-basis errors show as a P/E below one; a loss can exceed the price (LNC, 2023).
+        if eps is not None and not (finite(eps) and (eps < asset["price"] if eps > 0 else -eps < 5 * asset["price"])):
+            problems.append((asset["symbol"], "EPS out of range for the price"))
     for row in market["macro"]:
         if row.get("unit") not in MACRO_UNITS or not finite(row.get("value")):
             problems.append((row.get("id"), "macro unit or value"))
@@ -154,7 +155,8 @@ def engine_inputs(market_bytes, volatility_bytes, decision, model_version):
     checks = {"market_bytes": decision.get("market_sha256") == sha(market_bytes),
               "volatility_bytes": decision.get("volatility_sha256") == sha(volatility_bytes),
               "engine_version": decision.get("engine_version") == model_version,
-              "proposed": decision.get("status") == "proposed",
+              # Holding cash is a decision; an input audit only needs one the engine can produce.
+              "decision_valid": decision.get("status") in ("proposed", "hold"),
               "weights_sum_to_one": abs(weights - 1) < 1e-6, "outcomes_not_read": decision.get("outcomes_read") is False}
     return {"passed": all(checks.values()), **checks}
 

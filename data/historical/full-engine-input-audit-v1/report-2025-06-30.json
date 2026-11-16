@@ -157,7 +157,7 @@
    "market_bytes": true,
    "volatility_bytes": true,
    "engine_version": true,
-   "proposed": true,
+   "decision_valid": true,
    "weights_sum_to_one": true,
    "outcomes_not_read": true
   }

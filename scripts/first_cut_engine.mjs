@@ -44,7 +44,7 @@ function main() {
     universe: { assets: market.assets.length, stocks: market.assets.filter(a => a.type === 'stock').length },
     settings: { seed: preset.settings.seed, horizon: preset.settings.horizon, mandate: preset.settings.mandate,
       volatility_mode: preset.settings.volatilityMode, search: SEARCH },
-    status: model.status, positions: model.positions || [],
+    status: model.status, reason: model.reason || null, positions: model.positions || [],
     metrics: model.metrics ? { mean: model.metrics.meanReturn, median: model.metrics.medianReturn,
       p05: model.metrics.p05, p95: model.metrics.p95, loss_probability: model.metrics.lossProbability,
       cvar95: model.metrics.cvar95, volatility: model.metrics.volatility } : null,

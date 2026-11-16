@@ -64,6 +64,11 @@ class InputAuditTests(unittest.TestCase):
         market["macro"][0]["value"] = 46
         checks = {p["check"] for p in audit.units(market)["problems"]}
         self.assertEqual(checks, {"prices", "percent range"})
+        market = copy.deepcopy(MARKET)
+        market["assets"][0]["financials"]["eps"]["value"] = -40.0  # a loss above the price is real
+        self.assertTrue(audit.units(market)["passed"])
+        market["assets"][0]["financials"]["eps"]["value"] = 31.0  # a P/E below one is a unit error
+        self.assertFalse(audit.units(market)["passed"])
 
     def test_engine_inputs_must_be_the_audited_bytes(self):
         sha = lambda b: hashlib.sha256(b).hexdigest()
@@ -71,6 +76,8 @@ class InputAuditTests(unittest.TestCase):
                     "status": "proposed", "positions": [{"weight": .5}, {"weight": .5}], "outcomes_read": False}
         self.assertTrue(audit.engine_inputs(b"m", b"v", decision, "1")["passed"])
         self.assertFalse(audit.engine_inputs(b"m2", b"v", decision, "1")["passed"])
+        self.assertTrue(audit.engine_inputs(b"m", b"v", dict(decision, status="hold"), "1")["passed"])
+        self.assertFalse(audit.engine_inputs(b"m", b"v", dict(decision, status="error"), "1")["passed"])
 
 
 if __name__ == "__main__":

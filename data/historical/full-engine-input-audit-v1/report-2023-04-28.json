@@ -238,17 +238,17 @@
    "problems": []
   },
   "engine_inputs": {
-   "passed": false,
+   "passed": true,
    "market_bytes": true,
    "volatility_bytes": true,
    "engine_version": true,
-   "proposed": false,
+   "decision_valid": true,
    "weights_sum_to_one": true,
    "outcomes_not_read": true
   }
  },
- "input_checks_passed": false,
- "status": "blocked",
+ "input_checks_passed": true,
+ "status": "inputs-pass-with-declared-exclusions",
  "limitations": [
   "Prices are the current Yahoo revision restated to the cut's share basis, not an original vendor vintage; the unofficial endpoint grants no redistribution.",
   "Sectors come from the Wikipedia list revision in force at the cut, not from S&P's official file.",
