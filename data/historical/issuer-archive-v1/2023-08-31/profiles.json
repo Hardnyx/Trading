@@ -1,0 +1,88 @@
+{
+ "schema": "issuer-archive-bond-profiles-v1",
+ "cut": "2023-08-31",
+ "funds": {
+  "AGG": {
+   "status": "missing-duration",
+   "captured_at": "2023-08-15T17:47:05+00:00",
+   "archive_url": "https://web.archive.org/web/20230815174705/https://www.ishares.com/us/products/239458/ishares-core-total-us-bond-market-etf",
+   "raw_sha256": "878a42b24a4feac457c5c465c285ce489d2e45819fbe477224348fd67c52ddb4",
+   "profile": {
+    "expense_ratio": {
+     "value": 0.0003,
+     "as_of": null,
+     "raw": "Expense Ratio: 0.03%"
+    }
+   },
+   "rejected_after_cut": []
+  },
+  "EMB": {
+   "status": "capture-too-old"
+  },
+  "HYG": {
+   "status": "missing-duration",
+   "captured_at": "2023-07-19T00:51:47+00:00",
+   "archive_url": "https://web.archive.org/web/20230719005147/https://www.ishares.com/us/products/239565/ishares-iboxx-high-yield-corporate-bond-etf",
+   "raw_sha256": "6e1a239a0b1e35383fe041a98325ceaba089409341259a759095fad014e92d03",
+   "profile": {
+    "expense_ratio": {
+     "value": 0.0049,
+     "as_of": null,
+     "raw": "Expense Ratio: 0.49%"
+    }
+   },
+   "rejected_after_cut": []
+  },
+  "IEF": {
+   "status": "capture-too-old"
+  },
+  "IEI": {
+   "status": "capture-too-old"
+  },
+  "IGSB": {
+   "status": "capture-too-old"
+  },
+  "LQD": {
+   "status": "capture-too-old"
+  },
+  "SGOV": {
+   "status": "missing-duration",
+   "captured_at": "2023-08-05T06:39:33+00:00",
+   "archive_url": "https://web.archive.org/web/20230805063933/https://www.ishares.com/us/products/314116/",
+   "raw_sha256": "7bf049d193ae7c26d670f3ed803e095f6f4c9e8838ba2a626c6da3c9e1a0c6ae",
+   "profile": {
+    "expense_ratio": {
+     "value": 0.0013,
+     "as_of": null,
+     "raw": "Expense Ratio: 0.13%"
+    }
+   },
+   "rejected_after_cut": []
+  },
+  "SHV": {
+   "status": "capture-too-old"
+  },
+  "SHY": {
+   "status": "capture-too-old"
+  },
+  "TIP": {
+   "status": "capture-too-old"
+  },
+  "TLT": {
+   "status": "missing-duration",
+   "captured_at": "2023-08-28T16:57:54+00:00",
+   "archive_url": "https://web.archive.org/web/20230828165754/https://www.ishares.com/us/products/239454/ishares-20-year-treasury-bond-etf",
+   "raw_sha256": "1175d7787d5f2bc679dd8b029127240989faed29cbeec04384d5eb07284de45d",
+   "profile": {
+    "expense_ratio": {
+     "value": 0.0015,
+     "as_of": null,
+     "raw": "Expense Ratio: 0.15%"
+    }
+   },
+   "rejected_after_cut": []
+  }
+ },
+ "source": "issuer pages captured by the Internet Archive before the cut",
+ "estimated_values": false
+}
