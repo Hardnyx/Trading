@@ -3,8 +3,8 @@
  "cuts": 48,
  "counts": {
   "excluded": 22,
-  "audited-pass": 8,
-  "pending": 18
+  "audited-pass": 11,
+  "pending": 15
  },
  "every_cut_accounted": false,
  "rows": [
@@ -128,8 +128,12 @@
    "spy_as_of": "2023-06-30",
    "spy_age_days": 62,
    "spy_source_status": "source-available",
-   "status": "pending",
-   "reason": "fresh source; reconstruction not yet run"
+   "status": "audited-pass",
+   "failed_checks": [],
+   "members": 465,
+   "spy_weight_covered": 0.959384,
+   "spy_weight_with_ttm_eps": 0.917393,
+   "snapshot_sha256": "665baa75d99d1d1225fe654e78b5a1d168a109e265c0beb5952ffe60202da058"
   },
   {
    "cut": "2023-09-29",
@@ -137,8 +141,12 @@
    "spy_as_of": "2023-06-30",
    "spy_age_days": 91,
    "spy_source_status": "source-available",
-   "status": "pending",
-   "reason": "fresh source; reconstruction not yet run"
+   "status": "audited-pass",
+   "failed_checks": [],
+   "members": 463,
+   "spy_weight_covered": 0.95919,
+   "spy_weight_with_ttm_eps": 0.920328,
+   "snapshot_sha256": "1007097fb4f98c28938926a11ec594d7b23dfb68a71e6563b70c68f46982fcdb"
   },
   {
    "cut": "2023-10-31",
@@ -155,8 +163,12 @@
    "spy_as_of": "2023-09-30",
    "spy_age_days": 61,
    "spy_source_status": "source-available",
-   "status": "pending",
-   "reason": "fresh source; reconstruction not yet run"
+   "status": "audited-pass",
+   "failed_checks": [],
+   "members": 463,
+   "spy_weight_covered": 0.957204,
+   "spy_weight_with_ttm_eps": 0.91569,
+   "snapshot_sha256": "1c1e770b1502e0da67bb23d86eca916dd7b529d2e67bb8d57883c3797103c5cc"
   },
   {
    "cut": "2023-12-29",
