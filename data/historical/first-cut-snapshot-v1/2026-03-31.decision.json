@@ -1,0 +1,71 @@
+{
+ "schema": "first-cut-engine-decision-v1",
+ "cut": "2026-03-31",
+ "price_as_of": "2026-03-31",
+ "computed_at": "2026-11-16T21:24:57.054Z",
+ "seconds": 56,
+ "engine_version": "0.35.0",
+ "price_kernel_version": "1.0.0",
+ "market_sha256": "98693ed2e42f3369e3253b3525de3a3c3abc48fccf0230818fadb2103027be07",
+ "volatility_sha256": "3fe77df44ad3f8ac84edb52dd2013ba55ed7d8fdc089fa03a84a80ad7a68b0b3",
+ "universe": {
+  "assets": 586,
+  "stocks": 486
+ },
+ "settings": {
+  "seed": 20261024,
+  "horizon": 1,
+  "mandate": {
+   "objective": "growth",
+   "referenceCurrency": "USD",
+   "horizon": 1,
+   "maxDrawdown": 0.25,
+   "maxDrawdownProbability": 0.25,
+   "minimumCash": 0.05,
+   "monthlyWithdrawal": 0,
+   "withdrawals": [],
+   "terminalTarget": 0,
+   "capitalFloor": 0,
+   "maxLiquidityFailure": 0.02,
+   "fxSpot": 1,
+   "fxAnnualChange": 0,
+   "fxVolatility": 0,
+   "fxMarketCorrelation": 0,
+   "fxConfirmed": false,
+   "benchmark": "SPY",
+   "riskAversion": 5,
+   "dividendPolicy": "cash",
+   "dividendWithholding": 0,
+   "cashYield": 0,
+   "region": "us"
+  },
+  "volatility_mode": "hybrid",
+  "search": {
+   "candidates": 300,
+   "paths": 600,
+   "finalPaths": 3000
+  }
+ },
+ "status": "hold",
+ "reason": "Mantener: transición descartada en Baja convicción (Pérdida).",
+ "positions": [
+  {
+   "symbol": "CASH",
+   "weight": 1,
+   "price": 1,
+   "costBasis": 1
+  }
+ ],
+ "metrics": {
+  "mean": 0,
+  "median": 0,
+  "p05": 0,
+  "p95": 0,
+  "loss_probability": 0,
+  "cvar95": 0
+ },
+ "warnings": [],
+ "outcomes_read": false,
+ "prospective": false,
+ "note": "Development-period reconstruction with the current engine; it says nothing about predictive skill until scored under a registered protocol."
+}

@@ -1,0 +1,559 @@
+{
+ "schema": "issuer-archive-bond-profiles-v1",
+ "cut": "2026-03-31",
+ "funds": {
+  "AGG": {
+   "status": "parsed",
+   "captured_at": "2026-03-13T06:04:56+00:00",
+   "archive_url": "https://web.archive.org/web/20260313060456/https://www.ishares.com/us/products/239458/ishares-core-total-us-bond-market-etf9",
+   "raw_sha256": "d5b4ae572e9203722da7e8f9c8b0d2fdffd2c13e10c48ca1c86ac4e68e42a4df",
+   "profile": {
+    "sec_yield_30d": {
+     "value": 0.0417,
+     "as_of": "2026-03-11",
+     "raw": "4.17%"
+    },
+    "weighted_avg_coupon": {
+     "value": 3.69,
+     "as_of": "2026-03-11",
+     "raw": "3.69"
+    },
+    "effective_duration_years": {
+     "value": 5.78,
+     "as_of": "2026-03-11",
+     "raw": "5.78 yrs"
+    },
+    "option_adjusted_spread": {
+     "value": 28.62,
+     "as_of": "2026-03-11",
+     "raw": "28.62 bps"
+    },
+    "trailing_yield_12m": {
+     "value": 0.0391,
+     "as_of": "2026-03-11",
+     "raw": "3.91%"
+    },
+    "yield_to_maturity": {
+     "value": 0.0444,
+     "as_of": "2026-03-11",
+     "raw": "4.44%"
+    },
+    "weighted_avg_maturity_years": {
+     "value": 7.99,
+     "as_of": "2026-03-11",
+     "raw": "7.99 yrs"
+    },
+    "convexity": {
+     "value": 0.4,
+     "as_of": "2026-03-11",
+     "raw": "0.40"
+    },
+    "expense_ratio": {
+     "value": 0.0003,
+     "as_of": null,
+     "raw": "Expense Ratio: 0.03%"
+    }
+   },
+   "rejected_after_cut": []
+  },
+  "EMB": {
+   "status": "parsed",
+   "captured_at": "2026-03-09T23:38:44+00:00",
+   "archive_url": "https://web.archive.org/web/20260309233844/https://www.ishares.com/us/products/239572/ishares-jp-morgan-usd-emerging-markets-bond-etf",
+   "raw_sha256": "82d1c8ae411ed90b9678b81f5681600ef61fd0ba1458aebc2d50a64171f56b56",
+   "profile": {
+    "sec_yield_30d": {
+     "value": 0.0553,
+     "as_of": "2026-03-06",
+     "raw": "5.53%"
+    },
+    "weighted_avg_coupon": {
+     "value": 5.45,
+     "as_of": "2026-03-06",
+     "raw": "5.45"
+    },
+    "effective_duration_years": {
+     "value": 6.75,
+     "as_of": "2026-03-06",
+     "raw": "6.75 yrs"
+    },
+    "option_adjusted_spread": {
+     "value": 194.29,
+     "as_of": "2026-03-06",
+     "raw": "194.29 bps"
+    },
+    "trailing_yield_12m": {
+     "value": 0.05,
+     "as_of": "2026-03-06",
+     "raw": "5.00%"
+    },
+    "yield_to_maturity": {
+     "value": 0.060700000000000004,
+     "as_of": "2026-03-06",
+     "raw": "6.07%"
+    },
+    "weighted_avg_maturity_years": {
+     "value": 11.05,
+     "as_of": "2026-03-06",
+     "raw": "11.05 yrs"
+    },
+    "convexity": {
+     "value": 0.79,
+     "as_of": "2026-03-06",
+     "raw": "0.79"
+    },
+    "expense_ratio": {
+     "value": 0.0039000000000000003,
+     "as_of": null,
+     "raw": "Expense Ratio: 0.39%"
+    }
+   },
+   "rejected_after_cut": []
+  },
+  "HYG": {
+   "status": "parsed",
+   "captured_at": "2026-03-03T23:43:35+00:00",
+   "archive_url": "https://web.archive.org/web/20260303234335/https://www.ishares.com/us/products/239565/ishares-iboxx-high-yield-corporate-bond-etf",
+   "raw_sha256": "9a05caffd3df334dae4e44ca8a5c2cafb7abc472c781f22c235e23b93ecc9274",
+   "profile": {
+    "sec_yield_30d": {
+     "value": 0.061500000000000006,
+     "as_of": "2026-03-02",
+     "raw": "6.15%"
+    },
+    "weighted_avg_coupon": {
+     "value": 6.64,
+     "as_of": "2026-03-02",
+     "raw": "6.64"
+    },
+    "effective_duration_years": {
+     "value": 2.82,
+     "as_of": "2026-03-02",
+     "raw": "2.82 yrs"
+    },
+    "option_adjusted_spread": {
+     "value": 277.81,
+     "as_of": "2026-03-02",
+     "raw": "277.81 bps"
+    },
+    "trailing_yield_12m": {
+     "value": 0.06280000000000001,
+     "as_of": "2026-03-02",
+     "raw": "6.28%"
+    },
+    "yield_to_maturity": {
+     "value": 0.0663,
+     "as_of": "2026-03-02",
+     "raw": "6.63%"
+    },
+    "weighted_avg_maturity_years": {
+     "value": 3.46,
+     "as_of": "2026-03-02",
+     "raw": "3.46 yrs"
+    },
+    "convexity": {
+     "value": -0.24,
+     "as_of": "2026-03-02",
+     "raw": "-0.24"
+    },
+    "expense_ratio": {
+     "value": 0.0049,
+     "as_of": null,
+     "raw": "Expense Ratio: 0.49%"
+    }
+   },
+   "rejected_after_cut": []
+  },
+  "IEF": {
+   "status": "capture-too-old"
+  },
+  "IEI": {
+   "status": "parsed",
+   "captured_at": "2026-03-10T16:20:23+00:00",
+   "archive_url": "https://web.archive.org/web/20260310162023/https://www.ishares.com/us/products/239455/IEI",
+   "raw_sha256": "4e11eb6e51caae6f8856ce764307f78403a9f04825fa96995689e8ff9c2b8f84",
+   "profile": {
+    "sec_yield_30d": {
+     "value": 0.0354,
+     "as_of": "2026-03-06",
+     "raw": "3.54%"
+    },
+    "weighted_avg_coupon": {
+     "value": 3.41,
+     "as_of": "2026-03-09",
+     "raw": "3.41"
+    },
+    "effective_duration_years": {
+     "value": 4.31,
+     "as_of": "2026-03-09",
+     "raw": "4.31 yrs"
+    },
+    "option_adjusted_spread": {
+     "value": -0.2,
+     "as_of": "2026-03-09",
+     "raw": "-0.20 bps"
+    },
+    "trailing_yield_12m": {
+     "value": 0.0353,
+     "as_of": "2026-03-06",
+     "raw": "3.53%"
+    },
+    "yield_to_maturity": {
+     "value": 0.0371,
+     "as_of": "2026-03-09",
+     "raw": "3.71%"
+    },
+    "weighted_avg_maturity_years": {
+     "value": 4.77,
+     "as_of": "2026-03-09",
+     "raw": "4.77 yrs"
+    },
+    "convexity": {
+     "value": 0.23,
+     "as_of": "2026-03-09",
+     "raw": "0.23"
+    },
+    "expense_ratio": {
+     "value": 0.0015,
+     "as_of": null,
+     "raw": "Expense Ratio: 0.15%"
+    }
+   },
+   "rejected_after_cut": []
+  },
+  "IGSB": {
+   "status": "parsed",
+   "captured_at": "2026-03-09T14:57:48+00:00",
+   "archive_url": "https://web.archive.org/web/20260309145748/https://www.ishares.com/us/products/239451/ishares-15-year-investment-grade-corporate-bond-etf",
+   "raw_sha256": "f3f3198b6a242dac99e8ec02f0cf0bc13e9f1040052eca9738ff80586d2923c9",
+   "profile": {
+    "sec_yield_30d": {
+     "value": 0.0418,
+     "as_of": "2026-03-05",
+     "raw": "4.18%"
+    },
+    "weighted_avg_coupon": {
+     "value": 4.28,
+     "as_of": "2026-03-06",
+     "raw": "4.28"
+    },
+    "effective_duration_years": {
+     "value": 2.65,
+     "as_of": "2026-03-06",
+     "raw": "2.65 yrs"
+    },
+    "option_adjusted_spread": {
+     "value": 63.37,
+     "as_of": "2026-03-06",
+     "raw": "63.37 bps"
+    },
+    "trailing_yield_12m": {
+     "value": 0.0449,
+     "as_of": "2026-03-05",
+     "raw": "4.49%"
+    },
+    "yield_to_maturity": {
+     "value": 0.043,
+     "as_of": "2026-03-06",
+     "raw": "4.30%"
+    },
+    "weighted_avg_maturity_years": {
+     "value": 2.91,
+     "as_of": "2026-03-06",
+     "raw": "2.91 yrs"
+    },
+    "convexity": {
+     "value": 0.06,
+     "as_of": "2026-03-06",
+     "raw": "0.06"
+    },
+    "expense_ratio": {
+     "value": 0.0004,
+     "as_of": null,
+     "raw": "Expense Ratio: 0.04%"
+    }
+   },
+   "rejected_after_cut": []
+  },
+  "LQD": {
+   "status": "parsed",
+   "captured_at": "2026-03-19T21:09:12+00:00",
+   "archive_url": "https://web.archive.org/web/20260319210912/https://www.ishares.com/us/products/239566/ishares-iboxx-investment-grade-corporate-bond-etf",
+   "raw_sha256": "fc5940ef1d393d7acf42af4f0b73cfd30a95e43058bc012d4a886ea4f5989912",
+   "profile": {
+    "sec_yield_30d": {
+     "value": 0.050199999999999995,
+     "as_of": "2026-03-17",
+     "raw": "5.02%"
+    },
+    "weighted_avg_coupon": {
+     "value": 4.48,
+     "as_of": "2026-03-18",
+     "raw": "4.48"
+    },
+    "effective_duration_years": {
+     "value": 7.93,
+     "as_of": "2026-03-18",
+     "raw": "7.93 yrs"
+    },
+    "option_adjusted_spread": {
+     "value": 90.83,
+     "as_of": "2026-03-18",
+     "raw": "90.83 bps"
+    },
+    "trailing_yield_12m": {
+     "value": 0.0451,
+     "as_of": "2026-03-17",
+     "raw": "4.51%"
+    },
+    "yield_to_maturity": {
+     "value": 0.0525,
+     "as_of": "2026-03-18",
+     "raw": "5.25%"
+    },
+    "weighted_avg_maturity_years": {
+     "value": 12.82,
+     "as_of": "2026-03-18",
+     "raw": "12.82 yrs"
+    },
+    "convexity": {
+     "value": 1.08,
+     "as_of": "2026-03-18",
+     "raw": "1.08"
+    },
+    "expense_ratio": {
+     "value": 0.0014000000000000002,
+     "as_of": null,
+     "raw": "Expense Ratio: 0.14%"
+    }
+   },
+   "rejected_after_cut": []
+  },
+  "SGOV": {
+   "status": "parsed",
+   "captured_at": "2026-03-15T18:13:58+00:00",
+   "archive_url": "https://web.archive.org/web/20260315181358/https://www.ishares.com/us/products/314116/ishares-0-3-month-treasury-bond-etf-fund",
+   "raw_sha256": "ce12e10aa843577451aa00673351d57f4d53ca18169a74d2de0dd30281d8e6f2",
+   "profile": {
+    "sec_yield_30d": {
+     "value": 0.0354,
+     "as_of": "2026-03-12",
+     "raw": "3.54%"
+    },
+    "weighted_avg_coupon": {
+     "value": 0.0,
+     "as_of": "2026-03-13",
+     "raw": "0.00"
+    },
+    "effective_duration_years": {
+     "value": 0.11,
+     "as_of": "2026-03-13",
+     "raw": "0.11 yrs"
+    },
+    "option_adjusted_spread": {
+     "value": -0.06,
+     "as_of": "2026-03-13",
+     "raw": "-0.06 bps"
+    },
+    "trailing_yield_12m": {
+     "value": 0.04,
+     "as_of": "2026-03-12",
+     "raw": "4.00%"
+    },
+    "yield_to_maturity": {
+     "value": 0.0369,
+     "as_of": "2026-03-13",
+     "raw": "3.69%"
+    },
+    "weighted_avg_maturity_years": {
+     "value": 0.11,
+     "as_of": "2026-03-13",
+     "raw": "0.11 yrs"
+    },
+    "convexity": {
+     "value": 0.0,
+     "as_of": "2026-03-13",
+     "raw": "0.00"
+    },
+    "expense_ratio": {
+     "value": 0.0009,
+     "as_of": null,
+     "raw": "Expense Ratio: 0.09%"
+    }
+   },
+   "rejected_after_cut": []
+  },
+  "SHV": {
+   "status": "parsed",
+   "captured_at": "2026-02-17T11:39:13+00:00",
+   "archive_url": "https://web.archive.org/web/20260217113913/https://www.ishares.com/us/products/239466/ishares-ultra-shortterm-bond-etf",
+   "raw_sha256": "d1459b7cf43e8236351f6b7eae327b04ea043bfeaac78adb1dc14e5c633fac7d",
+   "profile": {
+    "sec_yield_30d": {
+     "value": 0.0352,
+     "as_of": "2026-02-12",
+     "raw": "3.52%"
+    },
+    "weighted_avg_coupon": {
+     "value": 3.16,
+     "as_of": "2026-02-13",
+     "raw": "3.16"
+    },
+    "effective_duration_years": {
+     "value": 0.27,
+     "as_of": "2026-02-13",
+     "raw": "0.27 yrs"
+    },
+    "option_adjusted_spread": {
+     "value": -0.95,
+     "as_of": "2026-02-13",
+     "raw": "-0.95 bps"
+    },
+    "trailing_yield_12m": {
+     "value": 0.0403,
+     "as_of": "2026-02-12",
+     "raw": "4.03%"
+    },
+    "yield_to_maturity": {
+     "value": 0.0365,
+     "as_of": "2026-02-13",
+     "raw": "3.65%"
+    },
+    "weighted_avg_maturity_years": {
+     "value": 0.28,
+     "as_of": "2026-02-13",
+     "raw": "0.28 yrs"
+    },
+    "convexity": {
+     "value": 0.0,
+     "as_of": "2026-02-13",
+     "raw": "0.00"
+    },
+    "expense_ratio": {
+     "value": 0.0015,
+     "as_of": null,
+     "raw": "Expense Ratio: 0.15%"
+    }
+   },
+   "rejected_after_cut": []
+  },
+  "SHY": {
+   "status": "capture-too-old"
+  },
+  "TIP": {
+   "status": "parsed",
+   "captured_at": "2026-03-10T09:39:21+00:00",
+   "archive_url": "https://web.archive.org/web/20260310093921/https://www.ishares.com/us/products/239467/ishares-tips-bond-etf",
+   "raw_sha256": "15d89868b8395739c580f5c725dfa7fc74168af9f56790079a7c445f72471256",
+   "profile": {
+    "sec_yield_30d": {
+     "value": 0.0189,
+     "as_of": "2026-03-06",
+     "raw": "1.89%"
+    },
+    "yield_to_maturity": {
+     "value": 0.039,
+     "as_of": "2026-03-06",
+     "raw": "3.90%"
+    },
+    "weighted_avg_maturity_years": {
+     "value": 7.29,
+     "as_of": "2026-03-06",
+     "raw": "7.29 yrs"
+    },
+    "convexity": {
+     "value": 0.81,
+     "as_of": "2026-03-06",
+     "raw": "0.81"
+    },
+    "trailing_yield_12m": {
+     "value": 0.0342,
+     "as_of": "2026-03-06",
+     "raw": "3.42%"
+    },
+    "real_yield": {
+     "value": 0.014199999999999999,
+     "as_of": "2026-03-06",
+     "raw": "1.42%"
+    },
+    "weighted_avg_coupon": {
+     "value": 1.21,
+     "as_of": "2026-03-06",
+     "raw": "1.21"
+    },
+    "effective_duration_years": {
+     "value": 6.51,
+     "as_of": "2026-03-06",
+     "raw": "6.51 yrs"
+    },
+    "option_adjusted_spread": {
+     "value": -3.46,
+     "as_of": "2026-03-06",
+     "raw": "-3.46 bps"
+    },
+    "expense_ratio": {
+     "value": 0.0018,
+     "as_of": null,
+     "raw": "Expense Ratio: 0.18%"
+    }
+   },
+   "rejected_after_cut": []
+  },
+  "TLT": {
+   "status": "parsed",
+   "captured_at": "2026-02-28T01:16:39+00:00",
+   "archive_url": "https://web.archive.org/web/20260228011639/https://www.ishares.com/us/products/239454/ishares-20-year-treasury-bond-etf",
+   "raw_sha256": "cbabc797565cf05e4ebd79c044ba7463027fae44d3117086d7a2a94d6de61fcc",
+   "profile": {
+    "sec_yield_30d": {
+     "value": 0.0463,
+     "as_of": "2026-02-26",
+     "raw": "4.63%"
+    },
+    "weighted_avg_coupon": {
+     "value": 3.11,
+     "as_of": "2026-02-26",
+     "raw": "3.11"
+    },
+    "effective_duration_years": {
+     "value": 15.52,
+     "as_of": "2026-02-26",
+     "raw": "15.52 yrs"
+    },
+    "option_adjusted_spread": {
+     "value": -0.03,
+     "as_of": "2026-02-26",
+     "raw": "-0.03 bps"
+    },
+    "trailing_yield_12m": {
+     "value": 0.043,
+     "as_of": "2026-02-26",
+     "raw": "4.30%"
+    },
+    "yield_to_maturity": {
+     "value": 0.047,
+     "as_of": "2026-02-26",
+     "raw": "4.70%"
+    },
+    "weighted_avg_maturity_years": {
+     "value": 25.55,
+     "as_of": "2026-02-26",
+     "raw": "25.55 yrs"
+    },
+    "convexity": {
+     "value": 3.33,
+     "as_of": "2026-02-26",
+     "raw": "3.33"
+    },
+    "expense_ratio": {
+     "value": 0.0015,
+     "as_of": null,
+     "raw": "Expense Ratio: 0.15%"
+    }
+   },
+   "rejected_after_cut": []
+  }
+ },
+ "source": "issuer pages captured by the Internet Archive before the cut",
+ "estimated_values": false
+}
