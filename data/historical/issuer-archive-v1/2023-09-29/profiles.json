@@ -1,0 +1,77 @@
+{
+ "schema": "issuer-archive-bond-profiles-v1",
+ "cut": "2023-09-29",
+ "funds": {
+  "AGG": {
+   "status": "error"
+  },
+  "EMB": {
+   "status": "capture-too-old"
+  },
+  "HYG": {
+   "status": "capture-too-old"
+  },
+  "IEF": {
+   "status": "missing-duration",
+   "captured_at": "2023-09-25T10:50:44+00:00",
+   "archive_url": "https://web.archive.org/web/20230925105044/https://www.ishares.com/us/products/239456/ishares-710-year-treasury-bond-etf/",
+   "raw_sha256": "883db49188e02d94ceaa40e348363c571a3274c373e9e56915a5512c2af37d68",
+   "profile": {
+    "expense_ratio": {
+     "value": 0.0015,
+     "as_of": null,
+     "raw": "Expense Ratio: 0.15%"
+    }
+   },
+   "rejected_after_cut": []
+  },
+  "IEI": {
+   "status": "capture-too-old"
+  },
+  "IGSB": {
+   "status": "capture-too-old"
+  },
+  "LQD": {
+   "status": "capture-too-old"
+  },
+  "SGOV": {
+   "status": "capture-too-old"
+  },
+  "SHV": {
+   "status": "missing-duration",
+   "captured_at": "2023-09-27T04:22:44+00:00",
+   "archive_url": "https://web.archive.org/web/20230927042244/https://www.ishares.com/us/products/239466/SHV",
+   "raw_sha256": "92b74d93b1377f38823975e72608c73b618e0de06603b0d7de6b169199a3c90c",
+   "profile": {
+    "expense_ratio": {
+     "value": 0.0016,
+     "as_of": null,
+     "raw": "Expense Ratio: 0.16%"
+    }
+   },
+   "rejected_after_cut": []
+  },
+  "SHY": {
+   "status": "capture-too-old"
+  },
+  "TIP": {
+   "status": "capture-too-old"
+  },
+  "TLT": {
+   "status": "missing-duration",
+   "captured_at": "2023-09-29T13:51:29+00:00",
+   "archive_url": "https://web.archive.org/web/20230929135129/https://www.ishares.com/us/products/239454/ishares-20-year-treasury-bond-etf",
+   "raw_sha256": "5174ad4231ed239806d3f1bd253e0b305d26b4d994221b9d8adf654a2d8c7c95",
+   "profile": {
+    "expense_ratio": {
+     "value": 0.0015,
+     "as_of": null,
+     "raw": "Expense Ratio: 0.15%"
+    }
+   },
+   "rejected_after_cut": []
+  }
+ },
+ "source": "issuer pages captured by the Internet Archive before the cut",
+ "estimated_values": false
+}

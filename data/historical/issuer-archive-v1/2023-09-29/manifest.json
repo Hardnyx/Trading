@@ -1,0 +1,137 @@
+{
+ "schema": "issuer-archive-capture-v1",
+ "cut": "2023-09-29",
+ "max_age_days": 45,
+ "source": "Internet Archive Wayback Machine, original-content mode",
+ "captures": [
+  {
+   "symbol": "AGG",
+   "source_url": "https://www.ishares.com/us/products/239458/ishares-core-us-aggregate-bond-etf",
+   "status": "error",
+   "error": "HTTPError: HTTP Error 503: Service Unavailable"
+  },
+  {
+   "symbol": "EMB",
+   "source_url": "https://www.ishares.com/us/products/239572/ishares-jp-morgan-usd-emerging-markets-bond-etf",
+   "cut": "2023-09-29",
+   "archived_url": "https://www.ishares.com/us/products/239572/ishares-jp-morgan-usd-emerging-markets-bond-etf",
+   "archive_timestamp": "20230620202108",
+   "captured_at": "2023-06-20T20:21:08+00:00",
+   "age_days": 101,
+   "status": "capture-too-old"
+  },
+  {
+   "symbol": "HYG",
+   "source_url": "https://www.ishares.com/us/products/239565/ishares-iboxx-high-yield-corporate-bond-etf",
+   "cut": "2023-09-29",
+   "archived_url": "https://www.ishares.com/us/products/239565/ishares-iboxx-high-yield-corporate-bond-etf",
+   "archive_timestamp": "20230719005147",
+   "captured_at": "2023-07-19T00:51:47+00:00",
+   "age_days": 72,
+   "status": "capture-too-old"
+  },
+  {
+   "symbol": "IEF",
+   "source_url": "https://www.ishares.com/us/products/239456/ishares-7-10-year-treasury-bond-etf",
+   "cut": "2023-09-29",
+   "archived_url": "https://www.ishares.com/us/products/239456/ishares-710-year-treasury-bond-etf/",
+   "archive_timestamp": "20230925105044",
+   "captured_at": "2023-09-25T10:50:44+00:00",
+   "age_days": 4,
+   "status": "archived",
+   "file": "IEF-20230925105044.html.gz",
+   "raw_sha256": "883db49188e02d94ceaa40e348363c571a3274c373e9e56915a5512c2af37d68",
+   "bytes": 1048576,
+   "archive_url": "https://web.archive.org/web/20230925105044/https://www.ishares.com/us/products/239456/ishares-710-year-treasury-bond-etf/"
+  },
+  {
+   "symbol": "IEI",
+   "source_url": "https://www.ishares.com/us/products/239455/ishares-3-7-year-treasury-bond-etf",
+   "cut": "2023-09-29",
+   "archived_url": "https://www.ishares.com/us/products/239455/ishares-37-year-treasury-bond-etf/",
+   "archive_timestamp": "20230326063509",
+   "captured_at": "2023-03-26T06:35:09+00:00",
+   "age_days": 187,
+   "status": "capture-too-old"
+  },
+  {
+   "symbol": "IGSB",
+   "source_url": "https://www.ishares.com/us/products/239451/ishares-1-5-year-investment-grade-corporate-bond-etf",
+   "cut": "2023-09-29",
+   "archived_url": "https://www.ishares.com/us/products/239451/ishares-13-year-credit-bond-etf",
+   "archive_timestamp": "20230325005312",
+   "captured_at": "2023-03-25T00:53:12+00:00",
+   "age_days": 188,
+   "status": "capture-too-old"
+  },
+  {
+   "symbol": "LQD",
+   "source_url": "https://www.ishares.com/us/products/239566/ishares-iboxx-investment-grade-corporate-bond-etf",
+   "cut": "2023-09-29",
+   "archived_url": "https://www.ishares.com/us/products/239566/ishares-iboxx-investment-grade-corporate-bond-etf",
+   "archive_timestamp": "20230608010308",
+   "captured_at": "2023-06-08T01:03:08+00:00",
+   "age_days": 113,
+   "status": "capture-too-old"
+  },
+  {
+   "symbol": "SGOV",
+   "source_url": "https://www.ishares.com/us/products/314116/ishares-0-3-month-treasury-bond-etf",
+   "cut": "2023-09-29",
+   "archived_url": "https://www.ishares.com/us/products/314116/",
+   "archive_timestamp": "20230805063933",
+   "captured_at": "2023-08-05T06:39:33+00:00",
+   "age_days": 55,
+   "status": "capture-too-old"
+  },
+  {
+   "symbol": "SHV",
+   "source_url": "https://www.ishares.com/us/products/239466/ishares-01-year-treasury-bond-etf",
+   "cut": "2023-09-29",
+   "archived_url": "https://www.ishares.com/us/products/239466/SHV",
+   "archive_timestamp": "20230927042244",
+   "captured_at": "2023-09-27T04:22:44+00:00",
+   "age_days": 2,
+   "status": "archived",
+   "file": "SHV-20230927042244.html.gz",
+   "raw_sha256": "92b74d93b1377f38823975e72608c73b618e0de06603b0d7de6b169199a3c90c",
+   "bytes": 1048576,
+   "archive_url": "https://web.archive.org/web/20230927042244/https://www.ishares.com/us/products/239466/SHV"
+  },
+  {
+   "symbol": "SHY",
+   "source_url": "https://www.ishares.com/us/products/239452/ishares-13-year-treasury-bond-etf",
+   "cut": "2023-09-29",
+   "archived_url": "https://www.ishares.com/us/products/239452/",
+   "archive_timestamp": "20230712030451",
+   "captured_at": "2023-07-12T03:04:51+00:00",
+   "age_days": 79,
+   "status": "capture-too-old"
+  },
+  {
+   "symbol": "TIP",
+   "source_url": "https://www.ishares.com/us/products/239467/ishares-tips-bond-etf",
+   "cut": "2023-09-29",
+   "archived_url": "https://www.ishares.com/us/products/239467/TIP",
+   "archive_timestamp": "20230629093409",
+   "captured_at": "2023-06-29T09:34:09+00:00",
+   "age_days": 92,
+   "status": "capture-too-old"
+  },
+  {
+   "symbol": "TLT",
+   "source_url": "https://www.ishares.com/us/products/239454/ishares-20-year-treasury-bond-etf",
+   "cut": "2023-09-29",
+   "archived_url": "https://www.ishares.com/us/products/239454/ishares-20-year-treasury-bond-etf",
+   "archive_timestamp": "20230929135129",
+   "captured_at": "2023-09-29T13:51:29+00:00",
+   "age_days": 0,
+   "status": "archived",
+   "file": "TLT-20230929135129.html.gz",
+   "raw_sha256": "5174ad4231ed239806d3f1bd253e0b305d26b4d994221b9d8adf654a2d8c7c95",
+   "bytes": 1579136,
+   "archive_url": "https://web.archive.org/web/20230929135129/https://www.ishares.com/us/products/239454/ishares-20-year-treasury-bond-etf"
+  }
+ ],
+ "retrieved_at": "2026-11-16T15:57:25.190914+00:00"
+}
