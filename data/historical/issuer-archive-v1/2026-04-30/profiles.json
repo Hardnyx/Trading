@@ -1,0 +1,299 @@
+{
+ "schema": "issuer-archive-bond-profiles-v1",
+ "cut": "2026-04-30",
+ "funds": {
+  "AGG": {
+   "status": "capture-too-old"
+  },
+  "EMB": {
+   "status": "capture-too-old"
+  },
+  "HYG": {
+   "status": "capture-too-old"
+  },
+  "IEF": {
+   "status": "parsed",
+   "captured_at": "2026-04-18T15:55:41+00:00",
+   "archive_url": "https://web.archive.org/web/20260418155541/https://www.ishares.com/us/products/239456/ishares-710-year-treasury-bond-etf",
+   "raw_sha256": "d1517ab4bdb353980ba4646730f0de99db3ec7555ff4d1e9b04b2029877344c9",
+   "profile": {
+    "sec_yield_30d": {
+     "value": 0.041299999999999996,
+     "as_of": "2026-04-16",
+     "raw": "4.13%"
+    },
+    "weighted_avg_coupon": {
+     "value": 4.14,
+     "as_of": "2026-04-16",
+     "raw": "4.14"
+    },
+    "effective_duration_years": {
+     "value": 6.96,
+     "as_of": "2026-04-16",
+     "raw": "6.96 yrs"
+    },
+    "option_adjusted_spread": {
+     "value": 1.95,
+     "as_of": "2026-04-16",
+     "raw": "1.95 bps"
+    },
+    "trailing_yield_12m": {
+     "value": 0.0384,
+     "as_of": "2026-04-16",
+     "raw": "3.84%"
+    },
+    "yield_to_maturity": {
+     "value": 0.042199999999999994,
+     "as_of": "2026-04-16",
+     "raw": "4.22%"
+    },
+    "weighted_avg_maturity_years": {
+     "value": 8.46,
+     "as_of": "2026-04-16",
+     "raw": "8.46 yrs"
+    },
+    "convexity": {
+     "value": 0.58,
+     "as_of": "2026-04-16",
+     "raw": "0.58"
+    },
+    "expense_ratio": {
+     "value": 0.0015,
+     "as_of": null,
+     "raw": "Expense Ratio: 0.15%"
+    }
+   },
+   "rejected_after_cut": []
+  },
+  "IEI": {
+   "status": "capture-too-old"
+  },
+  "IGSB": {
+   "status": "capture-too-old"
+  },
+  "LQD": {
+   "status": "parsed",
+   "captured_at": "2026-03-19T21:09:12+00:00",
+   "archive_url": "https://web.archive.org/web/20260319210912/https://www.ishares.com/us/products/239566/ishares-iboxx-investment-grade-corporate-bond-etf",
+   "raw_sha256": "fc5940ef1d393d7acf42af4f0b73cfd30a95e43058bc012d4a886ea4f5989912",
+   "profile": {
+    "sec_yield_30d": {
+     "value": 0.050199999999999995,
+     "as_of": "2026-03-17",
+     "raw": "5.02%"
+    },
+    "weighted_avg_coupon": {
+     "value": 4.48,
+     "as_of": "2026-03-18",
+     "raw": "4.48"
+    },
+    "effective_duration_years": {
+     "value": 7.93,
+     "as_of": "2026-03-18",
+     "raw": "7.93 yrs"
+    },
+    "option_adjusted_spread": {
+     "value": 90.83,
+     "as_of": "2026-03-18",
+     "raw": "90.83 bps"
+    },
+    "trailing_yield_12m": {
+     "value": 0.0451,
+     "as_of": "2026-03-17",
+     "raw": "4.51%"
+    },
+    "yield_to_maturity": {
+     "value": 0.0525,
+     "as_of": "2026-03-18",
+     "raw": "5.25%"
+    },
+    "weighted_avg_maturity_years": {
+     "value": 12.82,
+     "as_of": "2026-03-18",
+     "raw": "12.82 yrs"
+    },
+    "convexity": {
+     "value": 1.08,
+     "as_of": "2026-03-18",
+     "raw": "1.08"
+    },
+    "expense_ratio": {
+     "value": 0.0014000000000000002,
+     "as_of": null,
+     "raw": "Expense Ratio: 0.14%"
+    }
+   },
+   "rejected_after_cut": []
+  },
+  "SGOV": {
+   "status": "parsed",
+   "captured_at": "2026-04-07T22:24:14+00:00",
+   "archive_url": "https://web.archive.org/web/20260407222414/https://www.ishares.com/us/products/314116/ishares-core-sp-500-etf",
+   "raw_sha256": "b7902eeadcf80df25bdd378c04f02772ebf34ea6b98b795e9267a9a157380959",
+   "profile": {
+    "sec_yield_30d": {
+     "value": 0.0355,
+     "as_of": "2026-04-06",
+     "raw": "3.55%"
+    },
+    "weighted_avg_coupon": {
+     "value": 0.0,
+     "as_of": "2026-04-06",
+     "raw": "0.00"
+    },
+    "effective_duration_years": {
+     "value": 0.09,
+     "as_of": "2026-04-06",
+     "raw": "0.09 yrs"
+    },
+    "option_adjusted_spread": {
+     "value": -10.76,
+     "as_of": "2026-04-06",
+     "raw": "-10.76 bps"
+    },
+    "trailing_yield_12m": {
+     "value": 0.0395,
+     "as_of": "2026-04-06",
+     "raw": "3.95%"
+    },
+    "yield_to_maturity": {
+     "value": 0.0335,
+     "as_of": "2026-04-06",
+     "raw": "3.35%"
+    },
+    "weighted_avg_maturity_years": {
+     "value": 0.09,
+     "as_of": "2026-04-06",
+     "raw": "0.09 yrs"
+    },
+    "convexity": {
+     "value": 0.0,
+     "as_of": "2026-04-06",
+     "raw": "0.00"
+    },
+    "expense_ratio": {
+     "value": 0.0009,
+     "as_of": null,
+     "raw": "Expense Ratio: 0.09%"
+    }
+   },
+   "rejected_after_cut": []
+  },
+  "SHV": {
+   "status": "parsed",
+   "captured_at": "2026-04-18T00:29:08+00:00",
+   "archive_url": "https://web.archive.org/web/20260418002908/https://www.ishares.com/us/products/239466/SHV",
+   "raw_sha256": "5ba7727b16c79925922fc5116eb67bf00a34a4f97b1407d92ec8d811adf0d4f6",
+   "profile": {
+    "sec_yield_30d": {
+     "value": 0.0353,
+     "as_of": "2026-04-16",
+     "raw": "3.53%"
+    },
+    "weighted_avg_coupon": {
+     "value": 3.19,
+     "as_of": "2026-04-16",
+     "raw": "3.19"
+    },
+    "effective_duration_years": {
+     "value": 0.29,
+     "as_of": "2026-04-16",
+     "raw": "0.29 yrs"
+    },
+    "option_adjusted_spread": {
+     "value": -1.57,
+     "as_of": "2026-04-16",
+     "raw": "-1.57 bps"
+    },
+    "trailing_yield_12m": {
+     "value": 0.0393,
+     "as_of": "2026-04-16",
+     "raw": "3.93%"
+    },
+    "yield_to_maturity": {
+     "value": 0.0369,
+     "as_of": "2026-04-16",
+     "raw": "3.69%"
+    },
+    "weighted_avg_maturity_years": {
+     "value": 0.3,
+     "as_of": "2026-04-16",
+     "raw": "0.30 yrs"
+    },
+    "convexity": {
+     "value": 0.0,
+     "as_of": "2026-04-16",
+     "raw": "0.00"
+    },
+    "expense_ratio": {
+     "value": 0.0015,
+     "as_of": null,
+     "raw": "Expense Ratio: 0.15%"
+    }
+   },
+   "rejected_after_cut": []
+  },
+  "SHY": {
+   "status": "parsed",
+   "captured_at": "2026-04-11T23:44:48+00:00",
+   "archive_url": "https://web.archive.org/web/20260411234448/https://www.ishares.com/us/products/239452/ishares-132025-treasury-bond-etf",
+   "raw_sha256": "421272c60423c523ead42fc8b3b450e8556af0c397b4b05c9e43e90352ce3b78",
+   "profile": {
+    "sec_yield_30d": {
+     "value": 0.037200000000000004,
+     "as_of": "2026-04-09",
+     "raw": "3.72%"
+    },
+    "weighted_avg_coupon": {
+     "value": 2.89,
+     "as_of": "2026-04-09",
+     "raw": "2.89"
+    },
+    "effective_duration_years": {
+     "value": 1.86,
+     "as_of": "2026-04-09",
+     "raw": "1.86 yrs"
+    },
+    "option_adjusted_spread": {
+     "value": -0.89,
+     "as_of": "2026-04-09",
+     "raw": "-0.89 bps"
+    },
+    "trailing_yield_12m": {
+     "value": 0.037200000000000004,
+     "as_of": "2026-04-09",
+     "raw": "3.72%"
+    },
+    "yield_to_maturity": {
+     "value": 0.038,
+     "as_of": "2026-04-09",
+     "raw": "3.80%"
+    },
+    "weighted_avg_maturity_years": {
+     "value": 1.95,
+     "as_of": "2026-04-09",
+     "raw": "1.95 yrs"
+    },
+    "convexity": {
+     "value": 0.05,
+     "as_of": "2026-04-09",
+     "raw": "0.05"
+    },
+    "expense_ratio": {
+     "value": 0.0015,
+     "as_of": null,
+     "raw": "Expense Ratio: 0.15%"
+    }
+   },
+   "rejected_after_cut": []
+  },
+  "TIP": {
+   "status": "capture-too-old"
+  },
+  "TLT": {
+   "status": "capture-too-old"
+  }
+ },
+ "source": "issuer pages captured by the Internet Archive before the cut",
+ "estimated_values": false
+}
