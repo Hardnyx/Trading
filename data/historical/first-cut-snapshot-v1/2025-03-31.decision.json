@@ -1,0 +1,93 @@
+{
+ "schema": "first-cut-engine-decision-v1",
+ "cut": "2025-03-31",
+ "price_as_of": "2025-03-31",
+ "computed_at": "2026-11-16T20:34:00.731Z",
+ "seconds": 83,
+ "engine_version": "0.35.0",
+ "price_kernel_version": "1.0.0",
+ "market_sha256": "9894f60c0976e7d34378bbd41ef8aae337283b488f271fc4e151c0cde38a7429",
+ "volatility_sha256": "fa528a9ac7ff3eaf0983e71eb7a2865783a2d3185bbf58316bafc47b7e2f8ea1",
+ "universe": {
+  "assets": 578,
+  "stocks": 478
+ },
+ "settings": {
+  "seed": 20261024,
+  "horizon": 1,
+  "mandate": {
+   "objective": "growth",
+   "referenceCurrency": "USD",
+   "horizon": 1,
+   "maxDrawdown": 0.25,
+   "maxDrawdownProbability": 0.25,
+   "minimumCash": 0.05,
+   "monthlyWithdrawal": 0,
+   "withdrawals": [],
+   "terminalTarget": 0,
+   "capitalFloor": 0,
+   "maxLiquidityFailure": 0.02,
+   "fxSpot": 1,
+   "fxAnnualChange": 0,
+   "fxVolatility": 0,
+   "fxMarketCorrelation": 0,
+   "fxConfirmed": false,
+   "benchmark": "SPY",
+   "riskAversion": 5,
+   "dividendPolicy": "cash",
+   "dividendWithholding": 0,
+   "cashYield": 0,
+   "region": "us"
+  },
+  "volatility_mode": "hybrid",
+  "search": {
+   "candidates": 300,
+   "paths": 600,
+   "finalPaths": 3000
+  }
+ },
+ "status": "proposed",
+ "reason": null,
+ "positions": [
+  {
+   "symbol": "AGG",
+   "weight": 0.25
+  },
+  {
+   "symbol": "CASH",
+   "weight": 0.05
+  },
+  {
+   "symbol": "IEI",
+   "weight": 0.2
+  },
+  {
+   "symbol": "PFE",
+   "weight": 0.05
+  },
+  {
+   "symbol": "ACGL",
+   "weight": 0.15
+  },
+  {
+   "symbol": "LYB",
+   "weight": 0.1
+  },
+  {
+   "symbol": "QCOM",
+   "weight": 0.2
+  }
+ ],
+ "metrics": {
+  "mean": 0.07339584353419848,
+  "median": 0.0572691819895117,
+  "p05": -0.09333936376274686,
+  "p95": 0.29774450779318234,
+  "loss_probability": 0.29,
+  "cvar95": 0.12663216103765565
+ },
+ "warnings": [],
+ "outcomes_read": false,
+ "prospective": false,
+ "note": "Development-period reconstruction with the current engine; it says nothing about predictive skill until scored under a registered protocol."
+}
