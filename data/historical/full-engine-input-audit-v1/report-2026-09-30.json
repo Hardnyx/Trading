@@ -1,0 +1,125 @@
+{
+ "schema": "full-engine-first-cut-input-audit-v1",
+ "cut": "2026-09-30",
+ "snapshot_sha256": "56d64a2bc6a8e7d103486546b4924a55d22bd67467998a40781174108d8c189c",
+ "volatility_sha256": "c0a48eb9a45ab158bc6faf810c0c8a8dfe830d5bc7278b54e1bbe94f15c522ef",
+ "checks": {
+  "availability": {
+   "passed": true,
+   "fields_after_cut": [],
+   "count": 0
+  },
+  "universe": {
+   "passed": true,
+   "members": 495,
+   "spy_weight_covered": 0.988122,
+   "spy_weight_with_ttm_eps": 0.94514,
+   "unexplained_missing": [],
+   "not_in_binding": [],
+   "declared_exclusions": {
+    "unbound_positions": [
+     {
+      "cusip": "053484101",
+      "name": "AvalonBay Communities Inc",
+      "weight": 0.00040675423799999997,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "285512109",
+      "name": "Electronic Arts Inc",
+      "weight": 0.00071652920586,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "30231G102",
+      "name": "Exxon Mobil Corp",
+      "weight": 0.008791717745949999,
+      "status": "no-ticker-candidate"
+     },
+     {
+      "cusip": "436CVR021",
+      "name": "CONTRA HOLOGIC INCORPO",
+      "weight": 3.3008990000000005e-08,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "49177J102",
+      "name": "Kenvue Inc",
+      "weight": 0.00056922981625,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "934423104",
+      "name": "Warner Bros Discovery Inc",
+      "weight": 0.00102505672376,
+      "status": "no-public-series"
+     }
+    ],
+    "unbound_weight": 0.011512,
+    "no_sector_in_list_revision": [
+     "BLDR",
+     "TAP",
+     "TTD"
+    ],
+    "eps_withheld_by_engine_guards": [
+     "ABNB",
+     "ALB",
+     "APH",
+     "ARES",
+     "BKNG",
+     "BKR",
+     "BRK-B",
+     "CRWD",
+     "CVNA",
+     "DD",
+     "ERIE",
+     "EXC",
+     "FCX",
+     "HAL",
+     "HONA",
+     "HSY",
+     "KIM",
+     "KKR",
+     "LEN",
+     "MNST",
+     "OMC",
+     "REG",
+     "SKYD",
+     "STZ",
+     "V",
+     "VRSN"
+    ]
+   }
+  },
+  "identity": {
+   "passed": true,
+   "report_date": "2026-06-30",
+   "tolerance": 0.005,
+   "mismatches": []
+  },
+  "units": {
+   "passed": true,
+   "problems": []
+  },
+  "engine_inputs": {
+   "passed": true,
+   "market_bytes": true,
+   "volatility_bytes": true,
+   "engine_version": true,
+   "decision_valid": true,
+   "weights_sum_to_one": true,
+   "outcomes_not_read": true
+  }
+ },
+ "input_checks_passed": true,
+ "status": "inputs-pass-with-declared-exclusions",
+ "limitations": [
+  "Prices are the current Yahoo revision restated to the cut's share basis, not an original vendor vintage; the unofficial endpoint grants no redistribution.",
+  "Sectors come from the Wikipedia list revision in force at the cut, not from S&P's official file.",
+  "The ETF list is the current engine's list, chosen after the cut.",
+  "The engine, its parameters and the reference preset were developed after the cut: the decision is a development-period reconstruction and cannot be confirmatory evidence.",
+  "Members bought out or delisted after the cut without a free series are excluded positions, not priced."
+ ],
+ "outcomes_read": false,
+ "confirmatory_eligible": false
+}
