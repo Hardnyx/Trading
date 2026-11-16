@@ -26,11 +26,13 @@ if __package__:
     from .history_archive import _Tables
     from .universe import SECTOR_PRIORS, expanded_universe
     from .historical_price_binding import binding_path
+    from .issuer_archive_capture import close_utc
 else:
     import refresh_data
     from history_archive import _Tables
     from universe import SECTOR_PRIORS, expanded_universe
     from historical_price_binding import binding_path
+    from issuer_archive_capture import close_utc
 
 ROOT = Path(__file__).resolve().parents[1]
 CUT = "2024-12-31"
@@ -195,11 +197,13 @@ def macro_vintages(cut, current):
     return out
 
 
-def bond_profiles(path):
-    """Issuer profiles archived before the cut, in the engine's bond_profile schema."""
+def bond_profiles(path, cut=None):
+    """Issuer profiles archived before the cut's close, in the engine's bond_profile schema."""
     funds = json.loads(path.read_text())["funds"]
     out = {}
     for symbol, fund in funds.items():
+        if cut and fund.get("captured_at") and dt.datetime.fromisoformat(fund["captured_at"]) > close_utc(cut):
+            continue  # archived after the decision time
         p = fund.get("profile") or {}
         duration, ytm = p.get("effective_duration_years"), p.get("yield_to_maturity")
         if fund.get("status") != "parsed" or not duration or not (ytm or p.get("real_yield")):
@@ -300,7 +304,7 @@ def main():
     specs = (stocks[:options.limit] if options.limit else stocks) + fund_specs()
     assets, errors, failed = build(specs, options.cut)
     current = json.loads(CURRENT.read_text())
-    profiles = bond_profiles(ARCHIVE / options.cut / "profiles.json")
+    profiles = bond_profiles(ARCHIVE / options.cut / "profiles.json", options.cut)
     for asset in assets:
         if asset["symbol"] in profiles:
             asset["bond_profile"] = profiles[asset["symbol"]]

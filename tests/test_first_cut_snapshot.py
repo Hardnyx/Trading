@@ -75,7 +75,9 @@ class SnapshotTests(unittest.TestCase):
             path = pathlib.Path(tmp) / "p.json"
             path.write_text(json.dumps(data))
             out = fs.bond_profiles(path)
+            late = fs.bond_profiles(path, "2024-12-19")  # captured the next day: after that cut's close
         self.assertEqual(list(out), ["TIP"])
+        self.assertEqual(late, {})
         self.assertTrue(out["TIP"]["inflationLinked"])
         self.assertEqual(out["TIP"]["observed_at"], "2024-12-20T00:00:00+00:00")
         self.assertEqual((out["TIP"]["duration"], out["TIP"]["date"], out["TIP"]["expenseRatio"]), (6.54, "2024-12-19", .0018))

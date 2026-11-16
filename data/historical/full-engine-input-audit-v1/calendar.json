@@ -3,8 +3,8 @@
  "cuts": 48,
  "counts": {
   "excluded": 22,
-  "audited-pass": 15,
-  "pending": 11
+  "audited-pass": 17,
+  "pending": 9
  },
  "every_cut_accounted": false,
  "rows": [
@@ -264,8 +264,12 @@
    "spy_as_of": "2024-06-30",
    "spy_age_days": 61,
    "spy_source_status": "source-available",
-   "status": "pending",
-   "reason": "fresh source; reconstruction not yet run"
+   "status": "audited-pass",
+   "failed_checks": [],
+   "members": 472,
+   "spy_weight_covered": 0.96559,
+   "spy_weight_with_ttm_eps": 0.84275,
+   "snapshot_sha256": "c7a5a0d64a9c1113e9a5131207563830f9275fa906dd37b70c208839e36e508d"
   },
   {
    "cut": "2024-09-30",
@@ -340,8 +344,12 @@
    "spy_as_of": "2024-12-31",
    "spy_age_days": 120,
    "spy_source_status": "source-available",
-   "status": "pending",
-   "reason": "fresh source; reconstruction not yet run"
+   "status": "audited-pass",
+   "failed_checks": [],
+   "members": 483,
+   "spy_weight_covered": 0.992219,
+   "spy_weight_with_ttm_eps": 0.939863,
+   "snapshot_sha256": "e992b10cd7fa9d69a443aa6db6418d06a6d9d9f3339b29420fe16b0b156ac202"
   },
   {
    "cut": "2025-05-30",

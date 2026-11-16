@@ -48,15 +48,25 @@ def product_prefix(url):
     return parts.netloc + parts.path
 
 
+def close_utc(cut):
+    """The New York 16:00 close of the cut in UTC: 21:00 in winter, 20:00 in summer."""
+    from zoneinfo import ZoneInfo
+    return dt.datetime.fromisoformat(cut + "T16:00:00").replace(tzinfo=ZoneInfo("America/New_York")).astimezone(dt.timezone.utc)
+
+
 def last_capture(url, cut):
-    """Latest HTTP-200 HTML capture of the product page on or before the cut: (timestamp, url)."""
+    """Latest HTTP-200 HTML capture of the product page before the cut's close: (timestamp, url).
+
+    A capture later on the cut day was not available to a decision at the close (TLT, 2025-03-31).
+    """
+    limit = close_utc(cut).strftime("%Y%m%d%H%M%S")
     query = urllib.parse.urlencode({"url": product_prefix(url), "matchType": "prefix",
-                                    "to": cut.replace("-", "") + "235959", "output": "json",
+                                    "to": limit, "output": "json",
                                     "filter": ["statuscode:200", "mimetype:text/html"], "fl": "timestamp,original",
                                     "collapse": "digest", "limit": "-2000"}, doseq=True)
     rows = json.loads(fetch("https://web.archive.org/cdx/search/cdx?" + query) or b"[]")
-    pages = [(stamp, original) for stamp, original in rows[1:]
-             if "?" not in original and not original.endswith((".ajax", ".csv", ".json", ".pdf"))] if rows else []
+    pages = [(stamp, original) for stamp, original in rows[1:] if stamp <= limit
+             and "?" not in original and not original.endswith((".ajax", ".csv", ".json", ".pdf"))] if rows else []
     return max(pages) if pages else (None, None)
 
 

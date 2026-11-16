@@ -15,6 +15,7 @@ import hashlib
 import json
 import math
 import re
+from datetime import datetime
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -68,6 +69,13 @@ def availability(market, volatility, cut):
             late.append(path)
         elif key in OBSERVED and value > f"{cut}{CLOSE}":
             late.append(path)
+    # Archive captures carry their real time and must precede the New York close of the cut.
+    from zoneinfo import ZoneInfo
+    close = datetime.fromisoformat(cut + "T16:00:00").replace(tzinfo=ZoneInfo("America/New_York"))
+    for i, asset in enumerate(market.get("assets") or []):
+        seen = (asset.get("bond_profile") or {}).get("observed_at")
+        if seen and datetime.fromisoformat(seen) > close:
+            late.append(f"assets[{i}].bond_profile.observed_at after the close")
     for key in ("price_as_of", "requested_as_of"):
         if market.get(key) != cut:
             late.append(key)

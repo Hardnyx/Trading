@@ -82,3 +82,16 @@ class InputAuditTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class CloseTimeTests(unittest.TestCase):
+    def test_an_archive_capture_after_the_new_york_close_is_late(self):
+        market = copy.deepcopy(MARKET)
+        market["price_as_of"] = market["requested_as_of"] = "2025-03-31"
+        market["assets"][0]["history"] = [{"date": "2025-03-31", "close": 30.0, "adj_close": 30.0}]
+        market["assets"][0]["price_observed_at"] = "2025-03-31T21:00:00+00:00"
+        vol = dict(VOL, as_of="2025-03-31", parameter_fit_through="2025-03-31", instruments={})
+        market["assets"][0]["bond_profile"] = {"observed_at": "2025-03-31T19:30:00+00:00", "date": "2025-03-28"}
+        self.assertTrue(audit.availability(market, vol, "2025-03-31")["passed"])
+        market["assets"][0]["bond_profile"]["observed_at"] = "2025-03-31T20:30:00+00:00"  # 16:30 EDT
+        self.assertFalse(audit.availability(market, vol, "2025-03-31")["passed"])
