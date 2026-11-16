@@ -1,0 +1,93 @@
+{
+ "schema": "first-cut-engine-decision-v1",
+ "cut": "2025-04-30",
+ "price_as_of": "2025-04-30",
+ "computed_at": "2026-11-16T19:10:09.035Z",
+ "seconds": 70,
+ "engine_version": "0.35.0",
+ "price_kernel_version": "1.0.0",
+ "market_sha256": "e992b10cd7fa9d69a443aa6db6418d06a6d9d9f3339b29420fe16b0b156ac202",
+ "volatility_sha256": "5f5ba83b9f5f6f2d3f16d9857821271332189578de611085b5cd942058e8d4d2",
+ "universe": {
+  "assets": 583,
+  "stocks": 483
+ },
+ "settings": {
+  "seed": 20261024,
+  "horizon": 1,
+  "mandate": {
+   "objective": "growth",
+   "referenceCurrency": "USD",
+   "horizon": 1,
+   "maxDrawdown": 0.25,
+   "maxDrawdownProbability": 0.25,
+   "minimumCash": 0.05,
+   "monthlyWithdrawal": 0,
+   "withdrawals": [],
+   "terminalTarget": 0,
+   "capitalFloor": 0,
+   "maxLiquidityFailure": 0.02,
+   "fxSpot": 1,
+   "fxAnnualChange": 0,
+   "fxVolatility": 0,
+   "fxMarketCorrelation": 0,
+   "fxConfirmed": false,
+   "benchmark": "SPY",
+   "riskAversion": 5,
+   "dividendPolicy": "cash",
+   "dividendWithholding": 0,
+   "cashYield": 0,
+   "region": "us"
+  },
+  "volatility_mode": "hybrid",
+  "search": {
+   "candidates": 300,
+   "paths": 600,
+   "finalPaths": 3000
+  }
+ },
+ "status": "proposed",
+ "reason": null,
+ "positions": [
+  {
+   "symbol": "AGG",
+   "weight": 0.15
+  },
+  {
+   "symbol": "LQD",
+   "weight": 0.25
+  },
+  {
+   "symbol": "SGOV",
+   "weight": 0.25
+  },
+  {
+   "symbol": "CASH",
+   "weight": 0.05
+  },
+  {
+   "symbol": "MRK",
+   "weight": 0.1
+  },
+  {
+   "symbol": "USB",
+   "weight": 0.15
+  },
+  {
+   "symbol": "NTAP",
+   "weight": 0.05
+  }
+ ],
+ "metrics": {
+  "mean": 0.06034342893246956,
+  "median": 0.04658205153297745,
+  "p05": -0.10134999539877303,
+  "p95": 0.2870925126735697,
+  "loss_probability": 0.302,
+  "cvar95": 0.12713679364345737
+ },
+ "warnings": [],
+ "outcomes_read": false,
+ "prospective": false,
+ "note": "Development-period reconstruction with the current engine; it says nothing about predictive skill until scored under a registered protocol."
+}
