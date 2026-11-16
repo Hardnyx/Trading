@@ -1,0 +1,97 @@
+{
+ "schema": "first-cut-engine-decision-v1",
+ "cut": "2024-05-31",
+ "price_as_of": "2024-05-31",
+ "computed_at": "2026-11-16T17:35:20.299Z",
+ "seconds": 91,
+ "engine_version": "0.35.0",
+ "price_kernel_version": "1.0.0",
+ "market_sha256": "1e48f01bba3851de9ca3fbf918dec09b173ad7641ed7a5e72c53108947d619fa",
+ "volatility_sha256": "b2b1c1bf60386e03ec9d747bfb315a9a7a4f19050a74a1f5b3c483f83c96ed30",
+ "universe": {
+  "assets": 566,
+  "stocks": 466
+ },
+ "settings": {
+  "seed": 20261024,
+  "horizon": 1,
+  "mandate": {
+   "objective": "growth",
+   "referenceCurrency": "USD",
+   "horizon": 1,
+   "maxDrawdown": 0.25,
+   "maxDrawdownProbability": 0.25,
+   "minimumCash": 0.05,
+   "monthlyWithdrawal": 0,
+   "withdrawals": [],
+   "terminalTarget": 0,
+   "capitalFloor": 0,
+   "maxLiquidityFailure": 0.02,
+   "fxSpot": 1,
+   "fxAnnualChange": 0,
+   "fxVolatility": 0,
+   "fxMarketCorrelation": 0,
+   "fxConfirmed": false,
+   "benchmark": "SPY",
+   "riskAversion": 5,
+   "dividendPolicy": "cash",
+   "dividendWithholding": 0,
+   "cashYield": 0,
+   "region": "us"
+  },
+  "volatility_mode": "hybrid",
+  "search": {
+   "candidates": 300,
+   "paths": 600,
+   "finalPaths": 3000
+  }
+ },
+ "status": "proposed",
+ "reason": null,
+ "positions": [
+  {
+   "symbol": "SGOV",
+   "weight": 0.3
+  },
+  {
+   "symbol": "TLT",
+   "weight": 0.15
+  },
+  {
+   "symbol": "CASH",
+   "weight": 0.05
+  },
+  {
+   "symbol": "IBM",
+   "weight": 0.05
+  },
+  {
+   "symbol": "LKQ",
+   "weight": 0.1
+  },
+  {
+   "symbol": "PNW",
+   "weight": 0.05
+  },
+  {
+   "symbol": "TROW",
+   "weight": 0.1
+  },
+  {
+   "symbol": "FANG",
+   "weight": 0.2
+  }
+ ],
+ "metrics": {
+  "mean": 0.060970242288841556,
+  "median": 0.05092856534755663,
+  "p05": -0.11163547574566335,
+  "p95": 0.27774173497708854,
+  "loss_probability": 0.312,
+  "cvar95": 0.14217467915735532
+ },
+ "warnings": [],
+ "outcomes_read": false,
+ "prospective": false,
+ "note": "Development-period reconstruction with the current engine; it says nothing about predictive skill until scored under a registered protocol."
+}

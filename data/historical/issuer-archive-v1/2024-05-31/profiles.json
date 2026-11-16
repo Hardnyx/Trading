@@ -1,0 +1,256 @@
+{
+ "schema": "issuer-archive-bond-profiles-v1",
+ "cut": "2024-05-31",
+ "funds": {
+  "AGG": {
+   "status": "missing-duration",
+   "captured_at": "2024-05-25T05:18:56+00:00",
+   "archive_url": "https://web.archive.org/web/20240525051856/https://www.ishares.com/us/products/239458/ishares-core-us-aggregate-bond-etf",
+   "raw_sha256": "331ad2c99e0baf115431dc5244bf43de58cbce15681bba848602824d24baf0ae",
+   "profile": {
+    "expense_ratio": {
+     "value": 0.0003,
+     "as_of": null,
+     "raw": "Expense Ratio: 0.03%"
+    }
+   },
+   "rejected_after_cut": []
+  },
+  "EMB": {
+   "status": "missing-duration",
+   "captured_at": "2024-05-18T14:44:06+00:00",
+   "archive_url": "https://web.archive.org/web/20240518144406/https://www.ishares.com/us/products/239572/ishares-jp-morgan-usd-emerging-",
+   "raw_sha256": "41a12bc81e932e29fd55381a1822ba5ca58748c166eba9282de77b6131727b9f",
+   "profile": {
+    "expense_ratio": {
+     "value": 0.0039000000000000003,
+     "as_of": null,
+     "raw": "Expense Ratio: 0.39%"
+    }
+   },
+   "rejected_after_cut": []
+  },
+  "HYG": {
+   "status": "missing-duration",
+   "captured_at": "2024-05-25T03:58:47+00:00",
+   "archive_url": "https://web.archive.org/web/20240525035847/https://www.ishares.com/us/products/239565/ishares-iboxx-high-yield-corporate-bond-etf",
+   "raw_sha256": "06c1b314d493acd37ddb99e4c50cad82d48a8f8c6e2f6ba49e824ec612d1f2e9",
+   "profile": {
+    "expense_ratio": {
+     "value": 0.0049,
+     "as_of": null,
+     "raw": "Expense Ratio: 0.49%"
+    }
+   },
+   "rejected_after_cut": []
+  },
+  "IEF": {
+   "status": "missing-duration",
+   "captured_at": "2024-05-29T09:19:32+00:00",
+   "archive_url": "https://web.archive.org/web/20240529091932/https://www.ishares.com/us/products/239456/ishares-710-year-treasury-bond-etf%20",
+   "raw_sha256": "cf16cd5facb858ba54363796d318bde448d248ef211a3aa443fdd800043b4696",
+   "profile": {
+    "expense_ratio": {
+     "value": 0.0015,
+     "as_of": null,
+     "raw": "Expense Ratio: 0.15%"
+    }
+   },
+   "rejected_after_cut": []
+  },
+  "IEI": {
+   "status": "missing-duration",
+   "captured_at": "2024-04-19T22:33:57+00:00",
+   "archive_url": "https://web.archive.org/web/20240419223357/https://www.ishares.com/us/products/239455/IEI",
+   "raw_sha256": "489f048543df80f13468affd808b92e341cecb20c79ae647273e98f881bc1994",
+   "profile": {
+    "expense_ratio": {
+     "value": 0.0015,
+     "as_of": null,
+     "raw": "Expense Ratio: 0.15%"
+    }
+   },
+   "rejected_after_cut": []
+  },
+  "IGSB": {
+   "status": "missing-duration",
+   "captured_at": "2024-05-27T22:42:15+00:00",
+   "archive_url": "https://web.archive.org/web/20240527224215/https://www.ishares.com/us/products/239451/",
+   "raw_sha256": "d3a7dac615ed05a3719ec6989c0fad1dd4ce7d7455e724c6303a0bc8d66ca0d7",
+   "profile": {
+    "expense_ratio": {
+     "value": 0.0004,
+     "as_of": null,
+     "raw": "Expense Ratio: 0.04%"
+    }
+   },
+   "rejected_after_cut": []
+  },
+  "LQD": {
+   "status": "missing-duration",
+   "captured_at": "2024-05-25T04:09:18+00:00",
+   "archive_url": "https://web.archive.org/web/20240525040918/https://www.ishares.com/us/products/239566/ishares-iboxx-investment-grade-corporate-bond-etf",
+   "raw_sha256": "0e982f231647da156865c309053b9f08c7210059196d60d36f1bcbdb8930c435",
+   "profile": {
+    "expense_ratio": {
+     "value": 0.0014000000000000002,
+     "as_of": null,
+     "raw": "Expense Ratio: 0.14%"
+    }
+   },
+   "rejected_after_cut": []
+  },
+  "SGOV": {
+   "status": "parsed",
+   "captured_at": "2024-05-29T17:44:55+00:00",
+   "archive_url": "https://web.archive.org/web/20240529174455/https://www.ishares.com/us/products/314116/ishares-0-3-month-treasury-bond-etf",
+   "raw_sha256": "1f0d1f26ed04bcf2e765a2a2e8f4e111974b0139f2461b89b9e68160474ae065",
+   "profile": {
+    "sec_yield_30d": {
+     "value": 0.0526,
+     "as_of": "2024-05-24",
+     "raw": "5.26%"
+    },
+    "yield_to_maturity": {
+     "value": 0.0536,
+     "as_of": "2024-05-28",
+     "raw": "5.36%"
+    },
+    "weighted_avg_maturity_years": {
+     "value": 0.09,
+     "as_of": "2024-05-28",
+     "raw": "0.09 yrs"
+    },
+    "convexity": {
+     "value": 0.0,
+     "as_of": "2024-05-28",
+     "raw": "0.00"
+    },
+    "trailing_yield_12m": {
+     "value": 0.051699999999999996,
+     "as_of": "2024-05-24",
+     "raw": "5.17%"
+    },
+    "weighted_avg_coupon": {
+     "value": 0.0,
+     "as_of": "2024-05-28",
+     "raw": "0.00"
+    },
+    "effective_duration_years": {
+     "value": 0.09,
+     "as_of": "2024-05-28",
+     "raw": "0.09 yrs"
+    },
+    "option_adjusted_spread": {
+     "value": -6.18,
+     "as_of": "2024-05-28",
+     "raw": "-6.18 bps"
+    },
+    "expense_ratio": {
+     "value": 0.0013,
+     "as_of": null,
+     "raw": "Expense Ratio: 0.13%"
+    }
+   },
+   "rejected_after_cut": []
+  },
+  "SHV": {
+   "status": "missing-duration",
+   "captured_at": "2024-05-25T05:11:38+00:00",
+   "archive_url": "https://web.archive.org/web/20240525051138/https://www.ishares.com/us/products/239466/ishares-short-treasury-bond-etf",
+   "raw_sha256": "919367b73c5dd96e063557370b9ff108841b4e460d60c0925c7ed78d754906f4",
+   "profile": {
+    "expense_ratio": {
+     "value": 0.0016,
+     "as_of": null,
+     "raw": "Expense Ratio: 0.16%"
+    }
+   },
+   "rejected_after_cut": []
+  },
+  "SHY": {
+   "status": "missing-duration",
+   "captured_at": "2024-05-28T19:30:06+00:00",
+   "archive_url": "https://web.archive.org/web/20240528193006/https://www.ishares.com/us/products/239452/ishares-13-year-treasury-bond-etf/",
+   "raw_sha256": "c5e48966219a6a3586500c46f58d13f6814de24ca0c075fa81e5f06e374c2bdf",
+   "profile": {
+    "expense_ratio": {
+     "value": 0.0015,
+     "as_of": null,
+     "raw": "Expense Ratio: 0.15%"
+    }
+   },
+   "rejected_after_cut": []
+  },
+  "TIP": {
+   "status": "missing-duration",
+   "captured_at": "2024-05-13T01:10:46+00:00",
+   "archive_url": "https://web.archive.org/web/20240513011046/https://www.ishares.com/us/products/239467/ishare",
+   "raw_sha256": "3d2bd6ad5b82984b91ed732acb91e2d31701cb7d039e6d7f4d5304accab8f8b9",
+   "profile": {
+    "expense_ratio": {
+     "value": 0.0019,
+     "as_of": null,
+     "raw": "Expense Ratio: 0.19%"
+    }
+   },
+   "rejected_after_cut": []
+  },
+  "TLT": {
+   "status": "parsed",
+   "captured_at": "2024-05-28T11:42:07+00:00",
+   "archive_url": "https://web.archive.org/web/20240528114207/https://www.ishares.com/us/products/239454/ishares-20-year-treasury-bond-etf",
+   "raw_sha256": "e2b8478029ee19952b06fbe414dbfd0f9f8a42984ff32d31a86e9c5b419f08b9",
+   "profile": {
+    "sec_yield_30d": {
+     "value": 0.0455,
+     "as_of": "2024-05-23",
+     "raw": "4.55%"
+    },
+    "yield_to_maturity": {
+     "value": 0.04650000000000001,
+     "as_of": "2024-05-24",
+     "raw": "4.65%"
+    },
+    "weighted_avg_maturity_years": {
+     "value": 25.33,
+     "as_of": "2024-05-24",
+     "raw": "25.33 yrs"
+    },
+    "convexity": {
+     "value": 3.64,
+     "as_of": "2024-05-24",
+     "raw": "3.64"
+    },
+    "trailing_yield_12m": {
+     "value": 0.0385,
+     "as_of": "2024-05-23",
+     "raw": "3.85%"
+    },
+    "weighted_avg_coupon": {
+     "value": 2.62,
+     "as_of": "2024-05-24",
+     "raw": "2.62"
+    },
+    "effective_duration_years": {
+     "value": 16.42,
+     "as_of": "2024-05-24",
+     "raw": "16.42 yrs"
+    },
+    "option_adjusted_spread": {
+     "value": -1.26,
+     "as_of": "2024-05-24",
+     "raw": "-1.26 bps"
+    },
+    "expense_ratio": {
+     "value": 0.0015,
+     "as_of": null,
+     "raw": "Expense Ratio: 0.15%"
+    }
+   },
+   "rejected_after_cut": []
+  }
+ },
+ "source": "issuer pages captured by the Internet Archive before the cut",
+ "estimated_values": false
+}
