@@ -1,0 +1,110 @@
+{
+ "schema": "issuer-archive-bond-profiles-v1",
+ "cut": "2022-12-30",
+ "funds": {
+  "AGG": {
+   "status": "capture-too-old"
+  },
+  "EMB": {
+   "status": "missing-duration",
+   "captured_at": "2022-12-02T08:48:21+00:00",
+   "archive_url": "https://web.archive.org/web/20221202084821/https://www.ishares.com/us/products/239572/ishares-jp-morgan-usd-emerging-markets-bond-etf",
+   "raw_sha256": "4c349575fae17e335087722b53562dda641704aca96ad4ebe3d7a25d62468726",
+   "profile": {
+    "expense_ratio": {
+     "value": 0.0039000000000000003,
+     "as_of": null,
+     "raw": "Expense Ratio: 0.39%"
+    }
+   },
+   "rejected_after_cut": []
+  },
+  "HYG": {
+   "status": "missing-duration",
+   "captured_at": "2022-12-07T07:26:42+00:00",
+   "archive_url": "https://web.archive.org/web/20221207072642/https://www.ishares.com/us/products/239565/",
+   "raw_sha256": "739bf45f5e4bbb3bc0f205e9cc6974ed5a467a4287ed5366d21236b7f4a53f5e",
+   "profile": {
+    "expense_ratio": {
+     "value": 0.0048,
+     "as_of": null,
+     "raw": "Expense Ratio: 0.48%"
+    }
+   },
+   "rejected_after_cut": []
+  },
+  "IEF": {
+   "status": "capture-too-old"
+  },
+  "IEI": {
+   "status": "capture-too-old"
+  },
+  "IGSB": {
+   "status": "capture-too-old"
+  },
+  "LQD": {
+   "status": "capture-too-old"
+  },
+  "SGOV": {
+   "status": "capture-too-old"
+  },
+  "SHV": {
+   "status": "missing-duration",
+   "captured_at": "2022-12-08T12:53:47+00:00",
+   "archive_url": "https://web.archive.org/web/20221208125347/https://www.ishares.com/us/products/239466/",
+   "raw_sha256": "f76dd4754f91e89cdfa08a250b42c198bdeb5e59b58e69dd3d0c619c3279a2bc",
+   "profile": {
+    "expense_ratio": {
+     "value": 0.0015,
+     "as_of": null,
+     "raw": "Expense Ratio: 0.15%"
+    }
+   },
+   "rejected_after_cut": []
+  },
+  "SHY": {
+   "status": "missing-duration",
+   "captured_at": "2022-12-29T18:41:38+00:00",
+   "archive_url": "https://web.archive.org/web/20221229184138/https://www.ishares.com/us/products/239452/",
+   "raw_sha256": "05e30b5bd98fb1e14d818c4f847815b46582b67ed15ed67f5b0ff56d933998c4",
+   "profile": {
+    "expense_ratio": {
+     "value": 0.0015,
+     "as_of": null,
+     "raw": "Expense Ratio: 0.15%"
+    }
+   },
+   "rejected_after_cut": []
+  },
+  "TIP": {
+   "status": "missing-duration",
+   "captured_at": "2022-12-29T18:41:46+00:00",
+   "archive_url": "https://web.archive.org/web/20221229184146/https://www.ishares.com/us/products/239467/",
+   "raw_sha256": "a879da20ac9025ac8efb81a5a7fee279864c33af97a66cf96275e1d1f0c00cce",
+   "profile": {
+    "expense_ratio": {
+     "value": 0.0019,
+     "as_of": null,
+     "raw": "Expense Ratio: 0.19%"
+    }
+   },
+   "rejected_after_cut": []
+  },
+  "TLT": {
+   "status": "missing-duration",
+   "captured_at": "2022-12-19T07:28:13+00:00",
+   "archive_url": "https://web.archive.org/web/20221219072813/https://www.ishares.com/us/products/239454/ishares-20-year-treasury-bond-etf",
+   "raw_sha256": "626b975268b80455bbf5c47c55099acf079138e2a8195a19b9fb45743d6ac8cc",
+   "profile": {
+    "expense_ratio": {
+     "value": 0.0015,
+     "as_of": null,
+     "raw": "Expense Ratio: 0.15%"
+    }
+   },
+   "rejected_after_cut": []
+  }
+ },
+ "source": "issuer pages captured by the Internet Archive before the cut",
+ "estimated_values": false
+}
