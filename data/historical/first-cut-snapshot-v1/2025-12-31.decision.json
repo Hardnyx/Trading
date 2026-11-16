@@ -1,0 +1,97 @@
+{
+ "schema": "first-cut-engine-decision-v1",
+ "cut": "2025-12-31",
+ "price_as_of": "2025-12-31",
+ "computed_at": "2026-11-16T20:24:26.457Z",
+ "seconds": 104,
+ "engine_version": "0.35.0",
+ "price_kernel_version": "1.0.0",
+ "market_sha256": "089b8cba75c22cef7047f9e8026f058ec29061eac247d0a364b1a885f9c96d3a",
+ "volatility_sha256": "e71dca6ff2fbbcbf0b20c39b234f0e7d3131c32e91a36f0222d1b27eccc6d7eb",
+ "universe": {
+  "assets": 589,
+  "stocks": 489
+ },
+ "settings": {
+  "seed": 20261024,
+  "horizon": 1,
+  "mandate": {
+   "objective": "growth",
+   "referenceCurrency": "USD",
+   "horizon": 1,
+   "maxDrawdown": 0.25,
+   "maxDrawdownProbability": 0.25,
+   "minimumCash": 0.05,
+   "monthlyWithdrawal": 0,
+   "withdrawals": [],
+   "terminalTarget": 0,
+   "capitalFloor": 0,
+   "maxLiquidityFailure": 0.02,
+   "fxSpot": 1,
+   "fxAnnualChange": 0,
+   "fxVolatility": 0,
+   "fxMarketCorrelation": 0,
+   "fxConfirmed": false,
+   "benchmark": "SPY",
+   "riskAversion": 5,
+   "dividendPolicy": "cash",
+   "dividendWithholding": 0,
+   "cashYield": 0,
+   "region": "us"
+  },
+  "volatility_mode": "hybrid",
+  "search": {
+   "candidates": 300,
+   "paths": 600,
+   "finalPaths": 3000
+  }
+ },
+ "status": "proposed",
+ "reason": null,
+ "positions": [
+  {
+   "symbol": "AGG",
+   "weight": 0.2
+  },
+  {
+   "symbol": "LQD",
+   "weight": 0.15
+  },
+  {
+   "symbol": "SHY",
+   "weight": 0.1
+  },
+  {
+   "symbol": "CASH",
+   "weight": 0.05
+  },
+  {
+   "symbol": "VZ",
+   "weight": 0.1
+  },
+  {
+   "symbol": "SWKS",
+   "weight": 0.1
+  },
+  {
+   "symbol": "BBY",
+   "weight": 0.1
+  },
+  {
+   "symbol": "MDT",
+   "weight": 0.2
+  }
+ ],
+ "metrics": {
+  "mean": 0.059461531768582224,
+  "median": 0.04972972207605986,
+  "p05": -0.11283933258760166,
+  "p95": 0.2572039532072449,
+  "loss_probability": 0.326,
+  "cvar95": 0.152258490600178
+ },
+ "warnings": [],
+ "outcomes_read": false,
+ "prospective": false,
+ "note": "Development-period reconstruction with the current engine; it says nothing about predictive skill until scored under a registered protocol."
+}

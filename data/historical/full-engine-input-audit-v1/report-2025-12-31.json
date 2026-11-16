@@ -1,0 +1,149 @@
+{
+ "schema": "full-engine-first-cut-input-audit-v1",
+ "cut": "2025-12-31",
+ "snapshot_sha256": "089b8cba75c22cef7047f9e8026f058ec29061eac247d0a364b1a885f9c96d3a",
+ "volatility_sha256": "e71dca6ff2fbbcbf0b20c39b234f0e7d3131c32e91a36f0222d1b27eccc6d7eb",
+ "checks": {
+  "availability": {
+   "passed": true,
+   "fields_after_cut": [],
+   "count": 0
+  },
+  "universe": {
+   "passed": true,
+   "members": 489,
+   "spy_weight_covered": 0.995134,
+   "spy_weight_with_ttm_eps": 0.934095,
+   "unexplained_missing": [],
+   "not_in_binding": [],
+   "declared_exclusions": {
+    "unbound_positions": [
+     {
+      "cusip": "934423104",
+      "name": "Warner Bros Discovery Inc",
+      "weight": 0.00084648550358,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "000000000",
+      "name": "Amcor PLC",
+      "weight": 0.00033045256182,
+      "status": "no-ticker-candidate"
+     },
+     {
+      "cusip": "127097103",
+      "name": "Coterra Energy Inc",
+      "weight": 0.00031894495758,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "487836108",
+      "name": "Kellanova",
+      "weight": 0.00038921293406000003,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "15677J108",
+      "name": "Dayforce Inc",
+      "weight": 0.00019218994939,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "49177J102",
+      "name": "Kenvue Inc",
+      "weight": 0.00054912366639,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "053484101",
+      "name": "AvalonBay Communities Inc",
+      "weight": 0.00048420058834000004,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "285512109",
+      "name": "Electronic Arts Inc",
+      "weight": 0.00079495102407,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "460690100",
+      "name": "Interpublic Group of Cos Inc/The",
+      "weight": 0.00018345461126,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "436440101",
+      "name": "Hologic Inc",
+      "weight": 0.00026707152914,
+      "status": "no-public-series"
+     }
+    ],
+    "unbound_weight": 0.004357,
+    "no_sector_in_list_revision": [
+     "EMN",
+     "KMX",
+     "LKQ",
+     "MHK"
+    ],
+    "eps_withheld_by_engine_guards": [
+     "ABNB",
+     "AOS",
+     "BRK-B",
+     "ERIE",
+     "EXC",
+     "FAST",
+     "FCX",
+     "GDDY",
+     "HAL",
+     "HSY",
+     "IBKR",
+     "KIM",
+     "KKR",
+     "MNST",
+     "NFLX",
+     "NOW",
+     "ORLY",
+     "REG",
+     "SKYD",
+     "SPGI",
+     "STZ",
+     "TPL",
+     "V",
+     "VRSN",
+     "XOM"
+    ]
+   }
+  },
+  "identity": {
+   "passed": true,
+   "report_date": "2025-09-30",
+   "tolerance": 0.005,
+   "mismatches": []
+  },
+  "units": {
+   "passed": true,
+   "problems": []
+  },
+  "engine_inputs": {
+   "passed": true,
+   "market_bytes": true,
+   "volatility_bytes": true,
+   "engine_version": true,
+   "decision_valid": true,
+   "weights_sum_to_one": true,
+   "outcomes_not_read": true
+  }
+ },
+ "input_checks_passed": true,
+ "status": "inputs-pass-with-declared-exclusions",
+ "limitations": [
+  "Prices are the current Yahoo revision restated to the cut's share basis, not an original vendor vintage; the unofficial endpoint grants no redistribution.",
+  "Sectors come from the Wikipedia list revision in force at the cut, not from S&P's official file.",
+  "The ETF list is the current engine's list, chosen after the cut.",
+  "The engine, its parameters and the reference preset were developed after the cut: the decision is a development-period reconstruction and cannot be confirmatory evidence.",
+  "Members bought out or delisted after the cut without a free series are excluded positions, not priced."
+ ],
+ "outcomes_read": false,
+ "confirmatory_eligible": false
+}
