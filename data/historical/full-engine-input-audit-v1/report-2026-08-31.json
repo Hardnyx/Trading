@@ -10,13 +10,11 @@
    "count": 0
   },
   "universe": {
-   "passed": false,
+   "passed": true,
    "members": 496,
    "spy_weight_covered": 0.986552,
    "spy_weight_with_ttm_eps": 0.948022,
-   "unexplained_missing": [
-    "HONA"
-   ],
+   "unexplained_missing": [],
    "not_in_binding": [],
    "declared_exclusions": {
     "unbound_positions": [
@@ -65,6 +63,9 @@
     ],
     "unbound_weight": 0.012362,
     "no_sector_in_list_revision": [],
+    "no_price_series_at_cut": [
+     "HONA"
+    ],
     "eps_withheld_by_engine_guards": [
      "ABNB",
      "ALB",
@@ -113,8 +114,8 @@
    "outcomes_not_read": true
   }
  },
- "input_checks_passed": false,
- "status": "blocked",
+ "input_checks_passed": true,
+ "status": "inputs-pass-with-declared-exclusions",
  "limitations": [
   "Prices are the current Yahoo revision restated to the cut's share basis, not an original vendor vintage; the unofficial endpoint grants no redistribution.",
   "Sectors come from the Wikipedia list revision in force at the cut, not from S&P's official file.",

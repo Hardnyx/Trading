@@ -45,6 +45,10 @@ class InputAuditTests(unittest.TestCase):
         market = copy.deepcopy(MARKET)
         market["reconstruction"]["members_excluded"] = []
         self.assertEqual(audit.universe(market, BINDING, CUT)["unexplained_missing"], ["BBB"])
+        market["reconstruction"]["failed"] = ["BBB"]  # no series at the cut: declared by the snapshot
+        result = audit.universe(market, BINDING, CUT)
+        self.assertTrue(result["passed"])
+        self.assertEqual(result["declared_exclusions"]["no_price_series_at_cut"], ["BBB"])
 
     def test_a_price_outside_the_filed_basis_is_rejected(self):
         market = copy.deepcopy(MARKET)

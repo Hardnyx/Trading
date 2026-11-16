@@ -152,6 +152,7 @@
      "FMC",
      "TFX"
     ],
+    "no_price_series_at_cut": [],
     "eps_withheld_by_engine_guards": [
      "ABNB",
      "BRK-B",

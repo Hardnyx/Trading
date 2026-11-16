@@ -117,6 +117,7 @@
     ],
     "unbound_weight": 0.007725,
     "no_sector_in_list_revision": [],
+    "no_price_series_at_cut": [],
     "eps_withheld_by_engine_guards": [
      "ABNB",
      "BRK-B",

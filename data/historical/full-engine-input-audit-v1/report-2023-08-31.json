@@ -245,6 +245,7 @@
     "no_sector_in_list_revision": [
      "AAP"
     ],
+    "no_price_series_at_cut": [],
     "eps_withheld_by_engine_guards": [
      "BRK-B",
      "CPRT",

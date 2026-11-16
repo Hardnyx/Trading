@@ -3,10 +3,9 @@
  "cuts": 48,
  "counts": {
   "excluded": 22,
-  "audited-pass": 21,
-  "pending": 5
+  "audited-pass": 26
  },
- "every_cut_accounted": false,
+ "every_cut_accounted": true,
  "rows": [
   {
    "cut": "2022-10-31",
@@ -467,8 +466,12 @@
    "spy_as_of": "2025-12-31",
    "spy_age_days": 90,
    "spy_source_status": "source-available",
-   "status": "pending",
-   "reason": "fresh source; reconstruction not yet run"
+   "status": "audited-pass",
+   "failed_checks": [],
+   "members": 486,
+   "spy_weight_covered": 0.982876,
+   "spy_weight_with_ttm_eps": 0.948564,
+   "snapshot_sha256": "98693ed2e42f3369e3253b3525de3a3c3abc48fccf0230818fadb2103027be07"
   },
   {
    "cut": "2026-04-30",
@@ -476,8 +479,12 @@
    "spy_as_of": "2025-12-31",
    "spy_age_days": 120,
    "spy_source_status": "source-available",
-   "status": "pending",
-   "reason": "fresh source; reconstruction not yet run"
+   "status": "audited-pass",
+   "failed_checks": [],
+   "members": 491,
+   "spy_weight_covered": 0.99533,
+   "spy_weight_with_ttm_eps": 0.94938,
+   "snapshot_sha256": "8a3ab931db424e2915ec0f222ec78aba77d715fa72f2a086005ec811571240ac"
   },
   {
    "cut": "2026-05-29",
@@ -494,8 +501,12 @@
    "spy_as_of": "2026-03-31",
    "spy_age_days": 91,
    "spy_source_status": "source-available",
-   "status": "pending",
-   "reason": "fresh source; reconstruction not yet run"
+   "status": "audited-pass",
+   "failed_checks": [],
+   "members": 493,
+   "spy_weight_covered": 0.995704,
+   "spy_weight_with_ttm_eps": 0.94254,
+   "snapshot_sha256": "34de8b680bd10da4456e94030d7c7b4bbf5c839c1ea39b450b25cbcc84a0a540"
   },
   {
    "cut": "2026-07-31",
@@ -512,8 +523,12 @@
    "spy_as_of": "2026-06-30",
    "spy_age_days": 62,
    "spy_source_status": "source-available",
-   "status": "pending",
-   "reason": "fresh source; reconstruction not yet run"
+   "status": "audited-pass",
+   "failed_checks": [],
+   "members": 496,
+   "spy_weight_covered": 0.986552,
+   "spy_weight_with_ttm_eps": 0.948022,
+   "snapshot_sha256": "7edd5b8278a9ea994e9c6aa77cccf8d2a9f5eaf83dc9ded97591c2420708b867"
   },
   {
    "cut": "2026-09-30",
@@ -521,8 +536,12 @@
    "spy_as_of": "2026-06-30",
    "spy_age_days": 92,
    "spy_source_status": "source-available",
-   "status": "pending",
-   "reason": "fresh source; reconstruction not yet run"
+   "status": "audited-pass",
+   "failed_checks": [],
+   "members": 495,
+   "spy_weight_covered": 0.988122,
+   "spy_weight_with_ttm_eps": 0.94514,
+   "snapshot_sha256": "56d64a2bc6a8e7d103486546b4924a55d22bd67467998a40781174108d8c189c"
   }
  ],
  "development_period_only": true,

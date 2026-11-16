@@ -86,7 +86,10 @@ def availability(market, volatility, cut):
 
 def universe(market, binding, cut):
     stocks = {a["symbol"]: a for a in market["assets"] if a["type"] == "stock"}
-    declared = {e["symbol"] for e in market["reconstruction"]["members_excluded"]}
+    # Members without a sector in the list revision, or whose series could not be built at the cut
+    # (a spin-off listed weeks before it, HONA in 2026), are declared by the snapshot.
+    failed = set(market["reconstruction"].get("failed") or [])
+    declared = {e["symbol"] for e in market["reconstruction"]["members_excluded"]} | failed
     verified = {p["symbol"]: p for p in binding["positions"] if p["status"] == "verified"}
     unexplained = sorted(set(verified) - set(stocks) - declared)
     extra = sorted(set(stocks) - set(verified))
@@ -100,7 +103,8 @@ def universe(market, binding, cut):
             "unexplained_missing": unexplained, "not_in_binding": extra,
             "declared_exclusions": {"unbound_positions": unbound,
                                     "unbound_weight": round(sum(u["weight"] for u in unbound) / total, 6),
-                                    "no_sector_in_list_revision": sorted(declared),
+                                    "no_sector_in_list_revision": sorted(declared - failed),
+                                    "no_price_series_at_cut": sorted(failed & set(verified)),
                                     "eps_withheld_by_engine_guards": sorted(s for s, a in stocks.items()
                                                                             if not (a.get("financials") or {}).get("eps"))}}
 
