@@ -1,0 +1,97 @@
+{
+ "schema": "first-cut-engine-decision-v1",
+ "cut": "2024-09-30",
+ "price_as_of": "2024-09-30",
+ "computed_at": "2026-11-16T20:23:51.426Z",
+ "seconds": 74,
+ "engine_version": "0.35.0",
+ "price_kernel_version": "1.0.0",
+ "market_sha256": "52d922e281991d5227e73ce26801b264453290f1cbfb2752e6eeb418dcbacf68",
+ "volatility_sha256": "394e300f63c81656d0286fba8e219a3f390aabecfd78187b0aa6cd6b42e29962",
+ "universe": {
+  "assets": 577,
+  "stocks": 477
+ },
+ "settings": {
+  "seed": 20261024,
+  "horizon": 1,
+  "mandate": {
+   "objective": "growth",
+   "referenceCurrency": "USD",
+   "horizon": 1,
+   "maxDrawdown": 0.25,
+   "maxDrawdownProbability": 0.25,
+   "minimumCash": 0.05,
+   "monthlyWithdrawal": 0,
+   "withdrawals": [],
+   "terminalTarget": 0,
+   "capitalFloor": 0,
+   "maxLiquidityFailure": 0.02,
+   "fxSpot": 1,
+   "fxAnnualChange": 0,
+   "fxVolatility": 0,
+   "fxMarketCorrelation": 0,
+   "fxConfirmed": false,
+   "benchmark": "SPY",
+   "riskAversion": 5,
+   "dividendPolicy": "cash",
+   "dividendWithholding": 0,
+   "cashYield": 0,
+   "region": "us"
+  },
+  "volatility_mode": "hybrid",
+  "search": {
+   "candidates": 300,
+   "paths": 600,
+   "finalPaths": 3000
+  }
+ },
+ "status": "proposed",
+ "reason": null,
+ "positions": [
+  {
+   "symbol": "SGOV",
+   "weight": 0.25
+  },
+  {
+   "symbol": "CASH",
+   "weight": 0.05
+  },
+  {
+   "symbol": "SHV",
+   "weight": 0.2
+  },
+  {
+   "symbol": "LYB",
+   "weight": 0.15
+  },
+  {
+   "symbol": "CVS",
+   "weight": 0.1
+  },
+  {
+   "symbol": "PM",
+   "weight": 0.05
+  },
+  {
+   "symbol": "SNA",
+   "weight": 0.1
+  },
+  {
+   "symbol": "EOG",
+   "weight": 0.1
+  }
+ ],
+ "metrics": {
+  "mean": 0.06237589852528234,
+  "median": 0.04960313551967799,
+  "p05": -0.06680705319070372,
+  "p95": 0.23473242419873136,
+  "loss_probability": 0.284,
+  "cvar95": 0.09324348928180796
+ },
+ "warnings": [],
+ "outcomes_read": false,
+ "prospective": false,
+ "note": "Development-period reconstruction with the current engine; it says nothing about predictive skill until scored under a registered protocol."
+}
