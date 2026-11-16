@@ -3,8 +3,8 @@
  "cuts": 48,
  "counts": {
   "excluded": 22,
-  "audited-pass": 11,
-  "pending": 15
+  "audited-pass": 15,
+  "pending": 11
  },
  "every_cut_accounted": false,
  "rows": [
@@ -176,8 +176,12 @@
    "spy_as_of": "2023-09-30",
    "spy_age_days": 90,
    "spy_source_status": "source-available",
-   "status": "pending",
-   "reason": "fresh source; reconstruction not yet run"
+   "status": "audited-pass",
+   "failed_checks": [],
+   "members": 461,
+   "spy_weight_covered": 0.956874,
+   "spy_weight_with_ttm_eps": 0.91536,
+   "snapshot_sha256": "411af3882fbe56ab36521c833320de1bc07d3bfc45a473ea0f746b45e1731d0d"
   },
   {
    "cut": "2024-01-31",
@@ -203,8 +207,12 @@
    "spy_as_of": "2023-12-31",
    "spy_age_days": 88,
    "spy_source_status": "source-available",
-   "status": "pending",
-   "reason": "fresh source; reconstruction not yet run"
+   "status": "audited-pass",
+   "failed_checks": [],
+   "members": 466,
+   "spy_weight_covered": 0.962604,
+   "spy_weight_with_ttm_eps": 0.925881,
+   "snapshot_sha256": "cd53776f681827e10d35bf0ea1f3b049134b0641badfddaccf1522b67614ef0f"
   },
   {
    "cut": "2024-04-30",
@@ -221,8 +229,12 @@
    "spy_as_of": "2024-03-31",
    "spy_age_days": 61,
    "spy_source_status": "source-available",
-   "status": "pending",
-   "reason": "fresh source; reconstruction not yet run"
+   "status": "audited-pass",
+   "failed_checks": [],
+   "members": 466,
+   "spy_weight_covered": 0.96287,
+   "spy_weight_with_ttm_eps": 0.924644,
+   "snapshot_sha256": "1e48f01bba3851de9ca3fbf918dec09b173ad7641ed7a5e72c53108947d619fa"
   },
   {
    "cut": "2024-06-28",
@@ -230,8 +242,12 @@
    "spy_as_of": "2024-03-31",
    "spy_age_days": 89,
    "spy_source_status": "source-available",
-   "status": "pending",
-   "reason": "fresh source; reconstruction not yet run"
+   "status": "audited-pass",
+   "failed_checks": [],
+   "members": 465,
+   "spy_weight_covered": 0.962524,
+   "spy_weight_with_ttm_eps": 0.870789,
+   "snapshot_sha256": "8df98a2d503a41982772477b13ca552c4af172eaa8087816e2b14c599aa7015b"
   },
   {
    "cut": "2024-07-31",
