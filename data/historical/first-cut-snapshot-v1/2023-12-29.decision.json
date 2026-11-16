@@ -1,0 +1,71 @@
+{
+ "schema": "first-cut-engine-decision-v1",
+ "cut": "2023-12-29",
+ "price_as_of": "2023-12-29",
+ "computed_at": "2026-11-16T17:35:34.911Z",
+ "seconds": 90,
+ "engine_version": "0.35.0",
+ "price_kernel_version": "1.0.0",
+ "market_sha256": "411af3882fbe56ab36521c833320de1bc07d3bfc45a473ea0f746b45e1731d0d",
+ "volatility_sha256": "dabb0f84c768c9043a4a78813eeec3371cf8af55f8acb1a1272406acf804f63b",
+ "universe": {
+  "assets": 561,
+  "stocks": 461
+ },
+ "settings": {
+  "seed": 20261024,
+  "horizon": 1,
+  "mandate": {
+   "objective": "growth",
+   "referenceCurrency": "USD",
+   "horizon": 1,
+   "maxDrawdown": 0.25,
+   "maxDrawdownProbability": 0.25,
+   "minimumCash": 0.05,
+   "monthlyWithdrawal": 0,
+   "withdrawals": [],
+   "terminalTarget": 0,
+   "capitalFloor": 0,
+   "maxLiquidityFailure": 0.02,
+   "fxSpot": 1,
+   "fxAnnualChange": 0,
+   "fxVolatility": 0,
+   "fxMarketCorrelation": 0,
+   "fxConfirmed": false,
+   "benchmark": "SPY",
+   "riskAversion": 5,
+   "dividendPolicy": "cash",
+   "dividendWithholding": 0,
+   "cashYield": 0,
+   "region": "us"
+  },
+  "volatility_mode": "hybrid",
+  "search": {
+   "candidates": 300,
+   "paths": 600,
+   "finalPaths": 3000
+  }
+ },
+ "status": "hold",
+ "reason": "Mantener: ninguna transición del conjunto comprobado superó los controles. transición descartada en Base (mejora insuficiente); Sin re-rating (mejora insuficiente); Margen y crédito (mejora insuficiente); Combinado (mejora insuficiente); Baja convicción (mejora insuficiente).",
+ "positions": [
+  {
+   "symbol": "CASH",
+   "weight": 1,
+   "price": 1,
+   "costBasis": 1
+  }
+ ],
+ "metrics": {
+  "mean": 0,
+  "median": 0,
+  "p05": 0,
+  "p95": 0,
+  "loss_probability": 0,
+  "cvar95": 0
+ },
+ "warnings": [],
+ "outcomes_read": false,
+ "prospective": false,
+ "note": "Development-period reconstruction with the current engine; it says nothing about predictive skill until scored under a registered protocol."
+}
