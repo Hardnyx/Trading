@@ -1,0 +1,71 @@
+{
+ "schema": "first-cut-engine-decision-v1",
+ "cut": "2026-08-31",
+ "price_as_of": "2026-08-31",
+ "computed_at": "2026-11-16T21:27:43.620Z",
+ "seconds": 74,
+ "engine_version": "0.35.0",
+ "price_kernel_version": "1.0.0",
+ "market_sha256": "7edd5b8278a9ea994e9c6aa77cccf8d2a9f5eaf83dc9ded97591c2420708b867",
+ "volatility_sha256": "88a86c49f8c2ffe52c0625699dbd200bcac9663bd2f43c0eafb91da7c74acaec",
+ "universe": {
+  "assets": 596,
+  "stocks": 496
+ },
+ "settings": {
+  "seed": 20261024,
+  "horizon": 1,
+  "mandate": {
+   "objective": "growth",
+   "referenceCurrency": "USD",
+   "horizon": 1,
+   "maxDrawdown": 0.25,
+   "maxDrawdownProbability": 0.25,
+   "minimumCash": 0.05,
+   "monthlyWithdrawal": 0,
+   "withdrawals": [],
+   "terminalTarget": 0,
+   "capitalFloor": 0,
+   "maxLiquidityFailure": 0.02,
+   "fxSpot": 1,
+   "fxAnnualChange": 0,
+   "fxVolatility": 0,
+   "fxMarketCorrelation": 0,
+   "fxConfirmed": false,
+   "benchmark": "SPY",
+   "riskAversion": 5,
+   "dividendPolicy": "cash",
+   "dividendWithholding": 0,
+   "cashYield": 0,
+   "region": "us"
+  },
+  "volatility_mode": "hybrid",
+  "search": {
+   "candidates": 300,
+   "paths": 600,
+   "finalPaths": 3000
+  }
+ },
+ "status": "hold",
+ "reason": "Mantener: transición descartada en Base (Pérdida); Sin re-rating (Pérdida); Margen y crédito (Pérdida); Combinado (Pérdida); Baja convicción (Pérdida); Colas Student (Pérdida).",
+ "positions": [
+  {
+   "symbol": "CASH",
+   "weight": 1,
+   "price": 1,
+   "costBasis": 1
+  }
+ ],
+ "metrics": {
+  "mean": 0,
+  "median": 0,
+  "p05": 0,
+  "p95": 0,
+  "loss_probability": 0,
+  "cvar95": 0
+ },
+ "warnings": [],
+ "outcomes_read": false,
+ "prospective": false,
+ "note": "Development-period reconstruction with the current engine; it says nothing about predictive skill until scored under a registered protocol."
+}

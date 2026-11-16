@@ -1,0 +1,104 @@
+{
+ "schema": "issuer-archive-bond-profiles-v1",
+ "cut": "2026-08-31",
+ "funds": {
+  "AGG": {
+   "status": "missing-duration",
+   "captured_at": "2026-08-24T07:33:57+00:00",
+   "archive_url": "https://web.archive.org/web/20260824073357/https://www.ishares.com/us/products/239458/ishares-core-total-us-bond-market-etf",
+   "raw_sha256": "4c818459d5b899b579cff484705e243f81c1e24c9cd14310777e5d4a8338955f",
+   "profile": {},
+   "rejected_after_cut": []
+  },
+  "EMB": {
+   "status": "missing-duration",
+   "captured_at": "2026-07-27T12:31:27+00:00",
+   "archive_url": "https://web.archive.org/web/20260727123127/https://www.ishares.com/us/products/239572/ishares-jp-morgan-usd-emerging-markets-bond-etf",
+   "raw_sha256": "7274c14ba1f8cce69549c931862c05a5a7d5a8095775614e4fc62ac629dffa3d",
+   "profile": {},
+   "rejected_after_cut": []
+  },
+  "HYG": {
+   "status": "missing-duration",
+   "captured_at": "2026-07-27T12:09:54+00:00",
+   "archive_url": "https://web.archive.org/web/20260727120954/https://www.ishares.com/us/products/239565/ishares-iboxx-high-yield-corporate-bond-etf",
+   "raw_sha256": "94348a55119f1626896f728dc3ba06de622b04562f60a5aead7a6d8d924c07ad",
+   "profile": {},
+   "rejected_after_cut": []
+  },
+  "IEF": {
+   "status": "missing-duration",
+   "captured_at": "2026-08-09T20:20:17+00:00",
+   "archive_url": "https://web.archive.org/web/20260809202017/https://www.ishares.com/us/products/239456/",
+   "raw_sha256": "725002209dcdfd9200c8e3c014269b2bb76374a267c2b804a7bb008129909859",
+   "profile": {},
+   "rejected_after_cut": []
+  },
+  "IEI": {
+   "status": "missing-duration",
+   "captured_at": "2026-07-22T22:29:49+00:00",
+   "archive_url": "https://web.archive.org/web/20260722222949/https://www.ishares.com/us/products/239455/ishares-3-7-year-treasury-bond-etf",
+   "raw_sha256": "48875e6febc6a30d618c984ecea1582b245eb6e7e148047536f3c9674c9159c9",
+   "profile": {},
+   "rejected_after_cut": []
+  },
+  "IGSB": {
+   "status": "missing-duration",
+   "captured_at": "2026-07-27T12:09:08+00:00",
+   "archive_url": "https://web.archive.org/web/20260727120908/https://www.ishares.com/us/products/239451/ishares-13-year-credit-bond-etf",
+   "raw_sha256": "bb6018bb5633c11326ca57b61b54e2146c1568aa37e14110c8e71fc9f79f13ec",
+   "profile": {},
+   "rejected_after_cut": []
+  },
+  "LQD": {
+   "status": "missing-duration",
+   "captured_at": "2026-08-10T05:20:51+00:00",
+   "archive_url": "https://web.archive.org/web/20260810052051/https://www.ishares.com/us/products/239566/ishares-iboxx-investment-grade-corporate-bond-etf",
+   "raw_sha256": "b5f41d9d362d34290cfc5adb4f1a61c63bb2e91422eef3a2801cc296746354bf",
+   "profile": {},
+   "rejected_after_cut": []
+  },
+  "SGOV": {
+   "status": "missing-duration",
+   "captured_at": "2026-07-29T19:40:02+00:00",
+   "archive_url": "https://web.archive.org/web/20260729194002/https://www.ishares.com/us/products/314116/ishares-0-3-month-treasury-bond-etf",
+   "raw_sha256": "5f656d997a4196f398d984c7760e63faa1c51eb3b2c23e0efcd0b1def84463b4",
+   "profile": {},
+   "rejected_after_cut": []
+  },
+  "SHV": {
+   "status": "missing-duration",
+   "captured_at": "2026-08-29T03:28:31+00:00",
+   "archive_url": "https://web.archive.org/web/20260829032831/https://www.ishares.com/us/products/239466/ishares-short-treasury-bond-etf",
+   "raw_sha256": "e5cf172afad0da9e305d1295f2fef12f79f0d6ad9c9220a3ae302b63946d1a84",
+   "profile": {},
+   "rejected_after_cut": []
+  },
+  "SHY": {
+   "status": "missing-duration",
+   "captured_at": "2026-07-27T10:25:54+00:00",
+   "archive_url": "https://web.archive.org/web/20260727102554/https://www.ishares.com/us/products/239452/ishares-1-3-year-treasury-bond-etf",
+   "raw_sha256": "45627a92dc9451836c1a481144c7b95853fb27b2c189e9e0303a46f0039947ee",
+   "profile": {},
+   "rejected_after_cut": []
+  },
+  "TIP": {
+   "status": "missing-duration",
+   "captured_at": "2026-07-22T13:15:18+00:00",
+   "archive_url": "https://web.archive.org/web/20260722131518/https://www.ishares.com/us/products/239467/ishares-tips-bond-etf",
+   "raw_sha256": "f3cd53ed63699d6e3606188ea5865a1740592862cfb00dadf415884b4d225660",
+   "profile": {},
+   "rejected_after_cut": []
+  },
+  "TLT": {
+   "status": "missing-duration",
+   "captured_at": "2026-07-27T12:22:39+00:00",
+   "archive_url": "https://web.archive.org/web/20260727122239/https://www.ishares.com/us/products/239454/ishares-20-year-treasury-bond-etf",
+   "raw_sha256": "6d2e70897ae75727d2743f7af2d892317eac088c98812e9743fb18e5d7b6b349",
+   "profile": {},
+   "rejected_after_cut": []
+  }
+ },
+ "source": "issuer pages captured by the Internet Archive before the cut",
+ "estimated_values": false
+}
