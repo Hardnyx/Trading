@@ -1,0 +1,93 @@
+{
+ "schema": "first-cut-engine-decision-v1",
+ "cut": "2024-08-30",
+ "price_as_of": "2024-08-30",
+ "computed_at": "2026-11-16T19:28:15.532Z",
+ "seconds": 77,
+ "engine_version": "0.35.0",
+ "price_kernel_version": "1.0.0",
+ "market_sha256": "c7a5a0d64a9c1113e9a5131207563830f9275fa906dd37b70c208839e36e508d",
+ "volatility_sha256": "da940cf5f0cf313a4fcb20d77cae4acf40854d6c4405a8080702404c8a337ec7",
+ "universe": {
+  "assets": 572,
+  "stocks": 472
+ },
+ "settings": {
+  "seed": 20261024,
+  "horizon": 1,
+  "mandate": {
+   "objective": "growth",
+   "referenceCurrency": "USD",
+   "horizon": 1,
+   "maxDrawdown": 0.25,
+   "maxDrawdownProbability": 0.25,
+   "minimumCash": 0.05,
+   "monthlyWithdrawal": 0,
+   "withdrawals": [],
+   "terminalTarget": 0,
+   "capitalFloor": 0,
+   "maxLiquidityFailure": 0.02,
+   "fxSpot": 1,
+   "fxAnnualChange": 0,
+   "fxVolatility": 0,
+   "fxMarketCorrelation": 0,
+   "fxConfirmed": false,
+   "benchmark": "SPY",
+   "riskAversion": 5,
+   "dividendPolicy": "cash",
+   "dividendWithholding": 0,
+   "cashYield": 0,
+   "region": "us"
+  },
+  "volatility_mode": "hybrid",
+  "search": {
+   "candidates": 300,
+   "paths": 600,
+   "finalPaths": 3000
+  }
+ },
+ "status": "proposed",
+ "reason": null,
+ "positions": [
+  {
+   "symbol": "AGG",
+   "weight": 0.15
+  },
+  {
+   "symbol": "SGOV",
+   "weight": 0.3
+  },
+  {
+   "symbol": "CASH",
+   "weight": 0.05
+  },
+  {
+   "symbol": "CSCO",
+   "weight": 0.2
+  },
+  {
+   "symbol": "LYB",
+   "weight": 0.2
+  },
+  {
+   "symbol": "TPR",
+   "weight": 0.05
+  },
+  {
+   "symbol": "BBY",
+   "weight": 0.05
+  }
+ ],
+ "metrics": {
+  "mean": 0.06880568630362875,
+  "median": 0.05013586178063667,
+  "p05": -0.10369033093160439,
+  "p95": 0.2834408208450927,
+  "loss_probability": 0.304,
+  "cvar95": 0.13147491847692996
+ },
+ "warnings": [],
+ "outcomes_read": false,
+ "prospective": false,
+ "note": "Development-period reconstruction with the current engine; it says nothing about predictive skill until scored under a registered protocol."
+}
