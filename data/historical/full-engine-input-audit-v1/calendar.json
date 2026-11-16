@@ -3,8 +3,8 @@
  "cuts": 48,
  "counts": {
   "excluded": 22,
-  "audited-pass": 7,
-  "pending": 19
+  "audited-pass": 8,
+  "pending": 18
  },
  "every_cut_accounted": false,
  "rows": [
@@ -36,8 +36,12 @@
    "spy_as_of": "2022-09-30",
    "spy_age_days": 91,
    "spy_source_status": "source-available",
-   "status": "pending",
-   "reason": "fresh source; reconstruction not yet run"
+   "status": "audited-pass",
+   "failed_checks": [],
+   "members": 456,
+   "spy_weight_covered": 0.949448,
+   "spy_weight_with_ttm_eps": 0.817257,
+   "snapshot_sha256": "92d421befb2b449cfb2d8318cc83cdeefedb689cd0fd7311f41c314f6eb69710"
   },
   {
    "cut": "2023-01-31",
