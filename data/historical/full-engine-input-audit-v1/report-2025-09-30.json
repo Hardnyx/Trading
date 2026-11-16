@@ -1,0 +1,174 @@
+{
+ "schema": "full-engine-first-cut-input-audit-v1",
+ "cut": "2025-09-30",
+ "snapshot_sha256": "6169fb1252184f76976e9336f3265e9d6f8a67cecbc87a3fb11213c47e0386af",
+ "volatility_sha256": "dbc5e7ef390037ae4d52ddab104fd0d85a8d91fec51b0ed9bad68fd2dfca7e02",
+ "checks": {
+  "availability": {
+   "passed": true,
+   "fields_after_cut": [],
+   "count": 0
+  },
+  "universe": {
+   "passed": true,
+   "members": 485,
+   "spy_weight_covered": 0.993353,
+   "spy_weight_with_ttm_eps": 0.941754,
+   "unexplained_missing": [],
+   "not_in_binding": [],
+   "declared_exclusions": {
+    "unbound_positions": [
+     {
+      "cusip": "934423104",
+      "name": "Warner Bros Discovery Inc",
+      "weight": 0.0004914036757500001,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "42809H107",
+      "name": "Hess Corp",
+      "weight": 0.00073151582386,
+      "status": "no-ticker-candidate"
+     },
+     {
+      "cusip": "931427108",
+      "name": "Walgreens Boots Alliance Inc",
+      "weight": 0.00015684343107,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "000000000",
+      "name": "Amcor PLC",
+      "weight": 0.0004001734412,
+      "status": "no-ticker-candidate"
+     },
+     {
+      "cusip": "127097103",
+      "name": "Coterra Energy Inc",
+      "weight": 0.00036894393506,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "92556H206",
+      "name": "Paramount Global",
+      "weight": 0.00014631111287,
+      "status": "price-mismatch"
+     },
+     {
+      "cusip": "487836108",
+      "name": "Kellanova",
+      "weight": 0.00040683086782,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "15677J108",
+      "name": "Dayforce Inc",
+      "weight": 0.00016619603097,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "48203R104",
+      "name": "Juniper Networks Inc",
+      "weight": 0.00025062225526,
+      "status": "no-ticker-candidate"
+     },
+     {
+      "cusip": "49177J102",
+      "name": "Kenvue Inc",
+      "weight": 0.00076339363533,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "053484101",
+      "name": "AvalonBay Communities Inc",
+      "weight": 0.00054999792187,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "285512109",
+      "name": "Electronic Arts Inc",
+      "weight": 0.000694056618,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "03662Q105",
+      "name": "ANSYS Inc",
+      "weight": 0.00058816244443,
+      "status": "no-ticker-candidate"
+     },
+     {
+      "cusip": "460690100",
+      "name": "Interpublic Group of Cos Inc/The",
+      "weight": 0.00017345204911,
+      "status": "no-public-series"
+     },
+     {
+      "cusip": "436440101",
+      "name": "Hologic Inc",
+      "weight": 0.00027793535468,
+      "status": "no-public-series"
+     }
+    ],
+    "unbound_weight": 0.006167,
+    "no_sector_in_list_revision": [
+     "CZR",
+     "ENPH",
+     "MKTX",
+     "RAL"
+    ],
+    "eps_withheld_by_engine_guards": [
+     "ABNB",
+     "AOS",
+     "BRK-B",
+     "ERIE",
+     "EXC",
+     "FAST",
+     "FCX",
+     "GDDY",
+     "HAL",
+     "HSY",
+     "KIM",
+     "KKR",
+     "MNST",
+     "ORLY",
+     "REG",
+     "SPGI",
+     "STZ",
+     "V",
+     "VRSN",
+     "XOM"
+    ]
+   }
+  },
+  "identity": {
+   "passed": true,
+   "report_date": "2025-06-30",
+   "tolerance": 0.005,
+   "mismatches": []
+  },
+  "units": {
+   "passed": true,
+   "problems": []
+  },
+  "engine_inputs": {
+   "passed": true,
+   "market_bytes": true,
+   "volatility_bytes": true,
+   "engine_version": true,
+   "decision_valid": true,
+   "weights_sum_to_one": true,
+   "outcomes_not_read": true
+  }
+ },
+ "input_checks_passed": true,
+ "status": "inputs-pass-with-declared-exclusions",
+ "limitations": [
+  "Prices are the current Yahoo revision restated to the cut's share basis, not an original vendor vintage; the unofficial endpoint grants no redistribution.",
+  "Sectors come from the Wikipedia list revision in force at the cut, not from S&P's official file.",
+  "The ETF list is the current engine's list, chosen after the cut.",
+  "The engine, its parameters and the reference preset were developed after the cut: the decision is a development-period reconstruction and cannot be confirmatory evidence.",
+  "Members bought out or delisted after the cut without a free series are excluded positions, not priced."
+ ],
+ "outcomes_read": false,
+ "confirmatory_eligible": false
+}
