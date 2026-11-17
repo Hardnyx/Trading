@@ -1,0 +1,250 @@
+{
+ "schema": "evidence-timestamp-manifest-v1",
+ "created_utc": "2026-11-17T05:19:51.523122+00:00",
+ "files": [
+  {
+   "path": "data/distributions/histories/AGG/0fd9975419c5613535872bf00bbc095e2ab01001bd9fe4cb86a91115d9e25de7.json",
+   "sha256": "dfec179d26bc0a58300b734959af9c05ff049c38d8a2439c67155d748677c562"
+  },
+  {
+   "path": "data/distributions/histories/EMB/92b05140ae7d96ba2d20104ef3ecfdae85736a9781807163242587603640038e.json",
+   "sha256": "cfd436bb5b1840821091b3f2e8b45e095ad31b7064f15517ba367b3ba0406fb0"
+  },
+  {
+   "path": "data/distributions/histories/HYG/251d43e30c3fbac5822fa5e3cb2290892cbdfcfa7a6d04f6eedfc5c1c1a0532d.json",
+   "sha256": "7c79b0f2c9b975fe775c8d7745a1ccb18c017fd16239fe1290c4fee8d998a3bf"
+  },
+  {
+   "path": "data/distributions/histories/IEF/b11a55d0a5b61547709bde83f4b10331e78ea850c9396d2ff1589f08a2344cec.json",
+   "sha256": "ed9727ee3596a390c5f748f857e3e1075773b6afadcce703520d216f5940b488"
+  },
+  {
+   "path": "data/distributions/histories/IEI/65e0dd0f36ba25caa3eb598fc9ff459a3777fdf2379f6a9c935c24afd7ac91db.json",
+   "sha256": "b08e39f610e1ee1beec3d5315071d0562f0023610c39bda6e4daeefeb9ea406e"
+  },
+  {
+   "path": "data/distributions/histories/IGSB/c9255b65972abd653ec082d497d896ca2215a85204de1975203a2c84a29c09dd.json",
+   "sha256": "017f018ff81498364b98b71069dd007495528fe521616e1587d22866dbbb29c2"
+  },
+  {
+   "path": "data/distributions/histories/LQD/3750fbc903ede7f90721baa3cf11eae0a230b10b20cdf7d033a479e798b74619.json",
+   "sha256": "e4e5951fc6aec8cadf6122a9d9c60b6126cda155757f0be7f5db4fd12a4af4a8"
+  },
+  {
+   "path": "data/distributions/histories/SGOV/ea934bf74bc454bb970b7321689a7d1a266ada1a534afb52746fba5b6f73c99d.json",
+   "sha256": "a0f9043914bbd7e71432e34ea3ea8bb0a2e1bc22f9922dbf7348c036f3a746cb"
+  },
+  {
+   "path": "data/distributions/histories/SHV/94d8044afa69acf6d983da09e57860e13ec9211d9fc8da82c8c566fe812609d3.json",
+   "sha256": "4c9dc568a63f9a4848d5872d6f5a0401d68a17e716e96a888538a6a7f2a40aac"
+  },
+  {
+   "path": "data/distributions/histories/SHY/bddfddde69fbb6cd6c34440af572cd0b1afa425d8e959d66f9627981bdceaa8a.json",
+   "sha256": "813b3258512620edc8b4f76d0d260bf4dd120ffebcfc350cdae621025eb43e51"
+  },
+  {
+   "path": "data/distributions/histories/TIP/9d8ac48c86b502573e7ab317c101d9742bf164ff215c9a2dc5cccb22b03e4bff.json",
+   "sha256": "9c8f537212f7e45be9548cb78e1866b775998442f01868544857db47415b22d2"
+  },
+  {
+   "path": "data/distributions/histories/TLT/0fb15d59840be143c707ec43a6b818acb2a9294062530efc6462bd59c20be5c4.json",
+   "sha256": "42cc668d2485348ccb90ec3559a4077c80f1409950ee49841ac5f720ad28b4e3"
+  },
+  {
+   "path": "data/holdings/2026-06-30/KWEB-25c5d1e13830f731.json.gz",
+   "sha256": "76582af2b36c4431de25e9386a526a2720227bfdb795e75383161d28b3528340"
+  },
+  {
+   "path": "data/holdings/2026-06-30/SMH-782cd9d2934224f7.json.gz",
+   "sha256": "dbd7f6a651515dd7295601d8b1dfbcbd5d755443f74301b64a0cbbc7104a326b"
+  },
+  {
+   "path": "data/holdings/2026-06-30/VEA-8170f11df601b066.json.gz",
+   "sha256": "a96c33c6e44da70d75c099ac33f6ee22786f6237676f1bdac239164cb4187fb0"
+  },
+  {
+   "path": "data/holdings/2026-06-30/VTI-b36b3d90f99b5c9d.json.gz",
+   "sha256": "954ef2b76f3ff305d3e9f3755f6576d726b08b5a68ed162c87ac003a162f3bf3"
+  },
+  {
+   "path": "data/holdings/2026-06-30/VTV-ec55228eae9a9419.json.gz",
+   "sha256": "4f03e5d9471bb12482c72d897a75e3f794198b4883e2febbd6785fe946384e5a"
+  },
+  {
+   "path": "data/holdings/2026-06-30/VUG-2c04a48e9a7893a9.json.gz",
+   "sha256": "0dbf2216edba8217e0012d0cf22d54bd9ef93cac18628baca556f11e5dce1a41"
+  },
+  {
+   "path": "data/holdings/2026-07-31/VIG-69c4a2b36e9d058f.json.gz",
+   "sha256": "557cfaf8b0a650238dff777bf2b1c7bb8ae638e7b969f97b2bbcb96795c3b5bc"
+  },
+  {
+   "path": "data/holdings/2026-07-31/VNQ-c019f949b1e689a6.json.gz",
+   "sha256": "e3b8f0bfd4820096293da8734e0335b7dc8c999705ac69abbba52206ace1d62f"
+  },
+  {
+   "path": "data/holdings/2026-07-31/VWO-f90b62de08983abc.json.gz",
+   "sha256": "8968dbe1fee6b79efd8e04faca032da2a59f7bc0f77d20f520c01b83b81a7c6d"
+  },
+  {
+   "path": "data/holdings/2026-07-31/VXUS-5ee1dd5fe8ef5f7c.json.gz",
+   "sha256": "29c029a905007e6c8a9f0b6c2db0da8cebbdc5e8a896bae7727f61f545991cce"
+  },
+  {
+   "path": "data/holdings/2026-08-31/SCHD-3409e373e5208a0d.json.gz",
+   "sha256": "cee991a999f9db3d0aaceff6f1aec2eaa746d0e673c24e88215ba83f2a84cc2b"
+  },
+  {
+   "path": "data/holdings/2026-11-13/DGRO-a9c7ee653b912fed.json.gz",
+   "sha256": "2089af206efedb86a967c0262c356f4e8d44b0c3d8901619b99e1250d6257e4b"
+  },
+  {
+   "path": "data/holdings/2026-11-13/DIA-d0a848134c7dd8b1.json.gz",
+   "sha256": "12b668a44b355b95549c3e0bdfb1d23ad630772f02a57f1f7308b40c8925e889"
+  },
+  {
+   "path": "data/holdings/2026-11-13/ECH-14e4cc35148a5035.json.gz",
+   "sha256": "858b0f3819af355f3430d57a73e856ff61f5bb7fda2bdde8932759686bae957c"
+  },
+  {
+   "path": "data/holdings/2026-11-13/EEM-de0263d8732befdf.json.gz",
+   "sha256": "21dceabb37adfe9998090304a1ccc378d03faf2d9f64b4b540b629bba0753317"
+  },
+  {
+   "path": "data/holdings/2026-11-13/EFA-c087224ffc9b2687.json.gz",
+   "sha256": "d637de5759962eb479eee4fb3d8f7ed29e6f55f60814abe7d7df058d4fb4d9f0"
+  },
+  {
+   "path": "data/holdings/2026-11-13/EPU-d9661985fdd08090.json.gz",
+   "sha256": "e9d5589c1a73de055d7302b23f11d517a2e54091ce8e1d9071c8ee9064912b84"
+  },
+  {
+   "path": "data/holdings/2026-11-13/EWA-1ab7a74061e8263a.json.gz",
+   "sha256": "22c0efef1c89bdd56ebb92f3fccb2c5a28f24fb93a178e73133c3b51a475ce01"
+  },
+  {
+   "path": "data/holdings/2026-11-13/EWC-a77155cc6fbdb924.json.gz",
+   "sha256": "e1879edf290bbb9d58b7cea22fefcbbf1b7ca515927f27bcdc2a5513b4ca874f"
+  },
+  {
+   "path": "data/holdings/2026-11-13/EWG-b8c22ee1e89dcda2.json.gz",
+   "sha256": "d72b4402e765bd4209791a4b6ae5bed570cfb467fbee125d9af7e6884b651cbf"
+  },
+  {
+   "path": "data/holdings/2026-11-13/EWJ-e41c1f31e578584f.json.gz",
+   "sha256": "b9d3ff39619e97d676dca039e04eb014cdc02baf0e165887b5b15335e621fc91"
+  },
+  {
+   "path": "data/holdings/2026-11-13/EWT-1d3d473fb556c356.json.gz",
+   "sha256": "ad7fd8b31dcd90aa2f5aae7ce7a91139d98d7d5358e11b6886489a7f4c760c70"
+  },
+  {
+   "path": "data/holdings/2026-11-13/EWU-e30c045001cffe36.json.gz",
+   "sha256": "4f5e292ff59a3eea1e1c654b56dcbe43bc9ede49f8f3f6cc975f8d27f0646711"
+  },
+  {
+   "path": "data/holdings/2026-11-13/EWW-d06d17a5b7c46738.json.gz",
+   "sha256": "2924f3960411486e79043219fc2a948aed85561335595cbc97d49fa5251549fd"
+  },
+  {
+   "path": "data/holdings/2026-11-13/EWZ-4379fd02534e741c.json.gz",
+   "sha256": "d18de3109cc840b266847dbd1706474e7731f06ba527f7ffcd391f760165a7de"
+  },
+  {
+   "path": "data/holdings/2026-11-13/FXI-d4e4dc034b6b710f.json.gz",
+   "sha256": "4bfc4f499e43f846fb5b7a8e19da27f74ad83bfb7d19b75478fd95dcfa9d7e5c"
+  },
+  {
+   "path": "data/holdings/2026-11-13/IBB-46ff70150d313dff.json.gz",
+   "sha256": "ef1f9f113588146aee9831e25ada0cfa782eabcaee8c8f030cc89e720ba94cbf"
+  },
+  {
+   "path": "data/holdings/2026-11-13/INDA-8e224ac996ac0fcc.json.gz",
+   "sha256": "941c116c99209e8b2de1198519ceff44b68f723ccba1fc7ebe4b4065be5b118b"
+  },
+  {
+   "path": "data/holdings/2026-11-13/IWM-2fb1c462ce33eac8.json.gz",
+   "sha256": "4547eb03346c5a1c146b24a28d68009e9909fa2ae7f2bc9b0473af085e2ef19b"
+  },
+  {
+   "path": "data/holdings/2026-11-13/KRE-f80bb973208f70c1.json.gz",
+   "sha256": "45f8fd5ea4ef4867548b5e3f2fe5065fe370dc19a3fa2588790ac860d14a3925"
+  },
+  {
+   "path": "data/holdings/2026-11-13/MCHI-c33a253e55922a4c.json.gz",
+   "sha256": "5936627ef118874c1b23182cda20e171ef6e984e9a3fba6a332987712360efc2"
+  },
+  {
+   "path": "data/holdings/2026-11-13/MTUM-ac7222571f025b6f.json.gz",
+   "sha256": "bc6809135623c6a17c0bc6e65cc92ab78fe838bb373517f0bd0fe7232c480e72"
+  },
+  {
+   "path": "data/holdings/2026-11-13/QUAL-e60c02a1ed59ca22.json.gz",
+   "sha256": "d42687f15ab4969702891a186bb011c9b88ed871bacf39aceee65e8de9135a7d"
+  },
+  {
+   "path": "data/holdings/2026-11-13/SOXX-5f72ef3ce9842934.json.gz",
+   "sha256": "0c0515fc7431a0b26bbb649761253bf82a011b93a71c8b5b73dd11f901100b70"
+  },
+  {
+   "path": "data/holdings/2026-11-13/SPY-d83ab602e3abb24e.json.gz",
+   "sha256": "d74a6f0857235bd37ae86e8077d6e8bc7b8a121aff5adfed0d9c176c273905bc"
+  },
+  {
+   "path": "data/holdings/2026-11-13/USMV-70a1d9438188f30a.json.gz",
+   "sha256": "97ce6439e1f2f8bbb973faea6e9bcd5dfc9ff71073328d081bbe7f253642e0e3"
+  },
+  {
+   "path": "data/holdings/2026-11-13/XBI-fc6a91a9fffe32c8.json.gz",
+   "sha256": "d50aefa38abd56f6e22a15bf17f3950e460742313d192b6e321d591b8e026627"
+  },
+  {
+   "path": "data/holdings/2026-11-13/XLB-af7db558db6727e3.json.gz",
+   "sha256": "9380ee46cd526abc3be7f87cbe85b9cb19c5ffb9e21350994d86a3e0d5656c3d"
+  },
+  {
+   "path": "data/holdings/2026-11-13/XLC-e6e0a3c7834db556.json.gz",
+   "sha256": "e4ee7dd3c3d8e504e15412d7558266498158ee23446d456e19749aaaa8156693"
+  },
+  {
+   "path": "data/holdings/2026-11-13/XLE-5f44cb4968daf7dc.json.gz",
+   "sha256": "b922a3bc63f4d231426ce5cdc4596f643b868e8aa7eb6008d798192944033baa"
+  },
+  {
+   "path": "data/holdings/2026-11-13/XLF-1bb1671d19574c36.json.gz",
+   "sha256": "5338bfb3238253b5316a86fb65851ff365e50ee0c1cf95dcfcdb25bc71328db2"
+  },
+  {
+   "path": "data/holdings/2026-11-13/XLI-9eaaa0f3c6907961.json.gz",
+   "sha256": "65e9cf9e52738194560e4d1a421c7cb557a22adeb004fe475f0a53e514a144d7"
+  },
+  {
+   "path": "data/holdings/2026-11-13/XLK-0fe76ec9ab1468c6.json.gz",
+   "sha256": "d2604da7e6913c106f681c4c341272645b5e0de67e3789026582cd1cc04a989c"
+  },
+  {
+   "path": "data/holdings/2026-11-13/XLP-b5fc1ac85802bcb1.json.gz",
+   "sha256": "25cd091c1637834be48f51bdd8351b1d346810b9a1e6c66e3d97371611e0bbd3"
+  },
+  {
+   "path": "data/holdings/2026-11-13/XLRE-edfdf8e5ae97551a.json.gz",
+   "sha256": "a1c9785d02b799195a00388a5404c849fad7779cbd40da3b63f63d66d02e5f73"
+  },
+  {
+   "path": "data/holdings/2026-11-13/XLU-4a6a82183661f6f2.json.gz",
+   "sha256": "51b271517b92bfa6d2e1fd22ed452daa050d30fccdec616701c7b831cbc6e1ec"
+  },
+  {
+   "path": "data/holdings/2026-11-13/XLV-ecf8dd21d9c08aac.json.gz",
+   "sha256": "2854bd051f1d62e538dbb5e9b0f796d62bb7923427f82dead059a8ee19fee5cb"
+  },
+  {
+   "path": "data/holdings/2026-11-13/XLY-ea0b698448b77b9c.json.gz",
+   "sha256": "fc9f520b552bcc7f5e861e6a93fd144d1f3bc187d75844cdc9482ea4a4c9b07e"
+  },
+  {
+   "path": "data/snapshots/2026-11/2026-11-17T051453517718Z.json",
+   "sha256": "b2e362f2684ae989bf489d0d3baf23a801299d4b48c314398a5f6e7b8a88bddb"
+  }
+ ]
+}
