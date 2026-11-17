@@ -1,0 +1,49 @@
+{
+ "schema": "simulated-fund-review-v2",
+ "date": "2026-11-16",
+ "policy": "fondo-v2",
+ "target": [
+  {
+   "symbol": "VTI",
+   "weight": 0.42
+  },
+  {
+   "symbol": "VXUS",
+   "weight": 0.27999999999999997
+  },
+  {
+   "symbol": "AGG",
+   "weight": 0.25000000000000006
+  },
+  {
+   "symbol": "CASH",
+   "weight": 0.05
+  }
+ ],
+ "status": "hold",
+ "reason": "Mantener: desviación máxima 0.3 pp, dentro del umbral de 5 pp.",
+ "drift": 0.003489,
+ "value": 98686.01,
+ "orders": [],
+ "current": [
+  {
+   "symbol": "VTI",
+   "weight": 0.417782
+  },
+  {
+   "symbol": "VXUS",
+   "weight": 0.278063
+  },
+  {
+   "symbol": "AGG",
+   "weight": 0.253489
+  },
+  {
+   "symbol": "CASH",
+   "weight": 0.050666
+  }
+ ],
+ "engine_tilts": "disabled",
+ "research_only": true,
+ "market_sha256": "c2c946426c6f58c45bc2f2422cf5b917114535f1ca4b22807f3c0030a0f91105"
+}

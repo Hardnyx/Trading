@@ -2,16 +2,16 @@
  "schema_version": 2,
  "policy": "fondo-v2",
  "adopted_on": "2026-11-14",
- "as_of": "2026-11-13",
+ "as_of": "2026-11-16",
  "inception": "2026-11-13",
  "initial_capital": 100000,
- "value": 100000,
- "return_since_inception": 0,
- "drawdown": 0,
+ "value": 98686.01,
+ "return_since_inception": -0.01314,
+ "drawdown": -0.01314,
  "review_flag": null,
  "cash": 5000,
- "cash_weight": 0.05,
- "equity_weight": 0.7,
+ "cash_weight": 0.050666,
+ "equity_weight": 0.695845,
  "holdings": [
   {
    "symbol": "VTI",
@@ -19,9 +19,9 @@
    "class": "us-equity",
    "shares": 113.174,
    "whole_shares": 113,
-   "price": 371.109985,
-   "value": 42000,
-   "weight": 0.42,
+   "price": 364.299988,
+   "value": 41229.29,
+   "weight": 0.417782,
    "target_weight": 0.42
   },
   {
@@ -30,9 +30,9 @@
    "class": "international-equity",
    "shares": 338.819,
    "whole_shares": 338,
-   "price": 82.639999,
-   "value": 28000,
-   "weight": 0.28,
+   "price": 80.989998,
+   "value": 27440.95,
+   "weight": 0.278063,
    "target_weight": 0.28
   },
   {
@@ -41,9 +41,9 @@
    "class": "mixed-bond",
    "shares": 262.9088,
    "whole_shares": 262,
-   "price": 95.089996,
-   "value": 25000,
-   "weight": 0.25,
+   "price": 95.150002,
+   "value": 25015.78,
+   "weight": 0.253489,
    "target_weight": 0.25
   }
  ],
@@ -79,9 +79,9 @@
  },
  "threshold": 0.05,
  "prices": {
-  "VTI": 371.109985,
-  "VXUS": 82.639999,
-  "AGG": 95.089996
+  "VTI": 364.299988,
+  "VXUS": 80.989998,
+  "AGG": 95.150002
  },
  "names": {
   "VTI": "Vanguard Total Stock Market",
@@ -89,48 +89,17 @@
   "AGG": "iShares Core U.S. Aggregate Bond"
  },
  "last_review": {
-  "date": "2026-11-13",
-  "status": "rebalance",
-  "reason": "Compra inicial a los pesos objetivo.",
-  "drift": 0.95,
-  "orders": [
-   {
-    "symbol": "VTI",
-    "price": 371.109985,
-    "target_weight": 0.42,
-    "target_shares": 113.174,
-    "target_whole_shares": 113,
-    "held_shares": 0,
-    "trade_shares": 113.174,
-    "trade_whole_shares": 113
-   },
-   {
-    "symbol": "AGG",
-    "price": 95.089996,
-    "target_weight": 0.25000000000000006,
-    "target_shares": 262.9088,
-    "target_whole_shares": 262,
-    "held_shares": 0,
-    "trade_shares": 262.9088,
-    "trade_whole_shares": 262
-   },
-   {
-    "symbol": "VXUS",
-    "price": 82.639999,
-    "target_weight": 0.27999999999999997,
-    "target_shares": 338.819,
-    "target_whole_shares": 338,
-    "held_shares": 0,
-    "trade_shares": 338.819,
-    "trade_whole_shares": 338
-   }
-  ]
+  "date": "2026-11-16",
+  "status": "hold",
+  "reason": "Mantener: desviación máxima 0.3 pp, dentro del umbral de 5 pp.",
+  "drift": 0.003489,
+  "orders": []
  },
  "benchmarks": {
   "method": "total-return-adjusted-closes",
-  "balanced_60_40": 0,
-  "spy": 0,
-  "tbills": 0
+  "balanced_60_40": -0.011217,
+  "spy": -0.019115,
+  "tbills": 0.000219
  },
  "rebalances": [
   "2026-11-13"
@@ -140,6 +109,11 @@
    "date": "2026-11-13",
    "status": "rebalance",
    "value": 100000
+  },
+  {
+   "date": "2026-11-16",
+   "status": "hold",
+   "value": 98686.01
   }
  ],
  "evidence": {
@@ -171,9 +145,9 @@
  "risk": {
   "method": "engine EWMA price kernel, one year, zero-mean risk only",
   "paths": 2000,
-  "var95": 0.217313,
-  "cvar95": 0.273846,
-  "volatility": 0.151753,
+  "var95": 0.220169,
+  "cvar95": 0.277835,
+  "volatility": 0.154207,
   "budget": 0.3,
   "within_budget": true
  },
@@ -181,16 +155,16 @@
   "schema_version": 2,
   "policy": "fondo-v3",
   "adopted_on": "2026-11-14",
-  "as_of": "2026-11-13",
+  "as_of": "2026-11-16",
   "inception": "2026-11-13",
   "initial_capital": 100000,
-  "value": 100000,
-  "return_since_inception": 0,
-  "drawdown": 0,
+  "value": 98448.37,
+  "return_since_inception": -0.015516,
+  "drawdown": -0.015516,
   "review_flag": null,
   "cash": 5000,
-  "cash_weight": 0.05,
-  "equity_weight": 0.821072,
+  "cash_weight": 0.050788,
+  "equity_weight": 0.818169,
   "holdings": [
    {
     "symbol": "VTI",
@@ -198,9 +172,9 @@
     "class": "us-equity",
     "shares": 132.7486,
     "whole_shares": 132,
-    "price": 371.109985,
-    "value": 49264.34,
-    "weight": 0.492643,
+    "price": 364.299988,
+    "value": 48360.33,
+    "weight": 0.491225,
     "target_weight": 0.492643
    },
    {
@@ -209,9 +183,9 @@
     "class": "international-equity",
     "shares": 397.4213,
     "whole_shares": 397,
-    "price": 82.639999,
-    "value": 32842.9,
-    "weight": 0.328429,
+    "price": 80.989998,
+    "value": 32187.15,
+    "weight": 0.326944,
     "target_weight": 0.328429
    },
    {
@@ -220,9 +194,9 @@
     "class": "mixed-bond",
     "shares": 135.5848,
     "whole_shares": 135,
-    "price": 95.089996,
-    "value": 12892.76,
-    "weight": 0.128928,
+    "price": 95.150002,
+    "value": 12900.89,
+    "weight": 0.131042,
     "target_weight": 0.128928
    }
   ],
@@ -263,48 +237,17 @@
   },
   "threshold": 0.05,
   "last_review": {
-   "date": "2026-11-13",
-   "status": "rebalance",
-   "reason": "Compra inicial a los pesos objetivo.",
-   "drift": 0.95,
-   "orders": [
-    {
-     "symbol": "VTI",
-     "price": 371.109985,
-     "target_weight": 0.4926434470621168,
-     "target_shares": 132.7486,
-     "target_whole_shares": 132,
-     "held_shares": 0,
-     "trade_shares": 132.7486,
-     "trade_whole_shares": 132
-    },
-    {
-     "symbol": "AGG",
-     "price": 95.089996,
-     "target_weight": 0.12892758822980527,
-     "target_shares": 135.5848,
-     "target_whole_shares": 135,
-     "held_shares": 0,
-     "trade_shares": 135.5848,
-     "trade_whole_shares": 135
-    },
-    {
-     "symbol": "VXUS",
-     "price": 82.639999,
-     "target_weight": 0.3284289647080779,
-     "target_shares": 397.4213,
-     "target_whole_shares": 397,
-     "held_shares": 0,
-     "trade_shares": 397.4213,
-     "trade_whole_shares": 397
-    }
-   ]
+   "date": "2026-11-16",
+   "status": "hold",
+   "reason": "Mantener: desviación máxima 0.2 pp, dentro del umbral de 5 pp.",
+   "drift": 0.002115,
+   "orders": []
   },
   "benchmarks": {
    "method": "total-return-adjusted-closes",
-   "balanced_60_40": 0,
-   "spy": 0,
-   "tbills": 0
+   "balanced_60_40": -0.011217,
+   "spy": -0.019115,
+   "tbills": 0.000219
   },
   "rebalances": [
    "2026-11-13"
@@ -314,6 +257,11 @@
     "date": "2026-11-13",
     "status": "rebalance",
     "value": 100000
+   },
+   {
+    "date": "2026-11-16",
+    "status": "hold",
+    "value": 98448.37
    }
   ],
   "research_only": true,
