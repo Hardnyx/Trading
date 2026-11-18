@@ -1,0 +1,22 @@
+{
+ "schema": "evidence-timestamp-manifest-v1",
+ "created_utc": "2026-11-18T04:51:23.217183+00:00",
+ "files": [
+  {
+   "path": "data/fund/fondo-v2/reviews/2026-11-17.json",
+   "sha256": "27a03291b3023502977c87b7a211227858736cd9496a6b7089a6eacfaf1d13c0"
+  },
+  {
+   "path": "data/fund/fondo-v2/state.json",
+   "sha256": "93d08909849c4f242400ed61ace98cf608199cab6d9c814f4250ce9e73220643"
+  },
+  {
+   "path": "data/fund/fondo-v3/reviews/2026-11-17.json",
+   "sha256": "02e836f95ded435003171549ff8b65430ff055c3456a981e00266236626a8972"
+  },
+  {
+   "path": "data/fund/fondo-v3/state.json",
+   "sha256": "673bb69ee9230fecba3fb38b0a7be02ef44710a2f7358e4d192e93a4ee9d8dd5"
+  }
+ ]
+}
