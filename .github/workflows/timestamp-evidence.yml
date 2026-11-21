@@ -2,7 +2,8 @@ name: Timestamp prospective evidence
 on:
   workflow_dispatch:
   workflow_run:
-    workflows: [Refresh market data, Stock signal validation (prospective), Simulated fund review]
+    # Both follow every refresh within minutes and stamp its outputs with their own.
+    workflows: [Stock signal validation (prospective), Simulated fund review]
     types: [completed]
 permissions:
   contents: read

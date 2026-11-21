@@ -78,10 +78,13 @@ class InputAuditTests(unittest.TestCase):
         sha = lambda b: hashlib.sha256(b).hexdigest()
         decision = {"market_sha256": sha(b"m"), "volatility_sha256": sha(b"v"), "engine_version": "1",
                     "status": "proposed", "positions": [{"weight": .5}, {"weight": .5}], "outcomes_read": False}
-        self.assertTrue(audit.engine_inputs(b"m", b"v", decision, "1")["passed"])
-        self.assertFalse(audit.engine_inputs(b"m2", b"v", decision, "1")["passed"])
-        self.assertTrue(audit.engine_inputs(b"m", b"v", dict(decision, status="hold"), "1")["passed"])
-        self.assertFalse(audit.engine_inputs(b"m", b"v", dict(decision, status="error"), "1")["passed"])
+        self.assertTrue(audit.engine_inputs(b"m", b"v", decision)["passed"])
+        self.assertFalse(audit.engine_inputs(b"m2", b"v", decision)["passed"])
+        self.assertTrue(audit.engine_inputs(b"m", b"v", dict(decision, status="hold"))["passed"])
+        self.assertFalse(audit.engine_inputs(b"m", b"v", dict(decision, status="error"))["passed"])
+        # A later engine release must not invalidate an archived decision; an unrecorded engine does.
+        self.assertTrue(audit.engine_inputs(b"m", b"v", dict(decision, engine_version="9.9.9"))["passed"])
+        self.assertFalse(audit.engine_inputs(b"m", b"v", dict(decision, engine_version=""))["passed"])
 
 
 if __name__ == "__main__":

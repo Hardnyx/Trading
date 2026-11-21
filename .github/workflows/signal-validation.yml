@@ -105,14 +105,3 @@ jobs:
           else
             echo "changed=false" >> "$GITHUB_OUTPUT"
           fi
-  deploy:
-    needs: ledger
-    if: needs.ledger.outputs.published_changes == 'true'
-    permissions:
-      contents: read
-      pages: write
-      id-token: write
-    uses: ./.github/workflows/pages.yml
-    with:
-      ref: ${{ needs.ledger.outputs.published_ref }}
-      skip_python_revalidation: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success' }}

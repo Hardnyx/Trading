@@ -1,0 +1,42 @@
+name: Publish data updates
+# One Pages deployment per data update. The refresh, the fund review and the
+# signal ledger commit with the workflow token, which triggers no push
+# workflow; this publisher runs after the last two (both follow each refresh)
+# and deploys main only when the served build lacks a published file change.
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows: [Simulated fund review, Stock signal validation (prospective)]
+    types: [completed]
+permissions:
+  contents: read
+concurrency:
+  group: publish-data
+  cancel-in-progress: false
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      deploy: ${{ steps.release.outputs.deploy }}
+      ref: ${{ steps.head.outputs.ref }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - id: head
+        run: echo "ref=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+      - name: Deploy only if the served build lacks a published change
+        id: release
+        run: python3 scripts/pages_release_gate.py --site https://hardnyx.github.io/Trading --head "${{ steps.head.outputs.ref }}"
+  deploy:
+    needs: gate
+    if: needs.gate.outputs.deploy == 'true'
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    uses: ./.github/workflows/pages.yml
+    with:
+      ref: ${{ needs.gate.outputs.ref }}

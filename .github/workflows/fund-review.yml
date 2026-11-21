@@ -55,15 +55,3 @@ jobs:
           done
           echo "Fund review push failed after 4 attempts" >&2
           exit 1
-  # Commits made with the workflow token trigger no push workflow, so the
-  # published fund page is deployed explicitly.
-  deploy:
-    needs: review
-    if: needs.review.outputs.changed == 'true'
-    permissions:
-      contents: read
-      pages: write
-      id-token: write
-    uses: ./.github/workflows/pages.yml
-    with:
-      ref: ${{ needs.review.outputs.commit_sha }}

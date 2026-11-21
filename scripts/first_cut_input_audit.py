@@ -161,21 +161,18 @@ def units(market):
     return {"passed": not problems, "problems": [{"item": a, "check": b} for a, b in problems]}
 
 
-def engine_inputs(market_bytes, volatility_bytes, decision, model_version):
+def engine_inputs(market_bytes, volatility_bytes, decision):
     sha = lambda b: hashlib.sha256(b).hexdigest()
     weights = sum(p["weight"] for p in decision.get("positions", []))
     checks = {"market_bytes": decision.get("market_sha256") == sha(market_bytes),
               "volatility_bytes": decision.get("volatility_sha256") == sha(volatility_bytes),
-              "engine_version": decision.get("engine_version") == model_version,
+              # A record of the engine that decided at that time; later engine versions must not
+              # invalidate archived decisions, so the audit only requires that it was recorded.
+              "engine_version": isinstance(decision.get("engine_version"), str) and bool(decision["engine_version"]),
               # Holding cash is a decision; an input audit only needs one the engine can produce.
               "decision_valid": decision.get("status") in ("proposed", "hold"),
               "weights_sum_to_one": abs(weights - 1) < 1e-6, "outcomes_not_read": decision.get("outcomes_read") is False}
     return {"passed": all(checks.values()), **checks}
-
-
-def model_version(root=ROOT):
-    text = (root / "dist/assets/js/policy.mjs").read_text()
-    return re.search(r'MODEL_VERSION = "([^"]+)"', text)[1]
 
 
 def audit(cut=CUT, root=ROOT):
@@ -189,7 +186,7 @@ def audit(cut=CUT, root=ROOT):
     fundamentals = json.loads(gzip.decompress((root / "data/historical/first-cut-fundamentals-v1" / f"{cut}.json.gz").read_bytes()))
     checks = {"availability": availability(market, volatility, cut), "universe": universe(market, binding, cut),
               "identity": identity(market, binding, fundamentals), "units": units(market),
-              "engine_inputs": engine_inputs(market_bytes, volatility_bytes, decision, model_version(root))}
+              "engine_inputs": engine_inputs(market_bytes, volatility_bytes, decision)}
     passed = all(c["passed"] for c in checks.values())
     return {
         "schema": "full-engine-first-cut-input-audit-v1", "cut": cut, "snapshot_sha256": decision["market_sha256"],

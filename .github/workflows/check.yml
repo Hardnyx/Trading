@@ -44,7 +44,25 @@ jobs:
       - run: python -m unittest discover -s tests -p 'test_*.py'
       - run: python scripts/first_cut_source_audit.py --verify
       - run: python scripts/historical_spy_issuer_lei.py --verify
-      - run: python scripts/first_cut_input_audit.py --verify
+      # Recomputing the 26 cut audits takes minutes; repeat it only when their inputs or code change.
+      - name: Look up an earlier verification of the same historical cut audits
+        id: cut_audit
+        uses: actions/cache/restore@v4
+        with:
+          path: .cache/cut-audit-verified
+          key: cut-audit-${{ hashFiles('scripts/first_cut_input_audit.py', 'data/historical/first-cut-snapshot-v1/**', 'data/historical/price-binding-v1/**', 'data/historical/first-cut-fundamentals-v1/**', 'data/historical/full-engine-input-audit-v1/report*.json') }}
+          lookup-only: true
+      - name: Verify the historical cut audits
+        if: steps.cut_audit.outputs.cache-hit != 'true'
+        run: |
+          python scripts/first_cut_input_audit.py --verify
+          mkdir -p .cache/cut-audit-verified && date -u > .cache/cut-audit-verified/at
+      - name: Remember this verification
+        if: steps.cut_audit.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: .cache/cut-audit-verified
+          key: cut-audit-${{ hashFiles('scripts/first_cut_input_audit.py', 'data/historical/first-cut-snapshot-v1/**', 'data/historical/price-binding-v1/**', 'data/historical/first-cut-fundamentals-v1/**', 'data/historical/full-engine-input-audit-v1/report*.json') }}
       - run: python scripts/historical_cut_inventory.py --verify
       - run: python scripts/prospective_study_registry.py --verify
       - run: python scripts/overfit_policy_guard.py --verify

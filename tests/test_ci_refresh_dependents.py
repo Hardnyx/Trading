@@ -1,7 +1,7 @@
 """Protect prospective signal capture and selective shadow audit timing."""
 import unittest
 from scripts.ci_workflow_policy import (
-    POOL, SIGNAL, PAGES, REFRESH, validate_refresh_dependents,
+    POOL, SIGNAL, PAGES, PUBLISHER, REFRESH, validate_refresh_dependents,
     validate_page_reuse, validate_prospective_refresh_persistence,
 )
 
@@ -12,6 +12,7 @@ class RefreshDependentWorkflowTests(unittest.TestCase):
         cls.pool = POOL.read_text(encoding="utf-8")
         cls.signal = SIGNAL.read_text(encoding="utf-8")
         cls.pages = PAGES.read_text(encoding="utf-8")
+        cls.publisher = PUBLISHER.read_text(encoding="utf-8")
 
     def test_current_workflow_schedule(self):
         self.assertTrue(all(validate_refresh_dependents(
@@ -42,15 +43,14 @@ class RefreshDependentWorkflowTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "failed refresh"):
             validate_refresh_dependents(self.pool, changed)
 
-    def test_signal_pages_only_follows_new_evidence(self):
-        changed = self.signal.replace(
-            "    if: needs.ledger.outputs.published_changes == 'true'\n", "", 1)
-        with self.assertRaisesRegex(ValueError, "newly committed"):
-            validate_refresh_dependents(self.pool, changed)
+    def test_signal_evidence_is_committed_and_left_to_the_publisher(self):
         changed = self.signal.replace(
             "steps.verify.outputs.changed", "steps.other.outputs.changed", 1)
-        with self.assertRaisesRegex(ValueError, "newly committed"):
+        with self.assertRaisesRegex(ValueError, "single data publisher"):
             validate_refresh_dependents(self.pool, changed)
+        with self.assertRaisesRegex(ValueError, "single data publisher"):
+            validate_refresh_dependents(
+                self.pool, self.signal + "  deploy:\n    uses: ./.github/workflows/pages.yml\n")
 
     def test_weekly_pool_keeps_manual_access(self):
         changed = self.pool.replace("  workflow_dispatch:\n", "", 1)
@@ -58,23 +58,22 @@ class RefreshDependentWorkflowTests(unittest.TestCase):
             validate_refresh_dependents(changed, self.signal)
 
 
-    def test_pages_does_not_duplicate_python_after_successful_refresh(self):
-        self.assertTrue(all(validate_page_reuse(
-            self.pages, self.signal).values()))
-        bad = self.signal.replace(
-            "github.event.workflow_run.conclusion == 'success'",
-            "true", 1)
-        with self.assertRaisesRegex(ValueError, "only reuse"):
-            validate_page_reuse(self.pages, bad)
+    def test_data_updates_publish_once_with_the_full_python_suite(self):
+        self.assertTrue(all(validate_page_reuse(self.pages, self.publisher).values()))
+        for bad in (self.publisher + "      skip_python_revalidation: true\n",
+                    self.publisher.replace("python3 scripts/pages_release_gate.py", "true", 1),
+                    self.publisher.replace("if: needs.gate.outputs.deploy == 'true'", "if: always()", 1)):
+            with self.subTest(bad=bad[-60:]), self.assertRaisesRegex(ValueError, "publish once"):
+                validate_page_reuse(self.pages, bad)
 
     def test_pages_always_checks_js_and_preserves_full_python_path(self):
         bad = self.pages.replace(
             "        default: false", "        default: true", 1)
         with self.assertRaisesRegex(ValueError, "full Python"):
-            validate_page_reuse(bad, self.signal)
+            validate_page_reuse(bad, self.publisher)
         bad = self.pages.replace("          npm test\n", "", 1)
         with self.assertRaisesRegex(ValueError, "full Python"):
-            validate_page_reuse(bad, self.signal)
+            validate_page_reuse(bad, self.publisher)
 
 
     def test_failed_monthly_seal_is_committed_before_failure(self):

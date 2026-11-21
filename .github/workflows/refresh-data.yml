@@ -141,13 +141,3 @@ jobs:
         run: |
           echo "::error::Prospective seal failed; original attempted inputs were committed when available"
           exit 1
-  deploy:
-    needs: refresh
-    if: needs.refresh.outputs.changed == 'true'
-    permissions:
-      contents: read
-      pages: write
-      id-token: write
-    uses: ./.github/workflows/pages.yml
-    with:
-      ref: ${{ needs.refresh.outputs.commit_sha }}

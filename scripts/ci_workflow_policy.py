@@ -128,6 +128,7 @@ def validate_release_gate(gate):
 
 POOL = ROOT / ".github/workflows/pool-opportunity.yml"
 SIGNAL = ROOT / ".github/workflows/signal-validation.yml"
+PUBLISHER = ROOT / ".github/workflows/publish-data.yml"
 
 
 def validate_refresh_dependents(pool, signal):
@@ -168,30 +169,22 @@ def validate_refresh_dependents(pool, signal):
         "Prospective ledger lost failed refresh recording",
     )
     require(
-        all(value in signal for value in (
-            "published_changes:",
-            "steps.published.outputs.changed",
-            "id: persist",
-            "id: verify",
-            "steps.persist.outputs.changed",
-            "steps.verify.outputs.changed",
-            "if: needs.ledger.outputs.published_changes == 'true'",
-            "needs.ledger.outputs.published_ref",
-        ))
-        and signal.count('echo \'changed=true\' >> "$GITHUB_OUTPUT"') >= 2,
-        "Signal Pages deployment must require newly committed evidence",
+        all(value in signal for value in ("id: persist", "id: verify", "steps.persist.outputs.changed",
+                                          "steps.verify.outputs.changed"))
+        and "\n  deploy:" not in signal,
+        "Signal evidence must be committed and left to the single data publisher",
     )
     return {
         "weekly_exploratory_audit": True,
         "daily_prospective_ledger": True,
         "failed_refresh_evidence": True,
-        "conditional_signal_pages": True,
+        "single_data_publisher": True,
     }
 
 
 
-def validate_page_reuse(pages, signal):
-    """Only verified successful refresh events may skip duplicate Python suite."""
+def validate_page_reuse(pages, signal_or_publisher):
+    """Pages runs the full suite except after a push whose checks passed; data updates never skip it."""
     require(
         "skip_python_revalidation:" in pages
         and "type: boolean" in pages
@@ -203,10 +196,12 @@ def validate_page_reuse(pages, signal):
         "Pages must run full Python except on explicitly verified upstream reuse",
     )
     require(
-        "skip_python_revalidation:" in signal
-        and "github.event_name == 'workflow_run'" in signal
-        and "github.event.workflow_run.conclusion == 'success'" in signal,
-        "Signal may only reuse Python checks after a successful market refresh",
+        "uses: ./.github/workflows/pages.yml" in signal_or_publisher
+        and "python3 scripts/pages_release_gate.py" in signal_or_publisher
+        and "if: needs.gate.outputs.deploy == 'true'" in signal_or_publisher
+        and "skip_python_revalidation" not in signal_or_publisher
+        and "workflows: [Simulated fund review, Stock signal validation (prospective)]" in signal_or_publisher,
+        "Data updates must publish once, through the release gate and the full Python suite",
     )
     return {"safe_pages_test_reuse": True}
 
@@ -289,7 +284,10 @@ def main():
         SIGNAL.read_text(encoding="utf-8")))
     result.update(validate_page_reuse(
         PAGES.read_text(encoding="utf-8"),
-        SIGNAL.read_text(encoding="utf-8")))
+        PUBLISHER.read_text(encoding="utf-8")))
+    for name in ("refresh-data.yml", "fund-review.yml", "signal-validation.yml"):
+        require("uses: ./.github/workflows/pages.yml" not in (WORKFLOW_DIR / name).read_text(encoding="utf-8"),
+                f"{name} must leave Pages to the single data publisher")
     result.update(validate_prospective_refresh_persistence(
         REFRESH.read_text(encoding="utf-8")))
     result.update(validate_actions_budget({
