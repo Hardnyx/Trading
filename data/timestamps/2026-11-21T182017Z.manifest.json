@@ -1,0 +1,58 @@
+{
+ "schema": "evidence-timestamp-manifest-v1",
+ "created_utc": "2026-11-21T18:20:17.799335+00:00",
+ "files": [
+  {
+   "path": "data/distributions/histories/AGG/650cd9cd275d547584cafe420e3e104911d9a0ebbaf6d021de8fd46f031ffc33.json",
+   "sha256": "7b4d4e39b13ccce68964103c37cf793f90efa753df226e0f66ec5eba43dbe7a0"
+  },
+  {
+   "path": "data/distributions/histories/EMB/8cd3d689d5f8f4c4efbb8352a317336ac901bb34e6d80614b7284478e5661dd5.json",
+   "sha256": "b71de56b90fee6ca655afb0debfbc3cc9f208c14eb4907323d747fbb6f3f39b7"
+  },
+  {
+   "path": "data/distributions/histories/HYG/5af136e5b8655c14d2b72b55a766f031c23bc7b3a30233b10663a346d6c94e06.json",
+   "sha256": "1d611b7598d585f1a1b38ae47e639257334f5c6be60a5d8f5c43bc2779973e8d"
+  },
+  {
+   "path": "data/distributions/histories/IEF/ed1029525e97e729f70638c1fc21924ae2b9dff64e3fe010e6e22a9dcf2076cf.json",
+   "sha256": "2872e60eec9c52792b1b58d262aeab73bbeee2c331fc82d07c118e2cd160f630"
+  },
+  {
+   "path": "data/distributions/histories/IEI/fd1b7a6cbb3492def2b9f116923c2b6c397509625426a542ca0a76f87e3e300e.json",
+   "sha256": "4efec3e2be4bc3b0cbfc4f6bee297fcc02c4c9e170f8185911c0acb6fc5c1dc7"
+  },
+  {
+   "path": "data/distributions/histories/IGSB/44a2c061894374fe41263e5d43df03148fd6974bc6e6a47d565c1cdbe95e8e0e.json",
+   "sha256": "a86e4e2ac0835d8907f27433f832a6119330ec09641b1256735b7c91e39f698f"
+  },
+  {
+   "path": "data/distributions/histories/LQD/057049aa0300541424b55e905d5351c3ca10c164785bfeb4ca735be0eca2a981.json",
+   "sha256": "1a4292a0abd3c79a73900f4e9333d5498a10fdb03c7638c879876fd43a646827"
+  },
+  {
+   "path": "data/distributions/histories/SGOV/9119d3859f40d0fbd3c585c74a08225d75a4ba263db92b25bca89e7b098201b0.json",
+   "sha256": "b071550f10286e8a572bd95d7f1c0216ad4131df6efa7a4b6e50ae052cb34ac7"
+  },
+  {
+   "path": "data/distributions/histories/SHV/083029a441dbd9b165361ad7747c0cd166a20eeddf42cbbbeab1c9bad5913af0.json",
+   "sha256": "fbf4daeb0a345d6f28a62c7c04ea68c7dc8bf9fc929e4d6090ff315f603b8756"
+  },
+  {
+   "path": "data/distributions/histories/SHY/9915ebfc8b4561ee94eefb2c2e4db918927bd4fde217a29f9d8ac2a5b110fda4.json",
+   "sha256": "2ddb77c3ca7199f1ffa7788cf9087a9e5dc90dd8ffeb54a90551c0b75e3e4145"
+  },
+  {
+   "path": "data/distributions/histories/TIP/72ce756b57a47a744a0af6bd6c70b90321b3c79e792b99b5aa076adcb74dfe3f.json",
+   "sha256": "9a43ca24367ba43b2f402af8f8358d2d77df73d865f0a0cfc16058fe0dc3f11d"
+  },
+  {
+   "path": "data/distributions/histories/TLT/f665a39f2a57b3339aad6945cf7b4d95389d45ed85d246172c9117d5d4e5275e.json",
+   "sha256": "b4ef5b0ff9dd9f7883e10c68031ca123c29b2e480e1fd1d003f89d212e30cd3d"
+  },
+  {
+   "path": "data/snapshots/2026-11/2026-11-21T181806203752Z.json",
+   "sha256": "a537528f25e933eb0266702e6d8efdf53b984e1e4509d66a31073557033f2d6b"
+  }
+ ]
+}
