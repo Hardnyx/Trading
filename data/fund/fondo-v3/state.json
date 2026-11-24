@@ -2,7 +2,7 @@
  "schema": "simulated-fund-state-v2",
  "policy": "fondo-v3",
  "inception": "2026-11-13",
- "as_of": "2026-11-20",
+ "as_of": "2026-11-23",
  "cash": 5000,
  "positions": [
   {
