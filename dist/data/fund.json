@@ -2,16 +2,16 @@
  "schema_version": 2,
  "policy": "fondo-v2",
  "adopted_on": "2026-11-14",
- "as_of": "2026-11-23",
+ "as_of": "2026-11-24",
  "inception": "2026-11-13",
  "initial_capital": 100000,
- "value": 97022.26,
- "return_since_inception": -0.029777,
- "drawdown": -0.029777,
- "review_flag": "El riesgo simulado (CVaR 95 % 32.5 %) supera el presupuesto de 30 %: revisar el mandato; no genera operaciones.",
+ "value": 96739.61,
+ "return_since_inception": -0.032604,
+ "drawdown": -0.032604,
+ "review_flag": "El riesgo simulado (CVaR 95 % 31.8 %) supera el presupuesto de 30 %: revisar el mandato; no genera operaciones.",
  "cash": 5000,
- "cash_weight": 0.051535,
- "equity_weight": 0.687676,
+ "cash_weight": 0.051685,
+ "equity_weight": 0.686927,
  "holdings": [
   {
    "symbol": "VTI",
@@ -19,9 +19,9 @@
    "class": "us-equity",
    "shares": 113.174,
    "whole_shares": 113,
-   "price": 355.269989,
-   "value": 40207.32,
-   "weight": 0.414413,
+   "price": 353.839996,
+   "value": 40045.49,
+   "weight": 0.413951,
    "target_weight": 0.42
   },
   {
@@ -30,9 +30,9 @@
    "class": "international-equity",
    "shares": 338.819,
    "whole_shares": 338,
-   "price": 78.25,
-   "value": 26512.59,
-   "weight": 0.273263,
+   "price": 77.940002,
+   "value": 26407.55,
+   "weight": 0.272976,
    "target_weight": 0.28
   },
   {
@@ -41,9 +41,9 @@
    "class": "mixed-bond",
    "shares": 262.9088,
    "whole_shares": 262,
-   "price": 96.239998,
-   "value": 25302.35,
-   "weight": 0.260789,
+   "price": 96.18,
+   "value": 25286.57,
+   "weight": 0.261388,
    "target_weight": 0.25
   }
  ],
@@ -79,9 +79,9 @@
  },
  "threshold": 0.05,
  "prices": {
-  "VTI": 355.269989,
-  "VXUS": 78.25,
-  "AGG": 96.239998
+  "VTI": 353.839996,
+  "VXUS": 77.940002,
+  "AGG": 96.18
  },
  "names": {
   "VTI": "Vanguard Total Stock Market",
@@ -89,17 +89,17 @@
   "AGG": "iShares Core U.S. Aggregate Bond"
  },
  "last_review": {
-  "date": "2026-11-23",
+  "date": "2026-11-24",
   "status": "hold",
   "reason": "Mantener: desviación máxima 1.1 pp, dentro del umbral de 5 pp.",
-  "drift": 0.010789,
+  "drift": 0.011388,
   "orders": []
  },
  "benchmarks": {
   "method": "total-return-adjusted-closes",
-  "balanced_60_40": -0.020678,
-  "spy": -0.042526,
-  "tbills": 0.000765
+  "balanced_60_40": -0.023722,
+  "spy": -0.047178,
+  "tbills": 0.000874
  },
  "rebalances": [
   "2026-11-13"
@@ -139,6 +139,11 @@
    "date": "2026-11-23",
    "status": "hold",
    "value": 97022.26
+  },
+  {
+   "date": "2026-11-24",
+   "status": "hold",
+   "value": 96739.61
   }
  ],
  "evidence": {
@@ -170,9 +175,9 @@
  "risk": {
   "method": "engine EWMA price kernel, one year, zero-mean risk only",
   "paths": 2000,
-  "var95": 0.258387,
-  "cvar95": 0.324828,
-  "volatility": 0.184415,
+  "var95": 0.253146,
+  "cvar95": 0.318055,
+  "volatility": 0.179954,
   "budget": 0.3,
   "within_budget": false
  },
@@ -180,16 +185,16 @@
   "schema_version": 2,
   "policy": "fondo-v3",
   "adopted_on": "2026-11-14",
-  "as_of": "2026-11-23",
+  "as_of": "2026-11-24",
   "inception": "2026-11-13",
   "initial_capital": 100000,
-  "value": 96308.51,
-  "return_since_inception": -0.036915,
-  "drawdown": -0.036915,
+  "value": 95987.34,
+  "return_since_inception": -0.040127,
+  "drawdown": -0.040127,
   "review_flag": null,
   "cash": 5000,
-  "cash_weight": 0.051916,
-  "equity_weight": 0.812595,
+  "cash_weight": 0.05209,
+  "equity_weight": 0.812053,
   "holdings": [
    {
     "symbol": "VTI",
@@ -197,9 +202,9 @@
     "class": "us-equity",
     "shares": 132.7486,
     "whole_shares": 132,
-    "price": 355.269989,
-    "value": 47161.61,
-    "weight": 0.489693,
+    "price": 353.839996,
+    "value": 46971.78,
+    "weight": 0.489354,
     "target_weight": 0.492643
    },
    {
@@ -208,9 +213,9 @@
     "class": "international-equity",
     "shares": 397.4213,
     "whole_shares": 397,
-    "price": 78.25,
-    "value": 31098.22,
-    "weight": 0.322902,
+    "price": 77.940002,
+    "value": 30975.02,
+    "weight": 0.322699,
     "target_weight": 0.328429
    },
    {
@@ -219,9 +224,9 @@
     "class": "mixed-bond",
     "shares": 135.5848,
     "whole_shares": 135,
-    "price": 96.239998,
-    "value": 13048.68,
-    "weight": 0.135488,
+    "price": 96.18,
+    "value": 13040.55,
+    "weight": 0.135857,
     "target_weight": 0.128928
    }
   ],
@@ -262,17 +267,17 @@
   },
   "threshold": 0.05,
   "last_review": {
-   "date": "2026-11-23",
+   "date": "2026-11-24",
    "status": "hold",
    "reason": "Mantener: desviación máxima 0.7 pp, dentro del umbral de 5 pp.",
-   "drift": 0.006561,
+   "drift": 0.006929,
    "orders": []
   },
   "benchmarks": {
    "method": "total-return-adjusted-closes",
-   "balanced_60_40": -0.020678,
-   "spy": -0.042526,
-   "tbills": 0.000765
+   "balanced_60_40": -0.023722,
+   "spy": -0.047178,
+   "tbills": 0.000874
   },
   "rebalances": [
    "2026-11-13"
@@ -312,6 +317,11 @@
     "date": "2026-11-23",
     "status": "hold",
     "value": 96308.51
+   },
+   {
+    "date": "2026-11-24",
+    "status": "hold",
+    "value": 95987.34
    }
   ],
   "research_only": true,
