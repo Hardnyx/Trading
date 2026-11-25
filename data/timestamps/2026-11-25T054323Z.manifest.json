@@ -1,0 +1,98 @@
+{
+ "schema": "evidence-timestamp-manifest-v1",
+ "created_utc": "2026-11-25T05:43:23.877979+00:00",
+ "files": [
+  {
+   "path": "data/distributions/histories/AGG/7eb818ded8fd0068c34e95f046ea837dbbecb0ae6347ff854cdf4d22865cab67.json",
+   "sha256": "5bfe27abc3290b807ec61473fe2e6adc4a53d338197dbed0278c174a416a046b"
+  },
+  {
+   "path": "data/distributions/histories/EMB/d94bbf5f1bca8c620ac68d7c99b3b9b6c9c042c3b67080fd19c5538d8d989c85.json",
+   "sha256": "242d9d40f58b97afe0505dfacd05c111ff69055ee90fad89c0a5c2472c061924"
+  },
+  {
+   "path": "data/distributions/histories/HYG/0454e824aebc1ab027bc7d99a7bd97d8ad9a67f2743edd565913f9c180ee7edd.json",
+   "sha256": "13c4e38df462142127c2b9963cdff0a99182b4564447ad36f174cfccaaabb56b"
+  },
+  {
+   "path": "data/distributions/histories/IEF/fc3505df0a0360305f511f4cf78a9d0e5c5c2c095196f0ad53eb49bdf35e2985.json",
+   "sha256": "f30853123d7affaa08065710157c22499bced8e79595c5b88f30b1cbab23b05d"
+  },
+  {
+   "path": "data/distributions/histories/IEI/abfe99d7929d896ed788b6e726563fd8a2121bf2504e003208847be66a246a74.json",
+   "sha256": "c8f41d5b3a5eb5ae15405a4b70a1dfb406a3cedfcd6631ddf08f39df48130eb8"
+  },
+  {
+   "path": "data/distributions/histories/IGSB/a19c22d7b2a3efeca99d94edd557f8c24d1035004847b9c619093070be10d9b8.json",
+   "sha256": "6072bedd02de9caf7793f032a792310dd408c69bcd2cc93c902214e7d5e36df1"
+  },
+  {
+   "path": "data/distributions/histories/LQD/e14697253ce7f94ec9f89971f8818e7b6c110e869ad5706f11a28c3f249e473f.json",
+   "sha256": "50782cf29149e60e3862a55c12a09c892cf05cb37472c566aeca59b78a5fdbe2"
+  },
+  {
+   "path": "data/distributions/histories/SGOV/79a51baa4bffe3ab51c15f986703ab36cd123dc01c1aa87136303987a7d83599.json",
+   "sha256": "a8da3a2cd448d59dc81b927ddf04acb57baa023de70b85a3a49e5176cc264afc"
+  },
+  {
+   "path": "data/distributions/histories/SHV/ce261bc173c52b44aa355b671c3ff8ff10a8f71740e05129feebc39c829c67d7.json",
+   "sha256": "e512c0d139d01a4d76912c1868e0fe4c1b7899b7c0e0882b74a9cc49bbbaeccb"
+  },
+  {
+   "path": "data/distributions/histories/SHY/c90ad949c03b47bd92095dfb58b18718f8529916589ae2103931de6ba830239c.json",
+   "sha256": "c7b435a2cdfac39480aff4c1bff93374b44b9c607d67564159fc9b18a6d3152c"
+  },
+  {
+   "path": "data/distributions/histories/TIP/561458b1e4b868aca1ed4e866d1770b048e5766a2b42656dea021dbb3e6d4f08.json",
+   "sha256": "cdba0cb5ead9beb5ac3e4b472ce8942351d7957c0eeb143e9268ba0771c12641"
+  },
+  {
+   "path": "data/distributions/histories/TLT/d86cec02023aaa67920bb770ae79993dc6edd77aa87ef920a40d5df2dafc730f.json",
+   "sha256": "85d0fa5dbc3e7a49d61885641f3ae8f53486d587476efabd931254a18de99180"
+  },
+  {
+   "path": "data/forecasts/2026-11-24.json",
+   "sha256": "ebffa4dd8e44412d89c109aa061eabcd76b2a418aae0e324df9538536cc8a98c"
+  },
+  {
+   "path": "data/fund/fondo-v2/reviews/2026-11-24.json",
+   "sha256": "c981e1a222b85fb8b821b1935631aa67d7c5173a2b426632ef60742ca74b7e41"
+  },
+  {
+   "path": "data/fund/fondo-v2/state.json",
+   "sha256": "90fa199ba82df021934c3b17dd5e95f6b632026606d5d4165cc75745d6ee9e17"
+  },
+  {
+   "path": "data/fund/fondo-v3/reviews/2026-11-24.json",
+   "sha256": "54f8b8c12e930f6bc2cb2c47e6c1f671203a89022b0ccc72c1b6e2a014388901"
+  },
+  {
+   "path": "data/fund/fondo-v3/state.json",
+   "sha256": "07b22c057a966e71fc9dacabebeb43fd03c6e591929d6a66e3ac7b220d5c3a36"
+  },
+  {
+   "path": "data/risk-forecasts/2026-11-24.json",
+   "sha256": "527b117b5db8a9649de02b835e8ccb6c3576b0d2c26589a895f98ac0fa5ae4c6"
+  },
+  {
+   "path": "data/risk-forecasts/scores/2026-11-23.json",
+   "sha256": "c47d968c005c8be7e8c36dea5686491a06ebc2fbda4e3e27e8b23220cbb2796d"
+  },
+  {
+   "path": "data/simulator-validation/forecasts/2026-11-24.json.gz",
+   "sha256": "db5750dc7f0aa871102d54260eeae728db03dbe07874783d16923f65623bd6c5"
+  },
+  {
+   "path": "data/simulator-validation/scores/2026-11-13.h5.json.gz",
+   "sha256": "f4da502b5908d20b3b787c8ea05fd40fcdff6a7535aec6cd3b7426f2a50bd01a"
+  },
+  {
+   "path": "data/simulator-validation/scores/2026-11-19.h1.json.gz",
+   "sha256": "520c2c61b18dccbcc923c86ea248c36a241d0b1fc44036596343a67a477702a6"
+  },
+  {
+   "path": "data/snapshots/2026-11/2026-11-25T053903339863Z.json",
+   "sha256": "2e57114b4e0f4a7afa0368851237ab22bc98546e71636abf718f77c7817b9e1b"
+  }
+ ]
+}
