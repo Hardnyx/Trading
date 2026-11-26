@@ -1,0 +1,290 @@
+{
+ "schema": "evidence-timestamp-manifest-v1",
+ "created_utc": "2026-11-26T05:24:41.186667+00:00",
+ "files": [
+  {
+   "path": "data/distributions/histories/AGG/f0ffa96878e5c3d5e32d3641c9b3ddb531112311d25392c37e22286c30263fd8.json",
+   "sha256": "f87d24ef073d2172a9a6b8aa94ebab4e8b083ce58e3e22c6bc1253d82dd7140b"
+  },
+  {
+   "path": "data/distributions/histories/EMB/48de791f6cda7cb4bbe52eda582b6cb3687eda5f4891b092753a41152965120a.json",
+   "sha256": "a7b3280f21acd4876191cbd26b94c5090df9f8b1af68ff1300ae057051f69c40"
+  },
+  {
+   "path": "data/distributions/histories/HYG/eccf46e2484567890b21de7c3de34c5b5ae4e92eca7232cc2490d033f0f0edbc.json",
+   "sha256": "f71811c8b6c2a18599145094adaaadffc54099dac92b28633d2c70fd0b3a88c4"
+  },
+  {
+   "path": "data/distributions/histories/IEF/caa068ca45f85c6b606bb853120165c8ea223df26f0228d593fa14ddf004cb43.json",
+   "sha256": "cefa96b2117bde37fbb03e8390edc150247be9baef4b9d7ebb6fdbb3662fdd35"
+  },
+  {
+   "path": "data/distributions/histories/IEI/83a30d0126533ae24e6f683d3928f2c4db583da2e5af8c8ca79335d2b2951381.json",
+   "sha256": "bd86f21ce0134b20c8f93fe783e2806018ffdc622254eee458427ba6218b79d6"
+  },
+  {
+   "path": "data/distributions/histories/IGSB/81f1c62d58e2b4a3b2e6768e5db0798ba5d648cb1e2da937f67fea491aabd17b.json",
+   "sha256": "250fa286aa9d2377734efeb3d78e86dfb9a5198b7ea28d2a2790f440cbf5cc97"
+  },
+  {
+   "path": "data/distributions/histories/LQD/a347134beca64ea78548b9628b209b14660cb7cd93c91e1a0b3966cd0d91c1cf.json",
+   "sha256": "762e125d369f39672da6676f30dfec3257f161678128a88c45fd9ed1c29c7564"
+  },
+  {
+   "path": "data/distributions/histories/SGOV/4b2e2951d8d0669bc742cebe679dab505934d8f5fa9938340fddf83db29bd069.json",
+   "sha256": "4d98f6ee8ea2f741423d52fe2ba200e11285a29ca6703ef45b761e75c1fa2def"
+  },
+  {
+   "path": "data/distributions/histories/SHV/d89810cdf7bc00de08b4a2de870946dbdfb145c3d8cbc83caf7341fad75daf58.json",
+   "sha256": "676ea7feb16a2257dd731f4447a4f752ffedc07cb62bfaeee5fa6b3bc67462e8"
+  },
+  {
+   "path": "data/distributions/histories/SHY/b9aefc4867ba7d330b3eff38b38e49d7380aa34b28743e483d3ecc7dded7513e.json",
+   "sha256": "eb5fe68d141e5540684636803c5f316c7da6f38409819edde508bdbf8aae6ca0"
+  },
+  {
+   "path": "data/distributions/histories/TIP/7e4296ac8e4d2a37898bfeae240a6e589af06af74397d01c293ed286a5b5992e.json",
+   "sha256": "12e2fed067141bf0e5199de55a14972d50619ce10edfe79861fd1f917537a4b9"
+  },
+  {
+   "path": "data/distributions/histories/TLT/69722367fd00cef2531b4f6f647fc530407a096b76c10418fcea42e199320078.json",
+   "sha256": "d72887d54fb7c192754c37bfb5dc02e9a224494ce788a3c1b3022eb733890e6d"
+  },
+  {
+   "path": "data/forecasts/2026-11-25.json",
+   "sha256": "01b4b1d96aaf9f0348edce031a79a13df40b81f28f1611e839246cd06ac8c642"
+  },
+  {
+   "path": "data/fund/fondo-v2/reviews/2026-11-25.json",
+   "sha256": "e1f634cece47d37b64c2c41289c8059bbc9c98c26e72fd4ecb0e6de6170f188b"
+  },
+  {
+   "path": "data/fund/fondo-v2/state.json",
+   "sha256": "79ec2712f70a1ec501a966a5ff1d6d402b6f9def9da919473646f8a6b0303c39"
+  },
+  {
+   "path": "data/fund/fondo-v3/reviews/2026-11-25.json",
+   "sha256": "904772c2dde3c5aa6400005965f96ce2acd6b847d4f1628e01c4359663a45e90"
+  },
+  {
+   "path": "data/fund/fondo-v3/state.json",
+   "sha256": "d2807e267ef384dc12a45d75db61fdb1844f8acec1501155b229196ff1cb9dbb"
+  },
+  {
+   "path": "data/holdings/2026-06-30/KWEB-a0574e8e35918023.json.gz",
+   "sha256": "a5ade259372939c596e03c2b3df27fd2215a1ef4e6004919bbf7de4d2026aa84"
+  },
+  {
+   "path": "data/holdings/2026-06-30/VEA-eb9445d237772969.json.gz",
+   "sha256": "dbb07b97369094804e8bba4200c925ebabe63be87f08cb5b36903f44490013d4"
+  },
+  {
+   "path": "data/holdings/2026-06-30/VTI-d531ce3bb5f87217.json.gz",
+   "sha256": "f15678d68f379eeb5bdc4dcf962161d8ea00f1d0bc4f2f7417479205bc43edc7"
+  },
+  {
+   "path": "data/holdings/2026-06-30/VTV-71e2c0cf0801aafb.json.gz",
+   "sha256": "3eef08db1c3eb148018a38edfd711fd3f85b6fbc7aaa7499ac38106c9b4d71c9"
+  },
+  {
+   "path": "data/holdings/2026-06-30/VUG-7df1083e3e7f9d42.json.gz",
+   "sha256": "0f19ba24c6248476d6b51ec30d60a08cbc8f75b4a5d057b2ca1ff29b085f3b34"
+  },
+  {
+   "path": "data/holdings/2026-07-31/VIG-e4c959d32ad91d72.json.gz",
+   "sha256": "93ce1d66470b621219c0e812917b64db5eb28c13b521ad6492814f3ea2a11fc2"
+  },
+  {
+   "path": "data/holdings/2026-07-31/VNQ-96ba733c640494b0.json.gz",
+   "sha256": "2761ee616fd167e3d9a7555f60553567a49b4e327b1ec8c1456a7e4bea6283cf"
+  },
+  {
+   "path": "data/holdings/2026-07-31/VWO-e8c4c93234531d70.json.gz",
+   "sha256": "7ab3f2760b16b635d29f543b87a1ea84cb1625d5dc234f1a13ae34cef1dc35b1"
+  },
+  {
+   "path": "data/holdings/2026-07-31/VXUS-586a41b445396bd4.json.gz",
+   "sha256": "ec7392d61f94419b607a65c255fd36d6a98e190f7003d0b48e5e42d6ea3d6c99"
+  },
+  {
+   "path": "data/holdings/2026-08-31/SCHD-eee73308c33237ae.json.gz",
+   "sha256": "a885fcc58155d91e6630cbc73a56318120be8c8e3d652be73a4d609215d239e5"
+  },
+  {
+   "path": "data/holdings/2026-09-30/SMH-0f5f9859d72bcaad.json.gz",
+   "sha256": "8b46ffed14fcdb723621c1041935261fa9e5747f44b53c66ad3567a8a0d2f44c"
+  },
+  {
+   "path": "data/holdings/2026-11-24/DGRO-b8b436a1100b0f7d.json.gz",
+   "sha256": "42a214f93b0defe99201f34aa9f47312ba7b65d3be3247cbf6cb35168e74c1cb"
+  },
+  {
+   "path": "data/holdings/2026-11-24/DIA-994bb6b604a8ab4c.json.gz",
+   "sha256": "e8d04723879577ff972a27902697afebb8193e761d2e5ac36a933259a082a3f0"
+  },
+  {
+   "path": "data/holdings/2026-11-24/ECH-2d68723f1ce8b45a.json.gz",
+   "sha256": "faaf8a3af73f0aea78949120c7b17f58aa06752eb480bb786c9df53f92a4ec5b"
+  },
+  {
+   "path": "data/holdings/2026-11-24/EEM-f5d36b887f495abd.json.gz",
+   "sha256": "f96c3b5e2b7cc304e71a7633d2cdd612cae999fd4cbfff45ba754956ce457a6a"
+  },
+  {
+   "path": "data/holdings/2026-11-24/EFA-b41d9a29d21314ed.json.gz",
+   "sha256": "385f0fce2d4dca1b64c299af751c44eafc3a469df449ac645d3ba0a65ec71819"
+  },
+  {
+   "path": "data/holdings/2026-11-24/EPU-3a8980ded21764a9.json.gz",
+   "sha256": "cbef4b7cce55acda474309c0deae062947ed70e8f64cae1f5d74780302ae0852"
+  },
+  {
+   "path": "data/holdings/2026-11-24/EWA-5194f162ff026933.json.gz",
+   "sha256": "f21e8e63bdd1746c0a8a2b4a8209a1d8ed6a598770dc2308424c0d3a65a59b43"
+  },
+  {
+   "path": "data/holdings/2026-11-24/EWC-99cc97474ba187e3.json.gz",
+   "sha256": "3ce08b48f5f816234b70f61eec3e92b5eaddc50a14c56ba070780c1526d34955"
+  },
+  {
+   "path": "data/holdings/2026-11-24/EWG-b6da7ce157e43e70.json.gz",
+   "sha256": "efa97a32d330942b823d5dbf4a3ab5a017ded05524f1136c5e866a7520042adc"
+  },
+  {
+   "path": "data/holdings/2026-11-24/EWJ-8256e9d8bdb99394.json.gz",
+   "sha256": "f36d81fa40a8a6e1c33c381bee0ca0bd122eb1db13a604e7035e3959f9016102"
+  },
+  {
+   "path": "data/holdings/2026-11-24/EWT-5b39135fe4627554.json.gz",
+   "sha256": "cd609597d593d06faa88827be79a4858b311f7364fea4fe615f2824b4f2f2615"
+  },
+  {
+   "path": "data/holdings/2026-11-24/EWU-26ccf0bafb278668.json.gz",
+   "sha256": "cb207adbdaea232c7cc6d68204c59fa2597e03693cf37326b92d96b663d5cc3d"
+  },
+  {
+   "path": "data/holdings/2026-11-24/EWW-305bbdcd38020faa.json.gz",
+   "sha256": "29fc951a5f3cfff5869a8401be99a1675b2235c741c8d648b2d4779c1111b11b"
+  },
+  {
+   "path": "data/holdings/2026-11-24/EWZ-1831f8c45d5df989.json.gz",
+   "sha256": "1417804ffd80e237ff2f3beb8d1650e26815ef25fb063bb8effaa3986d7c7f3c"
+  },
+  {
+   "path": "data/holdings/2026-11-24/FXI-3e6b6064abbbb9b9.json.gz",
+   "sha256": "0226a2f99490e364946d76cc56d66d9bf80eb6458676bb11b2378834277d3749"
+  },
+  {
+   "path": "data/holdings/2026-11-24/IBB-46b74eede7925de6.json.gz",
+   "sha256": "1c226032193b735a03c72b1ba942a43bf99c44d5128f078ac143d69d68c62f32"
+  },
+  {
+   "path": "data/holdings/2026-11-24/INDA-a2b412e39b44f1a6.json.gz",
+   "sha256": "0dc26b3d2ec592704a2ee6c9778b2491a7ff913672784b3625ab8a4d94e3bde7"
+  },
+  {
+   "path": "data/holdings/2026-11-24/IWM-03263b173aa019fa.json.gz",
+   "sha256": "9b02e1b069d06e73d499eeb791b6e4fa8848b043127204b62a1b3f2ee50422d3"
+  },
+  {
+   "path": "data/holdings/2026-11-24/KRE-fe76644f9cbe4db5.json.gz",
+   "sha256": "e4b057225c81c43a6c81d81179e7d9d4909991f39bc78b51b6f42223f6e16235"
+  },
+  {
+   "path": "data/holdings/2026-11-24/MCHI-4fef961fd4c36970.json.gz",
+   "sha256": "3c1fe2c97d7d9ef53d5d5d90a38a85c756942c2d735ef6979e3635c1a553518b"
+  },
+  {
+   "path": "data/holdings/2026-11-24/MTUM-d29b1ae4f3e84958.json.gz",
+   "sha256": "a19f4d5b7502403df68c8733f4ce2878440340ca0e5917a5fd96e2bee2d1fec6"
+  },
+  {
+   "path": "data/holdings/2026-11-24/QUAL-13059f30c89ff798.json.gz",
+   "sha256": "2ce2ea064c63a0878b35f236b677fb1cf686e405640232acf9457b6fd668ab11"
+  },
+  {
+   "path": "data/holdings/2026-11-24/SOXX-46f202f33a3a16ce.json.gz",
+   "sha256": "9b4d31b9876d58b25874e08dd06c86edb76d07147cce7721290d49a35fcba98d"
+  },
+  {
+   "path": "data/holdings/2026-11-24/SPY-82008375e813ffac.json.gz",
+   "sha256": "2c7bf9b5e097a36fda3920ce8f5f99d34d3a130d2483ff27170160e34706f82f"
+  },
+  {
+   "path": "data/holdings/2026-11-24/USMV-1dfd6277418a6dce.json.gz",
+   "sha256": "804f0a3711d28d67fddcc33dd01182c5e1ce7071a61113caea82b24aa9276ab4"
+  },
+  {
+   "path": "data/holdings/2026-11-24/XBI-2f2a14d4e16b22dc.json.gz",
+   "sha256": "2afbe68b57346c99f25729d09736baf575b0bb0cde163bb8493722eb95691eda"
+  },
+  {
+   "path": "data/holdings/2026-11-24/XLB-068958bd0f99a6d1.json.gz",
+   "sha256": "8adef5ff8ba16c18f25f80684fab662f7b835e614be6859876edcb2eac1813d4"
+  },
+  {
+   "path": "data/holdings/2026-11-24/XLC-f4447cf0ade2fa0c.json.gz",
+   "sha256": "14f923926a41866aea87b4fab1b7c149b28f5d79a9bd11c931de815cf9e96a77"
+  },
+  {
+   "path": "data/holdings/2026-11-24/XLE-08247798174ed2d0.json.gz",
+   "sha256": "28b60a1044f727c3451ab1607f799b69e08455d440dc7893b5d2d837cd322543"
+  },
+  {
+   "path": "data/holdings/2026-11-24/XLF-1bd8ae28f2fdcd29.json.gz",
+   "sha256": "ed79942e6b27dd322056a61bf10e318142e7347a9e67a101472cde0b415316cb"
+  },
+  {
+   "path": "data/holdings/2026-11-24/XLI-3ebb5c547bfd375e.json.gz",
+   "sha256": "0c8e3bdfce355587e7586a1ddeaf92f0d4ae38f104473120c21b1eb7cba90318"
+  },
+  {
+   "path": "data/holdings/2026-11-24/XLK-a80b8395a511830f.json.gz",
+   "sha256": "3ec96b7d7f17bb82a1e1d9059f4102b7f2b8f1bb2a0761688194bf473abfbeab"
+  },
+  {
+   "path": "data/holdings/2026-11-24/XLP-9f660cebf544c1a6.json.gz",
+   "sha256": "d4f5a6512cdb355dfb24d684f8ecbe90e11ba568e8187eeef288df23d23e6d4f"
+  },
+  {
+   "path": "data/holdings/2026-11-24/XLRE-5f607222492fb3ee.json.gz",
+   "sha256": "30050be9c63084e5f4f7112492ddbd6ba08994171e21c9ca6c07f91ba9085532"
+  },
+  {
+   "path": "data/holdings/2026-11-24/XLU-92e5dbcf4393d1ec.json.gz",
+   "sha256": "0812f9ee406988cac46e5f5d88362513b3ec744e1701b4cce4fdb6617bada893"
+  },
+  {
+   "path": "data/holdings/2026-11-24/XLV-01c64fb639775c6e.json.gz",
+   "sha256": "01ccc5c7a23bc67411f6cfe2cd9262dc851e73a8bde60c20b296ea3c453cfa22"
+  },
+  {
+   "path": "data/holdings/2026-11-24/XLY-37f2350301c525ea.json.gz",
+   "sha256": "e163ec72be141767e1e81a4d7f17c8367171421ce04400f6432caf59027e094c"
+  },
+  {
+   "path": "data/risk-forecasts/2026-11-25.json",
+   "sha256": "33b42198a8d069e25fb2aedf447d110c7fbcc6c60da5f81a84e7f98d6b3ef2f2"
+  },
+  {
+   "path": "data/risk-forecasts/scores/2026-11-24.json",
+   "sha256": "189fc718c041953aa3245832676ca0107368530b768adf7c47385265a97d8a1e"
+  },
+  {
+   "path": "data/simulator-validation/forecasts/2026-11-25.json.gz",
+   "sha256": "730366b91aaa5e74568a6e036ca2d229b67ec571dfbd8e4126514eb2f734375a"
+  },
+  {
+   "path": "data/simulator-validation/scores/2026-11-16.h5.json.gz",
+   "sha256": "8a4874b2d4979d8298a879b7dfa11e7608c8038bf19353bd7086fddae0f98805"
+  },
+  {
+   "path": "data/simulator-validation/scores/2026-11-20.h1.json.gz",
+   "sha256": "1e23c17a65b8eefcfb99e8a446a87ae75f75bdd4ad50df4c9616eaeeba19d8f0"
+  },
+  {
+   "path": "data/snapshots/2026-11/2026-11-26T052053706444Z.json",
+   "sha256": "51ccc41fd8a0cf2551d37b5b7e2a2d89acd60dd58f5ce5775818955a6c5638f4"
+  }
+ ]
+}
